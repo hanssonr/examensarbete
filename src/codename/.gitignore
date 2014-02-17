@@ -1,11 +1,11 @@
 *.class
 
 # Package Files #
-# *.jar #
+*.jar
 *.war
 *.ear
-# *.iml #
-# *.ipr #
+*.iml
+*.ipr
 *.iws
 *.so
 .classpath
