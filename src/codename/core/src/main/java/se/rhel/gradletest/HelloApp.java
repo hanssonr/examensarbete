@@ -12,6 +12,7 @@ import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight;
 import com.badlogic.gdx.graphics.g3d.utils.CameraInputController;
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
+import com.badlogic.gdx.math.Quaternion;
 import com.badlogic.gdx.math.Vector3;
 
 
@@ -79,8 +80,10 @@ public class HelloApp extends ApplicationAdapter {
         mCamController.update();
 
         // For some flavor, lets spin the camera around the Y axis
-        mCamera.rotateAround(Vector3.Zero, new Vector3(0f , 1f, 0f), 1f);
-        mCamera.update();
+        //mCamera.rotateAround(Vector3.Zero, new Vector3(0f , 1f, 0f), 1f);
+        //mCamera.update();
+        mBoxInstance.transform.rotate(new Quaternion().setEulerAngles(1,0,0));
+
 
         // Like spriteBatch, but with models, hooray
         mModelBatch.begin(mCamera);
