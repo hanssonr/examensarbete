@@ -3,6 +3,7 @@ package se.rhel.screen;
 import se.rhel.CodeName;
 import se.rhel.controller.PlayerController;
 import se.rhel.model.WorldModel;
+import se.rhel.view.TextRenderer;
 import se.rhel.view.WorldView;
 
 
@@ -17,7 +18,7 @@ public class GameScreen extends BaseScreen {
 
         mWorldModel = new WorldModel();
         mPlayerController = new PlayerController(mWorldModel.getCamera(), mWorldModel.getPlayer());
-        mWorldView = new WorldView();
+        mWorldView = new WorldView(mWorldModel);
     }
 
 
@@ -25,11 +26,10 @@ public class GameScreen extends BaseScreen {
     public void update(float delta) {
         mPlayerController.processCurrentInput();
         mWorldModel.update(delta);
-        mWorldView.update(delta);
     }
 
     @Override
     public void draw(float delta) {
-        mWorldView.render();
+        mWorldView.render(delta);
     }
 }

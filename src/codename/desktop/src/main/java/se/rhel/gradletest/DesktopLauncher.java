@@ -8,6 +8,6 @@ import se.rhel.CodeName;
 public class DesktopLauncher {
 	public static void main (String[] arg) {
 		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
-		new LwjglApplication(new CodeName(), config);
+		new LwjglApplication(new HelloApp(), config);
 	}
 }

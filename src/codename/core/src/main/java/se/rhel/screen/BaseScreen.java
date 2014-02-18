@@ -1,5 +1,6 @@
 package se.rhel.screen;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import se.rhel.CodeName;
 
@@ -19,8 +20,13 @@ public abstract class BaseScreen implements Screen {
 
     @Override
     public void render(float delta) {
+
+        // TODO: Should we add prio for update? ATM this works fine for seperation
         update(delta);
         draw(delta);
+
+        // Gdx.app.log("Render delta", "Delta: " + delta);
+        // Gdx.app.log("Graphics delta", "GDelta: " + Gdx.graphics.getDeltaTime());
     }
 
     public abstract void update(float delta);

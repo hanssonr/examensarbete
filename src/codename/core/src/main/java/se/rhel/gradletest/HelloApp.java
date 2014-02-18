@@ -80,8 +80,8 @@ public class HelloApp extends ApplicationAdapter {
         mCamController.update();
 
         // For some flavor, lets spin the camera around the Y axis
-        //mCamera.rotateAround(Vector3.Zero, new Vector3(0f , 1f, 0f), 1f);
-        //mCamera.update();
+        // mCamera.rotateAround(Vector3.Zero, new Vector3(0f , 1f, 0f), 1f);
+        mCamera.update();
         mBoxInstance.transform.rotate(new Quaternion().setEulerAngles(1,0,0));
 
 
