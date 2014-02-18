@@ -1,5 +1,6 @@
 package se.rhel.screen;
 
+import com.badlogic.gdx.Gdx;
 import se.rhel.CodeName;
 import se.rhel.controller.PlayerController;
 import se.rhel.model.WorldModel;
@@ -16,14 +17,16 @@ public class GameScreen extends BaseScreen {
         super(game);
 
         mWorldModel = new WorldModel();
-        mPlayerController = new PlayerController(mWorldModel.getCamera(), mWorldModel.getPlayer());
+        //mPlayerController = new PlayerController(mWorldModel.getCamera(), mWorldModel.getPlayer());
         mWorldView = new WorldView();
+
+        //Gdx.input.setInputProcessor(mPlayerController);
     }
 
 
     @Override
     public void update(float delta) {
-        mPlayerController.processCurrentInput();
+        //mPlayerController.processCurrentInput();
         mWorldModel.update(delta);
         mWorldView.update(delta);
     }

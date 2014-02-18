@@ -1,6 +1,7 @@
 package se.rhel.controller;
 
 import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.math.Vector3;
 import se.rhel.model.FPSCamera;
 import se.rhel.model.Player;
 import com.badlogic.gdx.Input.Keys;
@@ -33,11 +34,11 @@ public class PlayerController implements InputProcessor {
 
     public void processCurrentInput() {
         if(mKeys.get(MapKeys.LEFT)) {
-
+            mPlayer.move(new Vector3(-1,0,0));
         }
 
         if(mKeys.get(MapKeys.RIGHT)) {
-
+            mPlayer.move(new Vector3(1,0,0));
         }
 
     }
