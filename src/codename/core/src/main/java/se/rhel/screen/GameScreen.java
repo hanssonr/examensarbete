@@ -18,21 +18,28 @@ public class GameScreen extends BaseScreen {
         super(game);
 
         mWorldModel = new WorldModel();
-        //mPlayerController = new PlayerController(mWorldModel.getCamera(), mWorldModel.getPlayer());
+        mPlayerController = new PlayerController(mWorldModel.getCamera(), mWorldModel.getPlayer());
         mWorldView = new WorldView(mWorldModel);
 
-        //Gdx.input.setInputProcessor(mPlayerController);
+        Gdx.input.setInputProcessor(mPlayerController);
     }
 
 
     @Override
     public void update(float delta) {
-        //mPlayerController.processCurrentInput();
+        mPlayerController.processCurrentInput(delta);
         mWorldModel.update(delta);
     }
 
     @Override
     public void draw(float delta) {
         mWorldView.render(delta);
+    }
+
+    @Override
+    public void dispose() {
+        super.dispose();
+
+        mWorldView.dispose();
     }
 }

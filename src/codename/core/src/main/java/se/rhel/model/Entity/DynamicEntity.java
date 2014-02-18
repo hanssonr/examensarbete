@@ -12,7 +12,6 @@ public class DynamicEntity extends GameObject {
         super(position, rotation);
 
         setMovespeed(movespeed);
-        move(Vector3.Zero);
     }
 
     public void move(Vector3 direction) {
@@ -20,16 +19,9 @@ public class DynamicEntity extends GameObject {
     }
 
     protected void update(float delta) {
-
         Vector3 velocity = mMoveDirection.scl(mMovespeed * delta);
-
-        //System.out.println(velocity);
-        Vector3 newpos = getPosition().scl(velocity);
-
-        //setPosition(newpos);
-
-        mMoveDirection.set(Vector3.Zero);
-        //System.out.println(getPosition());
+        Vector3 newpos = getPosition().add(velocity);
+        setPosition(newpos);
     }
 
     public void setMovespeed(float movespeed) {
