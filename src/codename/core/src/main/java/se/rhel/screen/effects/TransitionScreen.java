@@ -12,7 +12,7 @@ public class TransitionScreen implements Screen {
     public TransitionScreen(Screen current, Screen next, CodeName game) {
 
     }
-    
+
     @Override
     public void render(float delta) {
 

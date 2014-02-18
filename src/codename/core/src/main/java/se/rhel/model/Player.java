@@ -13,16 +13,15 @@ public class Player extends DynamicEntity {
     Model mModel;
     ModelInstance mInstance;
 
-
     public Player(Vector3 position) {
-        super(position, new Vector3(0,1,0));
+        super(position, new Vector3(0,0,0), 1f);
 
         mModel = Bodybuilder.INSTANCE.createBox(1f, 2f, 1f, new Material(ColorAttribute.createDiffuse(Color.BLUE)));
         mInstance = new ModelInstance(mModel, mPosition);
     }
 
     public void update(float delta) {
-
+        //super.update(delta);
     }
 
 }
