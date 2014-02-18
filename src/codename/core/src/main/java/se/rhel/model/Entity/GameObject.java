@@ -5,8 +5,8 @@ import com.badlogic.gdx.math.Vector3;
 
 public class GameObject {
 
-    protected Vector3 mPosition;
-    protected Vector3 mRotation;
+    protected Vector3 mPosition = new Vector3();
+    protected Vector3 mRotation = new Vector3();
 
     public GameObject(Vector3 position, Vector3 rotation) {
         setPosition(position);
@@ -14,11 +14,11 @@ public class GameObject {
     }
 
     public void setPosition(Vector3 position) {
-        mPosition = position;
+        mPosition.set(position);
     }
 
     public void setRotation(Vector3 rotation) {
-        mRotation = rotation;
+        mRotation.set(rotation);
     }
 
     public GameObject() {
