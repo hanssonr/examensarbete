@@ -9,8 +9,20 @@ import se.rhel.screen.effects.TransitionScreen;
 
 public class CodeName extends Game {
 
+    public static final int RUNMODE_MENU = 0;
+    public static final int RUNMODE_NO_MENU = 1;
+
     private TransitionScreen mTransition;
     private boolean mOnce = true;
+    private static int mRunMode = 0;
+
+    public CodeName() {
+        this(RUNMODE_MENU);
+    }
+
+    public CodeName(int mode) {
+        mRunMode = mode;
+    }
 
     @Override
     public void create() {
@@ -35,6 +47,10 @@ public class CodeName extends Game {
             mTransition = new TransitionScreen(this, screen);
             mOnce = false;
         }
+    }
+
+    public static boolean isInMenuMode() {
+        return mRunMode == RUNMODE_MENU ? true : false;
     }
 
 }

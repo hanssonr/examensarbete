@@ -43,8 +43,12 @@ public class LoadingScreen implements Screen {
         if(Resources.INSTANCE.getAssetManager().update()) {
             Resources.INSTANCE.setInstances();
 
-            mGame.setScreenWithTransition(new MainMenu(mGame));
-            // mGame.setScreenWithTransition(new GameScreen(mGame));
+            if(CodeName.isInMenuMode()) {
+                mGame.setScreenWithTransition(new MainMenu(mGame));
+            } else {
+                mGame.setScreenWithTransition(new GameScreen(mGame));
+            }
+
         }
 
         mSpriteBatch.begin();

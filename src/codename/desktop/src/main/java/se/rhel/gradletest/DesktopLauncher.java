@@ -7,7 +7,13 @@ import se.rhel.CodeName;
 
 public class DesktopLauncher {
 	public static void main (String[] arg) {
-		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
-		new LwjglApplication(new CodeName(), config);
+
+        LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
+
+        if(arg.length > 0) {
+            new LwjglApplication(new CodeName(Integer.valueOf(arg[0])), config);
+        } else {
+            new LwjglApplication(new CodeName(), config);
+        }
 	}
 }
