@@ -31,7 +31,7 @@ public enum Resources {
         hudFont = mManager.get("data/fonts/hud.fnt", BitmapFont.class);
 
         Model shipModel = mManager.get("obj/ship/ship.obj", Model.class);
-        ModelInstance instance = new ModelInstance(shipModel);
+        ModelInstance instance = new ModelInstance(shipModel, 0,1,0);
         modelInstanceArray.add(instance);
 
         Model levelModel = mManager.get("obj/level/level.g3db", Model.class);

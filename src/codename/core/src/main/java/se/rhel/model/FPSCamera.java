@@ -30,7 +30,9 @@ public class FPSCamera extends PerspectiveCamera {
     @Override
     public void update() {
         super.update();
-        position.set(mObj.getPosition());
-        mObj.setRotation(new Vector3(0, direction.y, 0)); //rotate only around y axis
+        //position.set(mObj.getPosition());
+        Vector3 pos = mObj.getPosition();
+        position.set(new Vector3(pos.x, pos.y + 1, pos.z + 3));
+        mObj.setRotation(new Vector3(0, direction.x, 0)); //rotate only around y axis
     }
 }
