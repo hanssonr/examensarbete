@@ -23,6 +23,7 @@ public enum Resources {
         mManager.load("data/fonts/hud.fnt", BitmapFont.class);
         mManager.load("obj/ship/ship.obj", Model.class);
         mManager.load("obj/level/level.g3db", Model.class);
+        mManager.load("obj/beretta/beretta.obj", Model.class);
     }
 
     public void setInstances() {
