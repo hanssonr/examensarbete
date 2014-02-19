@@ -1,0 +1,31 @@
+\select@language {english}
+\contentsline {section}{\numberline {1}Introduktion}{1}{section.1}
+\contentsline {subsection}{\numberline {1.1}Inledning/Bakrund}{1}{subsection.1.1}
+\contentsline {subsection}{\numberline {1.2}Tidigare forskning}{1}{subsection.1.2}
+\contentsline {subsection}{\numberline {1.3}Problemformulering}{1}{subsection.1.3}
+\contentsline {subsection}{\numberline {1.4}Syfte och fr\IeC {\r a}gest\IeC {\"a}llning/hypotes}{1}{subsection.1.4}
+\contentsline {subsection}{\numberline {1.5}Avgr\IeC {\"a}nsning/Begr\IeC {\"a}nsning}{1}{subsection.1.5}
+\contentsline {subsection}{\numberline {1.6} M\IeC {\r a}lgrupp}{1}{subsection.1.6}
+\contentsline {subsection}{\numberline {1.7}Disposition}{1}{subsection.1.7}
+\contentsline {section}{\numberline {2}Bakgrund/Teori}{2}{section.2}
+\contentsline {subsection}{\numberline {2.1}Rubrik 1}{2}{subsection.2.1}
+\contentsline {subsection}{\numberline {2.2}Rubrik 2}{2}{subsection.2.2}
+\contentsline {subsection}{\numberline {2.3}Rubrik etc}{2}{subsection.2.3}
+\contentsline {section}{\numberline {3}Metod}{3}{section.3}
+\contentsline {subsection}{\numberline {3.1}Vetenskaplig ansats}{3}{subsection.3.1}
+\contentsline {subsection}{\numberline {3.2}Datainsamling}{3}{subsection.3.2}
+\contentsline {subsubsection}{\numberline {3.2.1}Urval}{3}{subsubsection.3.2.1}
+\contentsline {subsubsection}{\numberline {3.2.2}Genomf\IeC {\"o}rande}{3}{subsubsection.3.2.2}
+\contentsline {subsection}{\numberline {3.3}Analys}{3}{subsection.3.3}
+\contentsline {subsection}{\numberline {3.4}Tillf\IeC {\"o}rlitlighet}{3}{subsection.3.4}
+\contentsline {subsection}{\numberline {3.5}Etiska \IeC {\"o}verv\IeC {\"a}ganden}{3}{subsection.3.5}
+\contentsline {section}{\numberline {4}Resultat/Emperi}{4}{section.4}
+\contentsline {subsection}{\numberline {4.1}Test 1}{4}{subsection.4.1}
+\contentsline {subsection}{\numberline {4.2}Test 2}{4}{subsection.4.2}
+\contentsline {section}{\numberline {5}Analys}{5}{section.5}
+\contentsline {section}{\numberline {6}Diskussion}{6}{section.6}
+\contentsline {subsection}{\numberline {6.1}Probleml\IeC {\"o}sning/resultat}{6}{subsection.6.1}
+\contentsline {subsection}{\numberline {6.2}Metodreflektion}{6}{subsection.6.2}
+\contentsline {section}{\numberline {7}Avslutning}{7}{section.7}
+\contentsline {subsection}{\numberline {7.1}Slutsats}{7}{subsection.7.1}
+\contentsline {subsection}{\numberline {7.2}F\IeC {\"o}rslag till fortsatt forskning}{7}{subsection.7.2}

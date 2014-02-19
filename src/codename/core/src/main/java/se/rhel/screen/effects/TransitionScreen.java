@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import se.rhel.CodeName;
+import se.rhel.observer.TransitionObserver;
 
 /**
  * Created by Emil on 2014-02-18.
@@ -23,18 +24,21 @@ public class TransitionScreen {
     private TweenCallback mTransitionComplete, mTimeToChangeScreen;
     private ShapeRenderer mShapeRenderer;
     private Screen mToScreen;
-    private boolean mTransitionInProgress;
+    private TransitionObserver mObs;
+
 
     public TransitionScreen(CodeName game, Screen toScreen) {
         mGame = game;
         mToScreen = toScreen;
+
+        mObs = new TransitionObserver();
+        mObs.add(mGame);
 
         mNormal = new Matrix4();
         mNormal.setToOrtho2D(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
         mShapeRenderer = new ShapeRenderer();
 
-        mTransitionInProgress = true;
         show();
     }
 
@@ -59,14 +63,14 @@ public class TransitionScreen {
         mTransitionComplete = new TweenCallback() {
             @Override
             public void onEvent(int type, BaseTween<?> source) {
-                mTransitionInProgress = false;
+                mObs.done();
             }
         };
 
         mTimeToChangeScreen = new TweenCallback() {
            @Override
            public void onEvent(int type, BaseTween<?> source) {
-               mGame.setScreen(mToScreen);
+               mObs.change(mToScreen);
            }
        };
 
@@ -80,9 +84,5 @@ public class TransitionScreen {
                 .setCallback(mTransitionComplete)
                 .setCallbackTriggers(TweenCallback.COMPLETE)
                 .start(mManager);
-    }
-
-    public boolean isTransitionInProgress() {
-        return mTransitionInProgress;
     }
 }

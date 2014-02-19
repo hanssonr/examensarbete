@@ -1,0 +1,236 @@
+\documentclass[a4paper,12pt]{article}
+\usepackage{titlesec}
+\titleformat*{\section}{\Large\bf}
+\titleformat*{\subsection}{\normalsize\bf}
+\titleformat*{\subsubsection}{\normalsize\bf}
+%
+%\usepackage[latin1]{inputenc}
+\usepackage[utf8]{inputenc}
+\usepackage[swedish,english]{babel}
+
+%	Nationella tecken måste kodas
+%	å=\aa,  ä=\"{a},   ö=\"{o} 
+%	Å=\AA, Ä=\"{A}, Ö=\"{O} 
+
+
+\addto\captionsenglish{%
+  \renewcommand{\listoffigures}{Figurer}%
+  \renewcommand{\listoftables}{Tabeller}%
+  \renewcommand{\contentsname}{Inneh\aa llsf\"{o}rteckning}%
+}
+
+%\usepackage [T1] {fontenc}
+%\usepackage [swedish] {babel}
+\usepackage[numbers]{natbib}
+\usepackage{float}
+\usepackage{my.techs}
+\usepackage{graphicx}
+\usepackage{hyperref}
+
+% \Section ger mindre spillutrymme, anv�nd dem om du vill
+\newcommand{\Section}[1]{\section{#1}\vspace{-8pt}}
+\newcommand{\Subsection}[1]{\vspace{-4pt}\subsection{#1}\vspace{-8pt}}
+\newcommand{\Subsubsection}[1]{\vspace{-4pt}\subsubsection{#1}\vspace{-8pt}}
+
+\hypersetup{
+    %bookmarks=true,         % show bookmarks bar?
+    %unicode=false,          % non-Latin characters in Acrobat�s bookmarks
+    %pdftoolbar=true,        % show Acrobat�s toolbar?
+    %pdfmenubar=true,        % show Acrobat�s menu?
+    %pdffitwindow=false,     % window fit to page when opened
+    %pdfstartview={FitH},    % fits the width of the page to the window
+    pdftitle={Project title},    % title
+    pdfsubject={Computer Science}, % subject
+    pdfauthor={Name of author},     % author
+    pdfkeywords={Here you write the keywords related to the theses}, % list of keywords
+    pdfnewwindow=true,      % links in new window
+    plainpages=false,				 % false: allows refs to pages that repeat (i.e. 1 in the preface as well as report)
+    colorlinks=true,       % false: boxed links; true: colored links
+    linkcolor=black,          % color of internal links
+    citecolor=black,        % color of links to bibliography
+    urlcolor=blue
+    %filecolor=magenta,      % color of file links
+}
+\def\inst{datavetenskap}
+\def\typeofdoc{Laborationsrapport}
+\def\course{Examensarbete 15p}
+\def\pretitle{Rapport under utveckling}
+\def\title{Rapporttitel}
+\def\name{Fnamn Enamn}
+\def\username{anv\"{a}ndarnamn}
+\def\email{\username{}@student.lnu.se}
+\def\path{edu/KURS/lab1}
+\def\graders{HANDLEDARNAS NAMN}
+
+
+% om du vill referera till katalogen d�r dina filer ligger kan du 
+% anv�nda \fullpath som kommer att vara "~username/edu..." o.s.v.
+%\def\fullpath{\raisebox{1pt}{$\scriptstyle \sim$}\username/\path}
+
+
+\begin{document}
+	\pagenumbering{roman}
+	%Here the preface - titlepage, TOC etc - starts:
+	%---------------------------------------------------------------------------------------------------------------
+%	\include{Sections/Title}
+
+	% skapar framsidan (om den inte duger: g�r helt enkelt en egen)
+	\begin{titlepage}
+		\thispagestyle{empty}
+		\begin{large}
+			\begin{tabular}{@{}p{\textwidth}@{}}
+				\textbf{Linn\'{e}universitetet \hfill \today} \\
+				\textbf{Institutionen f\"{o}r \inst} \\
+				%\textbf{\typeofdoc} \\
+			\end{tabular}
+		\end{large}
+		\vspace{10mm}
+		\begin{center}
+			\LARGE{\pretitle} \\
+			\LARGE{\course}\\
+			\vspace{10mm}
+			\LARGE{\textbf{\title}} \\
+			\vspace{15mm}
+			\begin{large}
+				\begin{tabular}{ll}
+					\textbf{Namn} & \name \\
+					\textbf{E-mail} & \texttt{\email} \\
+					%\textbf{S�kv�g} & \texttt{\fullpath} \\
+				\end{tabular}
+			\end{large}
+			\vfill
+			\large{\textbf{Handledare}}\\
+			\mbox{\large{\graders}}
+		\end{center}
+	\end{titlepage}
+
+
+
+	%\include{Title}
+	\include{Sections/Abstract}
+%	\include{Sections/Acknowledgements}
+	\tableofcontents
+	\newpage
+%	\listoffigures
+%	\newpage
+%	\listoftables
+%	\newpage
+	
+	%Here the actual report starts:
+	%---------------------------------------------------------------------------------------------------------------
+	\pagenumbering{arabic}
+%	\include{Sections/Introduction}
+%	\include{Sections/Technologies}
+%	\include{Sections/CurrentNetwork}
+%	\include{Sections/Achieving}
+%	\include{Sections/ChosenTechnologies}
+%	\include{Sections/TestEnvironment}
+%	\include{Sections/TestResults}
+%	\include{Sections/Discussion}
+%	\include{Sections/Conclusions}
+
+%
+%	Ovanstående indelning med kapitel lagrade i en katalog har ersatts med allt i ett dokument.
+%
+	\Section{Introduktion}
+		% \emph inneb�r emphasize, d.v.s. betona eller framh�ll -> kursiv stil
+		\emph{Inled med lite text som beskriver innehållet i kapitlet.}
+här kommer också övriga tecken
+
+		% l�gg in en underrubrik (\subsection -> spillutrymme)
+		\Subsection{Inledning/Bakrund}
+
+		\Subsection{Tidigare forskning}
+
+		\Subsection{Problemformulering}
+
+		\Subsection{Syfte och frågeställning/hypotes}
+
+		\Subsection{Avgränsning/Begränsning}
+
+		\Subsection{ Målgrupp}
+
+		\Subsection{Disposition}
+
+\newpage
+
+	\Section{Bakgrund/Teori}
+		\emph{Inled med lite text som beskriver inneh\aa llet i kapitlet.}
+		
+		\Subsection{Rubrik 1}
+			
+		\Subsection{Rubrik 2}
+
+		\Subsection{Rubrik etc}
+
+\newpage			
+
+	\Section{Metod}
+		\emph{Inled med lite text som beskriver inneh\aa llet i kapitlet.}
+
+		\Subsection{Vetenskaplig ansats}
+
+		\Subsection{Datainsamling}
+
+			\Subsubsection{Urval}
+
+			\Subsubsection {Genomförande}
+			
+		\Subsection{Analys}
+
+		\Subsection{Tillförlitlighet}
+
+		\Subsection{Etiska överväganden}
+
+\newpage
+
+	\Section{Resultat/Emperi}
+		\emph{Inled med lite text som beskriver inneh\aa llet i kapitlet.}
+		
+		\Subsection{Test 1}
+			
+		\Subsection{Test 2}	
+\newpage
+	
+	\Section{Analys}
+		\emph{Inled med lite text som beskriver inneh\aa llet i kapitlet.}
+	
+\newpage
+	
+	\Section{Diskussion}
+		\emph{Inled med lite text som beskriver inneh\aa llet i kapitlet.}
+
+		\Subsection{Problemlösning/resultat}
+
+		\Subsection{Metodreflektion}
+
+\newpage
+		
+	\Section{Avslutning}
+		\emph{Inled med lite text som beskriver inneh\aa llet i kapitlet.}
+		
+		\Subsection{Slutsats}
+
+		\Subsection{Förslag till fortsatt forskning}
+\newpage
+
+	
+	%Here the bibliography starts:
+	%---------------------------------------------------------------------------------------------------------------
+	\newpage
+	\clearpage
+	\bibliographystyle{agsm}
+	\bibliography{bachelor}
+	\addcontentsline{toc}{section}{Referenser}
+	\newpage
+	
+	%Here the end of the report starts - abbrivations, definitions and the last page:
+	%---------------------------------------------------------------------------------------------------------------
+%	\include{Sections/Definitions}
+%	\addcontentsline{toc}{section}{Definitions}
+%	\include{Sections/Abbreviations}
+%	\addcontentsline{toc}{section}{Abbreviations}
+%	\include{Sections/LastPage}
+%	\include{LastPage}
+
+\end{document}

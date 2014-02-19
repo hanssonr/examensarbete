@@ -54,8 +54,8 @@ public class MainMenu extends BaseScreen {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 Gdx.app.log("Button", "Game");
-                mGame.setScreenWithTransition(new GameScreen(mGame));
-                // mGame.setScreen(new GameScreen(mGame));
+                // mGame.setScreenWithTransition(new GameScreen(mGame));
+                mGame.setScreen(new GameScreen(mGame));
             }
         });
 

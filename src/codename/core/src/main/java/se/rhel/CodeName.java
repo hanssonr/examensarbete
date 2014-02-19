@@ -3,11 +3,13 @@ package se.rhel;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import se.rhel.observer.TransitionObserver;
+import se.rhel.screen.GameScreen;
 import se.rhel.screen.LoadingScreen;
 import se.rhel.screen.effects.TransitionScreen;
 
 
-public class CodeName extends Game {
+public class CodeName extends Game implements TransitionObserver.TransitionListener {
 
     public static final int RUNMODE_MENU = 0;
     public static final int RUNMODE_NO_MENU = 1;
@@ -33,7 +35,7 @@ public class CodeName extends Game {
     public void render() {
         super.render();
 
-        if(mTransition != null && mTransition.isTransitionInProgress()) {
+        if(mTransition != null) {
             mTransition.render();
         }
     }
@@ -43,12 +45,7 @@ public class CodeName extends Game {
      * @param screen
      */
     public void setScreenWithTransition(Screen screen) {
-
-        if(mTransition != null && !mTransition.isTransitionInProgress()) {
-            mOnce = true;
-        }
-
-        if(mOnce) {
+        if(mTransition == null && mOnce) {
             mTransition = new TransitionScreen(this, screen);
             mOnce = false;
         }
@@ -58,4 +55,14 @@ public class CodeName extends Game {
         return mRunMode == RUNMODE_MENU ? true : false;
     }
 
+    @Override
+    public void done() {
+        mTransition = null;
+        mOnce = true;
+    }
+
+    @Override
+    public void change(Screen toScreen) {
+        setScreen(toScreen);
+    }
 }

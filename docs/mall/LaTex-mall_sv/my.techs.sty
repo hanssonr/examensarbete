@@ -1,0 +1,140 @@
+%%
+%% Copyright 2011, Björn Olsson.
+%% bolkw08@student.lnu.se
+%% www.devbean.se
+%% 
+\ProvidesPackage{my.techs}[2011/02/27 v0.1 Something cool.]
+\RequirePackage{chngpage} %allows for temporary adjustment of side margins
+\RequirePackage{watermark}
+\RequirePackage{colortbl}
+\RequirePackage{listings}
+\RequirePackage{color}
+\RequirePackage{textcomp}
+\RequirePackage{amsmath,amssymb,amsthm}
+\numberwithin{figure}{section}
+\makeatletter
+\newcommand\ackname{Acknowledgements}
+\if@titlepage
+	\newenvironment{acknowledgements}{%
+		\titlepage
+		\null\vfil
+		\@beginparpenalty\@lowpenalty
+			\begin{center}%
+				\bfseries \ackname
+				\@endparpenalty\@M
+			\end{center}}%
+		{\par\vfil\null\endtitlepage}
+\else
+	\newenvironment{acknowledgements}{%
+			\if@twocolumn
+				\section*{\abstractname}%
+			\else
+				\small
+				\begin{center}%
+					{\bfseries \ackname\vspace{-.5em}\vspace{\z@}}%
+				\end{center}%
+				\quotation
+			\fi}
+			{\if@twocolumn\else\endquotation\fi}
+\fi
+\makeatother
+
+\makeatletter	
+	\newcommand{\createtitlepage}{%
+		\thispagestyle{empty}%
+		\addtolength{\textheight}{3in}
+		\addtolength{\vsize}{3in}
+		\makeatletter
+		\addtolength{\@colht}{3in}
+		\addtolength{\@colroom}{3in}
+		\makeatother
+		\addtolength{\topmargin}{-1.5in}
+		\begin{table}[tp]
+			\begin{adjustwidth}{-1in}{-1in}% adjust the L and R margins by 1 inch
+				\setlength{\arrayrulewidth}{1pt}
+				\begin{tabular*}{5cm}{p{2.5cm}lp{13cm}}
+					\includegraphics[scale=1.3]{img/lnuSymbol} & \vline & \includegraphics[scale=1.3]{img/lnuWordmark} \\
+					& \vline & \\
+					& \vline & \\
+					& \vline & \\
+					& \vline & \\
+					& \vline & \\
+					& \vline & \\
+					& \vline & {\huge \@level\ project} \\
+%					& \vspace{3cm} \\
+					& & \\
+					& & \\
+					& & \\
+					& & \\
+					& & \\
+					& & \\
+					& & \\
+					& & {\Huge\textbf{\@title}} \\
+					& & {\huge\textit{\@subtitle}} \\
+				\end{tabular*}
+			\end{adjustwidth}
+		\end{table}
+
+		\null
+		\vfill
+		\begin{adjustwidth}{-1in}{-1in}% adjust the L and R margins by 1 inch
+			\begin{figure}[!b]
+				%\includegraphics[scale=0.5]{img/pil}
+				\thiswatermark{
+					%\centering
+					\put(-150,-890){\includegraphics[width=1.45\textwidth]{img/pil}}
+				}
+			\end{figure}
+		\begin{flushright}%
+			\setlength{\arrayrulewidth}{1pt}
+			\begin{tabular}{|p{0.2cm}|l}
+				\multicolumn{2}{|c}{} \\
+				\multicolumn{2}{|c}{} \\
+				\multicolumn{2}{|c}{} \\
+				\multicolumn{2}{|c}{} \\
+				\multicolumn{2}{|c}{} \\
+				\multicolumn{2}{|c}{} \\
+				\multicolumn{2}{|c}{} \\
+				& Author: \@author \\
+				& Semester: \@semester \\
+				& Subject: \@subject \\
+				& Level: \@level \\
+				& Course code: \@coursecode \\
+			 \end{tabular}
+		\end{flushright}
+		\end{adjustwidth}
+		\setcounter{page}{0}
+		\newpage
+		\addtolength{\textheight}{-3in}
+		\addtolength{\vsize}{-3in}
+		\makeatletter
+		\addtolength{\@colht}{-3in}
+		\addtolength{\@colroom}{-3in}
+		\makeatother
+		\addtolength{\topmargin}{1.5in}
+	}
+	\def\subtitle#1{\gdef\@subtitle{#1}}
+	\def\@subtitle{}
+	\def\semester#1{\gdef\@semester{#1}}
+	\def\@semester{}
+	\def\subject#1{\gdef\@subject{#1}}
+	\def\@subject{}
+	\def\level#1{\gdef\@level{#1}}
+	\def\@level{}
+	\def\coursecode#1{\gdef\@coursecode{#1}}
+	\def\@coursecode{}
+\makeatother
+
+\lstdefinestyle{codeListing}{
+	columns=fullflexible,
+	basicstyle=\small,
+	extendedchars=true,
+	xleftmargin=2em,
+	xrightmargin=2em,
+	backgroundcolor=\color[rgb]{1,1,1},
+	frameshape={YYY}{n}{n}{YYY},
+	captionpos=b,
+	keywordstyle=\color[rgb]{0,0,1},
+	commentstyle=\color[rgb]{0.247,0.372,0.749},
+	stringstyle=\color[rgb]{0,1,0}
+}
