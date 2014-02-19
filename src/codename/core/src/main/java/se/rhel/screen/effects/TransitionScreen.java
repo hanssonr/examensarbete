@@ -23,7 +23,7 @@ public class TransitionScreen {
     private TweenCallback mTransitionComplete, mTimeToChangeScreen;
     private ShapeRenderer mShapeRenderer;
     private Screen mToScreen;
-    private boolean mTransitionInProgress = false;
+    private boolean mTransitionInProgress;
 
     public TransitionScreen(CodeName game, Screen toScreen) {
         mGame = game;
@@ -63,7 +63,7 @@ public class TransitionScreen {
             }
         };
 
-       mTimeToChangeScreen = new TweenCallback() {
+        mTimeToChangeScreen = new TweenCallback() {
            @Override
            public void onEvent(int type, BaseTween<?> source) {
                mGame.setScreen(mToScreen);

@@ -21,7 +21,7 @@ public class WorldModel {
         mCamera = new FPSCamera(mPlayer, 67, 0.1f, 300f);
 
         mBoxInstance = new ModelInstance(Bodybuilder.INSTANCE.createBox(1f,1f,1f), 0f, 0f, 0f);
-        //Resources.INSTANCE.modelInstanceArray.add(mBoxInstance);
+        Resources.INSTANCE.modelInstanceArray.add(mBoxInstance);
     }
 
     public void update(float delta) {

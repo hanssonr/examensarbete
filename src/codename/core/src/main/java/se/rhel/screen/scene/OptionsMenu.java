@@ -1,32 +1,30 @@
 package se.rhel.screen.scene;
 
-import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.CheckBox;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
-import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import se.rhel.CodeName;
 import se.rhel.screen.BaseScreen;
-import se.rhel.screen.GameScreen;
+import se.rhel.utils.Options;
 
 /**
- * Created by Emil on 2014-02-18.
+ * Created by Emil on 2014-02-19.
  * assigned to libgdx-gradle-template in se.rhel.screen.scene
  */
-public class MainMenu extends BaseScreen {
+public class OptionsMenu extends BaseScreen {
 
     private Stage mStage;
     private Table mTable;
 
     private CodeName mGame;
 
-    public MainMenu(CodeName game) {
+    public OptionsMenu(CodeName game) {
         super(game);
 
         mStage = new Stage();
@@ -37,31 +35,43 @@ public class MainMenu extends BaseScreen {
 
         mTable.clear();
 
-        final TextButton optButton = UIComponents.getDefaultTextButton("Options", 200f, 20f);
-        // button.setPosition(Gdx.graphics.getWidth() /2 - 100f, Gdx.graphics.getHeight()/2 - 10f);
-        final TextButton startButton = UIComponents.getDefaultTextButton("Start", 200f, 20f);
+        final CheckBox fullScreenCheck = UIComponents.getDefaultCheckBox("Fullscreen");
+        fullScreenCheck.setChecked(Options.INSTANCE.getFullScreen());
 
-        optButton.addListener(new ChangeListener() {
+        final TextButton backButton = UIComponents.getDefaultTextButton("Back", 200f, 20f);
+
+        fullScreenCheck.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                // mGame.setScreenWithTransition(new OptionsMenu(mGame));
-                Gdx.app.log("Button", "Opt");
-                mGame.setScreen(new OptionsMenu(mGame));
+
+                if(fullScreenCheck.isChecked()) {
+                    // If we are not already in fullscreen
+                    if(!Gdx.graphics.isFullscreen()) {
+                        Gdx.graphics.setDisplayMode(1280, 720, true);
+                    }
+                } else {
+                    if(Gdx.graphics.isFullscreen()) {
+                        Gdx.graphics.setDisplayMode(1280, 720, false);
+                    }
+                }
+
+                // Save either way
+                Options.INSTANCE.setFullScreen(fullScreenCheck.isChecked());
+                // Might do this in bulk later
+                Options.INSTANCE.save();
             }
         });
 
-        startButton.addListener(new ChangeListener() {
+        backButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                Gdx.app.log("Button", "Game");
-                mGame.setScreenWithTransition(new GameScreen(mGame));
-                // mGame.setScreen(new GameScreen(mGame));
+               back();
             }
         });
 
-        mTable.add(optButton);
+        mTable.add(fullScreenCheck);
         mTable.row().padTop(10);
-        mTable.add(startButton);
+        mTable.add(backButton);
         mStage.addActor(mTable);
 
     }
@@ -92,6 +102,7 @@ public class MainMenu extends BaseScreen {
     @Override
     public void resize(int width, int height) {
         super.resize(width, height);
+
         mStage.setViewport(width, height, true);
         initStage();
     }
@@ -101,5 +112,11 @@ public class MainMenu extends BaseScreen {
         super.dispose();
         Gdx.input.setInputProcessor(null);
         mStage.dispose();
+    }
+
+
+
+    private void back() {
+        mGame.setScreen(new MainMenu(mGame));
     }
 }

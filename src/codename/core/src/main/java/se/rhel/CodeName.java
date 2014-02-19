@@ -43,6 +43,11 @@ public class CodeName extends Game {
      * @param screen
      */
     public void setScreenWithTransition(Screen screen) {
+
+        if(mTransition != null && !mTransition.isTransitionInProgress()) {
+            mOnce = true;
+        }
+
         if(mOnce) {
             mTransition = new TransitionScreen(this, screen);
             mOnce = false;

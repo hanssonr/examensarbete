@@ -22,6 +22,7 @@ public enum Resources {
     public void load() {
         mManager.load("data/fonts/hud.fnt", BitmapFont.class);
         mManager.load("obj/ship/ship.obj", Model.class);
+        mManager.load("obj/level/level.g3db", Model.class);
     }
 
     public void setInstances() {
@@ -31,7 +32,10 @@ public enum Resources {
 
         Model shipModel = mManager.get("obj/ship/ship.obj", Model.class);
         ModelInstance instance = new ModelInstance(shipModel);
+        modelInstanceArray.add(instance);
 
+        Model levelModel = mManager.get("obj/level/level.g3db", Model.class);
+        instance = new ModelInstance(levelModel);
         modelInstanceArray.add(instance);
     }
 
