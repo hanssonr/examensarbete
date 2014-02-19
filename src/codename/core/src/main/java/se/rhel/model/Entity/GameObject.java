@@ -28,4 +28,8 @@ public class GameObject {
     public Vector3 getPosition() {
         return mPosition;
     }
+
+    public Vector3 getRotation() {
+        return mRotation;
+    }
 }

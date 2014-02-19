@@ -42,11 +42,7 @@ public class WorldView {
         Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
 
         mModelBatch.begin(mWorldModel.getCamera());
-
-        for (int i = 0; i < Resources.INSTANCE.modelInstanceArray.size; i++) {
-            mModelBatch.render(Resources.INSTANCE.modelInstanceArray.get(i), mEnvironment);
-        }
-
+        mModelBatch.render(Resources.INSTANCE.modelInstanceArray, mEnvironment);
         mModelBatch.end();
 
         mFPSRenderer.draw(delta);

@@ -16,6 +16,8 @@ public class PlayerController implements InputProcessor {
     Player mPlayer;
 
     Vector3 movement = new Vector3();
+    final float MOUSE_SPEED = 3f;
+    final Vector3 ALWAYS_UP = new Vector3(0,1,0);
 
     int xRot = 0, yRot = 0;
 
@@ -43,38 +45,38 @@ public class PlayerController implements InputProcessor {
     }
 
     public void processCurrentInput(float delta) {
-        mCamera.rotate(new Quaternion().setEulerAngles(-xRot * 5 * delta, 0, 0));
-        xRot = yRot = 0;
+        xRot = -Gdx.input.getDeltaX();
+        yRot = Gdx.input.getDeltaY();
+
+        //mCamera.rotate(new Vector3(1,0,0), -yRot * MOUSE_SPEED * delta);
+        mCamera.rotate(ALWAYS_UP, xRot * MOUSE_SPEED * delta);
+        mPlayer.rotateBody(xRot * MOUSE_SPEED * delta);
 
 
         //zero out movement
         movement.set(0, 0, 0);
 
         if(mKeys.get(MapKeys.LEFT)) {
-            movement.add(mCamera.up.cpy().crs(mCamera.direction));
+            //movement.add(mCamera.up.cpy().crs(mCamera.direction));
+            movement.add(ALWAYS_UP.cpy().crs(mCamera.direction));
         }
 
         if(mKeys.get(MapKeys.RIGHT)) {
-            movement.add(mCamera.direction.cpy().crs(mCamera.up));
+            movement.add(mCamera.direction.cpy().crs(ALWAYS_UP));
+            //movement.add(mCamera.direction.cpy().crs(mCamera.up));
         }
 
         if(mKeys.get(MapKeys.UP)) {
+            //movement.add(mCamera.direction.cpy());
             movement.add(mCamera.direction.cpy());
         }
 
         if(mKeys.get(MapKeys.DOWN)) {
-            movement.add(mCamera.direction.cpy().scl(-1));
+            //movement.add(mCamera.direction.cpy().scl(-1));
+            movement.sub(mCamera.direction.cpy());
         }
 
         mPlayer.move(movement.nor());
-
-        if(mKeys.get(MapKeys.ROT_LEFT)) {
-            mCamera.rotate(new Quaternion().setEulerAngles(1,0,0));
-        }
-
-        if(mKeys.get(MapKeys.ROT_RIGHT)) {
-            mCamera.rotate(new Quaternion().setEulerAngles(-1,0,0));
-        }
     }
 
     @Override
@@ -166,15 +168,15 @@ public class PlayerController implements InputProcessor {
 
     @Override
     public boolean mouseMoved(int screenX, int screenY) {
-        if (Gdx.input.isCursorCatched()) {
-            if (Gdx.input.getDeltaX() != 0)
-                //xRot = Gdx.input.getDeltaX() / Math.abs(Gdx.input.getDeltaX());
-                xRot = Gdx.input.getDeltaX();
-
-            if (Gdx.input.getDeltaY() != 0)
-                //yRot = Gdx.input.getDeltaY() / Math.abs(Gdx.input.getDeltaY());
-                yRot = Gdx.input.getDeltaY();
-        }
+//       // if (Gdx.input.isCursorCatched()) {
+//            if (Gdx.input.getDeltaX() != 0)
+//                //xRot = Gdx.input.getDeltaX() / Math.abs(Gdx.input.getDeltaX());
+//                xRot = Gdx.input.getDeltaX();
+//
+//            if (Gdx.input.getDeltaY() != 0)
+//                //yRot = Gdx.input.getDeltaY() / Math.abs(Gdx.input.getDeltaY());
+//                yRot = Gdx.input.getDeltaY();
+//       // }
 
         return false;
     }
