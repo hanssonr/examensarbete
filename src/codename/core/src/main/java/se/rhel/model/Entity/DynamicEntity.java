@@ -1,30 +1,30 @@
 package se.rhel.model.Entity;
 
+import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.math.Vector3;
 
 
-public class DynamicEntity extends GameObject {
+public abstract class DynamicEntity extends GameObject {
 
-    protected float mMovespeed;
-    protected Vector3 mMoveDirection = new Vector3();
+    protected float mMovespeed = 0;
 
-    public DynamicEntity(Vector3 position, Vector3 rotation, float movespeed) {
-        super(position, rotation);
+    protected DynamicEntity(Vector3 position, ModelInstance instance, float movespeed) {
+        super(position, instance);
 
         setMovespeed(movespeed);
     }
 
     public void move(Vector3 direction) {
-        mMoveDirection.set(direction);
+        getInstance().transform.setTranslation(getPosition());
+        getPosition().add(direction.scl(mMovespeed));
     }
 
-    protected void update(float delta) {
-        Vector3 velocity = mMoveDirection.scl(mMovespeed * delta);
-        Vector3 newpos = getPosition().add(velocity);
-        setPosition(newpos);
+    public void rotate(Vector3 axis, float angle) {
+        getInstance().transform.rotate(axis, angle);
     }
 
     public void setMovespeed(float movespeed) {
         mMovespeed = movespeed;
     }
 }
+
