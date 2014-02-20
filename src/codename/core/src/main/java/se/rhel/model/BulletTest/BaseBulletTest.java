@@ -10,10 +10,7 @@ import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.graphics.VertexAttribute;
 import com.badlogic.gdx.graphics.VertexAttributes;
 import com.badlogic.gdx.graphics.VertexAttributes.Usage;
-import com.badlogic.gdx.graphics.g3d.Environment;
-import com.badlogic.gdx.graphics.g3d.Material;
-import com.badlogic.gdx.graphics.g3d.Model;
-import com.badlogic.gdx.graphics.g3d.ModelBatch;
+import com.badlogic.gdx.graphics.g3d.*;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.attributes.FloatAttribute;
 import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight;
@@ -29,60 +26,45 @@ import com.badlogic.gdx.math.Quaternion;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.math.collision.Ray;
 import com.badlogic.gdx.physics.bullet.Bullet;
-import com.badlogic.gdx.physics.bullet.dynamics.btRigidBody;
+import com.badlogic.gdx.physics.bullet.collision.*;
+import com.badlogic.gdx.physics.bullet.dynamics.*;
 import com.badlogic.gdx.physics.bullet.linearmath.LinearMath;
+import com.badlogic.gdx.physics.bullet.linearmath.btDefaultMotionState;
 import com.badlogic.gdx.physics.bullet.linearmath.btIDebugDraw.DebugDrawModes;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.SharedLibraryLoader;
 
 public class BaseBulletTest extends BulletTest {
-    // Set this to the path of the lib to use it on desktop instead of default lib.
-    private final static String customDesktopLib = null;//"D:\\Data\\code\\android\\libs\\libgdx\\extensions\\gdx-bullet\\jni\\vs\\gdxBullet\\x64\\Debug\\gdxBullet.dll";
+    ModelBatch modelBatch;
+    Environment lights;
+    ModelBuilder modelBuilder = new ModelBuilder();
 
-    private static boolean initialized = false;
-    public static void init() {
-        if (initialized) return;
-        // Need to initialize bullet before using it.
-        if (Gdx.app.getType() == ApplicationType.Desktop && customDesktopLib != null) {
-            System.load(customDesktopLib);
-        } else
-            Bullet.init();
-        Gdx.app.log("Bullet", "Version = "+LinearMath.btGetVersion());
-        initialized = true;
-    }
+    btCollisionConfiguration collisionConfiguration;
+    btCollisionDispatcher dispatcher;
+    btBroadphaseInterface broadphase;
+    btConstraintSolver solver;
+    btDynamicsWorld collisionWorld;
+    Vector3 gravity = new Vector3(0, -9.81f, 0);
+    Vector3 tempVector = new Vector3();
 
-    public Environment lights;
-    public DirectionalLight shadowLight;
-    public ModelBatch shadowBatch;
-
-    public BulletWorld world;
-    public ObjLoader objLoader = new ObjLoader();
-    public ModelBuilder modelBuilder = new ModelBuilder();
-    public ModelBatch modelBatch;
-    public Array<Disposable> disposables = new Array<Disposable>();
-    private int debugMode = DebugDrawModes.DBG_NoDebug;
-
-    public BulletWorld createWorld() {
-        return new BulletWorld();
-    }
+    Array<Model> models = new Array<Model>();
+    Array<ModelInstance> instances = new Array<ModelInstance>();
+    Array<btDefaultMotionState> motionStates = new Array<btDefaultMotionState>();
+    Array<btRigidBodyConstructionInfo> bodyInfos = new Array<btRigidBodyConstructionInfo>();
+    Array<btCollisionShape> shapes = new Array<btCollisionShape>();
+    Array<btRigidBody> bodies = new Array<btRigidBody>();
 
     @Override
     public void create () {
-        init();
+        super.create();
+        instructions = "Swipe for next test";
+
         lights = new Environment();
-        lights.set(new ColorAttribute(ColorAttribute.AmbientLight, 0.3f, 0.3f, 0.3f, 1.f));
-        lights.add(
-                (shadowLight = new DirectionalLight()).set(0.8f, 0.8f, 0.8f, -0.5f, -1f, 0.7f)
-        );
-//		lights.shadowMap = shadowLight;
-        shadowBatch = new ModelBatch(new DepthShaderProvider());
+        lights.set(new ColorAttribute(ColorAttribute.AmbientLight, 0.2f, 0.2f, 0.2f, 1.f));
+        lights.add(new DirectionalLight().set(0.8f, 0.8f, 0.8f, -0.5f, -1f, -0.7f));
 
-        modelBatch = new ModelBatch();
-
-        world = createWorld();
-        world.performanceCounter = performanceCounter;
-
+        // Set up the camera
         final float width = Gdx.graphics.getWidth();
         final float height = Gdx.graphics.getHeight();
         if (width > height)
@@ -92,136 +74,116 @@ public class BaseBulletTest extends BulletTest {
         camera.position.set(10f, 10f, 10f);
         camera.lookAt(0, 0, 0);
         camera.update();
-
-        // Create some simple models
+        // Create the model batch
+        modelBatch = new ModelBatch();
+        // Create some basic models
         final Model groundModel = modelBuilder.createRect(20f, 0f, -20f, -20f, 0f, -20f, -20f, 0f, 20f, 20f, 0f, 20f, 0, 1, 0,
-                new Material(ColorAttribute.createDiffuse(Color.WHITE), ColorAttribute.createSpecular(Color.WHITE), FloatAttribute.createShininess(16f)),
+                new Material(ColorAttribute.createDiffuse(Color.BLUE), ColorAttribute.createSpecular(Color.WHITE), FloatAttribute.createShininess(16f)),
                 Usage.Position | Usage.Normal);
-        disposables.add(groundModel);
-        final Model boxModel = modelBuilder.createBox(1f, 1f, 1f,
-                new Material(ColorAttribute.createDiffuse(Color.WHITE), ColorAttribute.createSpecular(Color.WHITE), FloatAttribute.createShininess(64f)),
+        models.add(groundModel);
+        final Model sphereModel = modelBuilder.createSphere(1f, 1f, 1f, 10, 10,
+                new Material(ColorAttribute.createDiffuse(Color.RED), ColorAttribute.createSpecular(Color.WHITE), FloatAttribute.createShininess(64f)),
                 Usage.Position | Usage.Normal);
-        disposables.add(boxModel);
-
-        // Add the constructors
-        world.addConstructor("ground", new BulletConstructor(groundModel, 0f)); // mass = 0: static body
-        world.addConstructor("box", new BulletConstructor(boxModel, 1f)); // mass = 1kg: dynamic body
-        world.addConstructor("staticbox", new BulletConstructor(boxModel, 0f)); // mass = 0: static body
-    }
-
-    @Override
-    public void dispose () {
-        world.dispose();
-        world = null;
-
-        for (Disposable disposable : disposables)
-            disposable.dispose();
-        disposables.clear();
-
-        modelBatch.dispose();
-        modelBatch = null;
-
-        shadowBatch.dispose();
-        shadowBatch = null;
-
-//		shadowLight.dispose();
-        shadowLight = null;
-
-        super.dispose();
+        models.add(sphereModel);
+        // Load the bullet library
+        Bullet.init(); // Normally use: Bullet.init();
+        // Create the bullet world
+        collisionConfiguration = new btDefaultCollisionConfiguration();
+        dispatcher = new btCollisionDispatcher(collisionConfiguration);
+        broadphase = new btDbvtBroadphase();
+        solver = new btSequentialImpulseConstraintSolver();
+        collisionWorld = new btDiscreteDynamicsWorld(dispatcher, broadphase, solver, collisionConfiguration);
+        collisionWorld.setGravity(gravity);
+        // Create the shapes and body construction infos
+        btCollisionShape groundShape = new btBoxShape(tempVector.set(20, 0, 20));
+        shapes.add(groundShape);
+        btRigidBodyConstructionInfo groundInfo = new btRigidBodyConstructionInfo(0f, null, groundShape, Vector3.Zero);
+        bodyInfos.add(groundInfo);
+        btCollisionShape sphereShape = new btSphereShape(0.5f);
+        shapes.add(sphereShape);
+        sphereShape.calculateLocalInertia(1f, tempVector);
+        btRigidBodyConstructionInfo sphereInfo = new btRigidBodyConstructionInfo(1f, null, sphereShape, tempVector);
+        bodyInfos.add(sphereInfo);
+        // Create the ground
+        ModelInstance ground = new ModelInstance(groundModel);
+        instances.add(ground);
+        btDefaultMotionState groundMotionState = new btDefaultMotionState();
+        groundMotionState.setWorldTransform(ground.transform);
+        motionStates.add(groundMotionState);
+        btRigidBody groundBody = new btRigidBody(groundInfo);
+        groundBody.setMotionState(groundMotionState);
+        bodies.add(groundBody);
+        collisionWorld.addRigidBody(groundBody);
+        // Create the spheres
+        for (float x = -10f; x <= 10f; x += 2f) {
+            for (float y = 5f; y <= 15f; y += 2f) {
+                for (float z = 0f; z <= 0f; z+= 2f) {
+                    ModelInstance sphere = new ModelInstance(sphereModel);
+                    instances.add(sphere);
+                    sphere.transform.trn(x+0.1f*MathUtils.random(), y+0.1f*MathUtils.random(), z+0.1f*MathUtils.random());
+                    btDefaultMotionState sphereMotionState = new btDefaultMotionState();
+                    sphereMotionState.setWorldTransform(sphere.transform);
+                    motionStates.add(sphereMotionState);
+                    btRigidBody sphereBody = new btRigidBody(sphereInfo);
+                    sphereBody.setMotionState(sphereMotionState);
+                    bodies.add(sphereBody);
+                    collisionWorld.addRigidBody(sphereBody);
+                }
+            }
+        }
     }
 
     @Override
     public void render () {
-        render(true);
-    }
+        Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
 
-    public void render(boolean update) {
         fpsCounter.put(Gdx.graphics.getFramesPerSecond());
 
-        if (update)
-            update();
+        performanceCounter.tick();
+        performanceCounter.start();
+        ((btDynamicsWorld)collisionWorld).stepSimulation(Gdx.graphics.getDeltaTime(), 5);
+        performanceCounter.stop();
 
-        beginRender(true);
+        int c = motionStates.size;
+        for (int i = 0; i < c; i++) {
+            motionStates.get(i).getWorldTransform(instances.get(i).transform);
+        }
 
-        renderWorld();
-
-        Gdx.gl.glDisable(GL10.GL_DEPTH_TEST);
-        if (debugMode != DebugDrawModes.DBG_NoDebug)
-            world.setDebugMode(debugMode, camera.combined);
-        Gdx.gl.glEnable(GL10.GL_DEPTH_TEST);
+        modelBatch.begin(camera);
+        modelBatch.render(instances, lights);
+        modelBatch.end();
 
         performance.setLength(0);
         performance.append("FPS: ").append(fpsCounter.value).append(", Bullet: ")
                 .append((int)(performanceCounter.load.value*100f)).append("%");
     }
 
-    protected void beginRender(boolean lighting) {
-        Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        Gdx.gl.glClearColor(0,0,0,0);
-        Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
-        camera.update();
-    }
-
-    protected void renderWorld() {
-//		shadowLight.begin(Vector3.Zero, camera.direction);
-//		shadowBatch.begin(shadowLight.getCamera());
-//		world.render(shadowBatch, null);
-//		shadowBatch.end();
-//		shadowLight.end();
-
-        modelBatch.begin(camera);
-        world.render(modelBatch, lights);
-        modelBatch.end();
-    }
-
-    public void update() {
-        world.update();
-    }
-
-    public BulletEntity shoot(final float x, final float y) {
-        return shoot(x,y,30f);
-    }
-
-    public BulletEntity shoot(final float x, final float y, final float impulse) {
-        return shoot("box", x, y, impulse);
-    }
-
-    public BulletEntity shoot(final String what, final float x, final float y, final float impulse) {
-        // Shoot a box
-        Ray ray = camera.getPickRay(x, y);
-        BulletEntity entity = world.add(what, ray.origin.x, ray.origin.y, ray.origin.z);
-        entity.setColor(0.5f + 0.5f * (float)Math.random(), 0.5f + 0.5f * (float)Math.random(), 0.5f + 0.5f * (float)Math.random(), 1f);
-        ((btRigidBody)entity.body).applyCentralImpulse(ray.direction.scl(impulse));
-        return entity;
-    }
-
-    public void setDebugMode(final int mode) {
-        world.setDebugMode(debugMode = mode, camera.combined);
-    }
-
-    public void toggleDebugMode() {
-        if (world.getDebugMode() == DebugDrawModes.DBG_NoDebug)
-            setDebugMode(DebugDrawModes.DBG_DrawWireframe);
-        else if (world.renderMeshes)
-            world.renderMeshes = false;
-        else {
-            world.renderMeshes = true;
-            setDebugMode(DebugDrawModes.DBG_NoDebug);
-        }
-    }
-
     @Override
-    public boolean longPress (float x, float y) {
-        toggleDebugMode();
-        return true;
-    }
+    public void dispose () {
+        collisionWorld.dispose();
+        solver.dispose();
+        broadphase.dispose();
+        dispatcher.dispose();
+        collisionConfiguration.dispose();
 
-    @Override
-    public boolean keyUp (int keycode) {
-        if (keycode == Keys.ENTER) {
-            toggleDebugMode();
-            return true;
-        }
-        return super.keyUp(keycode);
+        for (btRigidBody body : bodies)
+            body.dispose();
+        bodies.clear();
+        for (btDefaultMotionState motionState : motionStates)
+            motionState.dispose();
+        motionStates.clear();
+        for (btCollisionShape shape : shapes)
+            shape.dispose();
+        shapes.clear();
+        for (btRigidBodyConstructionInfo info : bodyInfos)
+            info.dispose();
+        bodyInfos.clear();
+
+        modelBatch.dispose();
+        instances.clear();
+        for (Model model : models)
+            model.dispose();
+        models.clear();
     }
 }

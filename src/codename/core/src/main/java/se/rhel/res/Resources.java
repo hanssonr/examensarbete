@@ -19,13 +19,14 @@ public enum Resources {
 
     public BitmapFont hudFont;
     public Array<ModelInstance> modelInstanceArray;
+    public Model levelModel;
 
     public void load() {
         mManager.load("data/fonts/hud.fnt", BitmapFont.class);
         mManager.load("obj/ship/ship.obj", Model.class);
         mManager.load("obj/level/level.g3db", Model.class);
+        mManager.load("obj/beretta/beretta.obj", Model.class);
 
-        // Needs to be initialized early on
         Bullet.init();
     }
 
@@ -38,9 +39,9 @@ public enum Resources {
         ModelInstance instance = new ModelInstance(shipModel, 0,1,0);
         modelInstanceArray.add(instance);
 
-        Model levelModel = mManager.get("obj/level/level.g3db", Model.class);
-        instance = new ModelInstance(levelModel);
-        modelInstanceArray.add(instance);
+        levelModel = mManager.get("obj/level/level.g3db", Model.class);
+        // instance = new ModelInstance(levelModel);
+        // modelInstanceArray.add(instance);
     }
 
     public AssetManager getAssetManager() {

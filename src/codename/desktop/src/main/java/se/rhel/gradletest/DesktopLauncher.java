@@ -4,6 +4,7 @@ package se.rhel.gradletest;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 import se.rhel.CodeName;
+import se.rhel.model.BulletTest.BaseBulletTest;
 
 public class DesktopLauncher {
 	public static void main (String[] arg) {
@@ -16,6 +17,8 @@ public class DesktopLauncher {
         config.height = 720;
         config.vSyncEnabled = true;
         config.resizable = false;
+
+        // new LwjglApplication(new BaseBulletTest(), config);
 
         if(arg.length > 0) {
             new LwjglApplication(new CodeName(Integer.valueOf(arg[0])), config);

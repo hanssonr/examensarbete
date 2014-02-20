@@ -38,6 +38,10 @@ public class TextRenderer extends A2DView {
         mFont.setColor(Color.RED);
     }
 
+    public void setText(String text) {
+        mText = text;
+    }
+
     @Override
     public void draw(float delta) {
         smSpriteBatch.begin();

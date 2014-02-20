@@ -2,7 +2,7 @@ package se.rhel.controller;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
-import com.badlogic.gdx.math.Quaternion;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector3;
 import se.rhel.model.FPSCamera;
 import se.rhel.model.Player;
@@ -16,24 +16,27 @@ public class PlayerController implements InputProcessor {
     Player mPlayer;
 
     Vector3 movement = new Vector3();
-    final float MOUSE_SPEED = 3f;
+
+    //Finals
+    final float MOUSE_SPEED = 5f;
+    final float MAX_YROT = 80f;
+    final float MIN_YROT = -80f;
     final Vector3 ALWAYS_UP = new Vector3(0,1,0);
 
-    int xRot = 0, yRot = 0;
+    //Rotation
+    float xRot = 0, yRot = 0, currentRot = 0;
 
     public enum MapKeys {
-        LEFT, RIGHT, UP, DOWN, JUMP, ROT_LEFT, ROT_RIGHT;
+        LEFT, RIGHT, FORWARD, BACK, JUMP
     }
 
     private static final Map<MapKeys, Boolean> mKeys = new HashMap<MapKeys, Boolean>();
     static {
         mKeys.put(MapKeys.LEFT, false);
         mKeys.put(MapKeys.RIGHT, false);
-        mKeys.put(MapKeys.UP, false);
-        mKeys.put(MapKeys.DOWN, false);
+        mKeys.put(MapKeys.FORWARD, false);
+        mKeys.put(MapKeys.BACK, false);
         mKeys.put(MapKeys.JUMP, false);
-        mKeys.put(MapKeys.ROT_LEFT, false);
-        mKeys.put(MapKeys.ROT_RIGHT, false);
     }
 
 
@@ -45,35 +48,43 @@ public class PlayerController implements InputProcessor {
     }
 
     public void processCurrentInput(float delta) {
-        xRot = -Gdx.input.getDeltaX();
-        yRot = Gdx.input.getDeltaY();
-
-        //mCamera.rotate(new Vector3(1,0,0), -yRot * MOUSE_SPEED * delta);
-        mCamera.rotate(ALWAYS_UP, xRot * MOUSE_SPEED * delta);
-        mPlayer.rotateBody(xRot * MOUSE_SPEED * delta);
+        //Get the amount of rotation during last frame
+        xRot = -Gdx.input.getDeltaX() * MOUSE_SPEED * delta;
+        yRot = -Gdx.input.getDeltaY() * MOUSE_SPEED * delta;
 
 
-        //zero out movement
+        //Y-rotation
+        currentRot += yRot;
+        currentRot = MathUtils.clamp(currentRot, MIN_YROT, MAX_YROT);
+
+        if (currentRot > MIN_YROT && currentRot < MAX_YROT && yRot != 0) {
+            mCamera.rotate(mCamera.direction.cpy().crs(ALWAYS_UP), yRot);
+        }
+
+        //X-rotation
+        if (xRot != 0)
+            mCamera.rotate(ALWAYS_UP, xRot);
+
+        //TODO: Do something else rather than this
+        mPlayer.rotateBody(xRot);
+
+
+        //Zero out movement
         movement.set(0, 0, 0);
 
+        //Calculate movement
         if(mKeys.get(MapKeys.LEFT)) {
-            //movement.add(mCamera.up.cpy().crs(mCamera.direction));
             movement.add(ALWAYS_UP.cpy().crs(mCamera.direction));
         }
-
         if(mKeys.get(MapKeys.RIGHT)) {
             movement.add(mCamera.direction.cpy().crs(ALWAYS_UP));
-            //movement.add(mCamera.direction.cpy().crs(mCamera.up));
         }
 
-        if(mKeys.get(MapKeys.UP)) {
-            //movement.add(mCamera.direction.cpy());
-            movement.add(mCamera.direction.cpy());
+        if(mKeys.get(MapKeys.FORWARD)) {
+            movement.add(new Vector3(mCamera.direction.x, 0, mCamera.direction.z));
         }
-
-        if(mKeys.get(MapKeys.DOWN)) {
-            //movement.add(mCamera.direction.cpy().scl(-1));
-            movement.sub(mCamera.direction.cpy());
+        if(mKeys.get(MapKeys.BACK)) {
+            movement.sub(new Vector3(mCamera.direction.x, 0, mCamera.direction.z));
         }
 
         mPlayer.move(movement.nor());
@@ -92,11 +103,11 @@ public class PlayerController implements InputProcessor {
                 break;
             case Keys.UP:
             case Keys.W:
-                mKeys.get(mKeys.put(MapKeys.UP, true));
+                mKeys.get(mKeys.put(MapKeys.FORWARD, true));
                 break;
             case Keys.DOWN:
             case Keys.S:
-                mKeys.get(mKeys.put(MapKeys.DOWN, true));
+                mKeys.get(mKeys.put(MapKeys.BACK, true));
                 break;
 
             case Keys.ESCAPE:
@@ -105,13 +116,6 @@ public class PlayerController implements InputProcessor {
 
             case Keys.F1:
                 Gdx.input.setCursorCatched(!Gdx.input.isCursorCatched());
-
-            case Keys.O:
-                mKeys.get(mKeys.put(MapKeys.ROT_LEFT, true));
-                break;
-            case Keys.P:
-                mKeys.get(mKeys.put(MapKeys.ROT_RIGHT, true));
-                break;
         }
         return true;
     }
@@ -129,18 +133,11 @@ public class PlayerController implements InputProcessor {
                 break;
             case Keys.UP:
             case Keys.W:
-                mKeys.get(mKeys.put(MapKeys.UP, false));
+                mKeys.get(mKeys.put(MapKeys.FORWARD, false));
                 break;
             case Keys.DOWN:
             case Keys.S:
-                mKeys.get(mKeys.put(MapKeys.DOWN, false));
-                break;
-
-            case Keys.O:
-                mKeys.get(mKeys.put(MapKeys.ROT_LEFT, false));
-                break;
-            case Keys.P:
-                mKeys.get(mKeys.put(MapKeys.ROT_RIGHT, false));
+                mKeys.get(mKeys.put(MapKeys.BACK, false));
                 break;
         }
         return true;
@@ -168,16 +165,6 @@ public class PlayerController implements InputProcessor {
 
     @Override
     public boolean mouseMoved(int screenX, int screenY) {
-//       // if (Gdx.input.isCursorCatched()) {
-//            if (Gdx.input.getDeltaX() != 0)
-//                //xRot = Gdx.input.getDeltaX() / Math.abs(Gdx.input.getDeltaX());
-//                xRot = Gdx.input.getDeltaX();
-//
-//            if (Gdx.input.getDeltaY() != 0)
-//                //yRot = Gdx.input.getDeltaY() / Math.abs(Gdx.input.getDeltaY());
-//                yRot = Gdx.input.getDeltaY();
-//       // }
-
         return false;
     }
 

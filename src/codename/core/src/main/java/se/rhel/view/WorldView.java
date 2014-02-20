@@ -11,12 +11,16 @@ import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight;
 import com.badlogic.gdx.graphics.g3d.utils.DepthShaderProvider;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.bullet.linearmath.btIDebugDraw;
+import se.rhel.model.BulletTest.DebugDrawer;
+import se.rhel.model.BulletWorld;
 import se.rhel.model.WorldModel;
 import se.rhel.res.Resources;
 
 public class WorldView {
 
     private TextRenderer mFPSRenderer;
+    private TextRenderer mBulletLoadRenderer;
+
     private TextRenderer mTestTextRenderer;
     private SpriteBatch mSpriteBatch;
     private ModelBatch mModelBatch;
@@ -30,7 +34,9 @@ public class WorldView {
         mModelBatch = new ModelBatch();
 
         mFPSRenderer = TextRenderer.FPS(worldModel, mSpriteBatch);
+
         mTestTextRenderer = new TextRenderer("HELLO WORLD!!", new Vector2(100, 100), worldModel, mSpriteBatch);
+        mBulletLoadRenderer = new TextRenderer("Bullet init", new Vector2(10, Gdx.graphics.getHeight() - 30), worldModel, mSpriteBatch);
 
         mEnvironment = new Environment();
         mEnvironment.set(new ColorAttribute(ColorAttribute.AmbientLight, 0.5f, 0.5f, 0.5f, 1.0f));
@@ -45,9 +51,14 @@ public class WorldView {
 
         mModelBatch.begin(mWorldModel.getCamera());
         mModelBatch.render(Resources.INSTANCE.modelInstanceArray, mEnvironment);
+        mModelBatch.render(mWorldModel.getBulletWorld().instances, mEnvironment);
         mModelBatch.end();
 
+        mWorldModel.getBulletWorld().getCollisionWorld().debugDrawWorld();
+
         mFPSRenderer.draw(delta);
+        mBulletLoadRenderer.setText(BulletWorld.PERFORMANCE + "\n test");
+        mBulletLoadRenderer.draw(delta);
         mTestTextRenderer.draw(delta);
     }
 
