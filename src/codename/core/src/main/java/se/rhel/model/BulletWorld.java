@@ -165,6 +165,7 @@ public class BulletWorld implements BaseModel {
 
         for(btRigidBody b : mBodies) {
             b.applyCentralForce(new Vector3(5, 0, 0));
+            // b.getMotionState().
             // b.setLinearVelocity(new Vector3(10, 0 ,0));
             // b.applyGravity();
         }
