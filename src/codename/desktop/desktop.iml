@@ -172,7 +172,6 @@
       </library>
     </orderEntry>
     <orderEntry type="module" module-name="core" exported="" />
-    <orderEntry type="library" name="tween-engine-api" level="project" />
     <orderEntry type="module-library" exported="">
       <library>
         <CLASSES>
@@ -182,6 +181,15 @@
         <SOURCES>
           <root url="jar://$MODULE_DIR$/../lib/tween-engine-api-sources.jar!/" />
         </SOURCES>
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library" exported="">
+      <library>
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../lib/gdx-bullet-natives.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
       </library>
     </orderEntry>
   </component>

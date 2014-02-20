@@ -21,6 +21,27 @@
       </library>
     </orderEntry>
     <orderEntry type="library" name="tween-engine-api" level="project" />
+    <orderEntry type="module-library" exported="">
+      <library>
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../lib/gdx-bullet-0.9.9.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="jar://$MODULE_DIR$/../lib/gdx-bullet-0.9.9-sources.jar!/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library" exported="">
+      <library>
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../lib/gdx-bullet-platform-0.9.9-natives-desktop.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+        <jarDirectory url="jar://$MODULE_DIR$/../lib/gdx-bullet-platform-0.9.9-natives-desktop.jar!/" recursive="false" />
+      </library>
+    </orderEntry>
   </component>
 </module>
 
