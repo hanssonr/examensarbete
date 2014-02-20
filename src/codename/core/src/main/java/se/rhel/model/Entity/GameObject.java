@@ -1,35 +1,26 @@
 package se.rhel.model.Entity;
 
-
+import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.math.Vector3;
+import se.rhel.res.Resources;
 
-public class GameObject {
+public abstract class GameObject {
 
     protected Vector3 mPosition = new Vector3();
-    protected Vector3 mRotation = new Vector3();
+    protected ModelInstance mInstance;
 
-    public GameObject(Vector3 position, Vector3 rotation) {
-        setPosition(position);
-        setRotation(rotation);
-    }
+    public GameObject(Vector3 position, ModelInstance instance) {
+        mPosition = position;
+        mInstance = instance;
 
-    public void setPosition(Vector3 position) {
-        mPosition.set(position);
-    }
-
-    public void setRotation(Vector3 rotation) {
-        mRotation.set(rotation);
-    }
-
-    public GameObject() {
-        this(new Vector3(0,0,0), new Vector3(0,0,0));
+        Resources.INSTANCE.modelInstanceArray.add(mInstance);
     }
 
     public Vector3 getPosition() {
         return mPosition;
     }
 
-    public Vector3 getRotation() {
-        return mRotation;
+    public ModelInstance getInstance() {
+        return mInstance;
     }
 }

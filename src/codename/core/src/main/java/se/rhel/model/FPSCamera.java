@@ -10,6 +10,9 @@ public class FPSCamera extends PerspectiveCamera {
 
     GameObject mObj;
 
+    public static final Vector3 UP = new Vector3(0,1,0);
+    private final Vector3 mOffset = new Vector3(0,1,0);
+
     /**
      *
      * @param obj GameObject to follow
@@ -30,11 +33,6 @@ public class FPSCamera extends PerspectiveCamera {
     @Override
     public void update() {
         super.update();
-        //position.set(mObj.getPosition());
-        Vector3 pos = mObj.getPosition();
-
-        position.set(new Vector3(pos.x, pos.y + 1, pos.z));
-        mObj.setRotation(new Vector3(0, direction.x, 0)); //rotate only around y axis
-        //mObj.setRotation(direction);
+        position.set(mObj.getPosition().cpy().add(mOffset));
     }
 }

@@ -16,12 +16,12 @@ public class PlayerController implements InputProcessor {
     Player mPlayer;
 
     Vector3 movement = new Vector3();
+    Vector3 tmp = new Vector3();
 
     //Finals
     final float MOUSE_SPEED = 5f;
     final float MAX_YROT = 80f;
     final float MIN_YROT = -80f;
-    final Vector3 ALWAYS_UP = new Vector3(0,1,0);
 
     //Rotation
     float xRot = 0, yRot = 0, currentRot = 0;
@@ -52,42 +52,39 @@ public class PlayerController implements InputProcessor {
         xRot = -Gdx.input.getDeltaX() * MOUSE_SPEED * delta;
         yRot = -Gdx.input.getDeltaY() * MOUSE_SPEED * delta;
 
-
         //Y-rotation
         currentRot += yRot;
         currentRot = MathUtils.clamp(currentRot, MIN_YROT, MAX_YROT);
 
         if (currentRot > MIN_YROT && currentRot < MAX_YROT && yRot != 0) {
-            mCamera.rotate(mCamera.direction.cpy().crs(ALWAYS_UP), yRot);
+            mCamera.rotate(mCamera.direction.cpy().crs(FPSCamera.UP), yRot);
         }
 
         //X-rotation
-        if (xRot != 0)
-            mCamera.rotate(ALWAYS_UP, xRot);
-
-        //TODO: Do something else rather than this
-        mPlayer.rotateBody(xRot);
-
+        if (xRot != 0) {
+            mCamera.rotate(FPSCamera.UP, xRot);
+            mPlayer.rotate(FPSCamera.UP, xRot);
+        }
 
         //Zero out movement
         movement.set(0, 0, 0);
 
         //Calculate movement
         if(mKeys.get(MapKeys.LEFT)) {
-            movement.add(ALWAYS_UP.cpy().crs(mCamera.direction));
+            movement.add(FPSCamera.UP.cpy().crs(mCamera.direction));
         }
         if(mKeys.get(MapKeys.RIGHT)) {
-            movement.add(mCamera.direction.cpy().crs(ALWAYS_UP));
+            movement.add(mCamera.direction.cpy().crs(FPSCamera.UP));
         }
 
         if(mKeys.get(MapKeys.FORWARD)) {
-            movement.add(new Vector3(mCamera.direction.x, 0, mCamera.direction.z));
+            movement.add(tmp.set(mCamera.direction.x, 0, mCamera.direction.z));
         }
         if(mKeys.get(MapKeys.BACK)) {
-            movement.sub(new Vector3(mCamera.direction.x, 0, mCamera.direction.z));
+            movement.sub(tmp.set(mCamera.direction.x, 0, mCamera.direction.z));
         }
 
-        mPlayer.move(movement.nor());
+        mPlayer.move(movement.nor().scl(delta));
     }
 
     @Override
