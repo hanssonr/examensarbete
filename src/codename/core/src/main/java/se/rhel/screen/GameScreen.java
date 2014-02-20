@@ -1,6 +1,7 @@
 package se.rhel.screen;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.physics.bullet.Bullet;
 import se.rhel.CodeName;
 import se.rhel.controller.PlayerController;
 import se.rhel.model.WorldModel;

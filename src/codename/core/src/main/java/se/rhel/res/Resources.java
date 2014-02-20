@@ -4,6 +4,7 @@ import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g3d.Model;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
+import com.badlogic.gdx.physics.bullet.Bullet;
 import com.badlogic.gdx.utils.Array;
 
 /**
@@ -23,6 +24,9 @@ public enum Resources {
         mManager.load("data/fonts/hud.fnt", BitmapFont.class);
         mManager.load("obj/ship/ship.obj", Model.class);
         mManager.load("obj/level/level.g3db", Model.class);
+
+        // Needs to be initialized early on
+        Bullet.init();
     }
 
     public void setInstances() {

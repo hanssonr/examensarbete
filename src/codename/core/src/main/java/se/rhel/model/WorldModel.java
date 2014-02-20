@@ -2,10 +2,8 @@ package se.rhel.model;
 
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.graphics.g3d.utils.CameraInputController;
-import com.badlogic.gdx.math.Quaternion;
 import com.badlogic.gdx.math.Vector3;
 import se.rhel.res.Resources;
-
 
 public class WorldModel {
 
@@ -28,14 +26,11 @@ public class WorldModel {
         mPlayer.update(delta);
         mCamera.update();
 
-        mBoxInstance.transform.rotate(new Quaternion().setEulerAngles(1, 0, 0));
+        // mBoxInstance.transform.rotate(new Quaternion().setEulerAngles(1, 0, 0));
     }
 
     public Player getPlayer() {
         return mPlayer;
     }
-
-    public FPSCamera getCamera() {
-        return mCamera;
-    }
+    public FPSCamera getCamera() { return mCamera; }
 }
