@@ -12,8 +12,6 @@ public abstract class GameObject {
     public GameObject(Vector3 position, ModelInstance instance) {
         mPosition = position;
         mInstance = instance;
-
-        Resources.INSTANCE.modelInstanceArray.add(mInstance);
     }
 
     public Vector3 getPosition() {

@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.math.collision.Ray;
 import se.rhel.model.FPSCamera;
 import se.rhel.model.Player;
 import com.badlogic.gdx.Input.Keys;
@@ -11,6 +12,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class PlayerController implements InputProcessor {
+
+    public static boolean DRAW_DEBUG = false;
+    public static boolean DRAW_MESH = true;
+    public static boolean DRAW_DEBUG_INFO = true;
+    public static boolean DRAW_SHOOT_DEBUG = false;
 
     FPSCamera mCamera;
     Player mPlayer;
@@ -113,6 +119,18 @@ public class PlayerController implements InputProcessor {
 
             case Keys.F1:
                 Gdx.input.setCursorCatched(!Gdx.input.isCursorCatched());
+            case Keys.F2:
+                DRAW_DEBUG = !DRAW_DEBUG;
+                break;
+            case Keys.F3:
+                DRAW_MESH = !DRAW_MESH;
+                break;
+            case Keys.F4:
+                DRAW_DEBUG_INFO = !DRAW_DEBUG_INFO;
+                break;
+            case Keys.F5:
+                DRAW_SHOOT_DEBUG = !DRAW_SHOOT_DEBUG;
+                break;
         }
         return true;
     }
@@ -147,7 +165,10 @@ public class PlayerController implements InputProcessor {
 
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-        return false;
+        Ray r = mCamera.getPickRay(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2);
+
+        mPlayer.shoot(r);
+        return true;
     }
 
     @Override

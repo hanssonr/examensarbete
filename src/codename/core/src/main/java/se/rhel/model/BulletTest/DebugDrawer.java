@@ -15,6 +15,7 @@ public class DebugDrawer extends btIDebugDraw {
         lineRenderer.line(from.getX(), from.getY(), from.getZ(), to.getX(), to.getY(), to.getZ());
     }
 
+
     @Override
     public void drawContactPoint (btVector3 PointOnB, btVector3 normalOnB, float distance, int lifeTime, btVector3 color) {
     }

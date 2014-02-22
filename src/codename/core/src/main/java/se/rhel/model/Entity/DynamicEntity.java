@@ -15,8 +15,7 @@ public abstract class DynamicEntity extends GameObject {
     }
 
     public void move(Vector3 direction) {
-        getInstance().transform.setTranslation(getPosition());
-        getPosition().add(direction.scl(mMovespeed));
+
     }
 
     public void rotate(Vector3 axis, float angle) {
