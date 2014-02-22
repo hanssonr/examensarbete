@@ -3,7 +3,11 @@ package se.rhel.controller;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Quaternion;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.math.collision.Ray;
+import com.badlogic.gdx.physics.bullet.dynamics.btCharacterControllerInterface;
+import com.badlogic.gdx.physics.bullet.dynamics.btKinematicCharacterController;
 import se.rhel.model.FPSCamera;
 import se.rhel.model.Player;
 import com.badlogic.gdx.Input.Keys;
@@ -12,13 +16,20 @@ import java.util.Map;
 
 public class PlayerController implements InputProcessor {
 
+    public static boolean DRAW_DEBUG = false;
+    public static boolean DRAW_MESH = true;
+    public static boolean DRAW_DEBUG_INFO = true;
+    public static boolean DRAW_SHOOT_DEBUG = false;
+
     FPSCamera mCamera;
     Player mPlayer;
 
+    Quaternion rQuat = new Quaternion();
     Vector3 movement = new Vector3();
     Vector3 tmp = new Vector3();
 
     //Finals
+    final float JUMP_HEIGHT = 7f;
     final float MOUSE_SPEED = 5f;
     final float MAX_YROT = 80f;
     final float MIN_YROT = -80f;
@@ -41,6 +52,8 @@ public class PlayerController implements InputProcessor {
 
 
     public PlayerController(FPSCamera camera, Player player) {
+        super();
+
         mCamera = camera;
         mPlayer = player;
 
@@ -67,24 +80,38 @@ public class PlayerController implements InputProcessor {
         }
 
         //Zero out movement
-        movement.set(0, 0, 0);
+        tmp.set(Vector3.Zero);
 
         //Calculate movement
-        if(mKeys.get(MapKeys.LEFT)) {
-            movement.add(FPSCamera.UP.cpy().crs(mCamera.direction));
-        }
-        if(mKeys.get(MapKeys.RIGHT)) {
-            movement.add(mCamera.direction.cpy().crs(FPSCamera.UP));
-        }
-
         if(mKeys.get(MapKeys.FORWARD)) {
-            movement.add(tmp.set(mCamera.direction.x, 0, mCamera.direction.z));
+           tmp.add(mCamera.getForward());
         }
         if(mKeys.get(MapKeys.BACK)) {
-            movement.sub(tmp.set(mCamera.direction.x, 0, mCamera.direction.z));
+            tmp.sub(mCamera.getForward());
         }
 
-        mPlayer.move(movement.nor().scl(delta));
+        if(mKeys.get(MapKeys.LEFT)) {
+            tmp.sub(mCamera.getRight());
+        }
+        if(mKeys.get(MapKeys.RIGHT)) {
+            tmp.add(mCamera.getRight());
+        }
+
+        tmp.nor();
+        movement.x = tmp.x;
+        movement.z = tmp.z;
+
+        if(!mPlayer.isGrounded()) {
+            movement.y -=  15 * delta;
+        } else {
+            movement.y = 0;
+        }
+
+        if(mKeys.get(MapKeys.JUMP) && mPlayer.isGrounded()) {
+            movement.y = JUMP_HEIGHT;
+        }
+
+        mPlayer.move(movement);
     }
 
     @Override
@@ -113,6 +140,23 @@ public class PlayerController implements InputProcessor {
 
             case Keys.F1:
                 Gdx.input.setCursorCatched(!Gdx.input.isCursorCatched());
+
+            case Keys.SPACE:
+                mKeys.get(mKeys.put(MapKeys.JUMP, true));
+                //mPlayer.jump();
+                break;
+            case Keys.F2:
+                DRAW_DEBUG = !DRAW_DEBUG;
+                break;
+            case Keys.F3:
+                DRAW_MESH = !DRAW_MESH;
+                break;
+            case Keys.F4:
+                DRAW_DEBUG_INFO = !DRAW_DEBUG_INFO;
+                break;
+            case Keys.F5:
+                DRAW_SHOOT_DEBUG = !DRAW_SHOOT_DEBUG;
+                break;
         }
         return true;
     }
@@ -136,6 +180,9 @@ public class PlayerController implements InputProcessor {
             case Keys.S:
                 mKeys.get(mKeys.put(MapKeys.BACK, false));
                 break;
+            case Keys.SPACE:
+                mKeys.get(mKeys.put(MapKeys.JUMP, false));
+                break;
         }
         return true;
     }
@@ -147,7 +194,10 @@ public class PlayerController implements InputProcessor {
 
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-        return false;
+        Ray r = mCamera.getPickRay(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2);
+
+        mPlayer.shoot(r);
+        return true;
     }
 
     @Override

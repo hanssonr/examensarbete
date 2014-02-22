@@ -2,6 +2,7 @@ package se.rhel.model;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
+import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector3;
 import se.rhel.model.Entity.GameObject;
 
@@ -11,7 +12,7 @@ public class FPSCamera extends PerspectiveCamera {
     GameObject mObj;
 
     public static final Vector3 UP = new Vector3(0,1,0);
-    private final Vector3 mOffset = new Vector3(0,1,0);
+    private final Vector3 mOffset = new Vector3(0,1f,0);
 
     /**
      *
@@ -32,7 +33,22 @@ public class FPSCamera extends PerspectiveCamera {
 
     @Override
     public void update() {
+        mObj.getTransformation().getTranslation(position);
+        position.add(mOffset);
+
         super.update();
-        position.set(mObj.getPosition().cpy().add(mOffset));
     }
+
+    public Vector3 getRight() {
+        Vector3 ret = new Vector3();
+        ret.set(direction.cpy().crs(UP));
+        return ret.nor();
+    }
+
+    public Vector3 getForward() {
+        Vector3 ret = new Vector3();
+        ret.set(direction.x, 0, direction.z);
+        return ret.nor();
+    }
+
 }
