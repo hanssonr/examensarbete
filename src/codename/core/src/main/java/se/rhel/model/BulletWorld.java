@@ -118,7 +118,7 @@ public class BulletWorld implements BaseModel {
         // Create the spheres
         for(float x = -10f; x <= 10f; x += 2f) {
             for(float y = 5f; y <= 15f; y += 2f) {
-                for(float z = 0f; z <= 0f; z+= 2f) {
+                for(float z = -2f; z <= 2f; z+= 2f) {
 
                     ModelInstance sphere = new ModelInstance(sphereModel);
                     instances.add(sphere);
@@ -136,7 +136,7 @@ public class BulletWorld implements BaseModel {
         }
     }
 
-    public void addToWorld(btCollisionShape shape, btRigidBodyConstructionInfo info, btDefaultMotionState motionState, ModelInstance instance) {
+    public btRigidBody addToWorld(btCollisionShape shape, btRigidBodyConstructionInfo info, btDefaultMotionState motionState, ModelInstance instance) {
         mShapes.add(shape);
         mBodyInfos.add(info);
 
@@ -148,6 +148,7 @@ public class BulletWorld implements BaseModel {
 
         mBodies.add(body);
         mCollisionWorld.addRigidBody(body);
+        return body;
     }
 
     @Override
@@ -164,7 +165,7 @@ public class BulletWorld implements BaseModel {
         }
 
         for(btRigidBody b : mBodies) {
-            b.applyCentralForce(new Vector3(5, 0, 0));
+            //b.applyCentralForce(new Vector3(5, 0, 0));
             // b.getMotionState().
             // b.setLinearVelocity(new Vector3(10, 0 ,0));
             // b.applyGravity();

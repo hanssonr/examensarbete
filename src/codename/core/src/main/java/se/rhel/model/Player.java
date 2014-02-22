@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.bullet.collision.btBoxShape;
 import com.badlogic.gdx.physics.bullet.collision.btCollisionShape;
+import com.badlogic.gdx.physics.bullet.dynamics.btRigidBody;
 import com.badlogic.gdx.physics.bullet.dynamics.btRigidBodyConstructionInfo;
 import com.badlogic.gdx.physics.bullet.linearmath.btDefaultMotionState;
 import se.rhel.model.Entity.DynamicEntity;
@@ -16,6 +17,7 @@ import se.rhel.res.Resources;
 public class Player extends DynamicEntity {
 
     private BulletWorld mWorld;
+    private btRigidBody mBody;
 
     public Player(Vector3 position, BulletWorld world) {
         super(position,
@@ -25,11 +27,11 @@ public class Player extends DynamicEntity {
         mWorld = world;
 
         getInstance().transform.setTranslation(position);
-        btCollisionShape playerShape = new btBoxShape(new Vector3(1f, 1f, 1f));
+        btCollisionShape playerShape = new btBoxShape(new Vector3(0.5f, 0.5f, 0.5f));
         btRigidBodyConstructionInfo playerInfo = new btRigidBodyConstructionInfo(1f, null, playerShape, Vector3.Zero);
         btDefaultMotionState playerMotionState = new btDefaultMotionState();
         playerMotionState.setWorldTransform(getInstance().transform);
-        mWorld.addToWorld(playerShape, playerInfo, playerMotionState, getInstance());
+        mBody = mWorld.addToWorld(playerShape, playerInfo, playerMotionState, getInstance());
     }
 
     public void update(float delta) {
