@@ -30,6 +30,6 @@ public class MotionStateTest extends btMotionState {
         // btQuaternion q = worldTrans.getRotation(q);
         // mPlayer.setRotation();
 
-        mPlayer.setPosition(worldTrans.getTranslation(mPlayer.getPosition()));
+        //mPlayer.setPosition(worldTrans.getTranslation(mPlayer.getPosition()));
     }
 }

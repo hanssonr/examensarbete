@@ -8,19 +8,19 @@ public abstract class DynamicEntity extends GameObject {
 
     protected float mMovespeed = 0;
 
-    protected DynamicEntity(Vector3 position, ModelInstance instance, float movespeed) {
-        super(position, instance);
+    protected DynamicEntity(float movespeed) {
+        super();
 
         setMovespeed(movespeed);
     }
 
     public void move(Vector3 direction) {
-        getInstance().transform.setTranslation(getPosition());
-        getPosition().add(direction.scl(mMovespeed));
+        //mTransformation.translate(direction.scl(mMovespeed));
     }
 
     public void rotate(Vector3 axis, float angle) {
-        getInstance().transform.rotate(axis, angle);
+        //mTransformation.rotate(axis, angle);
+        //getInstance().transform.rotate(axis, angle);
     }
 
     public void setMovespeed(float movespeed) {

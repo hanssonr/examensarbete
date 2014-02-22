@@ -4,6 +4,8 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.physics.bullet.dynamics.btCharacterControllerInterface;
+import com.badlogic.gdx.physics.bullet.dynamics.btKinematicCharacterController;
 import se.rhel.model.FPSCamera;
 import se.rhel.model.Player;
 import com.badlogic.gdx.Input.Keys;
@@ -19,6 +21,7 @@ public class PlayerController implements InputProcessor {
     Vector3 tmp = new Vector3();
 
     //Finals
+    final float JUMP_HEIGHT = 5f;
     final float MOUSE_SPEED = 5f;
     final float MAX_YROT = 80f;
     final float MIN_YROT = -80f;
@@ -41,6 +44,8 @@ public class PlayerController implements InputProcessor {
 
 
     public PlayerController(FPSCamera camera, Player player) {
+        super();
+
         mCamera = camera;
         mPlayer = player;
 
@@ -67,24 +72,35 @@ public class PlayerController implements InputProcessor {
         }
 
         //Zero out movement
-        movement.set(0, 0, 0);
+        movement.x = 0;
+        movement.z = 0;
+
+        if(!mPlayer.isGrounded()) {
+            movement.y -= 10 * delta;
+        } else {
+            movement.y = 0;
+        }
 
         //Calculate movement
         if(mKeys.get(MapKeys.LEFT)) {
-            movement.add(FPSCamera.UP.cpy().crs(mCamera.direction));
+            movement.add(tmp.set(FPSCamera.UP.cpy().crs(mCamera.direction)).nor().scl(mPlayer.getMoveSpeed()));
         }
         if(mKeys.get(MapKeys.RIGHT)) {
-            movement.add(mCamera.direction.cpy().crs(FPSCamera.UP));
+            movement.add(tmp.set(mCamera.direction.cpy().crs(FPSCamera.UP).nor().scl(mPlayer.getMoveSpeed())));
         }
 
         if(mKeys.get(MapKeys.FORWARD)) {
-            movement.add(tmp.set(mCamera.direction.x, 0, mCamera.direction.z));
+            movement.add(tmp.set(mCamera.direction.x, 0, mCamera.direction.z).nor().scl(mPlayer.getMoveSpeed()));
         }
         if(mKeys.get(MapKeys.BACK)) {
-            movement.sub(tmp.set(mCamera.direction.x, 0, mCamera.direction.z));
+            movement.sub(tmp.set(mCamera.direction.x, 0, mCamera.direction.z).nor().scl(mPlayer.getMoveSpeed()));
         }
 
-        mPlayer.move(movement.nor().scl(delta));
+        if(mKeys.get(MapKeys.JUMP) && mPlayer.isGrounded()) {
+            movement.y = JUMP_HEIGHT;
+        }
+
+        mPlayer.move(movement);
     }
 
     @Override
@@ -113,6 +129,11 @@ public class PlayerController implements InputProcessor {
 
             case Keys.F1:
                 Gdx.input.setCursorCatched(!Gdx.input.isCursorCatched());
+
+            case Keys.SPACE:
+                mKeys.get(mKeys.put(MapKeys.JUMP, true));
+                //mPlayer.jump();
+                break;
         }
         return true;
     }
@@ -135,6 +156,9 @@ public class PlayerController implements InputProcessor {
             case Keys.DOWN:
             case Keys.S:
                 mKeys.get(mKeys.put(MapKeys.BACK, false));
+                break;
+            case Keys.SPACE:
+                mKeys.get(mKeys.put(MapKeys.JUMP, false));
                 break;
         }
         return true;

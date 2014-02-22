@@ -25,6 +25,8 @@ import se.rhel.res.Resources;
  */
 public class BulletWorld implements BaseModel {
 
+    private final float FIXED_TIMESTEP = 1f/60f;
+
     private static PerformanceCounter PERFORMANCE_COUNTER = new PerformanceCounter("BulletWorld");
     public static String PERFORMANCE;
 
@@ -136,15 +138,12 @@ public class BulletWorld implements BaseModel {
         }
     }
 
-    public void addToWorld(btCollisionShape shape, btRigidBodyConstructionInfo info, btDefaultMotionState motionState, ModelInstance instance) {
+    public void addToWorld(btCollisionShape shape, btRigidBodyConstructionInfo info, btDefaultMotionState motionState, ModelInstance instance, btRigidBody body) {
         mShapes.add(shape);
         mBodyInfos.add(info);
 
         instances.add(instance);
         mMotionStates.add(motionState);
-
-        btRigidBody body = new btRigidBody(info);
-        body.setMotionState(motionState);
 
         mBodies.add(body);
         mCollisionWorld.addRigidBody(body);
@@ -155,7 +154,7 @@ public class BulletWorld implements BaseModel {
 
         PERFORMANCE_COUNTER.tick();
         PERFORMANCE_COUNTER.start();
-                ((btDynamicsWorld) mCollisionWorld).stepSimulation(delta, 5);
+                ((btDynamicsWorld) mCollisionWorld).stepSimulation(FIXED_TIMESTEP, 3);
         PERFORMANCE_COUNTER.stop();
 
         int c = mMotionStates.size;
@@ -164,7 +163,7 @@ public class BulletWorld implements BaseModel {
         }
 
         for(btRigidBody b : mBodies) {
-            b.applyCentralForce(new Vector3(5, 0, 0));
+            //b.applyCentralForce(new Vector3(5, 0, 0));
             // b.getMotionState().
             // b.setLinearVelocity(new Vector3(10, 0 ,0));
             // b.applyGravity();

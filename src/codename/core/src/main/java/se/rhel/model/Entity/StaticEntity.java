@@ -7,7 +7,6 @@ import com.badlogic.gdx.math.Vector3;
 public abstract class StaticEntity extends GameObject {
 
     protected StaticEntity(Vector3 position, ModelInstance instance) {
-        super(position, instance);
     }
 
 }
