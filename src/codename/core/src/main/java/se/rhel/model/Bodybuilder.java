@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.g3d.Material;
 import com.badlogic.gdx.graphics.g3d.Model;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
+import com.badlogic.gdx.math.Vector3;
 
 public enum Bodybuilder {
     INSTANCE;
@@ -24,8 +25,25 @@ public enum Bodybuilder {
         return mBuilder.createBox(w, h, d, material, VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal);
     }
 
+    public Model createBox(Vector3 size, Material material) {
+        return mBuilder.createBox(size.x, size.y, size.z, material, VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal);
+    }
+
+    public Model createBox(Vector3 size, Color color) {
+        return mBuilder.createBox(size.x, size.y, size.z, createMaterial(color),
+                VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal);
+    }
+
     public Model createBox(float w, float h, float d) {
         Material material = new Material(ColorAttribute.createDiffuse(Color.BLUE));
         return createBox(w, h, d, material);
+    }
+
+    public Model createCapsule(float radius, float height) {
+        return mBuilder.createCapsule(radius, height, 8, createMaterial(Color.MAGENTA), VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal);
+    }
+
+    private Material createMaterial(Color color) {
+        return new Material(ColorAttribute.createDiffuse(color));
     }
 }

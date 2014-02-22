@@ -8,7 +8,10 @@ import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Quaternion;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.physics.bullet.collision.*;
+import com.badlogic.gdx.physics.bullet.dynamics.btRigidBody;
 import com.badlogic.gdx.math.collision.Ray;
 import com.badlogic.gdx.physics.bullet.collision.ClosestRayResultCallback;
 import com.badlogic.gdx.physics.bullet.collision.btBoxShape;
@@ -17,6 +20,8 @@ import com.badlogic.gdx.physics.bullet.collision.btCollisionShape;
 import com.badlogic.gdx.physics.bullet.dynamics.btRigidBody;
 import com.badlogic.gdx.physics.bullet.dynamics.btRigidBodyConstructionInfo;
 import com.badlogic.gdx.physics.bullet.linearmath.btDefaultMotionState;
+import com.badlogic.gdx.physics.bullet.linearmath.btQuaternion;
+import com.badlogic.gdx.physics.bullet.linearmath.btTransform;
 import com.badlogic.gdx.physics.bullet.linearmath.btVector3;
 import se.rhel.model.Entity.DynamicEntity;
 import se.rhel.res.Resources;
@@ -35,29 +40,35 @@ public class Player extends DynamicEntity {
 
     private Vector3 mDirection = new Vector3();
 
-    public Player(Vector3 position, BulletWorld world) {
-        super(position,
-                new ModelInstance(Bodybuilder.INSTANCE.createBox(1f, 1f, 1f,
-                        new Material(ColorAttribute.createDiffuse(Color.ORANGE))), position), 10f);
+    public boolean mOnGround = false;
+    private static Vector2 mPlayersize = new Vector2(0.3f, 1f);
 
+    public Player(Vector3 position, BulletWorld world) {
+        super(7f);
         mWorld = world;
 
-        getInstance().transform.setTranslation(position);
-        btCollisionShape playerShape = new btBoxShape(new Vector3(0.5f, 0.5f, 0.5f));
-        btRigidBodyConstructionInfo playerInfo = new btRigidBodyConstructionInfo(1f, null, playerShape, Vector3.Zero);
-        btDefaultMotionState playerMotionState = new btDefaultMotionState();
-        playerMotionState.setWorldTransform(getInstance().transform);
+        getTransformation().setTranslation(position);
+
+        btCollisionShape playerShape = new btCapsuleShape(mPlayersize.x, mPlayersize.y);
+        btRigidBodyConstructionInfo playerInfo = new btRigidBodyConstructionInfo(5f, null, playerShape, Vector3.Zero);
+        btDefaultMotionState playerMotionState = new btDefaultMotionState(getTransformation());
+
+
         mBody = new btRigidBody(playerInfo);
         mBody.setMotionState(playerMotionState);
-
-        mWorld.addToWorld(playerShape, playerInfo, playerMotionState, getInstance(), mBody);
-
+        mBody.setGravity(new Vector3(0,0,0));
         rayTestCB = new ClosestRayResultCallback(Vector3.Zero, Vector3.Z);
+        mWorld.addToWorld(playerShape,
+                playerInfo,
+                playerMotionState,
+                new ModelInstance(Bodybuilder.INSTANCE.createCapsule(mPlayersize.x, mPlayersize.y), position),
+                mBody);
     }
 
     public void update(float delta) {
-        // Gdx.app.log("BodyPos", "" + mBody.getCenterOfMassPosition());
+        mTransformation.set(mBody.getCenterOfMassTransform().cpy());
 
+        checkOnGround();
         Vector3 desiredVel = mDirection.scl(mMovespeed);
         Vector3 imp = desiredVel.mul(mBody.getInvMass());
         // mBody.applyCentralForce(imp);
@@ -69,7 +80,6 @@ public class Player extends DynamicEntity {
 
     public void shoot(Ray ray) {
         hasShot = true;
-
         from.set(ray.origin);
         to.set(ray.direction).scl(50f).add(from);
 
@@ -97,43 +107,71 @@ public class Player extends DynamicEntity {
                 t.dispose();
             }
         }
+    }
 
-        /*
+    private void checkOnGround() {
+        mOnGround = false;
+        Vector3 from = mBody.getCenterOfMassPosition().cpy();
+        Vector3 to = new Vector3(from.x, from.y - 1f, from.z);
+        ClosestRayResultCallback cb = new ClosestRayResultCallback(from, to);
+        cb.setCollisionObject(null);
 
-        btCollisionShape pShape = new btBoxShape(new Vector3(0.1f, 0.1f, 0.1f));
-        btRigidBodyConstructionInfo pInfo = new btRigidBodyConstructionInfo(1f, null, pShape, Vector3.Zero);
-        ModelInstance p = new ModelInstance(Bodybuilder.INSTANCE.createBox(0.1f, 0.1f, 0.1f));
-        btDefaultMotionState pMotionState = new btDefaultMotionState();
+        mWorld.getCollisionWorld().rayTest(from, to, cb);
 
-        p.transform.trn(from);
-
-        // pMotionState.setWorldTransform(p.transform);
-        btRigidBody pBody = new btRigidBody(pInfo);
-        // pBody.setMotionState(pMotionState);
-
-        Gdx.app.log("Body pos", ""+pBody.getCenterOfMassPosition());
-
-        mWorld.addToWorld(pShape, pInfo, pMotionState, p, pBody);
-        // Vector3 dir = ray.getEndPoint(1f).nor();
-        pBody.applyCentralImpulse(to.scl(3f));
-        // pBody.setLinearVelocity(to.scl(30f));
-        */
+        if(cb.hasHit()) {
+            final btCollisionObject obj = cb.getCollisionObject();
+            if (obj.isStaticObject()) {
+                mOnGround = true;
+            }
+        }
     }
 
     @Override
     public void move(Vector3 direction) {
-        // super.move(direction);
-        mDirection = direction;
-        // mBody.translate(getPosition()); // .transform.setTranslation(getPosition());
+        mBody.activate(true);
+        mBody.setLinearVelocity(direction);
     }
 
-    @Override
     public void rotate(Vector3 axis, float angle) {
-        super.rotate(axis, angle);
+        Quaternion quat = new Quaternion().setFromAxis(axis, angle);
+        mBody.setCenterOfMassTransform(mBody.getWorldTransform().rotate(quat));
     }
 
-    @Override
     public Vector3 getPosition() {
         return mBody.getCenterOfMassPosition();
     }
+
+    public Vector3 getVelocity() {
+        return mBody.getLinearVelocity().cpy();
+    }
+
+    public boolean isGrounded() {
+        return mOnGround;
+    }
+
+    public float getMoveSpeed() {
+        return mMovespeed;
+    }
+
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

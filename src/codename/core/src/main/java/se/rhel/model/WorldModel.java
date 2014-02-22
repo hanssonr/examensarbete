@@ -22,8 +22,9 @@ public class WorldModel implements BaseModel {
     @Override
     public void create() {
         mBulletWorld = new BulletWorld();
-        mPlayer = new Player(new Vector3(0, 0.1f, 4), mBulletWorld);
-        mCamera = new FPSCamera(mPlayer, 67f, 0.1f, 300f);
+        mPlayer = new Player(new Vector3(0, 20, 1), mBulletWorld);
+        mCamera = new FPSCamera(mPlayer, 68, 0.1f, 300f);
+
     }
 
     @Override

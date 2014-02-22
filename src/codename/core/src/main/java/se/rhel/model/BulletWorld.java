@@ -26,6 +26,8 @@ import se.rhel.res.Resources;
  */
 public class BulletWorld implements BaseModel {
 
+    private final float FIXED_TIMESTEP = 1f/60f;
+
     private static PerformanceCounter PERFORMANCE_COUNTER = new PerformanceCounter("BulletWorld");
     public static String PERFORMANCE;
 
@@ -172,15 +174,12 @@ public class BulletWorld implements BaseModel {
         mCollisionWorld.addRigidBody(body);
     }
 
-    public int maxSubSteps = 5;
-    public float fixedTimeStep = 1f / 60f;
-
     @Override
     public void update(float delta) {
 
         PERFORMANCE_COUNTER.tick();
         PERFORMANCE_COUNTER.start();
-                ((btDynamicsWorld) mCollisionWorld).stepSimulation(Gdx.graphics.getDeltaTime(), maxSubSteps, fixedTimeStep);
+                ((btDynamicsWorld) mCollisionWorld).stepSimulation(FIXED_TIMESTEP, 3);
         PERFORMANCE_COUNTER.stop();
 
         int c = mMotionStates.size;
@@ -189,7 +188,7 @@ public class BulletWorld implements BaseModel {
         }
 
         for(btRigidBody b : mBodies) {
-            // b.applyCentralForce(new Vector3(5, 0, 0));
+            //b.applyCentralForce(new Vector3(5, 0, 0));
             // b.getMotionState().
             // b.setLinearVelocity(new Vector3(10, 0 ,0));
             // b.applyGravity();
