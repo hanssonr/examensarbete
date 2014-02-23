@@ -57,11 +57,12 @@ public class BulletWorld implements BaseModel {
     public void create() {
 
         // Create some basic models
+        /*
         final Model groundModel = mModelBuilder.createRect(20f, 0f, -20f, -20f, 0f, -20f, -20f, 0f, 20f, 20f, 0f, 20f, 0, 1, 0,
                 new Material(ColorAttribute.createDiffuse(Color.BLUE), ColorAttribute.createSpecular(Color.WHITE), FloatAttribute.createShininess(16f)),
                 VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal);
         mModels.add(groundModel);
-
+        */
         // Bullet is init from Resources
 
         // Create the bullet world
@@ -109,11 +110,11 @@ public class BulletWorld implements BaseModel {
         mCollisionWorld.addRigidBody(levelBody);
 
         // btCollisionShape pShape = new btBoxShape(new Vector3(1f, 1f, 1f));
-        btBvhTriangleMeshShape pShape = new btBvhTriangleMeshShape(Resources.INSTANCE.playerModel.meshParts);
+        btBvhTriangleMeshShape pShape = new btBvhTriangleMeshShape(Resources.INSTANCE.mcPlayerModel.meshParts);
         mShapes.add(pShape);
         btRigidBodyConstructionInfo pInfo = new btRigidBodyConstructionInfo(0f, null, pShape, Vector3.Zero);
         mBodyInfos.add(pInfo);
-        ModelInstance p = new ModelInstance(Resources.INSTANCE.playerModel);
+        ModelInstance p = new ModelInstance(Resources.INSTANCE.mcPlayerModel);
         instances.add(p);
         btDefaultMotionState pMotionState = new btDefaultMotionState();
 
