@@ -37,8 +37,8 @@ public class Player extends DynamicEntity {
     public boolean hasShot = false;
     public Vector3 from = new Vector3();
     public Vector3 to = new Vector3();
-
-    private Vector3 mDirection = new Vector3();
+    public Vector3 fromGround = new Vector3();
+    public Vector3 toGround = new Vector3();
 
     public boolean mOnGround = false;
     private static Vector2 mPlayersize = new Vector2(0.3f, 1f);
@@ -48,20 +48,23 @@ public class Player extends DynamicEntity {
         mWorld = world;
 
         getTransformation().setTranslation(position);
+        createPyshicsBody();
+    }
 
+    private void createPyshicsBody() {
         btCollisionShape playerShape = new btCapsuleShape(mPlayersize.x, mPlayersize.y);
         btRigidBodyConstructionInfo playerInfo = new btRigidBodyConstructionInfo(5f, null, playerShape, Vector3.Zero);
         btDefaultMotionState playerMotionState = new btDefaultMotionState(getTransformation());
 
-
         mBody = new btRigidBody(playerInfo);
         mBody.setMotionState(playerMotionState);
-        mBody.setGravity(new Vector3(0,0,0));
+        mBody.setGravity(new Vector3(0, 0, 0));
         rayTestCB = new ClosestRayResultCallback(Vector3.Zero, Vector3.Z);
+
         mWorld.addToWorld(playerShape,
                 playerInfo,
                 playerMotionState,
-                new ModelInstance(Bodybuilder.INSTANCE.createCapsule(mPlayersize.x, mPlayersize.y), position),
+                new ModelInstance(Resources.INSTANCE.mcPlayerModel, getPosition()),
                 mBody);
     }
 
@@ -69,13 +72,7 @@ public class Player extends DynamicEntity {
         mTransformation.set(mBody.getCenterOfMassTransform().cpy());
 
         checkOnGround();
-        Vector3 desiredVel = mDirection.scl(mMovespeed);
-        Vector3 imp = desiredVel.mul(mBody.getInvMass());
-        // mBody.applyCentralForce(imp);
-        mBody.applyCentralImpulse(imp);
 
-        // mBody.setLinearVelocity(desiredVel);
-        // mBody.setLinearVelocity(getPosition().add(direction.scl(mMovespeed)));
     }
 
     public void shoot(Ray ray) {
@@ -102,7 +99,7 @@ public class Player extends DynamicEntity {
             if(obj.isStaticOrKinematicObject()) {
                 btVector3 v = rayTestCB.getHitPointWorld();
                 btVector3 t = rayTestCB.getHitNormalWorld();
-                DecalRenderer.addDecalAt(new Vector3(v.getX(), v.getY(), v.getZ()), new Vector3(t.getX(), t.getY(), t.getZ()).nor());
+                DecalRenderer.addBullethole(new Vector3(v.getX(), v.getY(), v.getZ()), new Vector3(t.getX(), t.getY(), t.getZ()).nor());
                 v.dispose();
                 t.dispose();
             }
@@ -111,12 +108,12 @@ public class Player extends DynamicEntity {
 
     private void checkOnGround() {
         mOnGround = false;
-        Vector3 from = mBody.getCenterOfMassPosition().cpy();
-        Vector3 to = new Vector3(from.x, from.y - 1f, from.z);
-        ClosestRayResultCallback cb = new ClosestRayResultCallback(from, to);
+        fromGround.set(getPosition());
+        toGround.set(new Vector3(fromGround.x, fromGround.y - 1f, fromGround.z));
+        ClosestRayResultCallback cb = new ClosestRayResultCallback(fromGround, toGround);
         cb.setCollisionObject(null);
 
-        mWorld.getCollisionWorld().rayTest(from, to, cb);
+        mWorld.getCollisionWorld().rayTest(fromGround, toGround, cb);
 
         if(cb.hasHit()) {
             final btCollisionObject obj = cb.getCollisionObject();
@@ -129,6 +126,8 @@ public class Player extends DynamicEntity {
     @Override
     public void move(Vector3 direction) {
         mBody.activate(true);
+        direction.x *= mMovespeed;
+        direction.z *= mMovespeed;
         mBody.setLinearVelocity(direction);
     }
 

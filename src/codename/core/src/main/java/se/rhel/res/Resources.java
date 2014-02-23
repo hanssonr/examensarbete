@@ -29,7 +29,7 @@ public enum Resources {
     public void load() {
         mManager.load("data/fonts/hud.fnt", BitmapFont.class);
         mManager.load("obj/ship/ship.obj", Model.class);
-        mManager.load("obj/level/level_large.g3db", Model.class);
+        mManager.load("obj/level/level_large_tex.g3db", Model.class);
         mManager.load("obj/player/player.g3db", Model.class);
         mManager.load("obj/player/mcplayer.g3db", Model.class);
         mManager.load("obj/beretta/beretta.obj", Model.class);
@@ -54,7 +54,7 @@ public enum Resources {
         instance = new ModelInstance(space);
         modelInstanceArray.add(instance);
 
-        levelModel = mManager.get("obj/level/level_large.g3db", Model.class);
+        levelModel = mManager.get("obj/level/level_large_tex.g3db", Model.class);
         playerModel = mManager.get("obj/player/player.g3db", Model.class);
         mcPlayerModel = mManager.get("obj/player/mcplayer.g3db", Model.class);
     }

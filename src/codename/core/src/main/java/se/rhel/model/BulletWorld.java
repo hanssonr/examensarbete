@@ -118,7 +118,7 @@ public class BulletWorld implements BaseModel {
         instances.add(p);
         btDefaultMotionState pMotionState = new btDefaultMotionState();
 
-        p.transform.trn(0f, 12f, 1f);
+        p.transform.trn(10f, 0.1f, 1f);
         pMotionState.setWorldTransform(p.transform);
         mMotionStates.add(pMotionState);
         btRigidBody pBody = new btRigidBody(pInfo);
@@ -180,7 +180,7 @@ public class BulletWorld implements BaseModel {
 
         PERFORMANCE_COUNTER.tick();
         PERFORMANCE_COUNTER.start();
-                ((btDynamicsWorld) mCollisionWorld).stepSimulation(FIXED_TIMESTEP, 3);
+                ((btDynamicsWorld) mCollisionWorld).stepSimulation(FIXED_TIMESTEP, 5);
         PERFORMANCE_COUNTER.stop();
 
         int c = mMotionStates.size;
@@ -188,12 +188,12 @@ public class BulletWorld implements BaseModel {
             mMotionStates.get(i).getWorldTransform(instances.get(i).transform);
         }
 
-        for(btRigidBody b : mBodies) {
-            //b.applyCentralForce(new Vector3(5, 0, 0));
-            // b.getMotionState().
-            // b.setLinearVelocity(new Vector3(10, 0 ,0));
-            // b.applyGravity();
-        }
+//        for(btRigidBody b : mBodies) {
+//            //b.applyCentralForce(new Vector3(5, 0, 0));
+//            // b.getMotionState().
+//            // b.setLinearVelocity(new Vector3(10, 0 ,0));
+//            // b.applyGravity();
+//        }
 
         PERFORMANCE = "Bullet: " + (int)(PERFORMANCE_COUNTER.load.value*100f) + " %";
     }

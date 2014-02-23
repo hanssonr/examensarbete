@@ -3,6 +3,7 @@ package se.rhel.controller;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Quaternion;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.math.collision.Ray;
 import com.badlogic.gdx.physics.bullet.dynamics.btCharacterControllerInterface;
@@ -23,11 +24,12 @@ public class PlayerController implements InputProcessor {
     FPSCamera mCamera;
     Player mPlayer;
 
+    Quaternion rQuat = new Quaternion();
     Vector3 movement = new Vector3();
     Vector3 tmp = new Vector3();
 
     //Finals
-    final float JUMP_HEIGHT = 5f;
+    final float JUMP_HEIGHT = 7f;
     final float MOUSE_SPEED = 5f;
     final float MAX_YROT = 80f;
     final float MIN_YROT = -80f;
@@ -78,33 +80,36 @@ public class PlayerController implements InputProcessor {
         }
 
         //Zero out movement
-        movement.x = 0;
-        movement.z = 0;
+        tmp.set(Vector3.Zero);
+
+        //Calculate movement
+        if(mKeys.get(MapKeys.FORWARD)) {
+           tmp.add(mCamera.getForward());
+        }
+        if(mKeys.get(MapKeys.BACK)) {
+            tmp.sub(mCamera.getForward());
+        }
+
+        if(mKeys.get(MapKeys.LEFT)) {
+            tmp.sub(mCamera.getRight());
+        }
+        if(mKeys.get(MapKeys.RIGHT)) {
+            tmp.add(mCamera.getRight());
+        }
+
+        tmp.nor();
+        movement.x = tmp.x;
+        movement.z = tmp.z;
 
         if(!mPlayer.isGrounded()) {
-            movement.y -= 10 * delta;
+            movement.y -=  15 * delta;
         } else {
             movement.y = 0;
         }
 
-        //Calculate movement
-        if(mKeys.get(MapKeys.LEFT)) {
-            movement.add(tmp.set(FPSCamera.UP.cpy().crs(mCamera.direction)).nor().scl(mPlayer.getMoveSpeed()));
-        }
-        if(mKeys.get(MapKeys.RIGHT)) {
-            movement.add(tmp.set(mCamera.direction.cpy().crs(FPSCamera.UP).nor().scl(mPlayer.getMoveSpeed())));
-        }
-
-        if(mKeys.get(MapKeys.FORWARD)) {
-            movement.add(tmp.set(mCamera.direction.x, 0, mCamera.direction.z).nor().scl(mPlayer.getMoveSpeed()));
-        }
-        if(mKeys.get(MapKeys.BACK)) {
-            movement.sub(tmp.set(mCamera.direction.x, 0, mCamera.direction.z).nor().scl(mPlayer.getMoveSpeed()));
-        }
-
         if(mKeys.get(MapKeys.JUMP) && mPlayer.isGrounded()) {
             movement.y = JUMP_HEIGHT;
-    }
+        }
 
         mPlayer.move(movement);
     }

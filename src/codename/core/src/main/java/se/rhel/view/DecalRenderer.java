@@ -19,12 +19,25 @@ public class DecalRenderer {
     private static FPSCamera mCamera;
     private static Array<Decal> mDecals;
 
+    private static Array<Decal> mBulletholes;
+    private static int MAX_BULLET_DECALS = 10;
+    private static int CURRENT = 0;
+
     public DecalRenderer(FPSCamera camera) {
         mCamera = camera;
         mDecalBatch = new DecalBatch(new CameraGroupStrategy(camera));
         mDecals = new Array<>();
+        mBulletholes = new Array<>(MAX_BULLET_DECALS);
+        createBulletholes();
+        //addDecalAt(new Vector3(0f, 0f, 0f), mCamera.up);
+    }
 
-        addDecalAt(new Vector3(0f, 0f, 0f), mCamera.up);
+    private void createBulletholes() {
+        for (int i = 0; i < MAX_BULLET_DECALS; i++) {
+            Decal toAdd = Decal.newDecal(1f, 1f, new TextureRegion(Resources.INSTANCE.bulletHole), true);
+            toAdd.setPosition(9999,9999,9999);
+            mBulletholes.add(toAdd);
+        }
     }
 
     public void draw(float delta) {
@@ -32,6 +45,10 @@ public class DecalRenderer {
         for (Decal decal : mDecals) {
             decal.lookAt(mCamera.position, mCamera.up);
             mDecalBatch.add(decal);
+        }
+
+        for (Decal bullethole : mBulletholes) {
+            mDecalBatch.add(bullethole);
         }
         mDecalBatch.flush();
     }
@@ -41,6 +58,13 @@ public class DecalRenderer {
         toAdd.setPosition(pos.x, pos.y, pos.z);
         toAdd.lookAt(normal, mCamera.up);
         mDecals.add(toAdd);
+    }
+
+    public static void addBullethole(Vector3 pos, Vector3 normal) {
+        CURRENT = CURRENT++ >= MAX_BULLET_DECALS-1 ? 0 : CURRENT;
+        Decal bh = mBulletholes.get(CURRENT);
+        bh.setPosition(pos.x + (normal.x * 0.001f), pos.y + (normal.y * 0.001f), pos.z + (normal.z * 0.001f));
+        bh.setRotation(normal, mCamera.up);
     }
 
     public void dispose() {

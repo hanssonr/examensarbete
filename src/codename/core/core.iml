@@ -32,6 +32,17 @@
       </library>
     </orderEntry>
     <orderEntry type="library" exported="" name="tween-engine-api" level="project" />
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../lib/tween-engine-api.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="jar://$MODULE_DIR$/../lib/tween-engine-api-sources.jar!/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
   </component>
 </module>
 

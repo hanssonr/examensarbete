@@ -12,7 +12,7 @@ public class FPSCamera extends PerspectiveCamera {
     GameObject mObj;
 
     public static final Vector3 UP = new Vector3(0,1,0);
-    private final Vector3 mOffset = new Vector3(0,1f,0);
+    private final Vector3 mOffset = new Vector3(0, 1f, 0f);
 
     /**
      *
@@ -33,9 +33,24 @@ public class FPSCamera extends PerspectiveCamera {
 
     @Override
     public void update() {
+
         mObj.getTransformation().getTranslation(position);
         position.add(mOffset);
+        position.sub(getForward().scl(3f));
 
         super.update();
     }
+
+    public Vector3 getRight() {
+        Vector3 ret = new Vector3();
+        ret.set(direction.cpy().crs(UP));
+        return ret.nor();
+    }
+
+    public Vector3 getForward() {
+        Vector3 ret = new Vector3();
+        ret.set(direction.x, 0, direction.z);
+        return ret.nor();
+    }
+
 }
