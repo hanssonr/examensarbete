@@ -29,6 +29,7 @@ public enum Resources {
     public ModelInstance playerModelInstanceAnimated;
 
     public Texture bulletHole;
+    public Texture hole;
 
     public void load() {
         mManager.load("data/fonts/hud.fnt", BitmapFont.class);
@@ -41,6 +42,7 @@ public enum Resources {
         mManager.load("obj/beretta/beretta.obj", Model.class);
         mManager.load("obj/skybox/spacesphere.obj", Model.class);
         mManager.load("tex/bullethole.png", Texture.class);
+        mManager.load("tex/hole.png", Texture.class);
 
         Bullet.init();
     }
@@ -51,6 +53,7 @@ public enum Resources {
         hudFont = mManager.get("data/fonts/hud.fnt", BitmapFont.class);
 
         bulletHole = mManager.get("tex/bullethole.png", Texture.class);
+        hole = mManager.get("tex/hole.png", Texture.class);
 
         Model shipModel = mManager.get("obj/ship/ship.obj", Model.class);
         ModelInstance instance = new ModelInstance(shipModel, 0,1,0);

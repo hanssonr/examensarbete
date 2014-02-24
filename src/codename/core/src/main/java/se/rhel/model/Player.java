@@ -123,7 +123,6 @@ public class Player extends DynamicEntity {
         }
     }
 
-    @Override
     public void move(Vector3 direction) {
         mBody.activate(true);
         direction.x *= mMovespeed;
