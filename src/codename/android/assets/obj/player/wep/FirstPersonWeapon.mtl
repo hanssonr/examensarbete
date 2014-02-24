@@ -1,0 +1,67 @@
+# Blender MTL File: 'MyMinecraftPlayer.blend'
+# Material Count: 7
+
+newmtl Material.017
+Ns 92.156863
+Ka 0.000000 0.000000 0.000000
+Kd 0.800000 0.800000 0.800000
+Ks 1.000000 1.000000 1.000000
+Ni 1.000000
+d 1.000000
+illum 2
+
+newmtl Material.018
+Ns 92.156863
+Ka 0.000000 0.000000 0.000000
+Kd 0.549348 0.549348 0.549348
+Ks 1.000000 1.000000 1.000000
+Ni 1.000000
+d 1.000000
+illum 2
+
+newmtl Material.019
+Ns 92.156863
+Ka 0.000000 0.000000 0.000000
+Kd 0.426621 0.426621 0.426621
+Ks 1.000000 1.000000 1.000000
+Ni 1.000000
+d 1.000000
+illum 2
+
+newmtl Material.020
+Ns 92.156863
+Ka 0.000000 0.000000 0.000000
+Kd 0.046244 0.046244 0.046244
+Ks 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+
+newmtl Material.021
+Ns 92.156863
+Ka 0.000000 0.000000 0.000000
+Kd 0.016975 0.010386 0.002678
+Ks 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+
+newmtl Material.026
+Ns 92.156863
+Ka 0.000000 0.000000 0.000000
+Kd 0.200126 0.200126 0.200126
+Ks 0.500000 0.500000 0.500000
+Ni 1.000000
+d 1.000000
+illum 2
+
+newmtl Player
+Ns 96.078431
+Ka 0.000000 0.000000 0.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 1
+map_Kd E:\Skola\Examensarbete\examensarbete\res\anim\char.png
+map_d E:\\Skola\\Examensarbete\\examensarbete\\res\\anim\\Minecraft Character Pack\\Model\\Steve\\Copy of steve(Original).png

@@ -22,8 +22,12 @@ public enum Resources {
     public Array<ModelInstance> modelInstanceArray;
 
     public Model levelModel;
-    public Model playerModel;
     public Model mcPlayerModel;
+    public Model firstPersonWeaponModel;
+    public Model playerModelAnimated;
+
+    public ModelInstance playerModelInstanceAnimated;
+
     public Texture bulletHole;
 
     public void load() {
@@ -31,6 +35,8 @@ public enum Resources {
         mManager.load("obj/ship/ship.obj", Model.class);
         mManager.load("obj/level/level_large_tex.g3db", Model.class);
         mManager.load("obj/player/player.g3db", Model.class);
+        mManager.load("obj/player/wep/FirstPersonWeapon.g3db", Model.class);
+        mManager.load("obj/player/animated/MyMinecraftPlayer_animated.g3db", Model.class);
         mManager.load("obj/player/mcplayer.g3db", Model.class);
         mManager.load("obj/beretta/beretta.obj", Model.class);
         mManager.load("obj/skybox/spacesphere.obj", Model.class);
@@ -54,8 +60,15 @@ public enum Resources {
         instance = new ModelInstance(space);
         modelInstanceArray.add(instance);
 
+        firstPersonWeaponModel = mManager.get("obj/player/wep/FirstPersonWeapon.g3db", Model.class);
+        instance = new ModelInstance(firstPersonWeaponModel, 5f, 0.1f, -15f);
+        modelInstanceArray.add(instance);
+
+        playerModelAnimated = mManager.get("obj/player/animated/MyMinecraftPlayer_animated.g3db", Model.class);
+        playerModelInstanceAnimated = new ModelInstance(playerModelAnimated, 10f, 0.1f, -15f);
+        // modelInstanceArray.add(instance);
+
         levelModel = mManager.get("obj/level/level_large_tex.g3db", Model.class);
-        playerModel = mManager.get("obj/player/player.g3db", Model.class);
         mcPlayerModel = mManager.get("obj/player/mcplayer.g3db", Model.class);
     }
 

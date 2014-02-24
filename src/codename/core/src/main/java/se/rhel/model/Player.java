@@ -60,11 +60,11 @@ public class Player extends DynamicEntity {
         mBody.setMotionState(playerMotionState);
         mBody.setGravity(new Vector3(0, 0, 0));
         rayTestCB = new ClosestRayResultCallback(Vector3.Zero, Vector3.Z);
-        
+
         mWorld.addToWorld(playerShape,
                 playerInfo,
                 playerMotionState,
-                new ModelInstance(Resources.INSTANCE.mcPlayerModel, getPosition()),
+                new ModelInstance(Resources.INSTANCE.firstPersonWeaponModel, getPosition()),
                 mBody);
     }
 

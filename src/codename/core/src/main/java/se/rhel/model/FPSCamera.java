@@ -36,7 +36,11 @@ public class FPSCamera extends PerspectiveCamera {
 
         mObj.getTransformation().getTranslation(position);
         position.add(mOffset);
-        position.sub(getForward().scl(3f));
+
+        // TODO: Well, this is obviously not that good
+        position.sub(getForward().scl(0.5f));
+        position.sub(getRight().scl(1.5f));
+        position.add(this.up.scl(1f));
 
         super.update();
     }

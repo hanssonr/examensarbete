@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.g3d.Environment;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight;
+import com.badlogic.gdx.graphics.g3d.utils.AnimationController;
 import com.badlogic.gdx.graphics.g3d.utils.DepthShaderProvider;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
@@ -42,6 +43,8 @@ public class WorldView {
 
     private DebugDrawer mAimDebugDrawer;
 
+    private AnimationController mAnimationController;
+
     public WorldView(WorldModel worldModel) {
         mWorldModel = worldModel;
         mSpriteBatch = new SpriteBatch();
@@ -66,6 +69,10 @@ public class WorldView {
                 new DirectionalLight().set(0.8f, 0.8f, 0.8f, -1f, -0.8f, -0.2f)
         );
 
+        mAnimationController = new AnimationController(Resources.INSTANCE.playerModelInstanceAnimated);
+        mAnimationController.setAnimation("walk", -1);
+        Resources.INSTANCE.modelInstanceArray.add(Resources.INSTANCE.playerModelInstanceAnimated);
+
         /*
         mEnvironment.add(new DirectionalLight().set(0.8f, 0.8f, 0.8f, -1f, -0.8f, -0.2f));
         mEnvironment.add(new DirectionalLight().set(0.8f, 0.8f, 0.8f, -0.5f, -1f, 0.7f));
@@ -76,6 +83,8 @@ public class WorldView {
         Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         Gdx.gl.glClearColor(0, 0, 0, 0);
         Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
+
+        mAnimationController.update(delta);
 
         if(PlayerController.DRAW_MESH) {
             mModelBatch.begin(mWorldModel.getCamera());

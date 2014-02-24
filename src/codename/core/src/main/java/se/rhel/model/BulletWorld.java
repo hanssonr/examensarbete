@@ -110,6 +110,7 @@ public class BulletWorld implements BaseModel {
         mCollisionWorld.addRigidBody(levelBody);
 
         // btCollisionShape pShape = new btBoxShape(new Vector3(1f, 1f, 1f));
+        /*
         btBvhTriangleMeshShape pShape = new btBvhTriangleMeshShape(Resources.INSTANCE.mcPlayerModel.meshParts);
         mShapes.add(pShape);
         btRigidBodyConstructionInfo pInfo = new btRigidBodyConstructionInfo(0f, null, pShape, Vector3.Zero);
@@ -125,7 +126,7 @@ public class BulletWorld implements BaseModel {
         pBody.setMotionState(pMotionState);
         mBodies.add(pBody);
         mCollisionWorld.addRigidBody(pBody);
-
+        */
         addSpheres();
     }
 
