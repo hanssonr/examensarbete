@@ -22,7 +22,7 @@ public class WorldModel implements BaseModel {
     @Override
     public void create() {
         mBulletWorld = new BulletWorld();
-        mPlayer = new Player(new Vector3(0, 20, 1), mBulletWorld);
+        mPlayer = new Player(new Vector3(0, 20, 1), mBulletWorld, this);
         mCamera = new FPSCamera(mPlayer, 68, 0.1f, 300f);
 
     }
@@ -34,9 +34,10 @@ public class WorldModel implements BaseModel {
 
     @Override
     public void update(float delta) {
+        mBulletWorld.update(delta);
         mPlayer.update(delta);
         mCamera.update();
-        mBulletWorld.update(delta);
+
 
         // mBoxInstance.transform.rotate(new Quaternion().setEulerAngles(1, 0, 0));
     }

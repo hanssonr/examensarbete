@@ -70,12 +70,13 @@ public class PlayerController implements InputProcessor {
         currentRot = MathUtils.clamp(currentRot, MIN_YROT, MAX_YROT);
 
         if (currentRot > MIN_YROT && currentRot < MAX_YROT && yRot != 0) {
-            mCamera.rotate(mCamera.direction.cpy().crs(FPSCamera.UP), yRot);
+            mCamera.rotate(mCamera.getRight(), yRot);
         }
 
         //X-rotation
         if (xRot != 0) {
             mCamera.rotate(FPSCamera.UP, xRot);
+            //mCamera.rotateAround(mPlayer.getPosition(), FPSCamera.UP, xRot);
             mPlayer.rotate(FPSCamera.UP, xRot);
         }
 

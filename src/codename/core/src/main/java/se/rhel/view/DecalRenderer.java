@@ -1,5 +1,6 @@
 package se.rhel.view;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g3d.decals.CameraGroupStrategy;
 import com.badlogic.gdx.graphics.g3d.decals.Decal;
@@ -34,7 +35,7 @@ public class DecalRenderer {
 
     private void createBulletholes() {
         for (int i = 0; i < MAX_BULLET_DECALS; i++) {
-            Decal toAdd = Decal.newDecal(1f, 1f, new TextureRegion(Resources.INSTANCE.bulletHole), true);
+            Decal toAdd = Decal.newDecal(0.4f, 0.4f, new TextureRegion(Resources.INSTANCE.hole), true);
             toAdd.setPosition(9999,9999,9999);
             mBulletholes.add(toAdd);
         }
@@ -47,6 +48,7 @@ public class DecalRenderer {
             mDecalBatch.add(decal);
         }
 
+        mDecalBatch.setGroupStrategy(new CameraGroupStrategy(mCamera));
         for (Decal bullethole : mBulletholes) {
             mDecalBatch.add(bullethole);
         }

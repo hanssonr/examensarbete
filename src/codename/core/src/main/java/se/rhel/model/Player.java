@@ -40,12 +40,16 @@ public class Player extends DynamicEntity {
     public Vector3 fromGround = new Vector3();
     public Vector3 toGround = new Vector3();
 
+    ModelInstance instance;
+    WorldModel mModel;
+
     public boolean mOnGround = false;
     private static Vector2 mPlayersize = new Vector2(0.3f, 1f);
 
-    public Player(Vector3 position, BulletWorld world) {
+    public Player(Vector3 position, BulletWorld world, WorldModel model) {
         super(7f);
         mWorld = world;
+        mModel = model;
 
         getTransformation().setTranslation(position);
         createPyshicsBody();
@@ -64,7 +68,7 @@ public class Player extends DynamicEntity {
         mWorld.addToWorld(playerShape,
                 playerInfo,
                 playerMotionState,
-                new ModelInstance(Resources.INSTANCE.firstPersonWeaponModel, getPosition()),
+                instance = new ModelInstance(Resources.INSTANCE.firstPersonWeaponModel),
                 mBody);
     }
 
@@ -73,6 +77,16 @@ public class Player extends DynamicEntity {
 
         checkOnGround();
 
+        Matrix4 cameraWorld = mModel.getCamera().view.cpy();
+        cameraWorld.inv();
+        Matrix4 weaponWorld = cameraWorld.cpy();
+        Vector3 pos = new Vector3();
+        weaponWorld.getTranslation(pos);
+        pos.add(mModel.getCamera().direction.cpy().scl(0.4f));
+        pos.add(mModel.getCamera().getRight().cpy().scl(1.5f));
+        pos.sub(mModel.getCamera().up.cpy().scl(2f));
+        weaponWorld.setTranslation(pos);
+        instance.transform.set(weaponWorld);
     }
 
     public void shoot(Ray ray) {
@@ -123,7 +137,6 @@ public class Player extends DynamicEntity {
         }
     }
 
-    @Override
     public void move(Vector3 direction) {
         mBody.activate(true);
         direction.x *= mMovespeed;

@@ -144,9 +144,9 @@ public class BulletWorld implements BaseModel {
         mBodyInfos.add(sphereInfo);
 
         // Create the spheres
-        for(float x = -10f; x <= 10f; x += 5f) {
+        for(float x = -20f; x <= 20f; x += 5f) {
             for(float y = 5f; y <= 15f; y += 2f) {
-                for(float z = 0f; z <= 0f; z+= 2f) {
+                for(float z = -20f; z <= 20f; z+= 2f) {
 
                     ModelInstance sphere = new ModelInstance(sphereModel);
                     sphere.materials.get(0).set(ColorAttribute.createDiffuse(x+0.5f* MathUtils.random(), y+0.5f*MathUtils.random(), z+0.5f*MathUtils.random(), 1));
