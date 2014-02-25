@@ -13,7 +13,7 @@ public class FPSCamera extends PerspectiveCamera {
 
     public static final Vector3 UP = new Vector3(0,1,0);
 
-    private final Vector3 mOffset = new Vector3(0, 1f, 0f);
+    private final Vector3 mOffset = new Vector3(0, 1f, 0);
 
     /**
      *
@@ -39,9 +39,9 @@ public class FPSCamera extends PerspectiveCamera {
         position.add(mOffset);
 
         // TODO: Well, this is obviously not that good
-        position.sub(getForward().scl(0.5f));
-        position.sub(getRight().scl(1.5f));
-        position.add(this.up.scl(1f));
+//        position.sub(getForward().scl(0.5f));
+//        position.sub(getRight().scl(1.5f));
+//        position.add(this.up.scl(1f));
 
         super.update();
     }
