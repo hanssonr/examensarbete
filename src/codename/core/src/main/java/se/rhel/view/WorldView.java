@@ -90,6 +90,7 @@ public class WorldView {
             mModelBatch.begin(mWorldModel.getCamera());
             mModelBatch.render(Resources.INSTANCE.modelInstanceArray);
             mModelBatch.render(mWorldModel.getBulletWorld().instances, mEnvironment);
+            mModelBatch.render(mWorldModel.getBulletWorld().fpsModel, mEnvironment);
             mModelBatch.end();
         }
 

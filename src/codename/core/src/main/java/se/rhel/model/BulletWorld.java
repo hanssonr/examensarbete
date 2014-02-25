@@ -41,6 +41,7 @@ public class BulletWorld implements BaseModel {
 
     private Array<Model> mModels = new Array<>();
     public Array<ModelInstance> instances = new Array<ModelInstance>();
+    public ModelInstance fpsModel;
     private Array<btCollisionShape> mShapes = new Array<>();
     private Array<btRigidBodyConstructionInfo> mBodyInfos = new Array<>();
     private Array<btRigidBody> mBodies = new Array<>();
@@ -127,7 +128,7 @@ public class BulletWorld implements BaseModel {
         mBodies.add(pBody);
         mCollisionWorld.addRigidBody(pBody);
         */
-        addSpheres();
+        //addSpheres();
     }
 
     public void addSpheres() {
@@ -166,10 +167,14 @@ public class BulletWorld implements BaseModel {
     }
 
     public void addToWorld(btCollisionShape shape, btRigidBodyConstructionInfo info, btDefaultMotionState motionState, ModelInstance instance, btRigidBody body) {
+        instances.add(instance);
+        this.addToWorld(shape, info, motionState, body);
+    }
+
+    public void addToWorld(btCollisionShape shape, btRigidBodyConstructionInfo info, btDefaultMotionState motionState, btRigidBody body) {
         mShapes.add(shape);
         mBodyInfos.add(info);
 
-        instances.add(instance);
         mMotionStates.add(motionState);
 
         mBodies.add(body);
@@ -184,7 +189,8 @@ public class BulletWorld implements BaseModel {
                 ((btDynamicsWorld) mCollisionWorld).stepSimulation(FIXED_TIMESTEP, 5);
         PERFORMANCE_COUNTER.stop();
 
-        int c = mMotionStates.size;
+        //int c = mMotionStates.size;
+        int c = instances.size;
         for (int i = 0; i < c; i++) {
             mMotionStates.get(i).getWorldTransform(instances.get(i).transform);
         }

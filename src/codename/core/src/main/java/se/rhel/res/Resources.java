@@ -25,6 +25,7 @@ public enum Resources {
     public Model mcPlayerModel;
     public Model firstPersonWeaponModel;
     public Model playerModelAnimated;
+    public Model fpsWeaponModel;
 
     public ModelInstance playerModelInstanceAnimated;
 
@@ -43,6 +44,8 @@ public enum Resources {
         mManager.load("obj/skybox/spacesphere.obj", Model.class);
         mManager.load("tex/bullethole.png", Texture.class);
         mManager.load("tex/hole.png", Texture.class);
+
+        mManager.load("obj/player/wep/FPSWeapon.obj", Model.class);
 
         Bullet.init();
     }
@@ -66,6 +69,8 @@ public enum Resources {
         firstPersonWeaponModel = mManager.get("obj/player/wep/FirstPersonWeapon.g3db", Model.class);
         instance = new ModelInstance(firstPersonWeaponModel, 5f, 0.1f, -15f);
         modelInstanceArray.add(instance);
+
+        fpsWeaponModel = mManager.get("obj/player/wep/FPSWeapon.obj", Model.class);
 
         playerModelAnimated = mManager.get("obj/player/animated/MyMinecraftPlayer_animated.g3db", Model.class);
         playerModelInstanceAnimated = new ModelInstance(playerModelAnimated, 10f, 0.1f, -15f);
