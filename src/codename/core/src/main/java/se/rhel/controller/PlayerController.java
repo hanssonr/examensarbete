@@ -76,8 +76,7 @@ public class PlayerController implements InputProcessor {
         //X-rotation
         if (xRot != 0) {
             mCamera.rotate(FPSCamera.UP, xRot);
-            //mCamera.rotateAround(mPlayer.getPosition(), FPSCamera.UP, xRot);
-            mPlayer.rotate(FPSCamera.UP, xRot);
+            //mPlayer.rotate(FPSCamera.UP, xRot);
         }
 
         //Zero out movement
@@ -105,7 +104,9 @@ public class PlayerController implements InputProcessor {
         if(!mPlayer.isGrounded()) {
             movement.y -=  15 * delta;
         } else {
-            movement.y = 0;
+            if(movement.y < -10) movement.y = -10;
+            movement.y += 15 * delta;
+            if(movement.y > 0) movement.y = 0;
         }
 
         if(mKeys.get(MapKeys.JUMP) && mPlayer.isGrounded()) {
@@ -141,10 +142,9 @@ public class PlayerController implements InputProcessor {
 
             case Keys.F1:
                 Gdx.input.setCursorCatched(!Gdx.input.isCursorCatched());
-
+                break;
             case Keys.SPACE:
                 mKeys.get(mKeys.put(MapKeys.JUMP, true));
-                //mPlayer.jump();
                 break;
             case Keys.F2:
                 DRAW_DEBUG = !DRAW_DEBUG;

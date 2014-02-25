@@ -1,11 +1,6 @@
 package se.rhel.model;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.g3d.Material;
-import com.badlogic.gdx.graphics.g3d.Model;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
-import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Quaternion;
 import com.badlogic.gdx.math.Vector2;
@@ -14,20 +9,18 @@ import com.badlogic.gdx.physics.bullet.collision.*;
 import com.badlogic.gdx.physics.bullet.dynamics.btRigidBody;
 import com.badlogic.gdx.math.collision.Ray;
 import com.badlogic.gdx.physics.bullet.collision.ClosestRayResultCallback;
-import com.badlogic.gdx.physics.bullet.collision.btBoxShape;
 import com.badlogic.gdx.physics.bullet.collision.btCollisionObject;
 import com.badlogic.gdx.physics.bullet.collision.btCollisionShape;
-import com.badlogic.gdx.physics.bullet.dynamics.btRigidBody;
 import com.badlogic.gdx.physics.bullet.dynamics.btRigidBodyConstructionInfo;
 import com.badlogic.gdx.physics.bullet.linearmath.btDefaultMotionState;
-import com.badlogic.gdx.physics.bullet.linearmath.btQuaternion;
-import com.badlogic.gdx.physics.bullet.linearmath.btTransform;
 import com.badlogic.gdx.physics.bullet.linearmath.btVector3;
 import se.rhel.model.Entity.DynamicEntity;
 import se.rhel.res.Resources;
 import se.rhel.view.DecalRenderer;
 
 public class Player extends DynamicEntity {
+
+    private FPSCamera mCamera;
 
     private BulletWorld mWorld;
     private btRigidBody mBody;
@@ -40,19 +33,20 @@ public class Player extends DynamicEntity {
     public Vector3 fromGround = new Vector3();
     public Vector3 toGround = new Vector3();
 
-    ModelInstance instance;
+    ModelInstance weapon;
     WorldModel mModel;
 
     public boolean mOnGround = false;
-    private static Vector2 mPlayersize = new Vector2(0.3f, 1f);
+    private static Vector2 mPlayersize = new Vector2(0.6f, 1.5f);
 
-    public Player(Vector3 position, BulletWorld world, WorldModel model) {
+    public Player(Vector3 position, BulletWorld world) {
         super(7f);
         mWorld = world;
-        mModel = model;
 
         getTransformation().setTranslation(position);
         createPyshicsBody();
+        weapon = new ModelInstance(Resources.INSTANCE.fpsWeaponModel);
+        mWorld.fpsModel = weapon;
     }
 
     private void createPyshicsBody() {
@@ -62,31 +56,21 @@ public class Player extends DynamicEntity {
 
         mBody = new btRigidBody(playerInfo);
         mBody.setMotionState(playerMotionState);
-        mBody.setGravity(new Vector3(0, 0, 0));
+        mBody.setGravity(Vector3.Zero);
+
         rayTestCB = new ClosestRayResultCallback(Vector3.Zero, Vector3.Z);
 
         mWorld.addToWorld(playerShape,
                 playerInfo,
                 playerMotionState,
-                instance = new ModelInstance(Resources.INSTANCE.firstPersonWeaponModel),
                 mBody);
     }
 
     public void update(float delta) {
-        mTransformation.set(mBody.getCenterOfMassTransform().cpy());
-
+        mBody.setGravity(Vector3.Zero);
+        mTransformation.set(mBody.getCenterOfMassTransform());
+        updateCamera();
         checkOnGround();
-
-        Matrix4 cameraWorld = mModel.getCamera().view.cpy();
-        cameraWorld.inv();
-        Matrix4 weaponWorld = cameraWorld.cpy();
-        Vector3 pos = new Vector3();
-        weaponWorld.getTranslation(pos);
-        pos.add(mModel.getCamera().direction.cpy().scl(0.4f));
-        pos.add(mModel.getCamera().getRight().cpy().scl(1.5f));
-        pos.sub(mModel.getCamera().up.cpy().scl(2f));
-        weaponWorld.setTranslation(pos);
-        instance.transform.set(weaponWorld);
     }
 
     public void shoot(Ray ray) {
@@ -120,10 +104,33 @@ public class Player extends DynamicEntity {
         }
     }
 
+    private void updateCamera() {
+        if(mCamera != null) {
+            mTransformation.getTranslation(mCamera.position);
+            mCamera.position.add(mCamera.getOffset());
+            mCamera.update();
+
+            Matrix4 weaponWorld = mCamera.view.cpy().inv();
+            Vector3 pos = new Vector3();
+            weaponWorld.getTranslation(pos);
+            pos.sub(mCamera.up.cpy());
+            pos.add(mCamera.direction.cpy().scl(1f));
+            pos.add(mCamera.getRight());
+
+            weaponWorld.setTranslation(pos);
+            weapon.transform.set(weaponWorld);
+        }
+    }
+
+    public void attachCamera(FPSCamera camera) {
+        this.mCamera = camera;
+    }
+
     private void checkOnGround() {
         mOnGround = false;
         fromGround.set(getPosition());
-        toGround.set(new Vector3(fromGround.x, fromGround.y - 1f, fromGround.z));
+        toGround.set(new Vector3(fromGround.x, fromGround.y - mPlayersize.y, fromGround.z));
+
         ClosestRayResultCallback cb = new ClosestRayResultCallback(fromGround, toGround);
         cb.setCollisionObject(null);
 
@@ -141,6 +148,7 @@ public class Player extends DynamicEntity {
         mBody.activate(true);
         direction.x *= mMovespeed;
         direction.z *= mMovespeed;
+        System.out.println(direction.y);
         mBody.setLinearVelocity(direction);
     }
 

@@ -40,7 +40,7 @@ public enum Bodybuilder {
     }
 
     public Model createCapsule(float radius, float height) {
-        return mBuilder.createCapsule(radius, height, 8, createMaterial(Color.MAGENTA), VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal);
+        return mBuilder.createCapsule(radius, height, 16, createMaterial(Color.MAGENTA), VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal);
     }
 
     private Material createMaterial(Color color) {
