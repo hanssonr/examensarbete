@@ -45,7 +45,7 @@ public enum Resources {
         mManager.load("tex/bullethole.png", Texture.class);
         mManager.load("tex/hole.png", Texture.class);
 
-        mManager.load("obj/player/wep/FPSWeapon.obj", Model.class);
+        mManager.load("obj/player/wep/FPSWeapon.g3db", Model.class);
 
         Bullet.init();
     }
@@ -70,7 +70,7 @@ public enum Resources {
         instance = new ModelInstance(firstPersonWeaponModel, 5f, 0.1f, -15f);
         modelInstanceArray.add(instance);
 
-        fpsWeaponModel = mManager.get("obj/player/wep/FPSWeapon.obj", Model.class);
+        fpsWeaponModel = mManager.get("obj/player/wep/FPSWeapon.g3db", Model.class);
 
         playerModelAnimated = mManager.get("obj/player/animated/MyMinecraftPlayer_animated.g3db", Model.class);
         playerModelInstanceAnimated = new ModelInstance(playerModelAnimated, 10f, 0.1f, -15f);

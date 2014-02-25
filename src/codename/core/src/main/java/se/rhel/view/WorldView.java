@@ -19,12 +19,15 @@ import com.badlogic.gdx.physics.bullet.linearmath.btVector3;
 import se.rhel.controller.PlayerController;
 import se.rhel.model.BulletTest.DebugDrawer;
 import se.rhel.model.BulletWorld;
+import se.rhel.model.FPSCamera;
 import se.rhel.model.WorldModel;
 import se.rhel.res.Resources;
 
 import java.math.BigDecimal;
 
 public class WorldView {
+
+    private FPSCamera weaponCam;
 
     private TextRenderer mFPSRenderer;
     private TextRenderer mBulletLoadRenderer;
@@ -46,6 +49,7 @@ public class WorldView {
     private AnimationController mAnimationController;
 
     public WorldView(WorldModel worldModel) {
+        weaponCam = new FPSCamera(68, 0.1f, 5);
         mWorldModel = worldModel;
         mSpriteBatch = new SpriteBatch();
         mModelBatch = new ModelBatch();
@@ -86,10 +90,16 @@ public class WorldView {
 
         mAnimationController.update(delta);
 
+        weaponCam.position.set(mWorldModel.getCamera().position);
+
         if(PlayerController.DRAW_MESH) {
             mModelBatch.begin(mWorldModel.getCamera());
             mModelBatch.render(Resources.INSTANCE.modelInstanceArray);
             mModelBatch.render(mWorldModel.getBulletWorld().instances, mEnvironment);
+            mModelBatch.end();
+
+            mModelBatch.begin(mWorldModel.getCamera());
+            Gdx.gl.glClear(GL10.GL_DEPTH_BUFFER_BIT);
             mModelBatch.render(mWorldModel.getBulletWorld().fpsModel, mEnvironment);
             mModelBatch.end();
         }

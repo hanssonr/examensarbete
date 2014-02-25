@@ -1,10 +1,7 @@
 package se.rhel.model;
 
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
-import com.badlogic.gdx.math.Matrix4;
-import com.badlogic.gdx.math.Quaternion;
-import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.math.*;
 import com.badlogic.gdx.physics.bullet.collision.*;
 import com.badlogic.gdx.physics.bullet.dynamics.btRigidBody;
 import com.badlogic.gdx.math.collision.Ray;
@@ -33,8 +30,10 @@ public class Player extends DynamicEntity {
     public Vector3 fromGround = new Vector3();
     public Vector3 toGround = new Vector3();
 
+    //weapon
     ModelInstance weapon;
-    WorldModel mModel;
+    Matrix4 weaponWorld = new Matrix4().idt();
+    Vector3 weaponOffset = new Vector3();
 
     public boolean mOnGround = false;
     private static Vector2 mPlayersize = new Vector2(0.6f, 1.5f);
@@ -69,7 +68,7 @@ public class Player extends DynamicEntity {
     public void update(float delta) {
         mBody.setGravity(Vector3.Zero);
         mTransformation.set(mBody.getCenterOfMassTransform());
-        updateCamera();
+        updateCamera(delta);
         checkOnGround();
     }
 
@@ -104,20 +103,18 @@ public class Player extends DynamicEntity {
         }
     }
 
-    private void updateCamera() {
+    private void updateCamera(float delta) {
         if(mCamera != null) {
             mTransformation.getTranslation(mCamera.position);
             mCamera.position.add(mCamera.getOffset());
             mCamera.update();
 
-            Matrix4 weaponWorld = mCamera.view.cpy().inv();
-            Vector3 pos = new Vector3();
-            weaponWorld.getTranslation(pos);
-            pos.sub(mCamera.up.cpy());
-            pos.add(mCamera.direction.cpy().scl(1f));
-            pos.add(mCamera.getRight());
-
-            weaponWorld.setTranslation(pos);
+            weaponWorld.set(mCamera.view.cpy().inv());
+            weaponWorld.getTranslation(weaponOffset);
+            weaponOffset.sub(mCamera.up.cpy().scl(0.7f));
+            weaponOffset.add(mCamera.direction);
+            weaponOffset.add(mCamera.getRight());
+            weaponWorld.setTranslation(weaponOffset);
             weapon.transform.set(weaponWorld);
         }
     }
@@ -148,7 +145,6 @@ public class Player extends DynamicEntity {
         mBody.activate(true);
         direction.x *= mMovespeed;
         direction.z *= mMovespeed;
-        System.out.println(direction.y);
         mBody.setLinearVelocity(direction);
     }
 
