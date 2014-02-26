@@ -21,12 +21,15 @@ import se.rhel.controller.PlayerController;
 import se.rhel.graphics.FrontFaceDepthShaderProvider;
 import se.rhel.model.BulletTest.DebugDrawer;
 import se.rhel.model.BulletWorld;
+import se.rhel.model.FPSCamera;
 import se.rhel.model.WorldModel;
 import se.rhel.res.Resources;
 
 import java.math.BigDecimal;
 
 public class WorldView {
+
+    private FPSCamera weaponCam;
 
     private TextRenderer mFPSRenderer;
     private TextRenderer mBulletLoadRenderer;
@@ -59,6 +62,7 @@ public class WorldView {
     private ModelBatch depthModelBatch = new ModelBatch(depthShaderProvider);
 
     public WorldView(WorldModel worldModel) {
+        weaponCam = new FPSCamera(68, 0.1f, 5);
         mWorldModel = worldModel;
         mSpriteBatch = new SpriteBatch();
         mModelBatch = new ModelBatch();
@@ -113,10 +117,11 @@ public class WorldView {
             Gdx.gl.glDepthFunc(GL20.GL_LEQUAL);
             Gdx.gl.glDepthMask(true);
 
+        weaponCam.position.set(mWorldModel.getCamera().position);
+
             mModelBatch.begin(mWorldModel.getCamera());
             mModelBatch.render(Resources.INSTANCE.modelInstanceArray);
             mModelBatch.render(mWorldModel.getBulletWorld().instances, mEnvironment);
-            mModelBatch.render(mWorldModel.getBulletWorld().fpsModel, mEnvironment);
             mModelBatch.render(mWorldModel.getBulletWorld().levelInstance, mEnvironment);
             mModelBatch.end();
             buffer1.end();
@@ -205,6 +210,11 @@ public class WorldView {
         mCrosshairRenderer.end();
 
         mDecalRenderer.draw(delta);
+
+        mModelBatch.begin(mWorldModel.getCamera());
+        Gdx.gl.glClear(GL10.GL_DEPTH_BUFFER_BIT);
+        mModelBatch.render(mWorldModel.getBulletWorld().fpsModel, mEnvironment);
+        mModelBatch.end();
     }
 
     /**
