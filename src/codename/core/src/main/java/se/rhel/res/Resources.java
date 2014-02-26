@@ -49,7 +49,7 @@ public enum Resources {
         mManager.load("tex/hole.png", Texture.class);
 
         mManager.load("obj/player/wep/FPSWeapon.g3db", Model.class);
-        mManager.load("obj/level/testbox.obj", Model.class);
+        // mManager.load("obj/level/testbox.obj", Model.class);
 
         Bullet.init();
     }

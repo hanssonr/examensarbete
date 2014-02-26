@@ -146,7 +146,7 @@ public class WorldView {
             depthModelBatch.end();
             depthFrameBuffer.end();
 
-            // depthFrameBuffer.getColorBufferTexture().bind();
+            depthFrameBuffer.getColorBufferTexture().bind();
             outLineShader.begin();
             Gdx.gl.glEnable(GL10.GL_BLEND);
             Gdx.gl.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
