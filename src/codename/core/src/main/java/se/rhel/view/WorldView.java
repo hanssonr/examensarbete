@@ -2,21 +2,23 @@ package se.rhel.view;
 
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.GL10;
+import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g3d.Environment;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight;
+import com.badlogic.gdx.graphics.g3d.shaders.DepthShader;
 import com.badlogic.gdx.graphics.g3d.utils.AnimationController;
 import com.badlogic.gdx.graphics.g3d.utils.DepthShaderProvider;
+import com.badlogic.gdx.graphics.glutils.FrameBuffer;
+import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.bullet.linearmath.btIDebugDraw;
 import com.badlogic.gdx.physics.bullet.linearmath.btVector3;
 import se.rhel.controller.PlayerController;
+import se.rhel.graphics.FrontFaceDepthShaderProvider;
 import se.rhel.model.BulletTest.DebugDrawer;
 import se.rhel.model.BulletWorld;
 import se.rhel.model.WorldModel;
@@ -34,6 +36,7 @@ public class WorldView {
     private ModelBatch mModelBatch;
     private ShapeRenderer mCrosshairRenderer;
     private DecalRenderer mDecalRenderer;
+    private EntitySystemRenderer mEntitySystem;
 
     private WorldModel mWorldModel;
 
@@ -45,6 +48,16 @@ public class WorldView {
 
     private AnimationController mAnimationController;
 
+    private FrameBuffer buffer1 = new FrameBuffer(Pixmap.Format.RGBA8888, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), true);
+    private FrameBuffer depthFrameBuffer = new FrameBuffer(Pixmap.Format.RGBA8888, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), true);
+
+    private ShaderProgram outLineShader = new ShaderProgram(Gdx.files.internal("shader/outline.vertex.glsl"), Gdx.files.internal("shader/outline.fragment.glsl"));
+    private ShaderProgram toonShader = new ShaderProgram(Gdx.files.internal("shader/celshading.vertex.glsl"), Gdx.files.internal("shader/celshading.fragment.glsl"));
+
+    private Mesh fullscreenQuad = createFullScreenQuad();
+    private FrontFaceDepthShaderProvider depthShaderProvider = new FrontFaceDepthShaderProvider();
+    private ModelBatch depthModelBatch = new ModelBatch(depthShaderProvider);
+
     public WorldView(WorldModel worldModel) {
         mWorldModel = worldModel;
         mSpriteBatch = new SpriteBatch();
@@ -52,6 +65,7 @@ public class WorldView {
 
         mCrosshairRenderer = new ShapeRenderer();
         mDecalRenderer = new DecalRenderer(mWorldModel.getCamera());
+        mEntitySystem = new EntitySystemRenderer();
 
         mAimDebugDrawer = new DebugDrawer();
         mDebugDrawer = new DebugDrawer();
@@ -71,7 +85,8 @@ public class WorldView {
 
         mAnimationController = new AnimationController(Resources.INSTANCE.playerModelInstanceAnimated);
         mAnimationController.setAnimation("walk", -1);
-        Resources.INSTANCE.modelInstanceArray.add(Resources.INSTANCE.playerModelInstanceAnimated);
+        mWorldModel.getBulletWorld().levelInstance.add(Resources.INSTANCE.playerModelInstanceAnimated);
+        // Resources.INSTANCE.modelInstanceArray.add
 
         /*
         mEnvironment.add(new DirectionalLight().set(0.8f, 0.8f, 0.8f, -1f, -0.8f, -0.2f));
@@ -80,19 +95,74 @@ public class WorldView {
     }
 
     public void render(float delta) {
-        Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        Gdx.gl.glClearColor(0, 0, 0, 0);
-        Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
+
+
 
         mAnimationController.update(delta);
 
         if(PlayerController.DRAW_MESH) {
+            // Cel-shading
+
+            buffer1.begin();
+            Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+            Gdx.gl.glClearColor(0, 1, 1, 1);
+            Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
+
+            Gdx.gl.glCullFace(GL20.GL_BACK);
+            Gdx.gl.glEnable(GL20.GL_DEPTH_TEST);
+            Gdx.gl.glDepthFunc(GL20.GL_LEQUAL);
+            Gdx.gl.glDepthMask(true);
+
             mModelBatch.begin(mWorldModel.getCamera());
             mModelBatch.render(Resources.INSTANCE.modelInstanceArray);
             mModelBatch.render(mWorldModel.getBulletWorld().instances, mEnvironment);
             mModelBatch.render(mWorldModel.getBulletWorld().fpsModel, mEnvironment);
+            mModelBatch.render(mWorldModel.getBulletWorld().levelInstance, mEnvironment);
+            mModelBatch.end();
+            buffer1.end();
+
+            buffer1.getColorBufferTexture().bind();
+            // Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
+            toonShader.begin();
+            fullscreenQuad.render(toonShader, GL20.GL_TRIANGLE_STRIP, 0, 4);
+            toonShader.end();
+
+            depthFrameBuffer.begin();
+            Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+            Gdx.gl.glClearColor(0, 1, 1, 1);
+            Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
+            Gdx.gl.glCullFace(GL20.GL_BACK);
+            Gdx.gl.glEnable(GL20.GL_DEPTH_TEST);
+            Gdx.gl.glDepthFunc(GL20.GL_LEQUAL);
+            Gdx.gl.glDepthMask(true);
+
+            depthModelBatch.begin(mWorldModel.getCamera());
+            depthModelBatch.render(mWorldModel.getBulletWorld().levelInstance, mEnvironment);
+            depthModelBatch.end();
+            depthFrameBuffer.end();
+
+            // depthFrameBuffer.getColorBufferTexture().bind();
+            outLineShader.begin();
+            Gdx.gl.glEnable(GL10.GL_BLEND);
+            Gdx.gl.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
+            // Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
+
+            fullscreenQuad.render(outLineShader, GL20.GL_TRIANGLE_STRIP, 0, 4);
+            outLineShader.end();
+
+        } else {
+            Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+            Gdx.gl.glClearColor(0, 1, 1, 1);
+            Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
+
+            mModelBatch.begin(mWorldModel.getCamera());
+            mModelBatch.render(Resources.INSTANCE.modelInstanceArray);
+            mModelBatch.render(mWorldModel.getBulletWorld().instances, mEnvironment);
+            mModelBatch.render(mWorldModel.getBulletWorld().fpsModel, mEnvironment);
+            mModelBatch.render(mWorldModel.getBulletWorld().levelInstance, mEnvironment);
             mModelBatch.end();
         }
+
 
         if(PlayerController.DRAW_DEBUG_INFO) {
             mFPSRenderer.draw(delta);
@@ -148,6 +218,43 @@ public class WorldView {
         BigDecimal bd = new BigDecimal(Float.toString(d));
         bd = bd.setScale(decimalPlace, BigDecimal.ROUND_HALF_UP);
         return bd.floatValue();
+    }
+
+    public Mesh createFullScreenQuad() {
+        float[] verts = new float[20];
+        int i = 0;
+
+        verts[i++] = 1f; // x2
+        verts[i++] = -1; // y2
+        verts[i++] = 0;
+        verts[i++] = 1f; // u2
+        verts[i++] = 0f; // v2
+
+        verts[i++] = -1; // x1
+        verts[i++] = -1; // y1
+        verts[i++] = 0;
+        verts[i++] = 0f; // u1
+        verts[i++] = 0f; // v1
+
+        verts[i++] = 1f; // x3
+        verts[i++] = 1f; // y2
+        verts[i++] = 0;
+        verts[i++] = 1f; // u3
+        verts[i++] = 1f; // v3
+
+        verts[i++] = -1; // x4
+        verts[i++] = 1f; // y4
+        verts[i++] = 0;
+        verts[i++] = 0f; // u4
+        verts[i++] = 1f; // v4
+
+
+        Mesh mesh = new Mesh( true, 4, 0,  // static mesh with 4 vertices and no indices
+                new VertexAttribute( VertexAttributes.Usage.Position, 3, ShaderProgram.POSITION_ATTRIBUTE ),
+                new VertexAttribute( VertexAttributes.Usage.TextureCoordinates, 2, ShaderProgram.TEXCOORD_ATTRIBUTE+"0" ) );
+
+        mesh.setVertices( verts );
+        return mesh;
     }
 
     public void dispose() {

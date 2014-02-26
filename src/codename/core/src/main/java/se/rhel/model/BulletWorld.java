@@ -41,6 +41,7 @@ public class BulletWorld implements BaseModel {
 
     private Array<Model> mModels = new Array<>();
     public Array<ModelInstance> instances = new Array<ModelInstance>();
+    public Array<ModelInstance> levelInstance = new Array<>();
     public ModelInstance fpsModel;
     private Array<btCollisionShape> mShapes = new Array<>();
     private Array<btRigidBodyConstructionInfo> mBodyInfos = new Array<>();
@@ -101,7 +102,7 @@ public class BulletWorld implements BaseModel {
         btRigidBodyConstructionInfo levelInfo = new btRigidBodyConstructionInfo(0f, null, levelShape, Vector3.Zero);
         mBodyInfos.add(levelInfo);
         ModelInstance level = new ModelInstance(Resources.INSTANCE.levelModel);
-        instances.add(level);
+        levelInstance.add(level);
         btDefaultMotionState levelMotionState = new btDefaultMotionState();
         levelMotionState.setWorldTransform(level.transform);
         mMotionStates.add(levelMotionState);
@@ -128,7 +129,7 @@ public class BulletWorld implements BaseModel {
         mBodies.add(pBody);
         mCollisionWorld.addRigidBody(pBody);
         */
-        //addSpheres();
+        addSpheres();
     }
 
     public void addSpheres() {

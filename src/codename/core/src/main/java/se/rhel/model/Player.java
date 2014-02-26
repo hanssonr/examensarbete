@@ -148,7 +148,6 @@ public class Player extends DynamicEntity {
         mBody.activate(true);
         direction.x *= mMovespeed;
         direction.z *= mMovespeed;
-        System.out.println(direction.y);
         mBody.setLinearVelocity(direction);
     }
 

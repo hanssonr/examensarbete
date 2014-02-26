@@ -35,7 +35,7 @@ public enum Resources {
     public void load() {
         mManager.load("data/fonts/hud.fnt", BitmapFont.class);
         mManager.load("obj/ship/ship.obj", Model.class);
-        mManager.load("obj/level/level_large_tex.g3db", Model.class);
+        mManager.load("obj/level/level_xlarge.g3db", Model.class);
         mManager.load("obj/player/player.g3db", Model.class);
         mManager.load("obj/player/wep/FirstPersonWeapon.g3db", Model.class);
         mManager.load("obj/player/animated/MyMinecraftPlayer_animated.g3db", Model.class);
@@ -62,9 +62,9 @@ public enum Resources {
         ModelInstance instance = new ModelInstance(shipModel, 0,1,0);
         modelInstanceArray.add(instance);
 
-        Model space = mManager.get("obj/skybox/spacesphere.obj", Model.class);
-        instance = new ModelInstance(space);
-        modelInstanceArray.add(instance);
+        // Model space = mManager.get("obj/skybox/spacesphere.obj", Model.class);
+        // instance = new ModelInstance(space);
+        // modelInstanceArray.add(instance);
 
         firstPersonWeaponModel = mManager.get("obj/player/wep/FirstPersonWeapon.g3db", Model.class);
         instance = new ModelInstance(firstPersonWeaponModel, 5f, 0.1f, -15f);
@@ -73,10 +73,10 @@ public enum Resources {
         fpsWeaponModel = mManager.get("obj/player/wep/FPSWeapon.obj", Model.class);
 
         playerModelAnimated = mManager.get("obj/player/animated/MyMinecraftPlayer_animated.g3db", Model.class);
-        playerModelInstanceAnimated = new ModelInstance(playerModelAnimated, 10f, 0.1f, -15f);
+        playerModelInstanceAnimated = new ModelInstance(playerModelAnimated, -19f, 0.1f, 24f);
         // modelInstanceArray.add(instance);
 
-        levelModel = mManager.get("obj/level/level_large_tex.g3db", Model.class);
+        levelModel = mManager.get("obj/level/level_xlarge.g3db", Model.class);
         mcPlayerModel = mManager.get("obj/player/mcplayer.g3db", Model.class);
     }
 
