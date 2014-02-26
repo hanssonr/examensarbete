@@ -97,11 +97,6 @@ public class WorldView {
             mModelBatch.render(Resources.INSTANCE.modelInstanceArray);
             mModelBatch.render(mWorldModel.getBulletWorld().instances, mEnvironment);
             mModelBatch.end();
-
-            mModelBatch.begin(mWorldModel.getCamera());
-            Gdx.gl.glClear(GL10.GL_DEPTH_BUFFER_BIT);
-            mModelBatch.render(mWorldModel.getBulletWorld().fpsModel, mEnvironment);
-            mModelBatch.end();
         }
 
         if(PlayerController.DRAW_DEBUG_INFO) {
@@ -145,6 +140,11 @@ public class WorldView {
         mCrosshairRenderer.end();
 
         mDecalRenderer.draw(delta);
+
+        mModelBatch.begin(mWorldModel.getCamera());
+        Gdx.gl.glClear(GL10.GL_DEPTH_BUFFER_BIT);
+        mModelBatch.render(mWorldModel.getBulletWorld().fpsModel, mEnvironment);
+        mModelBatch.end();
     }
 
     /**

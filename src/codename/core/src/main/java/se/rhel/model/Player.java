@@ -17,7 +17,17 @@ import se.rhel.view.DecalRenderer;
 
 public class Player extends DynamicEntity {
 
+    public enum PLAYERSTATE {
+        idle, running
+    }
+
     private FPSCamera mCamera;
+
+    private PLAYERSTATE mState;
+
+    private float bobPower = 0.7f;
+    private float bobTimer = 0f;
+    private Vector3 bobVector = new Vector3();
 
     private BulletWorld mWorld;
     private btRigidBody mBody;
@@ -46,6 +56,8 @@ public class Player extends DynamicEntity {
         createPyshicsBody();
         weapon = new ModelInstance(Resources.INSTANCE.fpsWeaponModel);
         mWorld.fpsModel = weapon;
+
+        mState = PLAYERSTATE.idle;
     }
 
     private void createPyshicsBody() {
@@ -69,7 +81,23 @@ public class Player extends DynamicEntity {
         mBody.setGravity(Vector3.Zero);
         mTransformation.set(mBody.getCenterOfMassTransform());
         updateCamera(delta);
+        updateWeapon();
         checkOnGround();
+    }
+
+    private void updateWeapon() {
+        weaponWorld.set(mCamera.view.cpy().inv());
+        weaponWorld.getTranslation(weaponOffset);
+        weaponOffset.sub(mCamera.up.cpy().scl(0.7f));
+        weaponOffset.add(mCamera.direction);
+        weaponOffset.add(mCamera.getRight());
+
+        if(mState == PLAYERSTATE.running) {
+            weaponOffset.add(bobVector.cpy().scl(bobPower));
+        }
+
+        weaponWorld.setTranslation(weaponOffset);
+        weapon.transform.set(weaponWorld);
     }
 
     public void shoot(Ray ray) {
@@ -105,17 +133,23 @@ public class Player extends DynamicEntity {
 
     private void updateCamera(float delta) {
         if(mCamera != null) {
+            bobTimer+=delta;
+
             mTransformation.getTranslation(mCamera.position);
             mCamera.position.add(mCamera.getOffset());
-            mCamera.update();
 
-            weaponWorld.set(mCamera.view.cpy().inv());
-            weaponWorld.getTranslation(weaponOffset);
-            weaponOffset.sub(mCamera.up.cpy().scl(0.7f));
-            weaponOffset.add(mCamera.direction);
-            weaponOffset.add(mCamera.getRight());
-            weaponWorld.setTranslation(weaponOffset);
-            weapon.transform.set(weaponWorld);
+            //bobbing
+            if(mState == PLAYERSTATE.running) {
+                Vector3 dir = mCamera.getRight().cpy();
+                dir.y = 1f;
+                float x = (float)Math.sin(bobTimer*10)*0.05f;
+                float y = (float)Math.cos(bobTimer * 20)*0.03f;
+                float z = (float)Math.sin(bobTimer*10)*0.05f;
+                bobVector.set(x, y, z);
+                mCamera.position.add(bobVector.scl(dir)).cpy().scl(bobPower);
+            }
+
+            mCamera.update();
         }
     }
 
@@ -146,6 +180,13 @@ public class Player extends DynamicEntity {
         direction.x *= mMovespeed;
         direction.z *= mMovespeed;
         mBody.setLinearVelocity(direction);
+
+
+        if(Math.abs(direction.x) > 0 || Math.abs(direction.z) > 0) {
+            mState = PLAYERSTATE.running;
+        } else {
+            mState = PLAYERSTATE.idle;
+        }
     }
 
     public void rotate(Vector3 axis, float angle) {
