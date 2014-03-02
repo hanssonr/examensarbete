@@ -1,8 +1,5 @@
-
-*.docx
-
-*.doc
-
-*.pdf
-
+/res
+.gitignore
+src/codename/core/core.iml
+src/codename/desktop/desktop.iml
 src/codename/libgdx-gradle-template.ipr
