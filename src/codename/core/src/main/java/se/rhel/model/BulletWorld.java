@@ -97,11 +97,11 @@ public class BulletWorld implements BaseModel {
         */
 
         // Level
-        btBvhTriangleMeshShape levelShape = new btBvhTriangleMeshShape(Resources.INSTANCE.levelModel.meshParts);
+        btBvhTriangleMeshShape levelShape = new btBvhTriangleMeshShape(Resources.INSTANCE.levelModelPhysics.meshParts);
         mShapes.add(levelShape);
         btRigidBodyConstructionInfo levelInfo = new btRigidBodyConstructionInfo(0f, null, levelShape, Vector3.Zero);
         mBodyInfos.add(levelInfo);
-        ModelInstance level = new ModelInstance(Resources.INSTANCE.levelModel);
+        ModelInstance level = new ModelInstance(Resources.INSTANCE.levelModelVisual);
         levelInstance.add(level);
         btDefaultMotionState levelMotionState = new btDefaultMotionState();
         levelMotionState.setWorldTransform(level.transform);
@@ -129,7 +129,7 @@ public class BulletWorld implements BaseModel {
         mBodies.add(pBody);
         mCollisionWorld.addRigidBody(pBody);
         */
-        addSpheres();
+        // addSpheres();
     }
 
     public void addSpheres() {

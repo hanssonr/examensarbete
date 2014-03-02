@@ -1,5 +1,6 @@
 package se.rhel.model;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.math.*;
 import com.badlogic.gdx.physics.bullet.collision.*;
@@ -13,7 +14,7 @@ import com.badlogic.gdx.physics.bullet.linearmath.btDefaultMotionState;
 import com.badlogic.gdx.physics.bullet.linearmath.btVector3;
 import se.rhel.model.Entity.DynamicEntity;
 import se.rhel.res.Resources;
-import se.rhel.view.DecalRenderer;
+import se.rhel.view.BulletHoleRenderer;
 
 public class Player extends DynamicEntity {
 
@@ -35,10 +36,14 @@ public class Player extends DynamicEntity {
     // Testing
     private ClosestRayResultCallback rayTestCB;
     public boolean hasShot = false;
+
     public Vector3 from = new Vector3();
     public Vector3 to = new Vector3();
+
     public Vector3 fromGround = new Vector3();
     public Vector3 toGround = new Vector3();
+
+    private float deltaShoot;
 
     //weapon
     ModelInstance weapon;
@@ -83,6 +88,15 @@ public class Player extends DynamicEntity {
         updateCamera(delta);
         updateWeapon();
         checkOnGround();
+
+        // Update shooting for uneccesary drawing / spam shooting
+        if(hasShot) {
+            deltaShoot += delta;
+            if(deltaShoot > 0.3f) {
+                hasShot = false;
+                deltaShoot = 0f;
+            }
+        }
     }
 
     private void updateWeapon() {
@@ -100,8 +114,18 @@ public class Player extends DynamicEntity {
         weapon.transform.set(weaponWorld);
     }
 
-    public void shoot(Ray ray) {
+    public void shoot() {
+
+        if(hasShot)
+            return;
+
         hasShot = true;
+
+        // We want a ray from middle of screen as basis of hit detection
+        Ray ray = mCamera.getPickRay(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2);
+        ray = ray.cpy();
+
+        // For debugging purposes
         from.set(ray.origin);
         to.set(ray.direction).scl(50f).add(from);
 
@@ -124,7 +148,7 @@ public class Player extends DynamicEntity {
             if(obj.isStaticOrKinematicObject()) {
                 btVector3 v = rayTestCB.getHitPointWorld();
                 btVector3 t = rayTestCB.getHitNormalWorld();
-                DecalRenderer.addBullethole(new Vector3(v.getX(), v.getY(), v.getZ()), new Vector3(t.getX(), t.getY(), t.getZ()).nor());
+                BulletHoleRenderer.addBullethole(new Vector3(v.getX(), v.getY(), v.getZ()), new Vector3(t.getX(), t.getY(), t.getZ()).nor());
                 v.dispose();
                 t.dispose();
             }

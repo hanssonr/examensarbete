@@ -14,7 +14,7 @@ import se.rhel.res.Resources;
  * Created by Emil on 2014-02-21.
  * assigned to libgdx-gradle-template in se.rhel.view
  */
-public class DecalRenderer {
+public class BulletHoleRenderer {
 
     private DecalBatch mDecalBatch;
     private static FPSCamera mCamera;
@@ -24,7 +24,7 @@ public class DecalRenderer {
     private static int MAX_BULLET_DECALS = 10;
     private static int CURRENT = 0;
 
-    public DecalRenderer(FPSCamera camera) {
+    public BulletHoleRenderer(FPSCamera camera) {
         mCamera = camera;
         mDecalBatch = new DecalBatch(new CameraGroupStrategy(camera));
         mDecals = new Array<>();
