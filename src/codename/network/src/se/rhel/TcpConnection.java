@@ -1,12 +1,11 @@
 package se.rhel;
 
+import se.rhel.packet.ConnectAcceptPacket;
+import se.rhel.packet.ConnectPacket;
 import se.rhel.packet.Packet;
 
 import java.io.*;
-import java.net.DatagramSocket;
-import java.net.ServerSocket;
-import java.net.Socket;
-import java.net.SocketException;
+import java.net.*;
 import java.nio.ByteBuffer;
 
 /**
@@ -15,9 +14,11 @@ import java.nio.ByteBuffer;
  */
 public class TcpConnection implements Runnable {
 
+    private final Server mServer;
     private Socket mSocket;
 
-    public TcpConnection(Socket socket) {
+    public TcpConnection(Socket socket, Server server) {
+        mServer = server;
         mSocket = socket;
     }
 
@@ -29,6 +30,8 @@ public class TcpConnection implements Runnable {
             byte[] msg = new byte[10];
             dis.readFully(msg);
             parsePacket(msg);
+
+
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -43,11 +46,12 @@ public class TcpConnection implements Runnable {
             case INVALID:
                 break;
             case CONNECT:
-                System.out.println("CONNECTION PACKET RECEIVED");
-                break;
-            case DISCONNECT:
-                break;
-            case MOVE:
+                //System.out.println("CONNECTION PACKET RECEIVED " + type.getId() + " UDP PORT " + buf.getInt());
+                Connection con = new Connection(mSocket.getInetAddress(), buf.getInt(), this);
+
+                if(mServer.addConnection(con))
+                    mServer.sendTCP(mSocket, new ConnectAcceptPacket(con.getId()));
+
                 break;
             default:
                 break;

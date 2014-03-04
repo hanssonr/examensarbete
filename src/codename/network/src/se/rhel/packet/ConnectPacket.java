@@ -7,8 +7,10 @@ import java.nio.ByteBuffer;
  */
 public class ConnectPacket extends Packet {
 
-    public ConnectPacket() {
+    public ConnectPacket(int udpPort) {
         super(0, 10);
+
+        mBuffer.putInt(udpPort);
     }
 
 }

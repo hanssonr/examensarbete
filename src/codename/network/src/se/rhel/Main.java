@@ -21,8 +21,9 @@ public class Main {
                     //EmilClient c = new EmilClient("Emil-PC", 4455);
                     //new Thread(c).start();
                     Client c = new Client();
-                    c.start();
                     c.connect(InetAddress.getByName("localhost"), 4455);
+                    c.start();
+
                 }
 
             } catch (SocketException e) {
