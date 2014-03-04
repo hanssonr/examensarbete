@@ -6,10 +6,14 @@ import com.badlogic.gdx.graphics.g3d.utils.CameraInputController;
 import com.badlogic.gdx.math.Vector3;
 import se.rhel.res.Resources;
 
+import java.util.ArrayList;
+
 public class WorldModel implements BaseModel {
 
     private FPSCamera mCamera;
     private Player mPlayer;
+
+    private ArrayList<Player> mPlayers = new ArrayList<Player>();
 
     private ModelInstance mBoxInstance;
     private CameraInputController mCamController;
@@ -36,6 +40,14 @@ public class WorldModel implements BaseModel {
     public void update(float delta) {
         mBulletWorld.update(delta);
         mPlayer.update(delta);
+
+
+        for(Player p : mPlayers)
+            p.update(delta);
+    }
+
+    public void addPlayer(Player player) {
+        mPlayers.add(player);
     }
 
     public BulletWorld getBulletWorld() { return mBulletWorld; }

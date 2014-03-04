@@ -133,7 +133,7 @@ public class WorldView {
             fullscreenQuad.render(toonShader, GL20.GL_TRIANGLE_STRIP, 0, 4);
             toonShader.end();
 
-            /*
+
             depthFrameBuffer.begin();
             Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
             Gdx.gl.glClearColor(0, 1, 1, 1);
@@ -156,7 +156,7 @@ public class WorldView {
 
             fullscreenQuad.render(outLineShader, GL20.GL_TRIANGLE_STRIP, 0, 4);
             outLineShader.end();
-            */
+
 
         } else {
             Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
