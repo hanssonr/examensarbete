@@ -171,7 +171,7 @@ public class WorldView {
             mModelBatch.end();
         }
 
-        lmtr.render();
+
 
         if(PlayerController.DRAW_DEBUG_INFO) {
             mFPSRenderer.draw(delta);
@@ -210,9 +210,10 @@ public class WorldView {
         }
 
         if(mWorldModel.getPlayer().hasShot) {
-            mLaserRenderer.shoot();
+            // mLaserRenderer.shoot();
+            lmtr.render();
         }
-        mLaserRenderer.draw(delta);
+        // mLaserRenderer.draw(delta);
 
         // "Crosshair"
         mCrosshairRenderer.begin(ShapeRenderer.ShapeType.Line);

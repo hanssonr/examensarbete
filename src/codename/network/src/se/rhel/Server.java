@@ -2,10 +2,9 @@ package se.rhel;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
-import java.net.InetAddress;
-import java.net.SocketException;
+import java.net.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Emil on 2014-02-27.
@@ -16,52 +15,112 @@ public class Server implements EndPoint {
     public static String NAME;
     private static int PORT;
 
-    private DatagramSocket mSocket;
+    private DatagramSocket mUDPSocket;
+    private ServerSocket mTCPSocket;
     private BufferedReader mIn;
+
+    private boolean mIsStarted;
+
+    // List with active connections
+    private List<Connection> mConnections;
 
     public Server(String name, int port) throws SocketException {
         PORT = port;
         NAME = name;
-        mSocket = new DatagramSocket(PORT);
+
+        mConnections = new ArrayList<>();
     }
 
     @Override
     public void run() {
-        try {
-            byte[] buf = new byte[256];
-
-            // Recieve request
-            DatagramPacket packet = new DatagramPacket(buf, buf.length);
-            mSocket.receive(packet);
-
-            String received = new String(packet.getData(), 0, packet.getLength());
-            System.out.println("Debug > Received on server: " + received);
-
-            // Response
-            String responseString = "hellu";
-            buf = responseString.getBytes();
-
-            // Send response
-            InetAddress address = packet.getAddress();
-            int port = packet.getPort();
-
-            if(port == PORT) {
-                packet = new DatagramPacket(buf, buf.length, address, port);
-                mSocket.send(packet);
+        System.out.println("Debug > Server started..");
+        while(mIsStarted) {
+            try {
+                // Waiting for new connections
+                TcpConnection c = new TcpConnection(mTCPSocket.accept());
+                // Adding the connection
+                c.start();
+                // addConnection(c);
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-        } catch (IOException e) {
-            e.printStackTrace();
         }
     }
 
     @Override
     public void start() {
-        run();
+
+        try {
+            mUDPSocket = new DatagramSocket(PORT);
+            mTCPSocket = new ServerSocket(PORT);
+        } catch (SocketException e) {
+            System.out.println(e.getMessage());
+            System.out.println("Server not started");
+            return;
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+            System.out.println("Server not started");
+            return;
+        }
+
+        UdpConnection udpc = new UdpConnection(mUDPSocket);
+        udpc.start();
+
+        mIsStarted = true;
+        new Thread(this).start();
     }
 
     @Override
     public void stop() {
-        mSocket.close();
+        if(!mIsStarted)
+            return;
+
+        mIsStarted = false;
+        mUDPSocket.close();
+    }
+
+    /*
+    Adds a connection object to the list of current connections
+     */
+    private boolean addConnection(Connection con) {
+        if(mConnections.contains(con))
+            return false;
+
+        // Adding a unique ID to the new Connection
+        mConnections.add(con);
+        return true;
+    }
+
+    /*
+    Send to all Connections through UDP
+     */
+    public void sendToAllUDP() throws IOException {
+        for (Connection connection : mConnections) {
+            sendToUDP(connection);
+        }
+    }
+
+    /**
+     * Send to a specific connection through UDP
+     * @param con
+     * @throws IOException
+     */
+    public void sendToUDP(Connection con) throws IOException {
+        byte[] buffer = new byte[256];
+        DatagramPacket packet;
+
+        // Response
+        String responseString = "Jag måste i ärlighetens namn, säga att jag är en ärlig person";
+        buffer = responseString.getBytes();
+
+        InetAddress address = con.getAddress();
+        int port = con.getPort();
+
+        System.out.println("Server port: " + PORT + " EmilClient port: " + port);
+
+        System.out.println("Debug > Sending on server..");
+        packet = new DatagramPacket(buffer, buffer.length, address, port);
+        mUDPSocket.send(packet);
     }
 
 }

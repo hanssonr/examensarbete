@@ -15,25 +15,6 @@ import se.rhel.res.Resources;
  */
 public class LaserMeshTestRenderer {
 
-    public static final String VERT_SHADER =
-            "attribute vec3 a_position;\n" +
-                    "attribute vec4 a_color;\n" +
-                    "uniform mat4 u_projTrans;\n" +
-                    "varying vec4 vColor;\n" +
-                    "void main() {\n" +
-                    "	vColor = a_color;\n" +
-                    "	gl_Position =  u_projTrans * vec4(a_position.xyz, 1.0);\n" +
-                    "}";
-
-    public static final String FRAG_SHADER =
-            "#ifdef GL_ES\n" +
-                    "precision mediump float;\n" +
-                    "#endif\n" +
-                    "varying vec4 vColor;\n" +
-                    "void main() {\n" +
-                    "	gl_FragColor = vColor;\n" +
-                    "}";
-
     protected static ShaderProgram createMeshShader() {
         ShaderProgram.pedantic = false;
         // ShaderProgram shader = new ShaderProgram(VERT_SHADER, FRAG_SHADER);
@@ -78,10 +59,11 @@ public class LaserMeshTestRenderer {
     private int idx = 0;
 
     public LaserMeshTestRenderer(FPSCamera cam) {
-        mesh = new Mesh(false, MAX_VERTS, 0,
+        mesh = new Mesh(false, 6, 6,
                 new VertexAttribute(VertexAttributes.Usage.Position, POSITION_COMPONENTS, "a_position"),
                 new VertexAttribute(VertexAttributes.Usage.Color, COLOR_COMPONENTS, "a_color"),
                 new VertexAttribute(VertexAttributes.Usage.TextureCoordinates, 2, ShaderProgram.TEXCOORD_ATTRIBUTE+"0" ));
+        mesh.setIndices(new short[]{0, 1, 2, 2, 3, 0});
         shader = createMeshShader();
         this.cam = cam;
     }
@@ -106,25 +88,22 @@ public class LaserMeshTestRenderer {
         //enable blending, for alpha
         Gdx.gl.glEnable(GL20.GL_BLEND);
         Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
+        Gdx.gl.glEnable(GL20.GL_TEXTURE);
 
         //number of vertices we need to render
         int vertexCount = (idx/NUM_COMPONENTS);
-
+        Resources.INSTANCE.laser.bind();
         //start the shader before setting any uniforms
         shader.begin();
 
         //update the projection matrix so our triangles are rendered in 2D
         shader.setUniformMatrix("u_projTrans", cam.combined);
 
-        Resources.INSTANCE.laser.bind();
         //render the mesh
         mesh.render(shader, GL20.GL_TRIANGLE_STRIP, 0, 4);
 
-
         shader.end();
 
-        //re-enable depth to reset states to their default
-        Gdx.gl.glDepthMask(true);
 
         //reset index to zero
         idx = 0;
@@ -169,47 +148,71 @@ public class LaserMeshTestRenderer {
         //bottom right vertex
 
 
-        //bottom left vertex
-        verts[idx++] = to.x; 			//Position(x, y)
-        verts[idx++] = to.y;
-        verts[idx++] = to.z;
-        verts[idx++] = color.r; 	//Color(r, g, b, a)
-        verts[idx++] = color.g;
-        verts[idx++] = color.b;
-        verts[idx++] = color.a;
-        verts[idx++] = 1;
-        verts[idx++] = 0;
-
-        verts[idx++] = to2.x;	 //Position(x, y)
+        // 4
+        verts[idx++] = to2.x;
         verts[idx++] = to2.y;
         verts[idx++] = to2.z;
-        verts[idx++] = color.r;		 //Color(r, g, b, a)
-        verts[idx++] = color.g;
-        verts[idx++] = color.b;
-        verts[idx++] = color.a;
-        verts[idx++] = 0;
-        verts[idx++] = 0;
-
-        //top left vertex
-        verts[idx++] = from2.x; 			//Position(x, y)
-        verts[idx++] = from2.y;
-        verts[idx++] = from2.z;
-        verts[idx++] = color.r; 	//Color(r, g, b, a)
+        verts[idx++] = color.r;
         verts[idx++] = color.g;
         verts[idx++] = color.b;
         verts[idx++] = color.a;
         verts[idx++] = 1;
         verts[idx++] = 1;
 
-        verts[idx++] = from.x;	 //Position(x, y)
+        // 2
+        verts[idx++] = from.x;
         verts[idx++] = from.y;
         verts[idx++] = from.z;
-        verts[idx++] = color.r;		 //Color(r, g, b, a)
+        verts[idx++] = color.r;
+        verts[idx++] = color.g;
+        verts[idx++] = color.b;
+        verts[idx++] = color.a;
+        verts[idx++] = 1;
+        verts[idx++] = 0;
+
+        // 3
+        verts[idx++] = from2.x;
+        verts[idx++] = from2.y;
+        verts[idx++] = from2.z;
+        verts[idx++] = color.r;
+        verts[idx++] = color.g;
+        verts[idx++] = color.b;
+        verts[idx++] = color.a;
+        verts[idx++] = 0;
+        verts[idx++] = 0;
+
+        //1
+        verts[idx++] = to.x;
+        verts[idx++] = to.y;
+        verts[idx++] = to.z;
+        verts[idx++] = color.r;
         verts[idx++] = color.g;
         verts[idx++] = color.b;
         verts[idx++] = color.a;
         verts[idx++] = 0;
         verts[idx++] = 1;
+
+        /*
+        11 11 11 11 11 11
+        01 01 00 00 10 10
+        10 00 01 10 00 01
+        00 10 10 01 01 00
+
+        00 00 00 00 00 00
+        11 11 10 10 01 01
+        01 10 11 01 10 11
+        10 01 01 11 11 10
+
+        10 10 10 10 10 10
+        00 00 01 01 11 11
+        11 01 00 11 01 00
+        01 11 11 00 00 01
+
+        01 01 01 01 01 01
+        10 10 11 11 00 00
+        00 11 10 00 11 10
+        11 00 00 10 10 11
+         */
 
     }
 

@@ -72,21 +72,21 @@ public class LaserRenderer {
             r.begin(mCamera.combined, GL20.GL_TRIANGLE_STRIP);
 
             tex.bind();
-
+            // 4
             r.color(1, 1, 1, 0);
-            r.vertex(f2.x, f2.y, f2.z);
-            r.texCoord(1, 0);
-
-            r.color(1, 1, 1, 0);
-            r.vertex(t.x, t.y, t.z);
+            r.vertex(t2.x, t2.y, t2.z);
             r.texCoord(0, 0);
-
+            // 3
             r.color(1, 1, 1, 0);
             r.vertex(f.x, f.y, f.z);
             r.texCoord(1, 1);
-
+            // 2
             r.color(1, 1, 1, 0);
-            r.vertex(t2.x, t2.y, t2.z);
+            r.vertex(t.x, t.y, t.z);
+            r.texCoord(1, 0);
+            // 1
+            r.color(1, 1, 1, 0);
+            r.vertex(f2.x, f2.y, f2.z);
             r.texCoord(0, 1);
 
             r.end();

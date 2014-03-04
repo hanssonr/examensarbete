@@ -13,10 +13,10 @@ public class Main {
 
                 if(args[0].equals("S")) {
                     Server server = new Server("DaServer", 4455);
-                    server.start();
+                    server.start();// new Thread(server).start(); // server.start();
                 } else {
-                    Client c = new Client("Emil-PC", 4455);
-                    c.start();
+                    EmilClient c = new EmilClient("Emil-PC", 4455);
+                    new Thread(c).start();
                 }
 
             } catch (SocketException e) {
