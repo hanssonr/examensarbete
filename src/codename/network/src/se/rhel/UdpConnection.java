@@ -42,7 +42,7 @@ public class UdpConnection implements Runnable {
     private void handlePacket(DatagramPacket packet) throws IOException {
         String received = new String(packet.getData(), 0, packet.getLength());
         System.out.println("Debug > Received on server: " + received);
-        System.out.println("UDPAddress: " + packet.getAddress() + "Socket Adress: " + packet.getSocketAddress() + " UDPPort: " + packet.getPort());
+        System.out.println("UDPAddress: " + packet.getAddress() + " Socket Adress: " + packet.getSocketAddress() + " UDPPort: " + packet.getPort());
 
 
         // Should we add the connection?

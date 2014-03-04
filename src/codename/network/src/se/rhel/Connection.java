@@ -1,6 +1,7 @@
 package se.rhel;
 
 import java.net.InetAddress;
+import java.net.InetSocketAddress;
 
 /**
  * Created by Emil on 2014-03-04.
