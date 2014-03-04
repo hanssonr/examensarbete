@@ -1,8 +1,6 @@
 package se.rhel;
 
-import se.rhel.packet.ConnectPacket;
-import se.rhel.packet.MovePacket;
-import se.rhel.packet.Packet;
+import se.rhel.packet.*;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -27,6 +25,8 @@ public class Client implements EndPoint {
     private boolean mShouldRun;
     private boolean mIsSocketConnected = false;
 
+    private TcpConnection mTcpConnection;
+
     public Client() {
         this(1024);
     }
@@ -46,23 +46,24 @@ public class Client implements EndPoint {
         mTcpSocket = new Socket(host, port);
         mIsSocketConnected = true;
 
-        //mUdpPacket = new DatagramPacket(mReceiveBuffer, mReceiveBuffer.length);
-
-
-        sendTcpPacket(new ConnectPacket());
-        //sendUdpPacket(new ConnectPacket());
+        System.out.println(mUdpSocket.getLocalPort() + " " + mUdpSocket.getPort());
+        sendTcpPacket(new ConnectPacket(mUdpSocket.getLocalPort()));
     }
 
     private void update() throws IOException {
         if(!mIsSocketConnected) return;
 
-        // DatagramPacket receivePacket = new DatagramPacket(mReceiveBuffer, mReceiveBuffer.length);
-        // mUdpSocket.receive(receivePacket);
-        System.out.println("hej");
         DataInputStream dis = new DataInputStream(mTcpSocket.getInputStream());
         byte[] msg = new byte[10];
         dis.readFully(msg);
-        System.out.println("From server: " + msg);
+        parsePacket(msg);
+
+        DatagramPacket receivePacket = new DatagramPacket(mReceiveBuffer, mReceiveBuffer.length);
+        mUdpSocket.receive(receivePacket);
+        parsePacket(mReceiveBuffer);
+
+
+
     }
 
     public void sendTcpPacket(Packet packet) throws IOException {
@@ -74,6 +75,28 @@ public class Client implements EndPoint {
         System.out.println("CLIENT::sendPacket > " + packet);
         mUdpPacket = new DatagramPacket(packet.getData(), packet.getData().length, mHost, mPort);
         mUdpSocket.send(mUdpPacket);
+    }
+
+    private void parsePacket(byte[] data) {
+        System.out.println("PARSE");
+        ByteBuffer buf = ByteBuffer.wrap(data);
+        Packet.PacketType type = Packet.lookupPacket(buf.get());
+
+        Packet packet = null;
+        switch(type) {
+            case CONNECT_ACCEPT:
+                System.out.println("CONNECTION ACCEPTED WITH ID: " + buf.getInt());
+                try {
+                    sendUdpPacket(new DisconnectPacket());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                break;
+            case CONNECT:
+                System.out.println("LOLOLO");
+            default:
+                break;
+        }
     }
 
 

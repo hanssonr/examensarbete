@@ -16,7 +16,7 @@ public abstract class Packet {
         mPacketId = (byte) packetId;
         mData = new byte[packetSize];
         mBuffer = ByteBuffer.wrap(mData);
-        mBuffer.put(mPacketId);
+        mBuffer.put((byte)mPacketId);
     }
 
     public byte getPacketId() {
@@ -38,7 +38,7 @@ public abstract class Packet {
 
     //PacketType
     public static enum PacketType {
-        INVALID(-1), CONNECT(0), DISCONNECT(1), MOVE(2);
+        INVALID(-1), CONNECT(0), CONNECT_ACCEPT(1);
 
         private int mPacketId;
 

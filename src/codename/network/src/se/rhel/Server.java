@@ -1,6 +1,10 @@
 package se.rhel;
 
+import se.rhel.packet.ConnectAcceptPacket;
+import se.rhel.packet.Packet;
+
 import java.io.BufferedReader;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.*;
 import java.util.ArrayList;
@@ -37,7 +41,7 @@ public class Server implements EndPoint {
         while(mIsStarted) {
             try {
                 // Waiting for new connections
-                TcpConnection c = new TcpConnection(mTCPSocket.accept());
+                TcpConnection c = new TcpConnection(mTCPSocket.accept(), this);
                 // Adding the connection
                 c.start();
                 // addConnection(c);
@@ -82,7 +86,7 @@ public class Server implements EndPoint {
     /*
     Adds a connection object to the list of current connections
      */
-    private boolean addConnection(Connection con) {
+    public boolean addConnection(Connection con) {
         if(mConnections.contains(con))
             return false;
 
@@ -98,6 +102,11 @@ public class Server implements EndPoint {
         for (Connection connection : mConnections) {
             sendToUDP(connection);
         }
+    }
+
+    public void sendUdpPacket(Packet packet, InetAddress address, int port) throws IOException {
+        DatagramPacket mUdpPacket = new DatagramPacket(packet.getData(), packet.getData().length, address, 4455);
+        mUDPSocket.send(mUdpPacket);
     }
 
     /**
@@ -123,4 +132,12 @@ public class Server implements EndPoint {
         mUDPSocket.send(packet);
     }
 
+    public void sendTCP(Socket mSocket, Packet packet) {
+        try {
+            DataOutputStream output = new DataOutputStream(mSocket.getOutputStream());
+            output.write(packet.getData());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }

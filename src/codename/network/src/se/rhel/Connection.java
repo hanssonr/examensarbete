@@ -49,4 +49,8 @@ public class Connection {
     public InetAddress getAddress() {
         return mAddress;
     }
+
+    public int getId() {
+        return mId;
+    }
 }

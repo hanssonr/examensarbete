@@ -7,7 +7,7 @@ import java.nio.ByteBuffer;
  */
 public class DisconnectPacket extends Packet {
 
-    protected DisconnectPacket() {
+    public DisconnectPacket() {
         super(1, 10);
     }
 }
