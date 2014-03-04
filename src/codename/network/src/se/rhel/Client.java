@@ -4,6 +4,7 @@ import se.rhel.packet.ConnectPacket;
 import se.rhel.packet.MovePacket;
 import se.rhel.packet.Packet;
 
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.*;
 import java.nio.ByteBuffer;
@@ -12,6 +13,8 @@ public class Client implements EndPoint {
 
     private DatagramSocket mUdpSocket;
     private DatagramPacket mUdpPacket;
+
+    private Socket mTcpSocket;
 
     private Thread mUpdateThread;
 
@@ -38,10 +41,15 @@ public class Client implements EndPoint {
 
         mUdpSocket = new DatagramSocket();
         mUdpSocket.connect(host, port);
+
+        mTcpSocket = new Socket(host, port);
         mIsSocketConnected = true;
 
-        mUdpPacket = new DatagramPacket(mReceiveBuffer, mReceiveBuffer.length);
-        sendPacket(new ConnectPacket());
+        //mUdpPacket = new DatagramPacket(mReceiveBuffer, mReceiveBuffer.length);
+
+
+        sendTcpPacket(new ConnectPacket());
+        //sendUdpPacket(new ConnectPacket());
     }
 
     private void update() throws IOException {
@@ -51,7 +59,12 @@ public class Client implements EndPoint {
         mUdpSocket.receive(receivePacket);
     }
 
-    public void sendPacket(Packet packet) throws IOException {
+    public void sendTcpPacket(Packet packet) throws IOException {
+        DataOutputStream output = new DataOutputStream(mTcpSocket.getOutputStream());
+        output.write(packet.getData());
+    }
+
+    public void sendUdpPacket(Packet packet) throws IOException {
         System.out.println("CLIENT::sendPacket > " + packet);
         mUdpPacket = new DatagramPacket(packet.getData(), packet.getData().length, mHost, mPort);
         mUdpSocket.send(mUdpPacket);
@@ -81,6 +94,11 @@ public class Client implements EndPoint {
         if(mShouldRun) return;
         mShouldRun = false;
         mUdpSocket.close();
+        try {
+            mTcpSocket.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
 
