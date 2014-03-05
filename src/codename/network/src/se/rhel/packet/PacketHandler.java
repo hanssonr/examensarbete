@@ -1,7 +1,5 @@
 package se.rhel.packet;
 
-import se.rhel.IPacketHandler;
-
 import java.nio.ByteBuffer;
 
 /**

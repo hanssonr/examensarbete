@@ -1,26 +1,18 @@
-package se.rhel;
+package se.rhel.client;
 
 import se.rhel.packet.*;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.*;
-import java.nio.ByteBuffer;
 
 public class Client {
-
-    private DatagramSocket mUdpSocket;
-    private DatagramPacket mUdpPacket;
-
-    private Socket mTcpSocket;
 
     private ClientTcpConnection mTcpConnection;
     private ClientUdpConnection mUdpConnection;
 
-    private IPacketHandler mHandler;
+    private BasePacketHandler mHandler;
 
-    public Client(IPacketHandler handler) {
+    public Client(BasePacketHandler handler) {
         mHandler = handler;
     }
 
@@ -37,7 +29,15 @@ public class Client {
         mTcpConnection.sendTcp(packet);
     }
 
+    public void sendTcp(byte[] data) throws IOException {
+        mTcpConnection.sendTcp(data);
+    }
+
     public void sendUdp(Packet packet) throws IOException {
         mUdpConnection.sendUdp(packet);
+    }
+
+    public void sendUdp(byte[] data) throws IOException {
+        mUdpConnection.sendUdp(data);
     }
 }

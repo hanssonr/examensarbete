@@ -1,8 +1,8 @@
 package se.rhel.model.client;
 
 import com.badlogic.gdx.math.Vector3;
-import se.rhel.Client;
-import se.rhel.Server;
+import se.rhel.client.Client;
+import se.rhel.server.Server;
 import se.rhel.model.BaseModel;
 import se.rhel.model.BulletWorld;
 import se.rhel.model.FPSCamera;

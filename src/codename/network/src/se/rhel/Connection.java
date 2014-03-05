@@ -1,5 +1,7 @@
 package se.rhel;
 
+import se.rhel.server.TcpConnection;
+
 import java.net.InetAddress;
 import java.net.Socket;
 
@@ -40,6 +42,17 @@ public class Connection {
 
     public void setDisconnected() {
         mTcpConnection.stop();
+    }
+
+    @Override
+    public String toString() {
+        return "Connection{" +
+                "mId=" + mId +
+                ", mLastPackageTime=" + mLastPackageTime +
+                ", mIsConnected=" + mIsConnected +
+                ", mUDPPort=" + mUDPPort +
+                ", mAddress=" + mAddress +
+                '}';
     }
 
     @Override

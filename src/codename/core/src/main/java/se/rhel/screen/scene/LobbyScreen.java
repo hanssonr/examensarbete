@@ -7,11 +7,10 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
-import org.omg.SendingContext.RunTime;
-import se.rhel.Client;
+import se.rhel.client.Client;
 import se.rhel.CodeName;
-import se.rhel.Main;
-import se.rhel.Server;
+import se.rhel.client.ClientPacketHandler;
+import se.rhel.server.Server;
 import se.rhel.packet.PacketHandler;
 import se.rhel.screen.BaseScreen;
 import se.rhel.screen.GameScreen;
@@ -52,7 +51,7 @@ public class LobbyScreen extends BaseScreen {
         }
 
         // else/and assume client
-        mClient = new Client(new PacketHandler());
+        mClient = new Client(new ClientPacketHandler());
         try {
             mClient.connect("127.0.0.1", 4455);
         } catch (IOException e) {

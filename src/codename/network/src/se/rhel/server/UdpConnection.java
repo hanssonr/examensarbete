@@ -1,4 +1,6 @@
-package se.rhel;
+package se.rhel.server;
+
+import se.rhel.AConnection;
 
 import java.io.IOException;
 import java.net.DatagramPacket;

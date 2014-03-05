@@ -1,14 +1,12 @@
-package se.rhel;
+package se.rhel.client;
 
+import se.rhel.packet.BasePacketHandler;
 import se.rhel.packet.Packet;
-import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.NotActiveException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
-import java.nio.ByteBuffer;
 
 /**
  * Created by rkh on 2014-03-05.
@@ -18,9 +16,9 @@ public class ClientUdpConnection implements Runnable {
     private DatagramSocket mUdpSocket;
     private DatagramPacket mUdpPacket;
 
-    private IPacketHandler mPacketHandler;
+    private BasePacketHandler mPacketHandler;
 
-    public ClientUdpConnection(InetAddress address, int port, IPacketHandler handler) throws SocketException {
+    public ClientUdpConnection(InetAddress address, int port, BasePacketHandler handler) throws SocketException {
         mUdpSocket = new DatagramSocket();
         mUdpSocket.connect(address, port);
         mPacketHandler = handler;
@@ -41,7 +39,7 @@ public class ClientUdpConnection implements Runnable {
                 mPacketHandler.handlePacket(packet.getData());
 
             } catch (IOException e) {
-                // e.printStackTrace();
+                e.printStackTrace();
             }
 
         }

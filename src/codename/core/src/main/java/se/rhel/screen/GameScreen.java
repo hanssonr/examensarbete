@@ -1,9 +1,9 @@
 package se.rhel.screen;
 
 import com.badlogic.gdx.Gdx;
-import se.rhel.Client;
+import se.rhel.client.Client;
 import se.rhel.CodeName;
-import se.rhel.Server;
+import se.rhel.server.Server;
 import se.rhel.controller.PlayerController;
 import se.rhel.model.client.ClientWorldModel;
 import se.rhel.model.server.ServerWorldModel;

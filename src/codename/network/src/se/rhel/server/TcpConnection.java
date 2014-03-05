@@ -1,5 +1,7 @@
-package se.rhel;
+package se.rhel.server;
 
+import se.rhel.AConnection;
+import se.rhel.Connection;
 import se.rhel.packet.ConnectAcceptPacket;
 import se.rhel.packet.ConnectPacket;
 import se.rhel.packet.Packet;

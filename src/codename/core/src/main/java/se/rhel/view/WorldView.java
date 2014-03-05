@@ -15,14 +15,12 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.bullet.linearmath.btIDebugDraw;
 import com.badlogic.gdx.physics.bullet.linearmath.btVector3;
-import se.rhel.Client;
 import se.rhel.controller.PlayerController;
 import se.rhel.graphics.FrontFaceDepthShaderProvider;
 import se.rhel.model.BulletTest.DebugDrawer;
 import se.rhel.model.BulletWorld;
 import se.rhel.model.FPSCamera;
 import se.rhel.model.client.ClientWorldModel;
-import se.rhel.model.server.ServerWorldModel;
 import se.rhel.res.Resources;
 
 import java.math.BigDecimal;

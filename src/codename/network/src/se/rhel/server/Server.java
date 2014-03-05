@@ -1,12 +1,13 @@
-package se.rhel;
+package se.rhel.server;
 
 import se.rhel.observer.Listener;
 import se.rhel.observer.Observer;
 import se.rhel.packet.ConnectAcceptPacket;
+import se.rhel.Connection;
+import se.rhel.EndPoint;
 import se.rhel.packet.DisconnectPacket;
 import se.rhel.packet.Packet;
 
-import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.*;

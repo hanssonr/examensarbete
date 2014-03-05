@@ -3,13 +3,11 @@ package se.rhel.model.server;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import se.rhel.Connection;
-import se.rhel.Server;
+import se.rhel.server.Server;
 import se.rhel.model.BaseModel;
 import se.rhel.model.BulletWorld;
 import se.rhel.model.Player;
 import se.rhel.observer.Listener;
-import se.rhel.packet.ConnectPacket;
-import se.rhel.packet.DisconnectPacket;
 import se.rhel.packet.Packet;
 import se.rhel.packet.PlayerJoinPacket;
 
@@ -56,6 +54,12 @@ public class ServerWorldModel implements BaseModel, Listener {
         System.out.println("ServerModel: SomeOneConnected!LOL!");
 
         mPlayers.add(new Player(new Vector3(0, 10, 0), mBulletWorld));
+
+        System.out.println(con);
+
+        mServer.sendToAllUDP(new PlayerJoinPacket(0f, 10f, 0f));
+        mServer.sendUDP(new PlayerJoinPacket(0f, 10f, 0f), con);
+        mServer.sendTCP(new PlayerJoinPacket(0f, 10f, 0f), con);
         mServer.sendToAllTCP(new PlayerJoinPacket(0f, 10f, 0f));
     }
 
