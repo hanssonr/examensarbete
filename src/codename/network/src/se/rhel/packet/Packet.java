@@ -1,6 +1,5 @@
 package se.rhel.packet;
 
-import javax.management.InvalidAttributeValueException;
 import java.nio.ByteBuffer;
 
 /**
@@ -34,7 +33,6 @@ public abstract class Packet {
 
         return null;
     }
-
 
     //PacketType
     public static enum PacketType {

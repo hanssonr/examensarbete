@@ -28,12 +28,6 @@ public class GameScreen extends BaseScreen {
 
         Gdx.input.setInputProcessor(mPlayerController);
 
-        Client client = new Client();
-        try {
-            client.connect(InetAddress.getLocalHost(), 7777);
-        } catch (UnknownHostException e) {
-            e.printStackTrace();
-        }
     }
 
 

@@ -1,6 +1,7 @@
 package se.rhel;
 
 import se.rhel.packet.ConnectAcceptPacket;
+import se.rhel.packet.DisconnectPacket;
 import se.rhel.packet.Packet;
 
 import java.io.BufferedReader;
@@ -8,6 +9,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.*;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -16,17 +18,23 @@ import java.util.List;
  */
 public class Server implements EndPoint {
 
+    private static final int MAX_CONNECTIONS = 16;
+    private static final long TIMEOUT_TIME = 2500;
+    private static final long SERVER_UPDATE_INTERVAL = 25;
+
     public static String NAME;
     private static int PORT;
+    private Thread SERVER_THREAD;
 
     private DatagramSocket mUDPSocket;
-    private ServerSocket mTCPSocket;
-    private BufferedReader mIn;
 
     private boolean mIsStarted;
 
     // List with active connections
-    private List<Connection> mConnections;
+    private volatile List<Connection> mConnections;
+
+    private UdpConnection mUDPConnection;
+    private TcpListener mTCPListener;
 
     public Server(String name, int port) throws SocketException {
         PORT = port;
@@ -39,14 +47,52 @@ public class Server implements EndPoint {
     public void run() {
         System.out.println("Debug > Server started..");
         while(mIsStarted) {
-            try {
-                // Waiting for new connections
-                TcpConnection c = new TcpConnection(mTCPSocket.accept(), this);
-                // Adding the connection
-                c.start();
-                // addConnection(c);
-            } catch (IOException e) {
+
+            // Do server stuff..
+            long startTime = System.currentTimeMillis();
+            update();
+            long elapsedTime = System.currentTimeMillis() - startTime;
+
+            if(elapsedTime < SERVER_UPDATE_INTERVAL) try {
+                Thread.sleep(SERVER_UPDATE_INTERVAL - elapsedTime);
+            } catch (InterruptedException e) {
                 e.printStackTrace();
+            }
+
+        }
+    }
+
+    public long last;
+    public void update() {
+
+        if(last != 0) {
+            long per = System.currentTimeMillis() - last;
+            // System.out.println("Update interval: " + per);
+        }
+        last = System.currentTimeMillis();
+
+        // Check if any client been dced
+        checkAlive();
+    }
+
+    private void checkAlive() {
+        if(mConnections.size() == 0)
+            return;
+
+        for (Iterator<Connection> iterator = mConnections.iterator(); iterator.hasNext(); ) {
+            Connection next = iterator.next();
+            if(!next.isConnected()) {
+                next.setDisconnected();
+                iterator.remove();
+            } else {
+                long timePassed = System.currentTimeMillis() - next.getTimeLastPackage();
+                if(timePassed > TIMEOUT_TIME) {
+                    next.setConnected(false);
+                    System.out.println("Time passed: " + timePassed + " Timeouttime: " + TIMEOUT_TIME + " Connection: " + next.getId() + " disconnected");
+
+                    // Send packet that you are about to be disconnected / have been
+                    sendTCP(new DisconnectPacket(), next);
+                }
             }
         }
     }
@@ -54,9 +100,25 @@ public class Server implements EndPoint {
     @Override
     public void start() {
 
+        ServerSocket tcpSocket;
+
         try {
             mUDPSocket = new DatagramSocket(PORT);
-            mTCPSocket = new ServerSocket(PORT);
+            tcpSocket = new ServerSocket(PORT);
+
+            // Start the TCP Listener
+            mTCPListener = new TcpListener(tcpSocket, this);
+            mTCPListener.start();
+
+            // Start the udp connection
+            mUDPConnection = new UdpConnection(mUDPSocket);
+            mUDPConnection.start();
+
+            // Starting the server
+            mIsStarted = true;
+            SERVER_THREAD = new Thread(this);
+            SERVER_THREAD.start();
+
         } catch (SocketException e) {
             System.out.println(e.getMessage());
             System.out.println("Server not started");
@@ -66,12 +128,6 @@ public class Server implements EndPoint {
             System.out.println("Server not started");
             return;
         }
-
-        UdpConnection udpc = new UdpConnection(mUDPSocket);
-        udpc.start();
-
-        mIsStarted = true;
-        new Thread(this).start();
     }
 
     @Override
@@ -80,7 +136,10 @@ public class Server implements EndPoint {
             return;
 
         mIsStarted = false;
-        mUDPSocket.close();
+
+        SERVER_THREAD.interrupt();
+        mUDPConnection.stop();
+        mTCPListener.stop();
     }
 
     /*
@@ -89,28 +148,64 @@ public class Server implements EndPoint {
     public boolean addConnection(Connection con) {
         if(mConnections.contains(con))
             return false;
+        if(mConnections.size() >= MAX_CONNECTIONS)
+            return false;
 
         // Adding a unique ID to the new Connection
         mConnections.add(con);
         return true;
     }
 
+    public boolean removeConnection(Connection con) {
+        if(mConnections.contains(con)) {
+            return mConnections.remove(con);
+        }
+        return false;
+    }
+
     /*
     Send to all Connections through UDP
      */
-    public void sendToAllUDP() throws IOException {
+    public void sendToAllUDP(Packet packet) {
         for (Connection connection : mConnections) {
-            sendToUDP(connection);
+            sendUDP(packet, connection);
         }
-    }
-
-    public void sendUdpPacket(Packet packet, InetAddress address, int port) throws IOException {
-        DatagramPacket mUdpPacket = new DatagramPacket(packet.getData(), packet.getData().length, address, 4455);
-        mUDPSocket.send(mUdpPacket);
     }
 
     /**
      * Send to a specific connection through UDP
+     * @param packet
+     * @param conn
+     * @throws IOException
+     */
+    public void sendUDP(Packet packet, Connection conn) {
+        DatagramPacket mUdpPacket = new DatagramPacket(packet.getData(), packet.getData().length, conn.getAddress(), conn.getPort());
+
+        try {
+            mUDPSocket.send(mUdpPacket);
+        } catch (IOException e) {
+            System.err.println(e.getMessage());
+        }
+
+    }
+
+    public void sendTCP(Packet packet, Connection conn) {
+        try {
+            DataOutputStream output = new DataOutputStream(conn.getSocket().getOutputStream());
+            output.write(packet.getData());
+        } catch (IOException e) {
+            System.err.println(e.getMessage());
+        }
+    }
+
+    public void sendToAllTCP(Packet packet) {
+        for (Connection connection : mConnections) {
+            sendTCP(packet, connection);
+        }
+    }
+
+    /**
+     * @deprecated use {@link}
      * @param con
      * @throws IOException
      */
@@ -132,12 +227,4 @@ public class Server implements EndPoint {
         mUDPSocket.send(packet);
     }
 
-    public void sendTCP(Socket mSocket, Packet packet) {
-        try {
-            DataOutputStream output = new DataOutputStream(mSocket.getOutputStream());
-            output.write(packet.getData());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
 }

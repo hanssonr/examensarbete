@@ -1,7 +1,7 @@
 package se.rhel;
 
 import java.net.InetAddress;
-import java.net.InetSocketAddress;
+import java.net.Socket;
 
 /**
  * Created by Emil on 2014-03-04.
@@ -10,16 +10,36 @@ import java.net.InetSocketAddress;
 public class Connection {
 
     private InetAddress mAddress;
-    private int mPort;
+    private int mUDPPort;
     private TcpConnection mTcpConnection;
+    private boolean mIsConnected;
+    private long mLastPackageTime;
 
     private final int mId;
 
     public Connection(InetAddress address, int port, TcpConnection tcpConnection) {
         mAddress = address;
-        mPort = port;
+        mUDPPort = port;
         mTcpConnection = tcpConnection;
         mId = Utils.getInstance().generateUniqueId();
+        mIsConnected = true;
+        mLastPackageTime = System.currentTimeMillis();
+    }
+
+    public void packageReceived() {
+        mLastPackageTime = System.currentTimeMillis();
+    }
+
+    public long getTimeLastPackage() {
+        return mLastPackageTime;
+    }
+
+    public void setConnected(boolean val) {
+        mIsConnected = false;
+    }
+
+    public void setDisconnected() {
+        mTcpConnection.stop();
     }
 
     @Override
@@ -29,7 +49,7 @@ public class Connection {
 
         Connection that = (Connection) o;
 
-        if (mPort != that.mPort) return false;
+        if (mUDPPort != that.mUDPPort) return false;
         if (!mAddress.equals(that.mAddress)) return false;
 
         return true;
@@ -38,18 +58,18 @@ public class Connection {
     @Override
     public int hashCode() {
         int result = mAddress.hashCode();
-        result = 31 * result + mPort;
+        result = 31 * result + mUDPPort;
         return result;
     }
 
+    public boolean isConnected() { return mIsConnected; }
+    public Socket getSocket() { return mTcpConnection.getSocket(); }
     public int getPort() {
-        return mPort;
+        return mUDPPort;
     }
-
     public InetAddress getAddress() {
         return mAddress;
     }
-
     public int getId() {
         return mId;
     }

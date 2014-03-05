@@ -40,6 +40,8 @@ public class MainMenu extends BaseScreen {
         final TextButton optButton = UIComponents.getDefaultTextButton("Options", 200f, 20f);
         // button.setPosition(Gdx.graphics.getWidth() /2 - 100f, Gdx.graphics.getHeight()/2 - 10f);
         final TextButton startButton = UIComponents.getDefaultTextButton("Start", 200f, 20f);
+        final TextButton hostButton = UIComponents.getDefaultTextButton("Host game", 200f, 20f);
+        final TextButton joinButton = UIComponents.getDefaultTextButton("Join game", 200f, 20f);
 
         optButton.addListener(new ChangeListener() {
             @Override
@@ -59,9 +61,20 @@ public class MainMenu extends BaseScreen {
             }
         });
 
+        joinButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                mGame.setScreen(new LobbyScreen(mGame, false));
+            }
+        });
+
         mTable.add(optButton);
         mTable.row().padTop(10);
         mTable.add(startButton);
+        mTable.row().padTop(10);
+        mTable.add(hostButton);
+        mTable.row().padTop(10);
+        mTable.add(joinButton);
         mStage.addActor(mTable);
 
     }

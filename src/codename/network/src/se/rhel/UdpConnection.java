@@ -9,7 +9,7 @@ import java.net.SocketException;
  * Created by Emil on 2014-03-04.
  * assigned to libgdx-gradle-template in se.rhel
  */
-public class UdpConnection implements Runnable {
+public class UdpConnection extends AConnection {
 
     private DatagramSocket mUDPSocket;
 
@@ -21,16 +21,14 @@ public class UdpConnection implements Runnable {
     public void run() {
         while(true) {
             byte[] buf = new byte[256];
-
             try {
                 // Recieve UDP request
                 DatagramPacket packet = new DatagramPacket(buf, buf.length);
                 mUDPSocket.receive(packet);
-                handlePacket(packet);
+                parseUDPPacket(packet);
             } catch (IOException e) {
                 e.printStackTrace();
             }
-
         }
     }
 
@@ -39,7 +37,7 @@ public class UdpConnection implements Runnable {
      * @param packet
      * @throws java.io.IOException
      */
-    private void handlePacket(DatagramPacket packet) throws IOException {
+    private void parseUDPPacket(DatagramPacket packet) {
         String received = new String(packet.getData(), 0, packet.getLength());
         System.out.println("Debug > Received on server: " + received);
         System.out.println("UDPAddress: " + packet.getAddress() + " Socket Adress: " + packet.getSocketAddress() + " UDPPort: " + packet.getPort());
@@ -59,5 +57,10 @@ public class UdpConnection implements Runnable {
     public void start() {
         new Thread(this).start();
     }
+
+    public void stop () {
+        mUDPSocket.close();
+    }
+
 
 }
