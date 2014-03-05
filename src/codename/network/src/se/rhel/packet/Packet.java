@@ -36,7 +36,7 @@ public abstract class Packet {
 
     //PacketType
     public static enum PacketType {
-        INVALID(-1), CONNECT(0), CONNECT_ACCEPT(1), DISCONNECT(2);
+        INVALID(-1), CONNECT(0), CONNECT_ACCEPT(1), DISCONNECT(2), PLAYER_JOIN(3);
 
         private int mPacketId;
 

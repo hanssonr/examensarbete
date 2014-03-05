@@ -22,6 +22,6 @@ public abstract class BasePacketHandler implements IPacketHandler {
                 break;
 
         }
-    };
+    }
 
 }

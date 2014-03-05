@@ -29,7 +29,7 @@ public class UdpConnection extends AConnection {
                 mUDPSocket.receive(packet);
                 parseUDPPacket(packet);
             } catch (IOException e) {
-                e.printStackTrace();
+                // e.printStackTrace();
             }
         }
     }

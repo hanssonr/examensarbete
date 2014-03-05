@@ -3,7 +3,7 @@ package se.rhel.view;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Matrix4;
-import se.rhel.model.WorldModel;
+import se.rhel.model.client.ClientWorldModel;
 
 /**
  * Created by Emil on 2014-02-18.
@@ -11,12 +11,12 @@ import se.rhel.model.WorldModel;
  */
 public abstract class A2DView {
 
-    protected WorldModel smWorldModel;
+    protected ClientWorldModel smClientWorldModel;
     protected SpriteBatch smSpriteBatch;
     protected Matrix4 smNormalProjection;
 
-    public A2DView(WorldModel model, SpriteBatch batch) {
-        smWorldModel = model;
+    public A2DView(ClientWorldModel model, SpriteBatch batch) {
+        smClientWorldModel = model;
         smSpriteBatch = batch;
 
         // Init a normalprojection

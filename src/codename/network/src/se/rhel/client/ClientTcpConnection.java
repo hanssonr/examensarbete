@@ -37,7 +37,7 @@ public class ClientTcpConnection implements Runnable {
                 mPacketHandler.handlePacket(data);
 
             } catch (Exception e) {
-                //e.printStackTrace();
+                e.printStackTrace();
             }
         }
     }

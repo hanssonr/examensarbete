@@ -18,6 +18,10 @@ public class ClientPacketHandler extends BasePacketHandler {
                 System.out.println("CONNECTION ACCEPTED WITH ID: " + mBuf.getInt());
                 break;
 
+            case PLAYER_JOIN:
+                System.out.println("Player joined LOL!");
+                break;
+
             default:
                 System.out.println("DEFAULT PACKAGE");
                 break;
