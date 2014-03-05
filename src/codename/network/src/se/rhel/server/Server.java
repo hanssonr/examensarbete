@@ -1,13 +1,11 @@
 package se.rhel.server;
 
-import se.rhel.observer.Listener;
-import se.rhel.observer.Observer;
-import se.rhel.packet.ConnectAcceptPacket;
+import se.rhel.observer.ServerListener;
+import se.rhel.observer.ServerObserver;
 import se.rhel.Connection;
 import se.rhel.EndPoint;
 import se.rhel.packet.DisconnectPacket;
 import se.rhel.packet.Packet;
-import se.rhel.packet.PlayerJoinPacket;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -40,15 +38,15 @@ public class Server implements EndPoint {
     private UdpConnection mUDPConnection;
     private TcpListener mTCPListener;
 
-    // Observer
-    private Observer mObserver;
+    // ServerObserver
+    private ServerObserver mServerObserver;
 
     public Server(String name, int port) throws SocketException {
         PORT = port;
         NAME = name;
 
         mConnections = new ArrayList<>();
-        mObserver = new Observer();
+        mServerObserver = new ServerObserver();
     }
 
     @Override
@@ -124,7 +122,7 @@ public class Server implements EndPoint {
             mUDPSocket = new DatagramSocket(PORT);
             tcpSocket = new ServerSocket(PORT);
 
-            // Start the TCP Listener
+            // Start the TCP ServerListener
             mTCPListener = new TcpListener(tcpSocket, this);
             mTCPListener.start();
 
@@ -173,7 +171,7 @@ public class Server implements EndPoint {
         mConnections.add(con);
 
         // Telling whoever is listening
-        mObserver.connected(con);
+        mServerObserver.connected(con);
 
         return true;
     }
@@ -230,8 +228,8 @@ public class Server implements EndPoint {
         return mConnections;
     }
 
-    public void addListener(Listener toAdd) {
-        mObserver.addListener(toAdd);
+    public void addListener(ServerListener toAdd) {
+        mServerObserver.addListener(toAdd);
     }
 
     /**

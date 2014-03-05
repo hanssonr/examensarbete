@@ -7,8 +7,9 @@ import se.rhel.model.BaseModel;
 import se.rhel.model.BulletWorld;
 import se.rhel.model.FPSCamera;
 import se.rhel.model.Player;
+import se.rhel.observer.ClientListener;
 
-public class ClientWorldModel implements BaseModel {
+public class ClientWorldModel implements BaseModel, ClientListener {
 
     private FPSCamera mCamera;
     private Player mLocalPlayer;
@@ -19,6 +20,7 @@ public class ClientWorldModel implements BaseModel {
 
     public ClientWorldModel(Client client) {
         mClient = client;
+        mClient.addListener(this);
         create();
     }
 
@@ -28,6 +30,7 @@ public class ClientWorldModel implements BaseModel {
         mCamera = new FPSCamera(75, 0.1f, 1000f);
         mLocalPlayer = new Player(new Vector3(0, 10, 0), mBulletWorld);
         mLocalPlayer.attachCamera(mCamera);
+        mPlayers = new Array<>();
         mPlayers.add(mLocalPlayer);
     }
 
@@ -47,5 +50,21 @@ public class ClientWorldModel implements BaseModel {
         return mLocalPlayer;
     }
     public FPSCamera getCamera() { return mCamera; }
+    public Array<Player> getPlayers() { return mPlayers; }
 
+    @Override
+    public void connected() {
+        System.out.println("Player can be viewed on client!!");
+        mPlayers.add(new Player(new Vector3(0f, 10f, 0f), mBulletWorld));
+    }
+
+    @Override
+    public void disconnected() {
+
+    }
+
+    @Override
+    public void received() {
+
+    }
 }

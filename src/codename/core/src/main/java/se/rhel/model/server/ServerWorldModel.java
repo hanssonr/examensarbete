@@ -7,11 +7,11 @@ import se.rhel.server.Server;
 import se.rhel.model.BaseModel;
 import se.rhel.model.BulletWorld;
 import se.rhel.model.Player;
-import se.rhel.observer.Listener;
+import se.rhel.observer.ServerListener;
 import se.rhel.packet.Packet;
 import se.rhel.packet.PlayerJoinPacket;
 
-public class ServerWorldModel implements BaseModel, Listener {
+public class ServerWorldModel implements BaseModel, ServerListener {
 
     private Array<Player> mPlayers = new Array<Player>();
     private BulletWorld mBulletWorld;

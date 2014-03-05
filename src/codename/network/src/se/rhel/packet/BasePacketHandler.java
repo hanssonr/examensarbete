@@ -1,5 +1,7 @@
 package se.rhel.packet;
 
+import se.rhel.observer.ServerObserver;
+
 import java.nio.ByteBuffer;
 
 /**
@@ -23,5 +25,7 @@ public abstract class BasePacketHandler implements IPacketHandler {
 
         }
     }
+
+
 
 }

@@ -1,5 +1,9 @@
 package se.rhel.client;
 
+import se.rhel.observer.ClientListener;
+import se.rhel.observer.ClientObserver;
+import se.rhel.observer.ServerListener;
+import se.rhel.observer.ServerObserver;
 import se.rhel.packet.*;
 
 import java.io.IOException;
@@ -12,8 +16,13 @@ public class Client {
 
     private BasePacketHandler mHandler;
 
+    private ClientObserver mClientObserver;
+
     public Client(BasePacketHandler handler) {
         mHandler = handler;
+        mClientObserver = new ClientObserver();
+
+        ((ClientPacketHandler)mHandler).setmClientObserver(mClientObserver);
     }
 
     public void connect(String host, int port) throws IOException {
@@ -23,6 +32,10 @@ public class Client {
 
         //Send connection request
         sendTcp(new ConnectPacket(mUdpConnection.getUdpPort()));
+    }
+
+    public void addListener(ClientListener toAdd) {
+        mClientObserver.addListener(toAdd);
     }
 
     public void sendTcp(Packet packet) throws IOException {
