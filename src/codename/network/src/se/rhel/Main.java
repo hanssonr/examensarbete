@@ -1,11 +1,11 @@
 package se.rhel;
 
-import se.rhel.packet.PacketHandler;
+import se.rhel.client.Client;
+import se.rhel.client.ClientPacketHandler;
+import se.rhel.server.Server;
 
 import java.io.IOException;
-import java.net.InetAddress;
 import java.net.SocketException;
-import java.net.UnknownHostException;
 
 public class Main {
 
@@ -20,9 +20,8 @@ public class Main {
                     Server server = new Server("DaServer", 4455);
                     server.start();// new Thread(server).start(); // server.start();
                 } else {
-                    Client c = new Client(new PacketHandler());
+                    Client c = new Client(new ClientPacketHandler());
                     c.connect("127.0.0.1", 4455);
-
                 }
 
             } catch (SocketException e) {

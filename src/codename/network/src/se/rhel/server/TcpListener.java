@@ -1,4 +1,4 @@
-package se.rhel;
+package se.rhel.server;
 
 import java.io.IOException;
 import java.net.ServerSocket;

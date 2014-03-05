@@ -1,7 +1,8 @@
-package se.rhel;
+package se.rhel.server;
 
+import se.rhel.AConnection;
+import se.rhel.Connection;
 import se.rhel.packet.ConnectAcceptPacket;
-import se.rhel.packet.ConnectPacket;
 import se.rhel.packet.Packet;
 
 import java.io.*;
@@ -24,14 +25,15 @@ public class TcpConnection extends AConnection {
 
     @Override
     public void run() {
-        try {
-            System.out.println("TCPAddress: " + mSocket.getInetAddress() + " TCPPort: " + mSocket.getPort() + " TCPLocalPort: " + mSocket.getLocalPort());
-            DataInputStream dis = new DataInputStream(mSocket.getInputStream());
-            byte[] msg = new byte[10];
-            dis.readFully(msg);
-            parseTCPPacket(msg);
-        } catch (Exception e) {
-            e.printStackTrace();
+        while(true) {
+            try {
+                DataInputStream dis = new DataInputStream(mSocket.getInputStream());
+                byte[] msg = new byte[10];
+                dis.readFully(msg);
+                parseTCPPacket(msg);
+            } catch (Exception e) {
+                //e.printStackTrace();
+            }
         }
     }
 

@@ -4,7 +4,6 @@ package se.rhel.gradletest;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 import se.rhel.CodeName;
-import se.rhel.model.BulletTest.BaseBulletTest;
 
 public class DesktopLauncher {
 	public static void main (String[] arg) {

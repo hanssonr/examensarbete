@@ -1,5 +1,7 @@
 package se.rhel;
 
+import se.rhel.server.TcpConnection;
+
 import java.net.InetAddress;
 import java.net.Socket;
 
