@@ -2,6 +2,7 @@ package se.rhel;
 
 import se.rhel.packet.ConnectAcceptPacket;
 import se.rhel.packet.ConnectPacket;
+import se.rhel.packet.DisconnectPacket;
 import se.rhel.packet.Packet;
 
 import java.io.*;
@@ -46,11 +47,17 @@ public class TcpConnection implements Runnable {
             case INVALID:
                 break;
             case CONNECT:
-                //System.out.println("CONNECTION PACKET RECEIVED " + type.getId() + " UDP PORT " + buf.getInt());
                 Connection con = new Connection(mSocket.getInetAddress(), buf.getInt(), this);
+                System.out.println("NEW TCP CONNECTION: " + con.getId());
 
-                if(mServer.addConnection(con))
+                if(mServer.addConnection(con)) {
                     mServer.sendTCP(mSocket, new ConnectAcceptPacket(con.getId()));
+                    try {
+                        mServer.sendUdpPacket(new DisconnectPacket(), con);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
 
                 break;
             default:

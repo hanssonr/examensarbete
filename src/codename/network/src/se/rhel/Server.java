@@ -104,8 +104,8 @@ public class Server implements EndPoint {
         }
     }
 
-    public void sendUdpPacket(Packet packet, InetAddress address, int port) throws IOException {
-        DatagramPacket mUdpPacket = new DatagramPacket(packet.getData(), packet.getData().length, address, 4455);
+    public void sendUdpPacket(Packet packet, Connection con) throws IOException {
+        DatagramPacket mUdpPacket = new DatagramPacket(packet.getData(), packet.getData().length, con.getAddress(), con.getPort());
         mUDPSocket.send(mUdpPacket);
     }
 
