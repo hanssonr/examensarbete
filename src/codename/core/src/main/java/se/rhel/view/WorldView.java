@@ -94,18 +94,11 @@ public class WorldView {
         mAnimationController = new AnimationController(Resources.INSTANCE.playerModelInstanceAnimated);
         mAnimationController.setAnimation("walk", -1);
         mServerWorldModel.getBulletWorld().levelInstance.add(Resources.INSTANCE.playerModelInstanceAnimated);
-        // Resources.INSTANCE.modelInstanceArray.add
-
-        /*
-        mEnvironment.add(new DirectionalLight().set(0.8f, 0.8f, 0.8f, -1f, -0.8f, -0.2f));
-        mEnvironment.add(new DirectionalLight().set(0.8f, 0.8f, 0.8f, -0.5f, -1f, 0.7f));
-        */
     }
 
     public void render(float delta) {
 
         mAnimationController.update(delta);
-        weaponCam.position.set(mServerWorldModel.getCamera().position);
 
         if(PlayerController.DRAW_MESH) {
             // Cel-shading
@@ -133,28 +126,28 @@ public class WorldView {
             toonShader.end();
 
 
-            depthFrameBuffer.begin();
-            Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-            Gdx.gl.glClearColor(0, 1, 1, 1);
-            Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
-            Gdx.gl.glCullFace(GL20.GL_BACK);
-            Gdx.gl.glEnable(GL20.GL_DEPTH_TEST);
-            Gdx.gl.glDepthFunc(GL20.GL_LEQUAL);
-            Gdx.gl.glDepthMask(true);
-
-            depthModelBatch.begin(mServerWorldModel.getCamera());
-            depthModelBatch.render(mServerWorldModel.getBulletWorld().levelInstance, mEnvironment);
-            depthModelBatch.end();
-            depthFrameBuffer.end();
-
-            depthFrameBuffer.getColorBufferTexture().bind();
-            outLineShader.begin();
-            Gdx.gl.glEnable(GL10.GL_BLEND);
-            Gdx.gl.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
-            // Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
-
-            fullscreenQuad.render(outLineShader, GL20.GL_TRIANGLE_STRIP, 0, 4);
-            outLineShader.end();
+//            depthFrameBuffer.begin();
+//            Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+//            Gdx.gl.glClearColor(0, 1, 1, 1);
+//            Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
+//            Gdx.gl.glCullFace(GL20.GL_BACK);
+//            Gdx.gl.glEnable(GL20.GL_DEPTH_TEST);
+//            Gdx.gl.glDepthFunc(GL20.GL_LEQUAL);
+//            Gdx.gl.glDepthMask(true);
+//
+//            depthModelBatch.begin(mServerWorldModel.getCamera());
+//            depthModelBatch.render(mServerWorldModel.getBulletWorld().levelInstance, mEnvironment);
+//            depthModelBatch.end();
+//            depthFrameBuffer.end();
+//
+//            depthFrameBuffer.getColorBufferTexture().bind();
+//            outLineShader.begin();
+//            Gdx.gl.glEnable(GL10.GL_BLEND);
+//            Gdx.gl.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
+//            // Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
+//
+//            fullscreenQuad.render(outLineShader, GL20.GL_TRIANGLE_STRIP, 0, 4);
+//            outLineShader.end();
 
 
         } else {

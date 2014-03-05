@@ -1,5 +1,6 @@
 package se.rhel.screen;
 
+import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Gdx;
 import se.rhel.client.Client;
 import se.rhel.CodeName;
@@ -24,6 +25,8 @@ public class GameScreen extends BaseScreen {
 
     public GameScreen(CodeName game, Server server, Client client) {
         super(game);
+
+        Gdx.app.setLogLevel(Application.LOG_NONE);
 
         mServer = server;
         mClient = client;
