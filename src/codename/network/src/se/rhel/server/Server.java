@@ -7,6 +7,7 @@ import se.rhel.Connection;
 import se.rhel.EndPoint;
 import se.rhel.packet.DisconnectPacket;
 import se.rhel.packet.Packet;
+import se.rhel.packet.PlayerJoinPacket;
 
 import java.io.DataOutputStream;
 import java.io.IOException;

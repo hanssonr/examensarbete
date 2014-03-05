@@ -7,7 +7,7 @@ package se.rhel.packet;
 public class PlayerJoinPacket extends Packet {
 
     public PlayerJoinPacket(float x, float y, float z) {
-        super(3, 10);
+        super(3, Float.SIZE * 5);
 
         mBuffer.putFloat(x);
         mBuffer.putFloat(y);

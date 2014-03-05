@@ -54,12 +54,6 @@ public class ServerWorldModel implements BaseModel, Listener {
         System.out.println("ServerModel: SomeOneConnected!LOL!");
 
         mPlayers.add(new Player(new Vector3(0, 10, 0), mBulletWorld));
-
-        System.out.println(con);
-
-        mServer.sendToAllUDP(new PlayerJoinPacket(0f, 10f, 0f));
-        mServer.sendUDP(new PlayerJoinPacket(0f, 10f, 0f), con);
-        mServer.sendTCP(new PlayerJoinPacket(0f, 10f, 0f), con);
         mServer.sendToAllTCP(new PlayerJoinPacket(0f, 10f, 0f));
     }
 
