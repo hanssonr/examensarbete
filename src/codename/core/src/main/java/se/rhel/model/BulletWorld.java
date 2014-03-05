@@ -57,16 +57,6 @@ public class BulletWorld implements BaseModel {
 
     @Override
     public void create() {
-
-        // Create some basic models
-        /*
-        final Model groundModel = mModelBuilder.createRect(20f, 0f, -20f, -20f, 0f, -20f, -20f, 0f, 20f, 20f, 0f, 20f, 0, 1, 0,
-                new Material(ColorAttribute.createDiffuse(Color.BLUE), ColorAttribute.createSpecular(Color.WHITE), FloatAttribute.createShininess(16f)),
-                VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal);
-        mModels.add(groundModel);
-        */
-        // Bullet is init from Resources
-
         // Create the bullet world
         mCollisionConfig = new btDefaultCollisionConfiguration();
         mDispatcher = new btCollisionDispatcher(mCollisionConfig);
@@ -74,27 +64,6 @@ public class BulletWorld implements BaseModel {
         mSolver = new btSequentialImpulseConstraintSolver();
         mCollisionWorld = new btDiscreteDynamicsWorld(mDispatcher, mBroadphase, mSolver, mCollisionConfig);
         mCollisionWorld.setGravity(mGravity);
-
-        // Create the shapes and body construction infos
-        /*
-        btCollisionShape groundShape = new btBoxShape(mTempVector.set(20, 0, 20));
-        mShapes.add(groundShape);
-        btRigidBodyConstructionInfo groundInfo = new btRigidBodyConstructionInfo(0f, null, groundShape, Vector3.Zero);
-        mBodyInfos.add(groundInfo);
-
-        // Create the ground
-        ModelInstance ground = new ModelInstance(groundModel);
-        instances.add(ground);
-        btDefaultMotionState groundMotionState = new btDefaultMotionState();
-        groundMotionState.setWorldTransform(ground.transform);
-        mMotionStates.add(groundMotionState);
-
-        btRigidBody groundBody = new btRigidBody(groundInfo);
-        groundBody.setMotionState(groundMotionState);
-        mBodies.add(groundBody);
-
-        mCollisionWorld.addRigidBody(groundBody);
-        */
 
         // Level
         btBvhTriangleMeshShape levelShape = new btBvhTriangleMeshShape(Resources.INSTANCE.levelModelPhysics.meshParts);
@@ -111,24 +80,6 @@ public class BulletWorld implements BaseModel {
         mBodies.add(levelBody);
         mCollisionWorld.addRigidBody(levelBody);
 
-        // btCollisionShape pShape = new btBoxShape(new Vector3(1f, 1f, 1f));
-        /*
-        btBvhTriangleMeshShape pShape = new btBvhTriangleMeshShape(Resources.INSTANCE.mcPlayerModel.meshParts);
-        mShapes.add(pShape);
-        btRigidBodyConstructionInfo pInfo = new btRigidBodyConstructionInfo(0f, null, pShape, Vector3.Zero);
-        mBodyInfos.add(pInfo);
-        ModelInstance p = new ModelInstance(Resources.INSTANCE.mcPlayerModel);
-        instances.add(p);
-        btDefaultMotionState pMotionState = new btDefaultMotionState();
-
-        p.transform.trn(10f, 0.1f, 1f);
-        pMotionState.setWorldTransform(p.transform);
-        mMotionStates.add(pMotionState);
-        btRigidBody pBody = new btRigidBody(pInfo);
-        pBody.setMotionState(pMotionState);
-        mBodies.add(pBody);
-        mCollisionWorld.addRigidBody(pBody);
-        */
         // addSpheres();
     }
 

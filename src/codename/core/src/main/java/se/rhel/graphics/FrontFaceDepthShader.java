@@ -18,7 +18,6 @@ package se.rhel.graphics;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Camera;
-import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.VertexAttribute;
 import com.badlogic.gdx.graphics.VertexAttributes.Usage;
 import com.badlogic.gdx.graphics.g3d.Renderable;
@@ -26,7 +25,7 @@ import com.badlogic.gdx.graphics.g3d.shaders.DefaultShader;
 import com.badlogic.gdx.graphics.g3d.utils.RenderContext;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 
-public class FroncFaceDepthShader extends DefaultShader {
+public class FrontFaceDepthShader extends DefaultShader {
 	public static class Config extends DefaultShader.Config {
 		public boolean depthBufferOnly = false;
 		
@@ -80,25 +79,25 @@ public class FroncFaceDepthShader extends DefaultShader {
 	public final int numBones;
 	public final int weights;
 	
-	public FroncFaceDepthShader(final Renderable renderable) {
+	public FrontFaceDepthShader(final Renderable renderable) {
 		this(renderable, new Config());
 	}
 	
-	public FroncFaceDepthShader(final Renderable renderable, final Config config) {
+	public FrontFaceDepthShader(final Renderable renderable, final Config config) {
 		this(renderable, config, createPrefix(renderable, config));
 	}
 
-	public FroncFaceDepthShader(final Renderable renderable, final Config config, final String prefix) {
+	public FrontFaceDepthShader(final Renderable renderable, final Config config, final String prefix) {
 		this(renderable, config, prefix, 
 				config.vertexShader != null ? config.vertexShader : getDefaultVertexShader(), 
 				config.fragmentShader != null ? config.fragmentShader : getDefaultFragmentShader());
 	}
 	
-	public FroncFaceDepthShader(final Renderable renderable, final Config config, final String prefix, final String vertexShader, final String fragmentShader) {
+	public FrontFaceDepthShader(final Renderable renderable, final Config config, final String prefix, final String vertexShader, final String fragmentShader) {
 		this(renderable, config, new ShaderProgram(prefix + vertexShader, prefix + fragmentShader));
 	}
 	
-	public FroncFaceDepthShader(final Renderable renderable, final Config config, final ShaderProgram shaderProgram) {
+	public FrontFaceDepthShader(final Renderable renderable, final Config config, final ShaderProgram shaderProgram) {
 		super(renderable, config, shaderProgram);
 		this.numBones = renderable.bones == null ? 0 : config.numBones;
 		int w = 0;

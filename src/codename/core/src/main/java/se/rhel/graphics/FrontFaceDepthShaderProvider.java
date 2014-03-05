@@ -23,16 +23,16 @@ import com.badlogic.gdx.graphics.g3d.Shader;
 import com.badlogic.gdx.graphics.g3d.utils.BaseShaderProvider;
 
 public class FrontFaceDepthShaderProvider extends BaseShaderProvider {
-	public final FroncFaceDepthShader.Config config;
+	public final FrontFaceDepthShader.Config config;
 	
-	public FrontFaceDepthShaderProvider(final FroncFaceDepthShader.Config config) {
+	public FrontFaceDepthShaderProvider(final FrontFaceDepthShader.Config config) {
 		if (!Gdx.graphics.isGL20Available())
 			throw new RuntimeException("The default shader requires OpenGL ES 2.0");
-		this.config = (config == null) ? new FroncFaceDepthShader.Config() : config;
+		this.config = (config == null) ? new FrontFaceDepthShader.Config() : config;
 	}
 	
 	public FrontFaceDepthShaderProvider(final String vertexShader, final String fragmentShader) {
-		this(new FroncFaceDepthShader.Config(vertexShader, fragmentShader));
+		this(new FrontFaceDepthShader.Config(vertexShader, fragmentShader));
 	}
 	
 	public FrontFaceDepthShaderProvider(final FileHandle vertexShader, final FileHandle fragmentShader) {
@@ -45,6 +45,6 @@ public class FrontFaceDepthShaderProvider extends BaseShaderProvider {
 	
 	@Override
 	protected Shader createShader(final Renderable renderable) {
-	   return new FroncFaceDepthShader(renderable, config);
+	   return new FrontFaceDepthShader(renderable, config);
 	}
 }
