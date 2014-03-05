@@ -15,25 +15,41 @@ public class ClientTcpConnection implements Runnable {
 
     private Socket mSocket;
     private IPacketHandler mPacketHandler;
+    private boolean mIsRunning;
 
     public ClientTcpConnection(InetAddress address, int port, IPacketHandler handler) throws IOException {
         mSocket = new Socket(address, port);
         mPacketHandler = handler;
 
+        mIsRunning = true;
         new Thread(this).start();
     }
 
     @Override
     public void run() {
+        while(mIsRunning) {
+            try {
+                DataInputStream dis = new DataInputStream(mSocket.getInputStream());
+                byte[] data = new byte[10];
+                dis.readFully(data);
+                System.out.println("data = " + data);
+                mPacketHandler.handlePacket(data);
+
+            } catch (Exception e) {
+               // e.printStackTrace();
+            }
+        }
+    }
+
+    public void stop() {
+        if(!mIsRunning)
+            return;
+
+        mIsRunning = false;
         try {
-            DataInputStream dis = new DataInputStream(mSocket.getInputStream());
-            byte[] data = new byte[10];
-            dis.readFully(data);
-
-            mPacketHandler.handlePacket(data);
-
-        } catch (Exception e) {
-            e.printStackTrace();
+            mSocket.close();
+        } catch (IOException e) {
+            System.err.println(e.getMessage());
         }
     }
 

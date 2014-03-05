@@ -1,25 +1,23 @@
-package se.rhel.model;
+package se.rhel.model.client;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.g3d.ModelInstance;
-import com.badlogic.gdx.graphics.g3d.utils.CameraInputController;
 import com.badlogic.gdx.math.Vector3;
-import se.rhel.res.Resources;
+import se.rhel.Client;
+import se.rhel.Server;
+import se.rhel.model.BaseModel;
+import se.rhel.model.BulletWorld;
+import se.rhel.model.FPSCamera;
+import se.rhel.model.Player;
 
-import java.util.ArrayList;
-
-public class WorldModel implements BaseModel {
+public class ClientWorldModel implements BaseModel {
 
     private FPSCamera mCamera;
     private Player mPlayer;
-
-    private ArrayList<Player> mPlayers = new ArrayList<Player>();
-
-    private ModelInstance mBoxInstance;
-    private CameraInputController mCamController;
     private BulletWorld mBulletWorld;
 
-    public WorldModel() {
+    private Client mClient;
+
+    public ClientWorldModel(Client client) {
+        mClient = client;
         create();
     }
 
@@ -40,14 +38,6 @@ public class WorldModel implements BaseModel {
     public void update(float delta) {
         mBulletWorld.update(delta);
         mPlayer.update(delta);
-
-
-        for(Player p : mPlayers)
-            p.update(delta);
-    }
-
-    public void addPlayer(Player player) {
-        mPlayers.add(player);
     }
 
     public BulletWorld getBulletWorld() { return mBulletWorld; }
@@ -55,4 +45,5 @@ public class WorldModel implements BaseModel {
         return mPlayer;
     }
     public FPSCamera getCamera() { return mCamera; }
+
 }

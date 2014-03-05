@@ -57,7 +57,7 @@ public class MainMenu extends BaseScreen {
             public void changed(ChangeEvent event, Actor actor) {
                 Gdx.app.log("Button", "Game");
                 // mGame.setScreenWithTransition(new GameScreen(mGame));
-                mGame.setScreen(new GameScreen(mGame));
+                // mGame.setScreen(new GameScreen(mGame));
             }
         });
 
@@ -65,6 +65,13 @@ public class MainMenu extends BaseScreen {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 mGame.setScreen(new LobbyScreen(mGame, false));
+            }
+        });
+
+        hostButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                mGame.setScreen(new LobbyScreen(mGame, true));
             }
         });
 

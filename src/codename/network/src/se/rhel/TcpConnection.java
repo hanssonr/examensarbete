@@ -16,6 +16,7 @@ public class TcpConnection extends AConnection {
 
     private final Server mServer;
     private Socket mSocket;
+    private boolean mIsRunning;
 
     public TcpConnection(Socket socket, Server server) {
         mServer = server;
@@ -24,14 +25,16 @@ public class TcpConnection extends AConnection {
 
     @Override
     public void run() {
-        try {
-            System.out.println("TCPAddress: " + mSocket.getInetAddress() + " TCPPort: " + mSocket.getPort() + " TCPLocalPort: " + mSocket.getLocalPort());
-            DataInputStream dis = new DataInputStream(mSocket.getInputStream());
-            byte[] msg = new byte[10];
-            dis.readFully(msg);
-            parseTCPPacket(msg);
-        } catch (Exception e) {
-            e.printStackTrace();
+        while(mIsRunning) {
+            try {
+                // System.out.println("TCPAddress: " + mSocket.getInetAddress() + " TCPPort: " + mSocket.getPort() + " TCPLocalPort: " + mSocket.getLocalPort());
+                DataInputStream dis = new DataInputStream(mSocket.getInputStream());
+                byte[] msg = new byte[10];
+                dis.readFully(msg);
+                parseTCPPacket(msg);
+            } catch (Exception e) {
+                // e.printStackTrace();
+            }
         }
     }
 
@@ -59,15 +62,21 @@ public class TcpConnection extends AConnection {
 
     @Override
     public void start() {
+        mIsRunning = true;
         new Thread(this).start();
     }
 
     @Override
     public void stop() {
+        if(!mIsRunning)
+            return;
+
+        mIsRunning = false;
+
         try {
             mSocket.close();
         } catch (IOException e) {
-            e.printStackTrace();
+            System.err.println(e.getMessage());
         }
     }
 

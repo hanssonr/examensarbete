@@ -13,15 +13,16 @@ import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.bullet.linearmath.btIDebugDraw;
 import com.badlogic.gdx.physics.bullet.linearmath.btVector3;
+import se.rhel.Client;
 import se.rhel.controller.PlayerController;
 import se.rhel.graphics.FrontFaceDepthShaderProvider;
 import se.rhel.model.BulletTest.DebugDrawer;
 import se.rhel.model.BulletWorld;
 import se.rhel.model.FPSCamera;
-import se.rhel.model.WorldModel;
+import se.rhel.model.client.ClientWorldModel;
+import se.rhel.model.server.ServerWorldModel;
 import se.rhel.res.Resources;
 
 import java.math.BigDecimal;
@@ -41,7 +42,7 @@ public class WorldView {
     private LaserRenderer mLaserRenderer;
     private EntitySystemRenderer mEntitySystem;
 
-    private WorldModel mWorldModel;
+    private ClientWorldModel mServerWorldModel;
 
     private Environment mEnvironment;
 
@@ -63,25 +64,25 @@ public class WorldView {
 
     private LaserMeshTestRenderer lmtr;
 
-    public WorldView(WorldModel worldModel) {
+    public WorldView(ClientWorldModel clientWorldModel) {
         weaponCam = new FPSCamera(68, 0.1f, 5);
-        mWorldModel = worldModel;
+        mServerWorldModel = clientWorldModel;
         mSpriteBatch = new SpriteBatch();
         mModelBatch = new ModelBatch();
-        lmtr = new LaserMeshTestRenderer(worldModel.getCamera());
+        lmtr = new LaserMeshTestRenderer(clientWorldModel.getCamera());
 
         mCrosshairRenderer = new ShapeRenderer();
-        mBulletHoleRenderer = new BulletHoleRenderer(mWorldModel.getCamera());
+        mBulletHoleRenderer = new BulletHoleRenderer(mServerWorldModel.getCamera());
         mEntitySystem = new EntitySystemRenderer();
 
         mAimDebugDrawer = new DebugDrawer();
         mDebugDrawer = new DebugDrawer();
-        mWorldModel.getBulletWorld().getCollisionWorld().setDebugDrawer(mDebugDrawer);
+        mServerWorldModel.getBulletWorld().getCollisionWorld().setDebugDrawer(mDebugDrawer);
         mDebugDrawer.setDebugMode(btIDebugDraw.DebugDrawModes.DBG_DrawWireframe);
 
-        mFPSRenderer = TextRenderer.FPS(worldModel, mSpriteBatch);
-        mBulletLoadRenderer = new TextRenderer("Bullet init", new Vector2(10, Gdx.graphics.getHeight() - 30), worldModel, mSpriteBatch);
-        mPlayerPosRenderer = new TextRenderer("Player init", new Vector2(10, Gdx.graphics.getHeight() - 60), worldModel, mSpriteBatch);
+        mFPSRenderer = TextRenderer.FPS(clientWorldModel, mSpriteBatch);
+        mBulletLoadRenderer = new TextRenderer("Bullet init", new Vector2(10, Gdx.graphics.getHeight() - 30), clientWorldModel, mSpriteBatch);
+        mPlayerPosRenderer = new TextRenderer("Player init", new Vector2(10, Gdx.graphics.getHeight() - 60), clientWorldModel, mSpriteBatch);
 
         mEnvironment = new Environment();
         mEnvironment.set(new ColorAttribute(ColorAttribute.AmbientLight, 0.3f, 0.3f, 0.3f, 1.0f));
@@ -90,11 +91,11 @@ public class WorldView {
                 new DirectionalLight().set(0.8f, 0.8f, 0.8f, -1f, -0.8f, -0.2f)
         );
 
-        mLaserRenderer = new LaserRenderer(mWorldModel.getCamera());
+        mLaserRenderer = new LaserRenderer(mServerWorldModel.getCamera());
 
         mAnimationController = new AnimationController(Resources.INSTANCE.playerModelInstanceAnimated);
         mAnimationController.setAnimation("walk", -1);
-        mWorldModel.getBulletWorld().levelInstance.add(Resources.INSTANCE.playerModelInstanceAnimated);
+        mServerWorldModel.getBulletWorld().levelInstance.add(Resources.INSTANCE.playerModelInstanceAnimated);
         // Resources.INSTANCE.modelInstanceArray.add
 
         /*
@@ -106,7 +107,7 @@ public class WorldView {
     public void render(float delta) {
 
         mAnimationController.update(delta);
-        weaponCam.position.set(mWorldModel.getCamera().position);
+        weaponCam.position.set(mServerWorldModel.getCamera().position);
 
         if(PlayerController.DRAW_MESH) {
             // Cel-shading
@@ -120,10 +121,10 @@ public class WorldView {
             Gdx.gl.glDepthFunc(GL20.GL_LEQUAL);
             Gdx.gl.glDepthMask(true);
 
-            mModelBatch.begin(mWorldModel.getCamera());
+            mModelBatch.begin(mServerWorldModel.getCamera());
             mModelBatch.render(Resources.INSTANCE.modelInstanceArray);
-            mModelBatch.render(mWorldModel.getBulletWorld().instances, mEnvironment);
-            mModelBatch.render(mWorldModel.getBulletWorld().levelInstance, mEnvironment);
+            mModelBatch.render(mServerWorldModel.getBulletWorld().instances, mEnvironment);
+            mModelBatch.render(mServerWorldModel.getBulletWorld().levelInstance, mEnvironment);
             mModelBatch.end();
             buffer1.end();
 
@@ -143,8 +144,8 @@ public class WorldView {
             Gdx.gl.glDepthFunc(GL20.GL_LEQUAL);
             Gdx.gl.glDepthMask(true);
 
-            depthModelBatch.begin(mWorldModel.getCamera());
-            depthModelBatch.render(mWorldModel.getBulletWorld().levelInstance, mEnvironment);
+            depthModelBatch.begin(mServerWorldModel.getCamera());
+            depthModelBatch.render(mServerWorldModel.getBulletWorld().levelInstance, mEnvironment);
             depthModelBatch.end();
             depthFrameBuffer.end();
 
@@ -163,11 +164,11 @@ public class WorldView {
             Gdx.gl.glClearColor(0, 1, 1, 1);
             Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
 
-            mModelBatch.begin(mWorldModel.getCamera());
+            mModelBatch.begin(mServerWorldModel.getCamera());
             mModelBatch.render(Resources.INSTANCE.modelInstanceArray);
-            mModelBatch.render(mWorldModel.getBulletWorld().instances, mEnvironment);
-            // mModelBatch.render(mWorldModel.getBulletWorld().fpsModel, mEnvironment);
-            mModelBatch.render(mWorldModel.getBulletWorld().levelInstance, mEnvironment);
+            mModelBatch.render(mServerWorldModel.getBulletWorld().instances, mEnvironment);
+            // mModelBatch.render(mServerWorldModel.getBulletWorld().fpsModel, mEnvironment);
+            mModelBatch.render(mServerWorldModel.getBulletWorld().levelInstance, mEnvironment);
             mModelBatch.end();
         }
 
@@ -177,28 +178,28 @@ public class WorldView {
             mFPSRenderer.draw(delta);
             mBulletLoadRenderer.setText(BulletWorld.PERFORMANCE + "\n test");
             mBulletLoadRenderer.draw(delta);
-            float x = round(mWorldModel.getPlayer().getPosition().x, 3);
-            float y = round(mWorldModel.getPlayer().getPosition().y, 3);
-            float z = round(mWorldModel.getPlayer().getPosition().z, 3);
+            float x = round(mServerWorldModel.getPlayer().getPosition().x, 3);
+            float y = round(mServerWorldModel.getPlayer().getPosition().y, 3);
+            float z = round(mServerWorldModel.getPlayer().getPosition().z, 3);
             mPlayerPosRenderer.setText("X: " + x + ", Y: " + y + ", Z: " + z);
             mPlayerPosRenderer.draw(delta);
         }
 
         if(PlayerController.DRAW_DEBUG) {
-            mDebugDrawer.lineRenderer.setProjectionMatrix(mWorldModel.getCamera().combined);
+            mDebugDrawer.lineRenderer.setProjectionMatrix(mServerWorldModel.getCamera().combined);
             mDebugDrawer.begin();
-            mWorldModel.getBulletWorld().getCollisionWorld().debugDrawWorld();
+            mServerWorldModel.getBulletWorld().getCollisionWorld().debugDrawWorld();
             mDebugDrawer.end();
         }
 
         // Ray
         if(PlayerController.DRAW_SHOOT_DEBUG) {
-            if(mWorldModel.getPlayer().hasShot) {
+            if(mServerWorldModel.getPlayer().hasShot) {
 
-                btVector3 from = new btVector3(mWorldModel.getPlayer().from.x, mWorldModel.getPlayer().from.y, mWorldModel.getPlayer().from.z);
-                btVector3 to = new btVector3(mWorldModel.getPlayer().to.x, mWorldModel.getPlayer().to.y, mWorldModel.getPlayer().to.z);
+                btVector3 from = new btVector3(mServerWorldModel.getPlayer().from.x, mServerWorldModel.getPlayer().from.y, mServerWorldModel.getPlayer().from.z);
+                btVector3 to = new btVector3(mServerWorldModel.getPlayer().to.x, mServerWorldModel.getPlayer().to.y, mServerWorldModel.getPlayer().to.z);
                 btVector3 c = new btVector3(1f, 1f, 1f);
-                mAimDebugDrawer.lineRenderer.setProjectionMatrix(mWorldModel.getCamera().combined);
+                mAimDebugDrawer.lineRenderer.setProjectionMatrix(mServerWorldModel.getCamera().combined);
                 mAimDebugDrawer.begin();
                 mAimDebugDrawer.drawLine(from, to, c);
                 mAimDebugDrawer.end();
@@ -209,7 +210,7 @@ public class WorldView {
             }
         }
 
-        if(mWorldModel.getPlayer().hasShot) {
+        if(mServerWorldModel.getPlayer().hasShot) {
             // mLaserRenderer.shoot();
             lmtr.render();
         }
@@ -223,9 +224,9 @@ public class WorldView {
 
         mBulletHoleRenderer.draw(delta);
 
-        mModelBatch.begin(mWorldModel.getCamera());
+        mModelBatch.begin(mServerWorldModel.getCamera());
         Gdx.gl.glClear(GL10.GL_DEPTH_BUFFER_BIT);
-        mModelBatch.render(mWorldModel.getBulletWorld().fpsModel, mEnvironment);
+        mModelBatch.render(mServerWorldModel.getBulletWorld().fpsModel, mEnvironment);
         mModelBatch.end();
     }
 

@@ -1,5 +1,7 @@
 package se.rhel;
 
+import se.rhel.observer.Listener;
+import se.rhel.observer.Observer;
 import se.rhel.packet.ConnectAcceptPacket;
 import se.rhel.packet.DisconnectPacket;
 import se.rhel.packet.Packet;
@@ -36,11 +38,15 @@ public class Server implements EndPoint {
     private UdpConnection mUDPConnection;
     private TcpListener mTCPListener;
 
+    // Observer
+    private Observer mObserver;
+
     public Server(String name, int port) throws SocketException {
         PORT = port;
         NAME = name;
 
         mConnections = new ArrayList<>();
+        mObserver = new Observer();
     }
 
     @Override
@@ -72,25 +78,35 @@ public class Server implements EndPoint {
         last = System.currentTimeMillis();
 
         // Check if any client been dced
-        checkAlive();
+        // checkAlive();
     }
 
+    /**
+     * Checks the aliveness of current
+     * connections and disconnects them
+     * if no activity
+     */
     private void checkAlive() {
         if(mConnections.size() == 0)
             return;
 
         for (Iterator<Connection> iterator = mConnections.iterator(); iterator.hasNext(); ) {
             Connection next = iterator.next();
+
+            // Check for dead connections and reamove them
             if(!next.isConnected()) {
                 next.setDisconnected();
                 iterator.remove();
             } else {
                 long timePassed = System.currentTimeMillis() - next.getTimeLastPackage();
+
+                // If there's been a certain amount of time since we heard from the client
                 if(timePassed > TIMEOUT_TIME) {
                     next.setConnected(false);
                     System.out.println("Time passed: " + timePassed + " Timeouttime: " + TIMEOUT_TIME + " Connection: " + next.getId() + " disconnected");
 
                     // Send packet that you are about to be disconnected / have been
+                    // just for convinience for the client since we are going to disconnect anyways
                     sendTCP(new DisconnectPacket(), next);
                 }
             }
@@ -153,6 +169,10 @@ public class Server implements EndPoint {
 
         // Adding a unique ID to the new Connection
         mConnections.add(con);
+
+        // Telling whoever is listening
+        mObserver.connected(con);
+
         return true;
     }
 
@@ -202,6 +222,14 @@ public class Server implements EndPoint {
         for (Connection connection : mConnections) {
             sendTCP(packet, connection);
         }
+    }
+
+    public List<Connection> getConnections() {
+        return mConnections;
+    }
+
+    public void addListener(Listener toAdd) {
+        mObserver.addListener(toAdd);
     }
 
     /**

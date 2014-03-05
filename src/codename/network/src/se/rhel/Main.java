@@ -3,9 +3,7 @@ package se.rhel;
 import se.rhel.packet.PacketHandler;
 
 import java.io.IOException;
-import java.net.InetAddress;
 import java.net.SocketException;
-import java.net.UnknownHostException;
 
 public class Main {
 
@@ -22,7 +20,6 @@ public class Main {
                 } else {
                     Client c = new Client(new PacketHandler());
                     c.connect("127.0.0.1", 4455);
-
                 }
 
             } catch (SocketException e) {

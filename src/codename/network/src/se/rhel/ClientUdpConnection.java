@@ -1,8 +1,6 @@
 package se.rhel;
 
 import se.rhel.packet.Packet;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
-
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.NotActiveException;
@@ -43,7 +41,7 @@ public class ClientUdpConnection implements Runnable {
                 mPacketHandler.handlePacket(packet.getData());
 
             } catch (IOException e) {
-                e.printStackTrace();
+                // e.printStackTrace();
             }
 
         }

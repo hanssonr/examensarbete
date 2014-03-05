@@ -16,7 +16,7 @@ public class PacketHandler implements IPacketHandler {
         Packet.PacketType type = Packet.lookupPacket(buf.get());
 
         Packet packet = null;
-
+        System.out.println("type = " + type);
         switch(type) {
             case CONNECT_ACCEPT:
                 System.out.println("CONNECTION ACCEPTED WITH ID: " + buf.getInt());
