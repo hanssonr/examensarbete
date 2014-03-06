@@ -11,10 +11,12 @@ public class TcpListener implements Runnable {
 
     private ServerSocket mTCPSocket;
     private Server mServer;
+    private ServerPacketHandler mHandler;
 
-    public TcpListener(ServerSocket tcpSocket, Server server) {
+    public TcpListener(ServerSocket tcpSocket, Server server, ServerPacketHandler handler) {
         mTCPSocket = tcpSocket;
         mServer = server;
+        mHandler = handler;
     }
 
     @Override
@@ -22,7 +24,7 @@ public class TcpListener implements Runnable {
         while(true) {
             try {
                 // Waiting for new connections
-                TcpConnection c = new TcpConnection(mTCPSocket.accept(), mServer);
+                TcpConnection c = new TcpConnection(mTCPSocket.accept(), mServer, mHandler);
                 // Adding the connection
                 c.start();
 

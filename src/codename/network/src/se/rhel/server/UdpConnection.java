@@ -14,9 +14,11 @@ import java.net.SocketException;
 public class UdpConnection extends AConnection {
 
     private DatagramSocket mUDPSocket;
+    private ServerPacketHandler mHandler;
 
-    public UdpConnection(DatagramSocket socket) {
+    public UdpConnection(DatagramSocket socket, ServerPacketHandler handler) {
         mUDPSocket = socket;
+        mHandler = handler;
     }
 
     @Override

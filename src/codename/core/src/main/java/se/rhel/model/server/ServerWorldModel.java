@@ -53,8 +53,11 @@ public class ServerWorldModel implements BaseModel, ServerListener {
     public void connected(Connection con) {
         System.out.println("ServerModel: SomeOneConnected!LOL!");
 
+        // Adding player on the server
         mPlayers.add(new Player(new Vector3(0, 10, 0), mBulletWorld));
-        mServer.sendToAllTCP(new PlayerJoinPacket(0f, 10f, 0f));
+
+        // And sending to all clients
+        mServer.sendToAllTCPExcept(new PlayerJoinPacket(0f, 10f, 0f), con);
     }
 
     @Override

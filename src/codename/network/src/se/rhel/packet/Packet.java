@@ -11,7 +11,7 @@ public abstract class Packet {
 
     private byte mPacketId;
 
-    protected Packet(int packetId, int packetSize) {
+    public Packet(int packetId, int packetSize) {
         mPacketId = (byte) packetId;
         mData = new byte[packetSize];
         mBuffer = ByteBuffer.wrap(mData);
@@ -36,7 +36,7 @@ public abstract class Packet {
 
     //PacketType
     public static enum PacketType {
-        INVALID(-1), CONNECT(0), CONNECT_ACCEPT(1), DISCONNECT(2), PLAYER_JOIN(3);
+        INVALID(-1), CONNECT(0), CONNECT_ACCEPT(1), DISCONNECT(2), PLAYER_JOIN(3), REQUEST_INITIAL_STATE(4);
 
         private int mPacketId;
 

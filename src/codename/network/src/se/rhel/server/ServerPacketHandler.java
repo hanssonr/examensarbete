@@ -7,12 +7,6 @@ import se.rhel.packet.BasePacketHandler;
  */
 public class ServerPacketHandler extends BasePacketHandler {
 
-    Server mServer;
-
-    public ServerPacketHandler(Server server) {
-        mServer = server;
-    }
-
     @Override
     public void handlePacket(byte[] data) {
         super.handlePacket(data);

@@ -41,12 +41,18 @@ public class Server implements EndPoint {
     // ServerObserver
     private ServerObserver mServerObserver;
 
+    // Handler
+    private ServerPacketHandler mServerPacketHandler;
+
     public Server(String name, int port) throws SocketException {
         PORT = port;
         NAME = name;
 
         mConnections = new ArrayList<>();
+
         mServerObserver = new ServerObserver();
+        mServerPacketHandler = new ServerPacketHandler();
+        mServerPacketHandler.setObserver(mServerObserver);
     }
 
     @Override
@@ -123,11 +129,11 @@ public class Server implements EndPoint {
             tcpSocket = new ServerSocket(PORT);
 
             // Start the TCP ServerListener
-            mTCPListener = new TcpListener(tcpSocket, this);
+            mTCPListener = new TcpListener(tcpSocket, this, mServerPacketHandler);
             mTCPListener.start();
 
             // Start the udp connection
-            mUDPConnection = new UdpConnection(mUDPSocket);
+            mUDPConnection = new UdpConnection(mUDPSocket, mServerPacketHandler);
             mUDPConnection.start();
 
             // Starting the server
@@ -221,6 +227,16 @@ public class Server implements EndPoint {
     public void sendToAllTCP(Packet packet) {
         for (Connection connection : mConnections) {
             sendTCP(packet, connection);
+        }
+    }
+
+    public void sendToAllTCPExcept(Packet packet, Connection except) {
+        for(Connection con : mConnections) {
+            if(!con.equals(except)) {
+                sendTCP(packet, con);
+            } else {
+                System.out.println("Skipped this one");
+            }
         }
     }
 

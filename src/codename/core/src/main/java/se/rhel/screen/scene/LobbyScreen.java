@@ -63,18 +63,15 @@ public class LobbyScreen extends BaseScreen {
     private void initStage() {
 
         mTable.clear();
+        final TextButton startButton = UIComponents.getDefaultTextButton("Start game", 200f, 20f);
 
-
-            final TextButton startButton = UIComponents.getDefaultTextButton("Start game", 200f, 20f);
-
-            startButton.addListener(new ChangeListener() {
-                @Override
-                public void changed(ChangeEvent event, Actor actor) {
-                    Gdx.app.log("Button", "Game");
-                    // mGame.setScreenWithTransition(new GameScreen(mGame));
-                    mGame.setScreen(new GameScreen(mGame, mServer, mClient));
-                }
-            });
+        startButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                Gdx.app.log("Button", "Game");
+                mGame.setScreen(new GameScreen(mGame, mServer, mClient));
+            }
+        });
 
         mTable.row().padTop(10);
         mTable.add(startButton);

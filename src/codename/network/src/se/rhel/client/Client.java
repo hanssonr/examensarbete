@@ -21,8 +21,7 @@ public class Client {
     public Client(BasePacketHandler handler) {
         mHandler = handler;
         mClientObserver = new ClientObserver();
-
-        ((ClientPacketHandler)mHandler).setmClientObserver(mClientObserver);
+        mHandler.setObserver(mClientObserver);
     }
 
     public void connect(String host, int port) throws IOException {
@@ -38,8 +37,12 @@ public class Client {
         mClientObserver.addListener(toAdd);
     }
 
-    public void sendTcp(Packet packet) throws IOException {
-        mTcpConnection.sendTcp(packet);
+    public void sendTcp(Packet packet) {
+        try {
+            mTcpConnection.sendTcp(packet);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void sendTcp(byte[] data) throws IOException {

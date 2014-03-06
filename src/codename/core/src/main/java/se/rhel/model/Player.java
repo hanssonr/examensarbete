@@ -19,51 +19,51 @@ import se.rhel.view.BulletHoleRenderer;
 public class Player extends DynamicEntity {
 
     public enum PLAYERSTATE {
-        idle, running
-    }
+            idle, running
+        }
 
-    private FPSCamera mCamera;
+        private FPSCamera mCamera;
 
-    private PLAYERSTATE mState;
+        private PLAYERSTATE mState;
 
-    private float bobPower = 0.7f;
-    private float bobTimer = 0f;
-    private Vector3 bobVector = new Vector3();
+        private float bobPower = 0.7f;
+        private float bobTimer = 0f;
+        private Vector3 bobVector = new Vector3();
 
-    private BulletWorld mWorld;
-    private btRigidBody mBody;
+        private BulletWorld mWorld;
+        private btRigidBody mBody;
 
-    // Testing
-    private ClosestRayResultCallback rayTestCB;
-    public boolean hasShot = false;
+        // Testing
+        private ClosestRayResultCallback rayTestCB;
+        public boolean hasShot = false;
 
-    public Vector3 from = new Vector3();
-    public Vector3 to = new Vector3();
+        public Vector3 from = new Vector3();
+        public Vector3 to = new Vector3();
 
-    public Vector3 fromGround = new Vector3();
-    public Vector3 toGround = new Vector3();
+        public Vector3 fromGround = new Vector3();
+        public Vector3 toGround = new Vector3();
 
-    private float deltaShoot;
+        private float deltaShoot;
 
-    //weapon
-    ModelInstance weapon;
-    Matrix4 weaponWorld = new Matrix4().idt();
-    Vector3 weaponOffset = new Vector3();
+        //weapon
+        ModelInstance weapon;
+        Matrix4 weaponWorld = new Matrix4().idt();
+        Vector3 weaponOffset = new Vector3();
 
-    public boolean mOnGround = false;
-    private static Vector2 mPlayersize = new Vector2(0.6f, 1.5f);
+        public boolean mOnGround = false;
+        private static Vector2 mPlayersize = new Vector2(0.6f, 1.5f);
 
-    public Player(Vector3 position, BulletWorld world) {
-        super(7f);
-        mWorld = world;
+        public Player(Vector3 position, BulletWorld world) {
+            super(7f);
+            mWorld = world;
 
-        getTransformation().setTranslation(position);
-        createPyshicsBody();
-        weapon = new ModelInstance(Resources.INSTANCE.fpsWeaponModel);
-        mWorld.fpsModel = weapon;
+            getTransformation().setTranslation(position);
+            createPyshicsBody();
+            weapon = new ModelInstance(Resources.INSTANCE.fpsWeaponModel);
+            mWorld.fpsModel = weapon;
 
-        mState = PLAYERSTATE.idle;
-    }
+            mState = PLAYERSTATE.idle;
+        }
 
     private void createPyshicsBody() {
         btCollisionShape playerShape = new btCapsuleShape(mPlayersize.x, mPlayersize.y);

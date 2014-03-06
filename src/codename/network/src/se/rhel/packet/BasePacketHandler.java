@@ -1,5 +1,6 @@
 package se.rhel.packet;
 
+import se.rhel.observer.IObserver;
 import se.rhel.observer.ServerObserver;
 
 import java.nio.ByteBuffer;
@@ -11,6 +12,7 @@ public abstract class BasePacketHandler implements IPacketHandler {
 
     protected ByteBuffer mBuf;
     protected Packet.PacketType mPacketType;
+    protected IObserver mObserver;
 
     public void handlePacket(byte[] data) {
         mBuf = ByteBuffer.wrap(data);
@@ -26,6 +28,8 @@ public abstract class BasePacketHandler implements IPacketHandler {
         }
     }
 
-
+    public void setObserver(IObserver obs) {
+        mObserver = obs;
+    }
 
 }

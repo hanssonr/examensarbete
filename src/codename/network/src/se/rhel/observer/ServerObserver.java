@@ -9,7 +9,7 @@ import java.util.ArrayList;
  * Created by Emil on 2014-03-05.
  * assigned to libgdx-gradle-template in se.rhel.observer
  */
-public class ServerObserver implements ServerListener {
+public class ServerObserver implements ServerListener, IObserver {
     private ArrayList<ServerListener> mServerListeners = new ArrayList<>();
 
     public void addListener(ServerListener toAdd) {

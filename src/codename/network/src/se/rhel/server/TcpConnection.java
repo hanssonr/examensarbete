@@ -18,11 +18,13 @@ public class TcpConnection extends AConnection {
 
     private final Server mServer;
     private Socket mSocket;
+    private ServerPacketHandler mHandler;
     private boolean mIsRunning;
 
-    public TcpConnection(Socket socket, Server server) {
+    public TcpConnection(Socket socket, Server server, ServerPacketHandler handler) {
         mServer = server;
         mSocket = socket;
+        mHandler = handler;
     }
 
     @Override
@@ -43,7 +45,7 @@ public class TcpConnection extends AConnection {
     void parseTCPPacket(byte[] data) {
         ByteBuffer buf = ByteBuffer.wrap(data);
         Packet.PacketType type = Packet.lookupPacket(buf.get());
-
+        System.out.println("> Server : " + " Type: " + type + ", Data: " + data);
         Packet packet = null;
         switch(type) {
             case INVALID:
@@ -56,6 +58,9 @@ public class TcpConnection extends AConnection {
                     mServer.sendTCP(new ConnectAcceptPacket(con.getId()), con);
                 }
 
+                break;
+            case REQUEST_INITIAL_STATE:
+                System.out.println(">   INITIAL STATE REQUESTED!!!!!!!!!!!!!!");
                 break;
             default:
                 break;

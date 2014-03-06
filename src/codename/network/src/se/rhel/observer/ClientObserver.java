@@ -6,7 +6,7 @@ import java.util.ArrayList;
  * Created by Emil on 2014-03-05.
  * assigned to libgdx-gradle-template in se.rhel.observer
  */
-public class ClientObserver implements ClientListener {
+public class ClientObserver implements ClientListener, IObserver {
 
     private ArrayList<ClientListener> mClientListeners = new ArrayList<>();
 

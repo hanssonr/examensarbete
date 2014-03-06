@@ -3,11 +3,9 @@ package se.rhel.model.client;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import se.rhel.client.Client;
-import se.rhel.model.BaseModel;
-import se.rhel.model.BulletWorld;
-import se.rhel.model.FPSCamera;
-import se.rhel.model.Player;
+import se.rhel.model.*;
 import se.rhel.observer.ClientListener;
+import se.rhel.packet.RequestInitialStatePacket;
 
 public class ClientWorldModel implements BaseModel, ClientListener {
 
@@ -16,11 +14,12 @@ public class ClientWorldModel implements BaseModel, ClientListener {
     private BulletWorld mBulletWorld;
 
     private Client mClient;
-    private Array<Player> mPlayers;
+    private Array<ExternalPlayer> mPlayers;
 
     public ClientWorldModel(Client client) {
         mClient = client;
         mClient.addListener(this);
+        mClient.sendTcp(new RequestInitialStatePacket());
         create();
     }
 
@@ -31,7 +30,6 @@ public class ClientWorldModel implements BaseModel, ClientListener {
         mLocalPlayer = new Player(new Vector3(0, 10, 0), mBulletWorld);
         mLocalPlayer.attachCamera(mCamera);
         mPlayers = new Array<>();
-        mPlayers.add(mLocalPlayer);
     }
 
     @Override
@@ -43,6 +41,10 @@ public class ClientWorldModel implements BaseModel, ClientListener {
     public void update(float delta) {
         mBulletWorld.update(delta);
         mLocalPlayer.update(delta);
+
+        for (ExternalPlayer externalPlayer : mPlayers) {
+            externalPlayer.update(delta);
+        }
     }
 
     public BulletWorld getBulletWorld() { return mBulletWorld; }
@@ -50,12 +52,13 @@ public class ClientWorldModel implements BaseModel, ClientListener {
         return mLocalPlayer;
     }
     public FPSCamera getCamera() { return mCamera; }
-    public Array<Player> getPlayers() { return mPlayers; }
+    public Array<ExternalPlayer> getPlayers() { return mPlayers; }
 
     @Override
     public void connected() {
         System.out.println("Player can be viewed on client!!");
-        mPlayers.add(new Player(new Vector3(0f, 10f, 0f), mBulletWorld));
+        ExternalPlayer ep = new ExternalPlayer(new Vector3(0f, 10f, 0f), mBulletWorld);
+        mPlayers.add(ep);
     }
 
     @Override

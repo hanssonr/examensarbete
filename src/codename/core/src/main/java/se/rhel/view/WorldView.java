@@ -91,9 +91,9 @@ public class WorldView {
 
         mLaserRenderer = new LaserRenderer(mServerWorldModel.getCamera());
 
-        mAnimationController = new AnimationController(Resources.INSTANCE.playerModelInstanceAnimated);
-        mAnimationController.setAnimation("walk", -1);
-        mServerWorldModel.getBulletWorld().levelInstance.add(Resources.INSTANCE.playerModelInstanceAnimated);
+        // mAnimationController = new AnimationController(Resources.INSTANCE.playerModelInstanceAnimated);
+        // mAnimationController.setAnimation("walk", -1);
+        // mServerWorldModel.getBulletWorld().levelInstance.add(Resources.INSTANCE.playerModelInstanceAnimated);
         // Resources.INSTANCE.modelInstanceArray.add
 
         /*
@@ -104,7 +104,7 @@ public class WorldView {
 
     public void render(float delta) {
 
-        mAnimationController.update(delta);
+        // mAnimationController.update(delta);
         weaponCam.position.set(mServerWorldModel.getCamera().position);
 
         if(PlayerController.DRAW_MESH) {
@@ -132,7 +132,7 @@ public class WorldView {
             fullscreenQuad.render(toonShader, GL20.GL_TRIANGLE_STRIP, 0, 4);
             toonShader.end();
 
-
+            /*
             depthFrameBuffer.begin();
             Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
             Gdx.gl.glClearColor(0, 1, 1, 1);
@@ -155,6 +155,7 @@ public class WorldView {
 
             fullscreenQuad.render(outLineShader, GL20.GL_TRIANGLE_STRIP, 0, 4);
             outLineShader.end();
+            */
 
 
         } else {
