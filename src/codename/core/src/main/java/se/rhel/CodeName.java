@@ -52,7 +52,7 @@ public class CodeName extends Game implements TransitionObserver.TransitionListe
     }
 
     public static boolean isInMenuMode() {
-        return mRunMode == RUNMODE_MENU ? true : false;
+        return mRunMode == RUNMODE_MENU;
     }
 
     @Override

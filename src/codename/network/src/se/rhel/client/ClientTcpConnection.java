@@ -20,6 +20,7 @@ public class ClientTcpConnection implements Runnable {
 
     public ClientTcpConnection(InetAddress address, int port, BasePacketHandler handler) throws IOException {
         mSocket = new Socket(address, port);
+        mSocket.setTcpNoDelay(true);
         mPacketHandler = handler;
         mIsRunning = true;
 
@@ -31,8 +32,8 @@ public class ClientTcpConnection implements Runnable {
         while(mIsRunning) {
             try {
                 DataInputStream dis = new DataInputStream(mSocket.getInputStream());
-                byte[] data = new byte[10];
-                dis.readFully(data);
+                byte[] data = new byte[256];     //TODO: se till att storlek inte är mindre än största paketet
+                dis.read(data);
 
                 mPacketHandler.handlePacket(data);
 
@@ -49,6 +50,8 @@ public class ClientTcpConnection implements Runnable {
     public void sendTcp(byte[] data) throws IOException {
         DataOutputStream output = new DataOutputStream(mSocket.getOutputStream());
         output.write(data);
+        output.flush();
+        System.out.println("Client TCP Send > " + Packet.lookupPacket(data[0]));
     }
 
     public void stop() throws IOException {

@@ -14,7 +14,7 @@ public class ClientPacketHandler extends BasePacketHandler {
 
         switch(mPacketType) {
             case CONNECT_ACCEPT:
-                System.out.println("CONNECTION ACCEPTED WITH ID: " + mBuf.getInt());
+                System.out.println("CLIENT > Connection accepted >> PLAYER_ID: " + mBuf.getInt());
                 break;
 
             case PLAYER_JOIN:

@@ -21,9 +21,10 @@ public class TcpConnection extends AConnection {
     private ServerPacketHandler mHandler;
     private boolean mIsRunning;
 
-    public TcpConnection(Socket socket, Server server, ServerPacketHandler handler) {
+    public TcpConnection(Socket socket, Server server, ServerPacketHandler handler) throws SocketException {
         mServer = server;
         mSocket = socket;
+        mSocket.setTcpNoDelay(true);
         mHandler = handler;
     }
 
@@ -33,8 +34,8 @@ public class TcpConnection extends AConnection {
             try {
                 // System.out.println("TCPAddress: " + mSocket.getInetAddress() + " TCPPort: " + mSocket.getPort() + " TCPLocalPort: " + mSocket.getLocalPort());
                 DataInputStream dis = new DataInputStream(mSocket.getInputStream());
-                byte[] msg = new byte[10];
-                dis.readFully(msg);
+                byte[] msg = new byte[256]; //TODO: se till att storlek inte är mindre än största paketet
+                dis.read(msg); //read retunerar storleken men läser också in data, readFully som användes förut läste in alltid in all data(?)
                 parseTCPPacket(msg);
             } catch (Exception e) {
                 // e.printStackTrace();
@@ -45,7 +46,7 @@ public class TcpConnection extends AConnection {
     void parseTCPPacket(byte[] data) {
         ByteBuffer buf = ByteBuffer.wrap(data);
         Packet.PacketType type = Packet.lookupPacket(buf.get());
-        System.out.println("> Server : " + " Type: " + type + ", Data: " + data);
+        System.out.println("SERVER > PARSE " + " Type: " + type + ", Data: " + data);
         Packet packet = null;
         switch(type) {
             case INVALID:
@@ -60,7 +61,7 @@ public class TcpConnection extends AConnection {
 
                 break;
             case REQUEST_INITIAL_STATE:
-                System.out.println(">   INITIAL STATE REQUESTED!!!!!!!!!!!!!!");
+                System.out.println("SERVER > INITIAL STATE REQUESTED!!!!!!!!!!!!!!");
                 break;
             default:
                 break;

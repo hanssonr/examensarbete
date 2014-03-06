@@ -141,14 +141,9 @@ public class Server implements EndPoint {
             SERVER_THREAD = new Thread(this);
             SERVER_THREAD.start();
 
-        } catch (SocketException e) {
-            System.out.println(e.getMessage());
-            System.out.println("Server not started");
-            return;
         } catch (IOException e) {
             System.out.println(e.getMessage());
             System.out.println("Server not started");
-            return;
         }
     }
 
@@ -219,6 +214,8 @@ public class Server implements EndPoint {
         try {
             DataOutputStream output = new DataOutputStream(conn.getSocket().getOutputStream());
             output.write(packet.getData());
+            output.flush();
+
         } catch (IOException e) {
             System.err.println(e.getMessage());
         }
@@ -235,7 +232,7 @@ public class Server implements EndPoint {
             if(!con.equals(except)) {
                 sendTCP(packet, con);
             } else {
-                System.out.println("Skipped this one");
+                //System.out.println("Skipped this one");
             }
         }
     }
