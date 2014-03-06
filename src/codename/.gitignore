@@ -1,5 +1,6 @@
+.gitignore
 *.class
-
+libgdx-gradle-template.ipr
 # Package Files #
 *.war
 *.ear
