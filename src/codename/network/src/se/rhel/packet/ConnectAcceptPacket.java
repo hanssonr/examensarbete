@@ -6,10 +6,7 @@ package se.rhel.packet;
 public class ConnectAcceptPacket extends Packet {
 
     public ConnectAcceptPacket(int id) {
-        super(1, 10);
-
-        System.out.println("ID" + id);
+        super(1, 5);
         mBuffer.putInt(id);
-
     }
 }

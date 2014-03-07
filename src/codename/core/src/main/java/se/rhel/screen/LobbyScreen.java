@@ -1,4 +1,4 @@
-package se.rhel.screen.scene;
+package se.rhel.screen;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL10;
@@ -10,6 +10,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import se.rhel.client.Client;
 import se.rhel.CodeName;
 import se.rhel.client.ClientPacketHandler;
+import se.rhel.screen.scene.UIComponents;
 import se.rhel.server.Server;
 import se.rhel.packet.PacketHandler;
 import se.rhel.screen.BaseScreen;

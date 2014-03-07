@@ -14,7 +14,7 @@ public class ClientPacketHandler extends BasePacketHandler {
     public ClientPacketHandler(Client c) {
         mClient = c;
     }
-
+    
     @Override
     public void handlePacket(byte[] data) {
         super.handlePacket(data);
@@ -24,7 +24,7 @@ public class ClientPacketHandler extends BasePacketHandler {
                 int id = mBuf.getInt();
                 // Setting the ID on client
                 mClient.setId(id);
-                System.out.println("CONNECTION ACCEPTED WITH ID: " + id);
+                System.out.println("CLIENT > Connection accepted >> PLAYER_ID: " + id);
                 break;
 
             case PLAYER_JOIN:

@@ -7,7 +7,7 @@ package se.rhel.packet;
 public class RequestInitialStatePacket extends Packet {
 
     public RequestInitialStatePacket(int id) {
-        super(4, 16);
+        super(4, 5);
         mBuffer.putInt(id);
     }
 }

@@ -61,59 +61,61 @@ public class PlayerController implements InputProcessor {
     }
 
     public void processCurrentInput(float delta) {
-        //Get the amount of rotation during last frame
-        xRot = -Gdx.input.getDeltaX() * MOUSE_SPEED * delta;
-        yRot = -Gdx.input.getDeltaY() * MOUSE_SPEED * delta;
+        if(Gdx.input.isCursorCatched()) {
+            //Get the amount of rotation during last frame
+            xRot = -Gdx.input.getDeltaX() * MOUSE_SPEED * delta;
+            yRot = -Gdx.input.getDeltaY() * MOUSE_SPEED * delta;
 
-        //Y-rotation
-        currentRot += yRot;
-        currentRot = MathUtils.clamp(currentRot, MIN_YROT, MAX_YROT);
+            //Y-rotation
+            currentRot += yRot;
+            currentRot = MathUtils.clamp(currentRot, MIN_YROT, MAX_YROT);
 
-        if (currentRot > MIN_YROT && currentRot < MAX_YROT && yRot != 0) {
-            mCamera.rotate(mCamera.getRight(), yRot);
+            if (currentRot > MIN_YROT && currentRot < MAX_YROT && yRot != 0) {
+                mCamera.rotate(mCamera.getRight(), yRot);
+            }
+
+            //X-rotation
+            if (xRot != 0) {
+                mCamera.rotate(FPSCamera.UP, xRot);
+                //mPlayer.rotate(FPSCamera.UP, xRot);
+            }
+
+            //Zero out movement
+            tmp.set(Vector3.Zero);
+
+            //Calculate movement
+            if(mKeys.get(MapKeys.FORWARD)) {
+               tmp.add(mCamera.getForward());
+            }
+            if(mKeys.get(MapKeys.BACK)) {
+                tmp.sub(mCamera.getForward());
+            }
+
+            if(mKeys.get(MapKeys.LEFT)) {
+                tmp.sub(mCamera.getRight());
+            }
+            if(mKeys.get(MapKeys.RIGHT)) {
+                tmp.add(mCamera.getRight());
+            }
+
+            tmp.nor();
+            movement.x = tmp.x;
+            movement.z = tmp.z;
+
+            if(!mPlayer.isGrounded()) {
+                movement.y -=  15 * delta;
+            } else {
+                if(movement.y < -10) movement.y = -10;
+                movement.y += 15 * delta;
+                if(movement.y > 0) movement.y = 0;
+            }
+
+            if(mKeys.get(MapKeys.JUMP) && mPlayer.isGrounded()) {
+                movement.y = JUMP_HEIGHT;
+            }
+
+            mPlayer.move(movement);
         }
-
-        //X-rotation
-        if (xRot != 0) {
-            mCamera.rotate(FPSCamera.UP, xRot);
-            //mPlayer.rotate(FPSCamera.UP, xRot);
-        }
-
-        //Zero out movement
-        tmp.set(Vector3.Zero);
-
-        //Calculate movement
-        if(mKeys.get(MapKeys.FORWARD)) {
-           tmp.add(mCamera.getForward());
-        }
-        if(mKeys.get(MapKeys.BACK)) {
-            tmp.sub(mCamera.getForward());
-        }
-
-        if(mKeys.get(MapKeys.LEFT)) {
-            tmp.sub(mCamera.getRight());
-        }
-        if(mKeys.get(MapKeys.RIGHT)) {
-            tmp.add(mCamera.getRight());
-        }
-
-        tmp.nor();
-        movement.x = tmp.x;
-        movement.z = tmp.z;
-
-        if(!mPlayer.isGrounded()) {
-            movement.y -=  15 * delta;
-        } else {
-            if(movement.y < -10) movement.y = -10;
-            movement.y += 15 * delta;
-            if(movement.y > 0) movement.y = 0;
-        }
-
-        if(mKeys.get(MapKeys.JUMP) && mPlayer.isGrounded()) {
-            movement.y = JUMP_HEIGHT;
-        }
-
-        mPlayer.move(movement);
     }
 
     @Override

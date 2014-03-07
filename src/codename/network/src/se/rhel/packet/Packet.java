@@ -15,7 +15,7 @@ public abstract class Packet {
         mPacketId = (byte) packetId;
         mData = new byte[packetSize];
         mBuffer = ByteBuffer.wrap(mData);
-        mBuffer.put((byte)mPacketId);
+        mBuffer.put(mPacketId);
     }
 
     public byte getPacketId() {

@@ -1,11 +1,13 @@
 package se.rhel.server;
 
 import se.rhel.AConnection;
+import se.rhel.packet.Packet;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.SocketException;
+import java.nio.ByteBuffer;
 
 /**
  * Created by Emil on 2014-03-04.
@@ -42,9 +44,10 @@ public class UdpConnection extends AConnection {
      * @throws java.io.IOException
      */
     private void parseUDPPacket(DatagramPacket packet) {
-        String received = new String(packet.getData(), 0, packet.getLength());
-        System.out.println("Debug > Received on server: " + received);
-        System.out.println("UDPAddress: " + packet.getAddress() + " Socket Adress: " + packet.getSocketAddress() + " UDPPort: " + packet.getPort());
+        ByteBuffer buf = ByteBuffer.wrap(packet.getData());
+        System.out.println("Debug > Received on server: " + Packet.lookupPacket(buf.get()));
+        System.out.println("PORT > " + buf.getInt());
+        //System.out.println("UDPAddress: " + packet.getAddress() + " Socket Adress: " + packet.getSocketAddress() + " UDPPort: " + packet.getPort());
 
 
         // Should we add the connection?
