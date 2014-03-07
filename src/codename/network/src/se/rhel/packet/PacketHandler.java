@@ -14,16 +14,16 @@ public class PacketHandler implements IPacketHandler {
         Packet.PacketType type = Packet.lookupPacket(buf.get());
 
         Packet packet = null;
-        System.out.println("type = " + type);
+        System.out.println(">   PacketHandler: type = " + type);
         switch(type) {
             case CONNECT_ACCEPT:
-                System.out.println("CONNECTION ACCEPTED WITH ID: " + buf.getInt());
+                System.out.println(">   PacketHandler: CONNECTION ACCEPTED WITH ID: " + buf.getInt());
                 break;
             case DISCONNECT:
-                System.out.println("DISCONNECT");
+                System.out.println(">   PacketHandler: DISCONNECT");
                 break;
             default:
-                System.out.println("DEFAULT PACKAGE");
+                System.out.println(">   PacketHandler: DEFAULT PACKAGE");
                 break;
         }
     }

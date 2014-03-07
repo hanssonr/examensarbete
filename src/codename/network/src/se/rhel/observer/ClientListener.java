@@ -10,5 +10,5 @@ import se.rhel.packet.Packet;
 public interface ClientListener {
     public void connected();
     public void disconnected();
-    public void received();
+    public void received(Packet packet);
 }

@@ -50,7 +50,7 @@ public class ClientUdpConnection implements Runnable {
     }
 
     public void sendUdp(byte[] data) throws IOException {
-        System.out.println(mUdpSocket.getPort());
+        System.out.println(">   ClientUdpConnection: Sending udp via port: " + mUdpSocket.getPort());
         mUdpPacket = new DatagramPacket(data, data.length, mUdpSocket.getInetAddress(), mUdpSocket.getPort());
         mUdpSocket.send(mUdpPacket);
     }

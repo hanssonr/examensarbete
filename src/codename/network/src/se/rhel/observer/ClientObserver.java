@@ -1,5 +1,7 @@
 package se.rhel.observer;
 
+import se.rhel.packet.Packet;
+
 import java.util.ArrayList;
 
 /**
@@ -29,9 +31,9 @@ public class ClientObserver implements ClientListener, IObserver {
     }
 
     @Override
-    public void received() {
+    public void received(Packet packet) {
         for (ClientListener clientListener : mClientListeners) {
-            clientListener.received();
+            clientListener.received(packet);
         }
     }
 }

@@ -51,7 +51,7 @@ public class ClientTcpConnection implements Runnable {
         DataOutputStream output = new DataOutputStream(mSocket.getOutputStream());
         output.write(data);
         output.flush();
-        System.out.println("Client TCP Send > " + Packet.lookupPacket(data[0]));
+        System.out.println(">   ClientTcpConnection: Client TCP Send > " + Packet.lookupPacket(data[0]));
     }
 
     public void stop() throws IOException {

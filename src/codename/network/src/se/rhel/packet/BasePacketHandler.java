@@ -20,7 +20,7 @@ public abstract class BasePacketHandler implements IPacketHandler {
 
         switch(mPacketType) {
             case DISCONNECT:
-                System.out.println("DISCONNECT");
+                System.out.println(">   BasePacketHandler: Recieved packet DISCONNECT");
                 break;
             default:
                 break;

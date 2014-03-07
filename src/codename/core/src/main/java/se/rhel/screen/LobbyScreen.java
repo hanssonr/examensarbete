@@ -31,7 +31,6 @@ public class LobbyScreen extends BaseScreen {
 
     private CodeName mGame;
     private Server mServer;
-    private Client mClient;
 
     public LobbyScreen(CodeName game, boolean isHost) {
         super(game);
@@ -51,14 +50,6 @@ public class LobbyScreen extends BaseScreen {
             }
         }
 
-        // else/and assume client
-        mClient = new Client();
-        try {
-            mClient.connect("127.0.0.1", 4455);
-        } catch (IOException e) {
-            System.err.println("Could not connect to server");
-        }
-
     }
 
     private void initStage() {
@@ -70,7 +61,7 @@ public class LobbyScreen extends BaseScreen {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 Gdx.app.log("Button", "Game");
-                mGame.setScreen(new GameScreen(mGame, mServer, mClient));
+                mGame.setScreen(new GameScreen(mGame, mServer));
             }
         });
 

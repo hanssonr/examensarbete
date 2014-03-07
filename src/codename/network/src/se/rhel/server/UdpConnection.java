@@ -1,6 +1,7 @@
 package se.rhel.server;
 
 import se.rhel.AConnection;
+import se.rhel.Connection;
 import se.rhel.packet.Packet;
 
 import java.io.IOException;
@@ -17,10 +18,12 @@ public class UdpConnection extends AConnection {
 
     private DatagramSocket mUDPSocket;
     private ServerPacketHandler mHandler;
+    private Server mServer;
 
-    public UdpConnection(DatagramSocket socket, ServerPacketHandler handler) {
+    public UdpConnection(DatagramSocket socket, ServerPacketHandler handler, Server server) {
         mUDPSocket = socket;
         mHandler = handler;
+        mServer = server;
     }
 
     @Override
@@ -45,20 +48,21 @@ public class UdpConnection extends AConnection {
      */
     private void parseUDPPacket(DatagramPacket packet) {
         ByteBuffer buf = ByteBuffer.wrap(packet.getData());
-        System.out.println("Debug > Received on server: " + Packet.lookupPacket(buf.get()));
-        System.out.println("PORT > " + buf.getInt());
-        //System.out.println("UDPAddress: " + packet.getAddress() + " Socket Adress: " + packet.getSocketAddress() + " UDPPort: " + packet.getPort());
+        Packet.PacketType type = Packet.lookupPacket(buf.get());
 
+        switch(type) {
+            case IDLE_PACKET:
+                int id = buf.getInt();
+                for(Connection d : mServer.getConnections()) {
+                    System.out.println(">   UdpConnection: Active connections: " + d.getId() + " Last package: " + d.getTimeLastPackage());
+                }
 
-        // Should we add the connection?
-        /*if(addConnection(new Connection(packet.getAddress(), packet.getPort()))) {
-            System.out.println("Debug > Connection added");
-        } else {
-            System.out.println("Debug > Connection already exists");
+                Connection fromConnection = mServer.getConnection(id);
+                fromConnection.packageReceived();
+
+                System.out.println(">   UdpConnection: Idle packet recieved from clientId: " + id);
+                break;
         }
-        System.out.println("Debug > Connections size: " + mConnections.size());
-
-        sendToAllUDP();*/
     }
 
     public void start() {

@@ -16,6 +16,11 @@ public class ServerObserver implements ServerListener, IObserver {
         mServerListeners.add(toAdd);
     }
 
+    // For debugging
+    public int nrOfListeners() {
+        return mServerListeners.size();
+    }
+
     @Override
     public void connected(Connection con) {
         for (ServerListener serverListener : mServerListeners) {

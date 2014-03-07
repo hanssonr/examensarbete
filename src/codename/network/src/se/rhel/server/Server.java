@@ -57,7 +57,7 @@ public class Server implements EndPoint {
 
     @Override
     public void run() {
-        System.out.println("Debug > Server started..");
+        System.out.println(">   Server: Debug > Server started..");
         while(mIsStarted) {
 
             // Do server stuff..
@@ -84,7 +84,7 @@ public class Server implements EndPoint {
         last = System.currentTimeMillis();
 
         // Check if any client been dced
-        // checkAlive();
+        checkAlive();
     }
 
     /**
@@ -109,7 +109,7 @@ public class Server implements EndPoint {
                 // If there's been a certain amount of time since we heard from the client
                 if(timePassed > TIMEOUT_TIME) {
                     next.setConnected(false);
-                    System.out.println("Time passed: " + timePassed + " Timeouttime: " + TIMEOUT_TIME + " Connection: " + next.getId() + " disconnected");
+                    System.out.println(">   Server: Time passed: " + timePassed + " Timeouttime: " + TIMEOUT_TIME + " Connection: " + next.getId() + " disconnected");
 
                     // Send packet that you are about to be disconnected / have been
                     // just for convinience for the client since we are going to disconnect anyways
@@ -133,7 +133,7 @@ public class Server implements EndPoint {
             mTCPListener.start();
 
             // Start the udp connection
-            mUDPConnection = new UdpConnection(mUDPSocket, mServerPacketHandler);
+            mUDPConnection = new UdpConnection(mUDPSocket, mServerPacketHandler, this);
             mUDPConnection.start();
 
             // Starting the server
@@ -251,6 +251,10 @@ public class Server implements EndPoint {
 
     public void addListener(ServerListener toAdd) {
         mServerObserver.addListener(toAdd);
+    }
+
+    public ServerObserver getObserver() {
+        return mServerObserver;
     }
 
     /**

@@ -5,6 +5,8 @@ import com.badlogic.gdx.utils.Array;
 import se.rhel.client.Client;
 import se.rhel.model.*;
 import se.rhel.observer.ClientListener;
+import se.rhel.packet.Packet;
+import se.rhel.packet.PlayerJoinPacket;
 import se.rhel.packet.RequestInitialStatePacket;
 
 public class ClientWorldModel implements BaseModel, ClientListener {
@@ -56,9 +58,7 @@ public class ClientWorldModel implements BaseModel, ClientListener {
 
     @Override
     public void connected() {
-        System.out.println("Player can be viewed on client!!");
-        ExternalPlayer ep = new ExternalPlayer(new Vector3(1f, 10f, 0f), mBulletWorld);
-        mPlayers.add(ep);
+
     }
 
     @Override
@@ -67,7 +67,16 @@ public class ClientWorldModel implements BaseModel, ClientListener {
     }
 
     @Override
-    public void received() {
-
+    public void received(Packet packet) {
+        switch(Packet.lookupPacket(packet.getPacketId())) {
+            case PLAYER_JOIN:
+                System.out.println(">   ClientWorldModel: Player_Join packet - Player can be viewed on client!!");
+                ExternalPlayer ep = new ExternalPlayer(new Vector3(1f, 10f, 0f), mBulletWorld);
+                mPlayers.add(ep);
+                break;
+            default:
+                System.out.println(">   ClientWorldModel: Unhandled packet");
+                break;
+        }
     }
 }

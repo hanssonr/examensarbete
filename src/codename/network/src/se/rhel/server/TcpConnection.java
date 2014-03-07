@@ -2,10 +2,7 @@ package se.rhel.server;
 
 import se.rhel.AConnection;
 import se.rhel.Connection;
-import se.rhel.packet.ConnectAcceptPacket;
-import se.rhel.packet.ConnectPacket;
-import se.rhel.packet.Packet;
-import se.rhel.packet.PlayerJoinPacket;
+import se.rhel.packet.*;
 
 import java.io.*;
 import java.net.*;
@@ -47,7 +44,7 @@ public class TcpConnection extends AConnection {
     void parseTCPPacket(byte[] data) {
         ByteBuffer buf = ByteBuffer.wrap(data);
         Packet.PacketType type = Packet.lookupPacket(buf.get());
-        System.out.println("SERVER > PARSE " + " Type: " + type + ", Data: " + data);
+        System.out.println(">   TcpConnection: PARSE " + " Type: " + type + ", Data: " + data);
         Packet packet = null;
         switch(type) {
             case INVALID:
@@ -62,12 +59,14 @@ public class TcpConnection extends AConnection {
 
                 break;
             case REQUEST_INITIAL_STATE:
-                // A client wants to know the servers initial state
+                // This right here should be the default from every packet
                 int id = buf.getInt();
-                System.out.println(">   INITIAL STATE REQUESTED!!!!!!!!!!!!!! From clientId: " + id);
-                Connection toSend = mServer.getConnection(id);
-                // TODO: This is just fake, lol!
-                mServer.sendTCP(new PlayerJoinPacket(0f, 10f, 0f), toSend);
+                Connection fromConnection = mServer.getConnection(id);
+
+                // We really dont care about what packet has been sent, just tell
+                // the listeners about it
+                System.out.println(">   TcpConnection: Number of active listeners: " + mServer.getObserver().nrOfListeners());
+                mServer.getObserver().received(fromConnection, new RequestInitialStatePacket(id));
                 break;
             default:
                 break;
