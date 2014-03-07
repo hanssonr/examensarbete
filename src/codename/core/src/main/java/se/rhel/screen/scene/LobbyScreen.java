@@ -51,7 +51,7 @@ public class LobbyScreen extends BaseScreen {
         }
 
         // else/and assume client
-        mClient = new Client(new ClientPacketHandler());
+        mClient = new Client();
         try {
             mClient.connect("127.0.0.1", 4455);
         } catch (IOException e) {

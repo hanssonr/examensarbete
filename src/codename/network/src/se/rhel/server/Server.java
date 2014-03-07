@@ -219,6 +219,7 @@ public class Server implements EndPoint {
         try {
             DataOutputStream output = new DataOutputStream(conn.getSocket().getOutputStream());
             output.write(packet.getData());
+            output.flush();
         } catch (IOException e) {
             System.err.println(e.getMessage());
         }
@@ -238,6 +239,14 @@ public class Server implements EndPoint {
                 System.out.println("Skipped this one");
             }
         }
+    }
+
+    public Connection getConnection(int id) {
+        for (Connection connection : mConnections) {
+            if(connection.getId() == id)
+                return connection;
+        }
+        return null;
     }
 
     public List<Connection> getConnections() {

@@ -20,7 +20,7 @@ public class Main {
                     Server server = new Server("DaServer", 4455);
                     server.start();// new Thread(server).start(); // server.start();
                 } else {
-                    Client c = new Client(new ClientPacketHandler());
+                    Client c = new Client();
                     c.connect("127.0.0.1", 4455);
                 }
 

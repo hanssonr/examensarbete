@@ -18,8 +18,11 @@ public class Client {
 
     private ClientObserver mClientObserver;
 
-    public Client(BasePacketHandler handler) {
-        mHandler = handler;
+    private int mId;
+
+    public Client() {
+        mId = -1;
+        mHandler = new ClientPacketHandler(this);
         mClientObserver = new ClientObserver();
         mHandler.setObserver(mClientObserver);
     }
@@ -43,6 +46,20 @@ public class Client {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    /**
+     * If equals -1 it means that
+     * the client haven't got response
+     * from server yet
+     * @return
+     */
+    public int getId() {
+        return mId;
+    }
+
+    public void setId(int id) {
+        mId = id;
     }
 
     public void sendTcp(byte[] data) throws IOException {

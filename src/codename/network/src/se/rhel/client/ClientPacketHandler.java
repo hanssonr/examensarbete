@@ -8,13 +8,23 @@ import se.rhel.packet.BasePacketHandler;
  */
 public class ClientPacketHandler extends BasePacketHandler {
 
+    private Client mClient;
+
+    // TODO: Should not be aware of client, really.
+    public ClientPacketHandler(Client c) {
+        mClient = c;
+    }
+
     @Override
     public void handlePacket(byte[] data) {
         super.handlePacket(data);
 
         switch(mPacketType) {
             case CONNECT_ACCEPT:
-                System.out.println("CONNECTION ACCEPTED WITH ID: " + mBuf.getInt());
+                int id = mBuf.getInt();
+                // Setting the ID on client
+                mClient.setId(id);
+                System.out.println("CONNECTION ACCEPTED WITH ID: " + id);
                 break;
 
             case PLAYER_JOIN:
