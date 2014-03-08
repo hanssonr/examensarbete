@@ -50,7 +50,7 @@ public class TcpConnection implements Runnable {
     private void start() {
         mShouldRun = true;
         if(mUpdateThread == null) {
-            mUpdateThread = new Thread(this);
+            mUpdateThread = new Thread(this, "TcpConnectionThread");
             mUpdateThread.start();
         }
     }

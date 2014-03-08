@@ -27,13 +27,6 @@ public class ClientPacketHandler extends BasePacketHandler {
                 // Setting the ID on client
                 mClient.setId(id);
                 System.out.println(">   ClientPacketHandler: Connection accepted >> PLAYER_ID: " + id);
-
-                // Telling listeners if they wants to do something
-                ((ClientObserver)mObserver).connected();
-
-                // Also, since the connection been accepted, we can start telling the server
-                // that we're still alive, hopefully
-                mClient.sendIdlePackage(true);
                 break;
 
             case PLAYER_JOIN:
@@ -46,10 +39,17 @@ public class ClientPacketHandler extends BasePacketHandler {
                 HandshakeResponsePacket pkt = new HandshakeResponsePacket(data);
                 System.out.println(">   ClientPacketHandler: " + mPacketType + " ID: " + pkt.mId);
                 mClient.setId(pkt.mId);
+
+                // Telling listeners if they wants to do something
+                ((ClientObserver)mObserver).connected();
+
+                // Also, since the connection been accepted, we can start telling the server
+                // that we're still alive, hopefully
+                mClient.sendIdlePackage(true);
                 break;
 
             default:
-                System.out.println(">   ClientPacketHandler: DEFAULT PACKAGE: " + " TYPE: " + mPacketType + ", DATA: " + data);
+                // System.out.println(">   ClientPacketHandler: DEFAULT PACKAGE: " + " TYPE: " + mPacketType + ", DATA: " + data);
                 break;
         }
     }

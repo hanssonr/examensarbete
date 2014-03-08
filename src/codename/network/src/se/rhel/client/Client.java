@@ -66,7 +66,7 @@ public class Client implements EndPoint {
     @Override
     public void start() {
         mIsRunning = true;
-        new Thread(this).start();
+        new Thread(this, "ClientThread").start();
     }
 
     @Override

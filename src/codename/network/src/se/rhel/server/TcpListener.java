@@ -40,7 +40,7 @@ public class TcpListener implements Runnable {
     }
 
     public void start() {
-        new Thread(this).start();
+        new Thread(this, "TcpListenerThread").start();
     }
 
     public void stop() {

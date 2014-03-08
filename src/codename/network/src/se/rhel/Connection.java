@@ -31,7 +31,7 @@ public class Connection {
     }
 
     public void setConnected(boolean val) {
-        mIsConnected = false;
+        mIsConnected = val;
     }
 
     public void setDisconnected() {
@@ -58,6 +58,7 @@ public class Connection {
 
         if (mUdpConnection.getPort() != that.mUdpConnection.getPort()) return false;
         if (!mTcpConnection.getInetAddress().equals(that.mTcpConnection.getInetAddress())) return false;
+        if (mId != that.mId) return false;
 
         return true;
     }
@@ -86,6 +87,7 @@ public class Connection {
         mTcpConnection = tcpCon;
         mUdpConnection = udpCon;
         mIsConnected = true;
+        mLastPackageTime = System.currentTimeMillis();
     }
 
     public void sendUdp(byte[] data, Connection connection) {

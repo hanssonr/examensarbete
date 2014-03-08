@@ -101,12 +101,12 @@ public class Server implements EndPoint {
 
                 // If there's been a certain amount of time since we heard from the client
                 if(timePassed > TIMEOUT_TIME) {
-                    //next.setConnected(false);
-                    //System.out.println(">   Server: Time passed: " + timePassed + " Timeouttime: " + TIMEOUT_TIME + " Connection: " + next.getId() + " disconnected");
+                    next.setConnected(false);
+                    System.out.println(">   Server: Time passed: " + timePassed + " Timeouttime: " + TIMEOUT_TIME + " Connection: " + next.getId() + " disconnected");
 
                     // Send packet that you are about to be disconnected / have been
                     // just for convinience for the client since we are going to disconnect anyways
-                    //sendTCP(new DisconnectPacket(), next);
+                    sendTCP(new DisconnectPacket(), next);
                 }
             }
         }
@@ -116,7 +116,7 @@ public class Server implements EndPoint {
     public void start() {
         // Starting the server
         mIsStarted = true;
-        SERVER_THREAD = new Thread(this);
+        SERVER_THREAD = new Thread(this, "ServerThread");
         SERVER_THREAD.start();
     }
 
@@ -142,6 +142,7 @@ public class Server implements EndPoint {
     Adds a connection object to the list of current connections
      */
     public boolean addConnection(Connection con) {
+        System.out.println("Connection should be added!");
         if(mConnections.contains(con))
             return false;
         if(mConnections.size() >= MAX_CONNECTIONS)
@@ -149,6 +150,7 @@ public class Server implements EndPoint {
 
         // Adding a unique ID to the new Connection
         mConnections.add(con);
+        System.out.println("Size: " + mConnections.size());
 
         // Telling whoever is listening
         mServerObserver.connected(con);

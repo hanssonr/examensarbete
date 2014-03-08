@@ -62,7 +62,7 @@ public class UdpConnection implements Runnable {
 
     private void start() {
         mShouldRun = true;
-        mUpdateThread = new Thread(this);
+        mUpdateThread = new Thread(this, "UdpConnectionThread");
         mUpdateThread.start();
     }
 
@@ -122,6 +122,6 @@ public class UdpConnection implements Runnable {
     }
 
     public int getPort() {
-        return mSocket.getLocalPort();
+        return mSocket.getPort();
     }
 }
