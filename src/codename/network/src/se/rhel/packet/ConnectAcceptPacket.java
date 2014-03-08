@@ -6,7 +6,7 @@ package se.rhel.packet;
 public class ConnectAcceptPacket extends Packet {
 
     public ConnectAcceptPacket(int id) {
-        super(1, 5);
+        super(PacketType.CONNECT_ACCEPT, 5);
         mBuffer.putInt(id);
     }
 }

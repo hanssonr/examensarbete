@@ -20,6 +20,7 @@ public class ClientWorldModel implements BaseModel, ClientListener {
 
     public ClientWorldModel(Client client) {
         mBulletWorld = new BulletWorld();
+        mPlayers = new Array<>();
         mClient = client;
         mClient.addListener(this);
         mClient.sendTcp(new RequestInitialStatePacket(mClient.getId()));
@@ -31,7 +32,6 @@ public class ClientWorldModel implements BaseModel, ClientListener {
         mCamera = new FPSCamera(75, 0.1f, 1000f);
         mLocalPlayer = new Player(new Vector3(0, 10, 0), mBulletWorld);
         mLocalPlayer.attachCamera(mCamera);
-        mPlayers = new Array<>();
     }
 
     @Override
@@ -72,6 +72,7 @@ public class ClientWorldModel implements BaseModel, ClientListener {
             case PLAYER_JOIN:
                 System.out.println(">   ClientWorldModel: Player_Join packet - Player can be viewed on client!!");
                 ExternalPlayer ep = new ExternalPlayer(new Vector3(1f, 10f, 0f), mBulletWorld);
+                System.out.println(mPlayers);
                 mPlayers.add(ep);
                 break;
             default:

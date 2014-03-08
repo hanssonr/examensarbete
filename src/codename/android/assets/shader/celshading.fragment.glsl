@@ -1,21 +1,24 @@
-uniform vec3 u_lightDir;
-varying vec3 v_normal;
+#ifdef GL_ES
+#define LOWP lowp
+#define MED mediump
+precision lowp float;
+#else
+#define LOWP
+#define MED
+#endif
+
 uniform sampler2D u_texture;
-varying vec2 v_texCoord0;
+varying MED vec2 v_texCoord0;
 
 float toonify(in float intensity) {
-    float amount = 0;
-
     if (intensity > 0.8)
-        amount = 1.2;
+        return 1.0;
     else if (intensity > 0.5)
-        amount = 0.9;
-    else if (intensity > 0.3)
-        amount = 0.8;
+        return 0.8;
+    else if (intensity > 0.25)
+        return 0.3;
     else
-        amount = 0.8;
-
-    return amount;
+        return 0.1;
 }
 
 void main(){

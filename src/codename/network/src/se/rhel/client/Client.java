@@ -1,16 +1,12 @@
 package se.rhel.client;
 
-import se.rhel.Connection;
 import se.rhel.EndPoint;
 import se.rhel.TcpConnection;
 import se.rhel.UdpConnection;
 import se.rhel.observer.ClientListener;
 import se.rhel.observer.ClientObserver;
-import se.rhel.observer.ServerListener;
-import se.rhel.observer.ServerObserver;
 import se.rhel.packet.*;
 
-import java.io.IOException;
 import java.net.*;
 
 public class Client implements EndPoint {

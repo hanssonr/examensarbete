@@ -40,15 +40,15 @@ public enum Resources {
 
     public void load() {
         mManager.load("data/fonts/hud.fnt", BitmapFont.class);
-        mManager.load("obj/ship/ship.obj", Model.class);
+        //mManager.load("obj/ship/ship.obj", Model.class);
         mManager.load("obj/level/level_xlarge.g3db", Model.class);
         mManager.load("obj/level/level_xlarge_vis.g3db", Model.class);
-        mManager.load("obj/player/player.g3db", Model.class);
+        //mManager.load("obj/player/player.g3db", Model.class);
         mManager.load("obj/player/wep/FirstPersonWeapon.g3db", Model.class);
         mManager.load("obj/player/animated/MyMinecraftPlayer_animated.g3db", Model.class);
-        mManager.load("obj/player/mcplayer.g3db", Model.class);
-        mManager.load("obj/beretta/beretta.obj", Model.class);
-        mManager.load("obj/skybox/spacesphere.obj", Model.class);
+        //mManager.load("obj/player/mcplayer.g3db", Model.class);
+        //mManager.load("obj/beretta/beretta.obj", Model.class);
+        //mManager.load("obj/skybox/spacesphere.obj", Model.class);
 
         mManager.load("tex/laser/laser_middle_b.png", Texture.class);
         mManager.load("tex/laser/laser_middle_o.png", Texture.class);

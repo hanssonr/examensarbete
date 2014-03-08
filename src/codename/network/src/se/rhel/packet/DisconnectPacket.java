@@ -8,6 +8,6 @@ import java.nio.ByteBuffer;
 public class DisconnectPacket extends Packet {
 
     public DisconnectPacket() {
-        super(2, 10);
+        super(PacketType.DISCONNECT, 10);
     }
 }

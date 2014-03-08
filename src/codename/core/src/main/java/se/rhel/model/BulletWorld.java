@@ -138,7 +138,7 @@ public class BulletWorld implements BaseModel {
 
         PERFORMANCE_COUNTER.tick();
         PERFORMANCE_COUNTER.start();
-                ((btDynamicsWorld) mCollisionWorld).stepSimulation(FIXED_TIMESTEP, 5);
+                ((btDynamicsWorld) mCollisionWorld).stepSimulation(delta, 5);
         PERFORMANCE_COUNTER.stop();
 
         //int c = mMotionStates.size;

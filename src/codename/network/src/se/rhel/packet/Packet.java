@@ -8,11 +8,11 @@ import java.nio.ByteBuffer;
 public abstract class Packet {
     protected ByteBuffer mBuffer;
     protected byte[] mData;
+    protected byte mPacketId;
 
-    private byte mPacketId;
+    public Packet(PacketType type, int packetSize) {
+        mPacketId = PacketUtils.getInstance().getPacketId(type);
 
-    public Packet(int packetId, int packetSize) {
-        mPacketId = (byte) packetId;
         mData = new byte[packetSize];
         mBuffer = ByteBuffer.wrap(mData);
         mBuffer.put(mPacketId);
@@ -27,25 +27,10 @@ public abstract class Packet {
     }
 
     public static PacketType lookupPacket(byte id){
-        for(PacketType type : PacketType.values()) {
-            if(type.getId() == id) return type;
-        }
-
-        return null;
+        return PacketUtils.getInstance().getPacketType(id);
     }
 
-    //PacketType
     public static enum PacketType {
-        INVALID(-2), HANDSHAKE_RESPONSE(-1), CONNECT(0), CONNECT_ACCEPT(1), DISCONNECT(2), PLAYER_JOIN(3), REQUEST_INITIAL_STATE(4), IDLE_PACKET(5);
-
-        private int mPacketId;
-
-        private PacketType(int packetId) {
-            this.mPacketId = packetId;
-        }
-
-        public int getId() {
-            return mPacketId;
-        }
+        INVALID, HANDSHAKE_RESPONSE, CONNECT, CONNECT_ACCEPT, DISCONNECT, PLAYER_JOIN, REQUEST_INITIAL_STATE, IDLE_PACKET
     }
 }
