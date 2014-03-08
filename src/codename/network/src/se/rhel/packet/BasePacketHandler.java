@@ -1,8 +1,6 @@
 package se.rhel.packet;
 
 import se.rhel.observer.IObserver;
-import se.rhel.observer.ServerObserver;
-
 import java.nio.ByteBuffer;
 
 /**

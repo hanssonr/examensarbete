@@ -6,7 +6,7 @@ package se.rhel.packet;
 public class ConnectPacket extends Packet {
 
     public ConnectPacket(int udpPort) {
-        super(0, 5);
+        super(PacketType.CONNECT, 5);
         mBuffer.putInt(udpPort);
     }
 

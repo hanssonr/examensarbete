@@ -16,7 +16,7 @@ public class ServerPacketHandler extends BasePacketHandler {
     }
 
     @Override
-    public void handlePacket(byte[] data) {
+    public void handlePacket(byte[] data)  {
         super.handlePacket(data);
         int id = -1;
         Connection fromConnection;

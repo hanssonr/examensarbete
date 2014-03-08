@@ -113,17 +113,20 @@ public class WorldView {
             Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
             Gdx.gl.glClearColor(0, 1, 1, 1);
             Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
-
-            Gdx.gl.glCullFace(GL20.GL_BACK);
-            Gdx.gl.glEnable(GL20.GL_DEPTH_TEST);
-            Gdx.gl.glDepthFunc(GL20.GL_LEQUAL);
-            Gdx.gl.glDepthMask(true);
+//
+//            Gdx.gl.glCullFace(GL20.GL_BACK);
+//            Gdx.gl.glEnable(GL20.GL_DEPTH_TEST);
+//            Gdx.gl.glDepthFunc(GL20.GL_LEQUAL);
+//            Gdx.gl.glDepthMask(true);
 
             mModelBatch.begin(mServerWorldModel.getCamera());
             mModelBatch.render(Resources.INSTANCE.modelInstanceArray);
             mModelBatch.render(mServerWorldModel.getBulletWorld().instances, mEnvironment);
             mModelBatch.render(mServerWorldModel.getBulletWorld().levelInstance, mEnvironment);
             mModelBatch.end();
+
+            mBulletHoleRenderer.draw(delta);
+
             buffer1.end();
 
             buffer1.getColorBufferTexture().bind();
@@ -220,8 +223,6 @@ public class WorldView {
         mCrosshairRenderer.setColor(Color.RED);
         mCrosshairRenderer.circle(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2, 5f);
         mCrosshairRenderer.end();
-
-        mBulletHoleRenderer.draw(delta);
 
         mModelBatch.begin(mServerWorldModel.getCamera());
         Gdx.gl.glClear(GL10.GL_DEPTH_BUFFER_BIT);

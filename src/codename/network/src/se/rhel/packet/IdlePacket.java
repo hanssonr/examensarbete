@@ -7,7 +7,7 @@ package se.rhel.packet;
 public class IdlePacket extends Packet {
 
     public IdlePacket(int id) {
-        super(5, 5);
+        super(PacketType.IDLE_PACKET, 5);
         mBuffer.putInt(id);
     }
 

@@ -10,13 +10,13 @@ public class HandshakeResponsePacket extends Packet {
     public int mId;
 
     public HandshakeResponsePacket(int id) {
-        super(-1, 5);
+        super(PacketType.HANDSHAKE_RESPONSE, 5);
 
         mBuffer.putInt(id);
     }
 
     public HandshakeResponsePacket(byte[] data) {
-        super(-1, 5);
+        super(PacketType.HANDSHAKE_RESPONSE, 5);
 
         mBuffer = ByteBuffer.wrap(data);
         mBuffer.get(); //type
