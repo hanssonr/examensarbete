@@ -35,7 +35,7 @@ public class ServerPacketHandler extends BasePacketHandler {
                 // We really dont care about what packet has been sent, just tell
                 // the listeners about it
                 Log.debug("ServerPacketHandler", "Number of active listeners: " + mServer.getObserver().nrOfListeners());
-                mServer.getObserver().received(fromConnection, new RequestInitialStatePacket(id));
+                mServer.getObserver().received(fromConnection, new RequestInitialStatePacket(risp.mPlayerId));
                 break;
             case IDLE_PACKET:
                 IdlePacket ip = new IdlePacket(data);
