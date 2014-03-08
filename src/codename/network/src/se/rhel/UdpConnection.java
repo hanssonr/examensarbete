@@ -79,6 +79,7 @@ public class UdpConnection implements Runnable {
 
             } catch (IOException e) {
                 e.printStackTrace();
+                stop();
             }
         }
     }
@@ -97,8 +98,6 @@ public class UdpConnection implements Runnable {
 
         try {
             mSocket.send(new DatagramPacket(data, data.length, mSocket.getInetAddress(), mSocket.getPort()));
-
-            //System.out.println(">   UdpConnection: Send > " + Packet.lookupPacket(data[0]));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -114,8 +113,6 @@ public class UdpConnection implements Runnable {
 
         try {
             mSocket.send(new DatagramPacket(data, data.length, connection.getAddress(), connection.getPort()));
-
-            //System.out.println(">   UdpConnection: Send > " + Packet.lookupPacket(data[0]));
         } catch (IOException e) {
             e.printStackTrace();
         }

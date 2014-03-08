@@ -3,6 +3,7 @@ package se.rhel.client;
 import se.rhel.Connection;
 import se.rhel.observer.ClientObserver;
 import se.rhel.packet.BasePacketHandler;
+import se.rhel.packet.ConnectAcceptPacket;
 import se.rhel.packet.HandshakeResponsePacket;
 import se.rhel.packet.PlayerJoinPacket;
 
@@ -23,13 +24,6 @@ public class ClientPacketHandler extends BasePacketHandler {
         super.handlePacket(data);
 
         switch(mPacketType) {
-            case CONNECT_ACCEPT:
-                int id = mBuf.getInt();
-                // Setting the ID on client
-                mClient.setId(id);
-                System.out.println(">   ClientPacketHandler: Connection accepted >> PLAYER_ID: " + id);
-                break;
-
             case PLAYER_JOIN:
                 System.out.println(">   ClientPacketHandler: Player joined packet!");
                 // TODO: This is just fake!
@@ -38,8 +32,9 @@ public class ClientPacketHandler extends BasePacketHandler {
 
             case HANDSHAKE_RESPONSE:
                 HandshakeResponsePacket pkt = new HandshakeResponsePacket(data);
-                System.out.println(">   ClientPacketHandler: " + mPacketType + " ID: " + pkt.mId);
                 mClient.setId(pkt.mId);
+
+                System.out.println(">   ClientPacketHandler: " + mPacketType + " ID: " + pkt.mId);
 
                 // Telling listeners if they wants to do something
                 ((ClientObserver)mObserver).connected();
@@ -47,10 +42,6 @@ public class ClientPacketHandler extends BasePacketHandler {
                 // Also, since the connection been accepted, we can start telling the server
                 // that we're still alive, hopefully
                 mClient.sendIdlePackage(true);
-                break;
-
-            default:
-                // System.out.println(">   ClientPacketHandler: DEFAULT PACKAGE: " + " TYPE: " + mPacketType + ", DATA: " + data);
                 break;
         }
     }

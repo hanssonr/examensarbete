@@ -2,6 +2,7 @@ package se.rhel.server;
 
 import se.rhel.Connection;
 import se.rhel.packet.BasePacketHandler;
+import se.rhel.packet.IdlePacket;
 import se.rhel.packet.RequestInitialStatePacket;
 
 /**
@@ -18,41 +19,24 @@ public class ServerPacketHandler extends BasePacketHandler {
     @Override
     public void handlePacket(byte[] data)  {
         super.handlePacket(data);
-        int id = -1;
+
         Connection fromConnection;
 
         switch(mPacketType) {
-            case CONNECT:
-                //mServer.sendToAllUDP(new ConnectAcceptPacket(Utils.getInstance().generateUniqueId()));
-                System.out.println("CONNECT");
-                break;
             case REQUEST_INITIAL_STATE:
-                // This right here should be the default from every packet
-                id = mBuf.getInt();
-                fromConnection = mServer.getConnection(id);
+                RequestInitialStatePacket risp = new RequestInitialStatePacket(data);
+                fromConnection = mServer.getConnection(risp.mPlayerId);
 
                 // We really dont care about what packet has been sent, just tell
                 // the listeners about it
-                System.out.println(">   ServerPacketHandler: Number of active listeners: " + mServer.getObserver().nrOfListeners());
-                mServer.getObserver().received(fromConnection, new RequestInitialStatePacket(id));
+                //System.out.println(">   ServerPacketHandler: Number of active listeners: " + mServer.getObserver().nrOfListeners());
+                mServer.getObserver().received(fromConnection, new RequestInitialStatePacket(risp.mPlayerId));
                 break;
             case IDLE_PACKET:
-                id = mBuf.getInt();
-                // System.out.println(">   ServerPacketHandler: Idle Packet, Id: " + id);
-//                for(Connection d : mServer.getConnections()) {
-//                    System.out.println(">   ServerPacketHandler: Active connections: " + d.getId() + " Last package: " + d.getTimeLastPackage());
-//                }
+                IdlePacket ip = new IdlePacket(data);
 
-                if(id != 1) {
-                    fromConnection = mServer.getConnection(id);
-                    fromConnection.packageReceived();
-                } else {
-                    fromConnection = mServer.getConnection(id);
-                    fromConnection.packageReceived();
-                }
-
-
-                // System.out.println(">   ServerPacketHandler: Idle packet recieved from clientId: " + id);
+                fromConnection = mServer.getConnection(ip.mPlayerId);
+                fromConnection.packageReceived();
                 break;
             default:
                 //System.out.println("DEFAULT PACKAGE");

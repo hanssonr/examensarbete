@@ -3,23 +3,23 @@ package se.rhel.packet;
 import java.nio.ByteBuffer;
 
 /**
- * Created by rkh on 2014-03-07.
+ * 0    = (byte) id
+ * 1-4  = (int) server_id
  */
 public class HandshakeResponsePacket extends Packet {
 
+    private static int PACKET_SIZE = Byte.SIZE + Integer.SIZE;;
     public int mId;
 
     public HandshakeResponsePacket(int id) {
-        super(PacketType.HANDSHAKE_RESPONSE, 5);
+        super(PacketType.HANDSHAKE_RESPONSE, PACKET_SIZE);
 
         mBuffer.putInt(id);
     }
 
     public HandshakeResponsePacket(byte[] data) {
-        super(PacketType.HANDSHAKE_RESPONSE, 5);
+        super(data);
 
-        mBuffer = ByteBuffer.wrap(data);
-        mBuffer.get(); //type
         mId = mBuffer.getInt();
     }
 }

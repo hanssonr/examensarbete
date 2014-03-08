@@ -79,8 +79,6 @@ public class TcpConnection implements Runnable {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-        System.out.println(">   TcpConnection: Send > " + Packet.lookupPacket(data[0]));
     }
 
     public void stop() {
