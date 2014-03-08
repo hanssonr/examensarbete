@@ -1,13 +1,13 @@
 package se.rhel.packet;
 
-import java.nio.ByteBuffer;
-
 /**
- * Created by rkh on 2014-03-04.
+ * 0    = (byte) packet id
  */
 public class DisconnectPacket extends Packet {
 
+    private static int PACKET_SIZE = Byte.SIZE;
+
     public DisconnectPacket() {
-        super(PacketType.DISCONNECT, 10);
+        super(PacketType.DISCONNECT, PACKET_SIZE);
     }
 }

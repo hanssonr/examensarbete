@@ -1,12 +1,13 @@
 package se.rhel.packet;
 
 /**
- * Created by rkh on 2014-03-04.
+ * 0    = (byte) packet id
  */
 public class ConnectAcceptPacket extends Packet {
 
+    private static int PACKET_SIZE = Byte.SIZE;
+
     public ConnectAcceptPacket(int id) {
-        super(PacketType.CONNECT_ACCEPT, 5);
-        mBuffer.putInt(id);
+        super(PacketType.CONNECT_ACCEPT, PACKET_SIZE);
     }
 }

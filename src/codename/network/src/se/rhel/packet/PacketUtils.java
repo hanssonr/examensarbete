@@ -10,7 +10,7 @@ public class PacketUtils {
 
     private static PacketUtils INSTANCE = null;
     private static HashMap<Packet.PacketType, Byte> PACKETS = new HashMap<>();
-    private static int UNIQUE_ID = -127;
+    private static int UNIQUE_ID = -128;
 
     // Private constructor
     private PacketUtils() {

@@ -24,13 +24,6 @@ public class ClientPacketHandler extends BasePacketHandler {
         super.handlePacket(data);
 
         switch(mPacketType) {
-            case CONNECT_ACCEPT:
-                int id = mBuf.getInt();
-                // Setting the ID on client
-                mClient.setId(id);
-                Log.debug("ClientPacketHandler", "Connection accepted >> PLAYER_ID: " + id);
-                break;
-
             case PLAYER_JOIN:
                 Log.debug("ClientPacketHandler", "Player joined packet!");
                 // TODO: This is just fake!
@@ -48,10 +41,6 @@ public class ClientPacketHandler extends BasePacketHandler {
                 // Also, since the connection been accepted, we can start telling the server
                 // that we're still alive, hopefully
                 mClient.sendIdlePackage(true);
-                break;
-
-            default:
-                // System.out.println(">   ClientPacketHandler: DEFAULT PACKAGE: " + " TYPE: " + mPacketType + ", DATA: " + data);
                 break;
         }
     }

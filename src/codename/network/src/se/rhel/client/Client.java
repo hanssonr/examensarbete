@@ -12,7 +12,7 @@ import java.net.*;
 
 public class Client implements EndPoint {
 
-    private static final int CLIENT_UPDATE_INTERVAL = 25;
+    private static final int CLIENT_UPDATE_INTERVAL = 2000;
 
     private UdpConnection mUdpConnection;
     private TcpConnection mTcpConnection;
@@ -103,18 +103,20 @@ public class Client implements EndPoint {
     }
 
     public void sendTcp(Packet packet) {
-        mTcpConnection.sendTcp(packet.getData());
+        sendTcp(packet.getData());
     }
 
     public void sendTcp(byte[] data) {
+        System.out.println(">   Client: Send TCP > " + Packet.lookupPacket(data[0]));
         mTcpConnection.sendTcp(data);
     }
 
     public void sendUdp(Packet packet) {
-        mUdpConnection.sendUdp(packet.getData());
+        sendUdp(packet.getData());
     }
 
     public void sendUdp(byte[] data) {
+        System.out.println(">   Client: Send UDP > " + Packet.lookupPacket(data[0]));
         mUdpConnection.sendUdp(data);
     }
 

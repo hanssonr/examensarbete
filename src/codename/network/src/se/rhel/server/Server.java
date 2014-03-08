@@ -24,7 +24,7 @@ public class Server implements EndPoint {
 
     private static final int MAX_CONNECTIONS = 16;
     private static final long TIMEOUT_TIME = 2500;
-    private static final long SERVER_UPDATE_INTERVAL = 25;
+    private static final long SERVER_UPDATE_INTERVAL = 250;
 
     private Thread SERVER_THREAD;
     private boolean mIsStarted;
@@ -182,10 +182,12 @@ public class Server implements EndPoint {
      * @throws IOException
      */
     public void sendUDP(Packet packet, Connection conn) {
+        System.out.println(">   Server: Send UDP > " + Packet.lookupPacket(packet.getPacketId()));
         conn.sendUdp(packet.getData(), conn);
     }
 
     public void sendTCP(Packet packet, Connection conn) {
+        System.out.println(">   Server: Send TCP > " + Packet.lookupPacket(packet.getPacketId()));
         conn.sendTcp(packet.getData());
     }
 
@@ -199,8 +201,6 @@ public class Server implements EndPoint {
         for(Connection con : mConnections) {
             if(!con.equals(except)) {
                 sendTCP(packet, con);
-            } else {
-                //System.out.println("Skipped this one");
             }
         }
     }

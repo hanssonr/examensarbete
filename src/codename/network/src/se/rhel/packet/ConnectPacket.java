@@ -1,13 +1,25 @@
 package se.rhel.packet;
 
 /**
- * Created by rkh on 2014-03-04.
+ * 0    = (byte) packet id
+ * 1-4  = (int) player id
  */
 public class ConnectPacket extends Packet {
 
-    public ConnectPacket(int udpPort) {
-        super(PacketType.CONNECT, 5);
-        mBuffer.putInt(udpPort);
+    private static int PACKET_SIZE = Byte.SIZE + Integer.SIZE;
+    public int mPlayerId;
+
+    public ConnectPacket(int playerId) {
+        super(PacketType.CONNECT, PACKET_SIZE);
+        mBuffer.putInt(playerId);
     }
+
+    public ConnectPacket(byte[] data) {
+        super(data);
+
+        mPlayerId = mBuffer.getInt();
+    }
+
+
 
 }
