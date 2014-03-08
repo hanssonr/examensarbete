@@ -2,6 +2,7 @@ package se.rhel.client;
 
 import se.rhel.observer.ClientObserver;
 import se.rhel.packet.BasePacketHandler;
+import se.rhel.packet.HandshakeResponsePacket;
 import se.rhel.packet.PlayerJoinPacket;
 
 /**
@@ -39,6 +40,12 @@ public class ClientPacketHandler extends BasePacketHandler {
                 System.out.println(">   ClientPacketHandler: Player joined packet!");
                 // TODO: This is just fake!
                 ((ClientObserver)mObserver).received(new PlayerJoinPacket(0f, 10f, 0f));
+                break;
+
+            case HANDSHAKE_RESPONSE:
+                HandshakeResponsePacket pkt = new HandshakeResponsePacket(data);
+                System.out.println(">   ClientPacketHandler: " + mPacketType + " ID: " + pkt.mId);
+                mClient.setId(pkt.mId);
                 break;
 
             default:

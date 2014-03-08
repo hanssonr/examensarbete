@@ -7,17 +7,10 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
-import se.rhel.client.Client;
 import se.rhel.CodeName;
-import se.rhel.client.ClientPacketHandler;
 import se.rhel.screen.scene.UIComponents;
 import se.rhel.server.Server;
-import se.rhel.packet.PacketHandler;
-import se.rhel.screen.BaseScreen;
-import se.rhel.screen.GameScreen;
 
-import java.io.IOException;
-import java.net.SocketException;
 
 /**
  * Created by Emil on 2014-03-05.
@@ -41,13 +34,9 @@ public class LobbyScreen extends BaseScreen {
 
         // Start the server if host
         if(isHost) {
-            mServer = null;
-            try {
-                mServer = new Server("DaServer", 4455);
-                mServer.start();
-            } catch (SocketException e) {
-                System.err.println("Server not started");
-            }
+            mServer = new Server();
+            mServer.start();
+            mServer.bind(4455, 5544);
         }
 
     }

@@ -8,7 +8,7 @@ import java.nio.ByteBuffer;
 /**
  * Created by rkh on 2014-03-05.
  */
-public abstract class BasePacketHandler implements IPacketHandler {
+public abstract class BasePacketHandler {
 
     protected ByteBuffer mBuf;
     protected Packet.PacketType mPacketType;
@@ -20,11 +20,8 @@ public abstract class BasePacketHandler implements IPacketHandler {
 
         switch(mPacketType) {
             case DISCONNECT:
-                System.out.println(">   BasePacketHandler: Recieved packet DISCONNECT");
+                System.out.println(">   BasePacketHandler: Received packet DISCONNECT");
                 break;
-            default:
-                break;
-
         }
     }
 

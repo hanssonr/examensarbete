@@ -1,6 +1,6 @@
 package se.rhel;
 
-import se.rhel.server.TcpConnection;
+import se.rhel.packet.BasePacketHandler;
 
 import java.net.InetAddress;
 import java.net.Socket;
@@ -11,21 +11,15 @@ import java.net.Socket;
  */
 public class Connection {
 
-    private InetAddress mAddress;
-    private int mUDPPort;
-    private TcpConnection mTcpConnection;
     private boolean mIsConnected;
     private long mLastPackageTime;
-
     private final int mId;
 
-    public Connection(InetAddress address, int port, TcpConnection tcpConnection) {
-        mAddress = address;
-        mUDPPort = port;
-        mTcpConnection = tcpConnection;
+    protected UdpConnection mUdpConnection;
+    protected TcpConnection mTcpConnection;
+
+    public Connection() {
         mId = Utils.getInstance().generateUniqueId();
-        mIsConnected = true;
-        mLastPackageTime = System.currentTimeMillis();
     }
 
     public void packageReceived() {
@@ -50,8 +44,8 @@ public class Connection {
                 "mId=" + mId +
                 ", mLastPackageTime=" + mLastPackageTime +
                 ", mIsConnected=" + mIsConnected +
-                ", mUDPPort=" + mUDPPort +
-                ", mAddress=" + mAddress +
+                ", mUDPPort=" + mUdpConnection.getPort() +
+                ", mAddress=" + mTcpConnection.getInetAddress() +
                 '}';
     }
 
@@ -62,28 +56,43 @@ public class Connection {
 
         Connection that = (Connection) o;
 
-        if (mUDPPort != that.mUDPPort) return false;
-        if (!mAddress.equals(that.mAddress)) return false;
+        if (mUdpConnection.getPort() != that.mUdpConnection.getPort()) return false;
+        if (!mTcpConnection.getInetAddress().equals(that.mTcpConnection.getInetAddress())) return false;
 
         return true;
     }
 
     @Override
     public int hashCode() {
-        int result = mAddress.hashCode();
-        result = 31 * result + mUDPPort;
+        int result = mTcpConnection.getInetAddress().hashCode();
+        result = 31 * result + mUdpConnection.getPort();
         return result;
     }
 
     public boolean isConnected() { return mIsConnected; }
     public Socket getSocket() { return mTcpConnection.getSocket(); }
-    public int getPort() {
-        return mUDPPort;
-    }
-    public InetAddress getAddress() {
-        return mAddress;
-    }
+    public int getPort() { return mUdpConnection.getPort(); }
+    public InetAddress getAddress() { return mTcpConnection.getInetAddress(); }
     public int getId() {
         return mId;
+    }
+
+    /**
+     * Sets TCP/UDP connection objects
+     * @param tcpCon
+     * @param udpCon
+     */
+    public void initialize(TcpConnection tcpCon, UdpConnection udpCon) {
+        mTcpConnection = tcpCon;
+        mUdpConnection = udpCon;
+        mIsConnected = true;
+    }
+
+    public void sendUdp(byte[] data, Connection connection) {
+        mUdpConnection.sendUdp(data, connection);
+    }
+
+    public void sendTcp(byte[] data) {
+        mTcpConnection.sendTcp(data);
     }
 }

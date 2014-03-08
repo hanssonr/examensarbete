@@ -13,21 +13,15 @@ public class Main {
 
         if(args.length != 1) {
             assert false;
-        } else {
-            try {
-
-                if(args[0].equals("S")) {
-                    Server server = new Server("DaServer", 4455);
-                    server.start();// new Thread(server).start(); // server.start();
-                } else {
-                    Client c = new Client();
-                    c.connect("127.0.0.1", 4455);
-                }
-
-            } catch (SocketException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
+        } {
+            if (args[0].equals("S")) {
+                Server server = new Server();
+                server.start();
+                server.bind(4455, 5544);
+            } else {
+                Client client = new Client();
+                client.start();
+                client.connect("127.0.0.1", 4455, 5544);
             }
         }
     }

@@ -1,5 +1,10 @@
 package se.rhel.server;
 
+import se.rhel.Connection;
+import se.rhel.TcpConnection;
+import se.rhel.packet.ConnectAcceptPacket;
+import se.rhel.packet.HandshakeResponsePacket;
+
 import java.io.IOException;
 import java.net.ServerSocket;
 
@@ -23,11 +28,11 @@ public class TcpListener implements Runnable {
     public void run() {
         while(true) {
             try {
-                // Waiting for new connections
-                TcpConnection c = new TcpConnection(mTCPSocket.accept(), mServer, mHandler);
-                // Adding the connection
-                c.start();
-
+                TcpConnection tcpCon = new TcpConnection(mHandler);
+                tcpCon.bindSocket(mTCPSocket.accept());
+                Connection connection = mServer.createConnection(tcpCon);
+                mServer.addConnection(connection);
+                mServer.sendTCP(new HandshakeResponsePacket(connection.getId()), connection);
             } catch (IOException e) {
                 e.printStackTrace();
             }

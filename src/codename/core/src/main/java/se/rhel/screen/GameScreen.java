@@ -36,12 +36,8 @@ public class GameScreen extends BaseScreen {
 
         // else/and assume client
         mClient = new Client();
-        try {
-            mClient.connect("127.0.0.1", 4455);
-            mClient.start();
-        } catch (IOException e) {
-            System.err.println("Could not connect to server");
-        }
+        mClient.start();
+        mClient.connect("127.0.0.1", 4455, 5544);
 
         mClientWorldModel = new ClientWorldModel(mClient);
 

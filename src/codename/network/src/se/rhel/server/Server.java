@@ -1,5 +1,7 @@
 package se.rhel.server;
 
+import se.rhel.TcpConnection;
+import se.rhel.UdpConnection;
 import se.rhel.observer.ServerListener;
 import se.rhel.observer.ServerObserver;
 import se.rhel.Connection;
@@ -7,7 +9,6 @@ import se.rhel.EndPoint;
 import se.rhel.packet.DisconnectPacket;
 import se.rhel.packet.Packet;
 
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.*;
 import java.util.ArrayList;
@@ -24,18 +25,13 @@ public class Server implements EndPoint {
     private static final long TIMEOUT_TIME = 2500;
     private static final long SERVER_UPDATE_INTERVAL = 25;
 
-    public static String NAME;
-    private static int PORT;
     private Thread SERVER_THREAD;
-
-    private DatagramSocket mUDPSocket;
-
     private boolean mIsStarted;
 
     // List with active connections
     private volatile List<Connection> mConnections;
 
-    private UdpConnection mUDPConnection;
+    private UdpConnection mUdpConnection;
     private TcpListener mTCPListener;
 
     // ServerObserver
@@ -44,14 +40,12 @@ public class Server implements EndPoint {
     // Handler
     private ServerPacketHandler mServerPacketHandler;
 
-    public Server(String name, int port) throws SocketException {
-        PORT = port;
-        NAME = name;
 
+    public Server() {
         mConnections = new ArrayList<>();
 
         mServerObserver = new ServerObserver();
-        mServerPacketHandler = new ServerPacketHandler();
+        mServerPacketHandler = new ServerPacketHandler(this);
         mServerPacketHandler.setObserver(mServerObserver);
     }
 
@@ -76,7 +70,6 @@ public class Server implements EndPoint {
 
     public long last;
     public void update() {
-
         if(last != 0) {
             long per = System.currentTimeMillis() - last;
             // System.out.println("Update interval: " + per);
@@ -108,12 +101,12 @@ public class Server implements EndPoint {
 
                 // If there's been a certain amount of time since we heard from the client
                 if(timePassed > TIMEOUT_TIME) {
-                    next.setConnected(false);
-                    System.out.println(">   Server: Time passed: " + timePassed + " Timeouttime: " + TIMEOUT_TIME + " Connection: " + next.getId() + " disconnected");
+                    //next.setConnected(false);
+                    //System.out.println(">   Server: Time passed: " + timePassed + " Timeouttime: " + TIMEOUT_TIME + " Connection: " + next.getId() + " disconnected");
 
                     // Send packet that you are about to be disconnected / have been
                     // just for convinience for the client since we are going to disconnect anyways
-                    sendTCP(new DisconnectPacket(), next);
+                    //sendTCP(new DisconnectPacket(), next);
                 }
             }
         }
@@ -121,30 +114,16 @@ public class Server implements EndPoint {
 
     @Override
     public void start() {
+        // Starting the server
+        mIsStarted = true;
+        SERVER_THREAD = new Thread(this);
+        SERVER_THREAD.start();
+    }
 
-        ServerSocket tcpSocket;
-
-        try {
-            mUDPSocket = new DatagramSocket(PORT);
-            tcpSocket = new ServerSocket(PORT);
-
-            // Start the TCP ServerListener
-            mTCPListener = new TcpListener(tcpSocket, this, mServerPacketHandler);
-            mTCPListener.start();
-
-            // Start the udp connection
-            mUDPConnection = new UdpConnection(mUDPSocket, mServerPacketHandler, this);
-            mUDPConnection.start();
-
-            // Starting the server
-            mIsStarted = true;
-            SERVER_THREAD = new Thread(this);
-            SERVER_THREAD.start();
-
-        } catch (IOException e) {
-            System.out.println(e.getMessage());
-            System.out.println("Server not started");
-        }
+    public Connection createConnection(TcpConnection tcpConnection) {
+        Connection con = new Connection();
+        con.initialize(tcpConnection, mUdpConnection);
+        return con;
     }
 
     @Override
@@ -155,7 +134,7 @@ public class Server implements EndPoint {
         mIsStarted = false;
 
         SERVER_THREAD.interrupt();
-        mUDPConnection.stop();
+        mUdpConnection.stop();
         mTCPListener.stop();
     }
 
@@ -200,25 +179,11 @@ public class Server implements EndPoint {
      * @throws IOException
      */
     public void sendUDP(Packet packet, Connection conn) {
-        DatagramPacket mUdpPacket = new DatagramPacket(packet.getData(), packet.getData().length, conn.getAddress(), conn.getPort());
-
-        try {
-            mUDPSocket.send(mUdpPacket);
-        } catch (IOException e) {
-            System.err.println(e.getMessage());
-        }
-
+        conn.sendUdp(packet.getData(), conn);
     }
 
     public void sendTCP(Packet packet, Connection conn) {
-        try {
-            DataOutputStream output = new DataOutputStream(conn.getSocket().getOutputStream());
-            output.write(packet.getData());
-            output.flush();
-
-        } catch (IOException e) {
-            System.err.println(e.getMessage());
-        }
+        conn.sendTcp(packet.getData());
     }
 
     public void sendToAllTCP(Packet packet) {
@@ -257,27 +222,17 @@ public class Server implements EndPoint {
         return mServerObserver;
     }
 
-    /**
-     * @deprecated use {@link}
-     * @param con
-     * @throws IOException
-     */
-    public void sendToUDP(Connection con) throws IOException {
-        byte[] buffer = new byte[256];
-        DatagramPacket packet;
+    public void bind(int tcpPort, int udpPort) {
+        // Start the TCP ServerListener
+        try {
+            mTCPListener = new TcpListener(new ServerSocket(tcpPort), this, mServerPacketHandler);
+            mTCPListener.start();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
-        // Response
-        String responseString = "Jag måste i ärlighetens namn, säga att jag är en ärlig person";
-        buffer = responseString.getBytes();
-
-        InetAddress address = con.getAddress();
-        int port = con.getPort();
-
-        System.out.println("Server port: " + PORT + " EmilClient port: " + port);
-
-        System.out.println("Debug > Sending on server..");
-        packet = new DatagramPacket(buffer, buffer.length, address, port);
-        mUDPSocket.send(packet);
+        //setup DatagramSocket and bind listening port
+        mUdpConnection = new UdpConnection(mServerPacketHandler);
+        mUdpConnection.bind(udpPort);
     }
-
 }

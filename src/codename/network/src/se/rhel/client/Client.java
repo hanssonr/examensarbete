@@ -1,6 +1,9 @@
 package se.rhel.client;
 
+import se.rhel.Connection;
 import se.rhel.EndPoint;
+import se.rhel.TcpConnection;
+import se.rhel.UdpConnection;
 import se.rhel.observer.ClientListener;
 import se.rhel.observer.ClientObserver;
 import se.rhel.observer.ServerListener;
@@ -14,11 +17,8 @@ public class Client implements EndPoint {
 
     private static final int CLIENT_UPDATE_INTERVAL = 25;
 
-    private ClientTcpConnection mTcpConnection;
-    private ClientUdpConnection mUdpConnection;
-
-    private BasePacketHandler mHandler;
-
+    private UdpConnection mUdpConnection;
+    private TcpConnection mTcpConnection;
     private ClientObserver mClientObserver;
 
     private int mId;
@@ -26,10 +26,12 @@ public class Client implements EndPoint {
     private boolean mSendIdlePackage;
 
     public Client() {
-        mId = -1;
-        mHandler = new ClientPacketHandler(this);
+        ClientPacketHandler mHandler = new ClientPacketHandler(this);
         mClientObserver = new ClientObserver();
         mHandler.setObserver(mClientObserver);
+
+        mTcpConnection = new TcpConnection(mHandler);
+        mUdpConnection = new UdpConnection(mHandler);
     }
 
     @Override
@@ -49,7 +51,8 @@ public class Client implements EndPoint {
         }
     }
 
-    private void update () {
+    public void update () {
+
         // We want to send still-alive-packages to the server
         if(mSendIdlePackage) {
             sendUdp(new IdlePacket(mId));
@@ -73,25 +76,18 @@ public class Client implements EndPoint {
         mIsRunning = false;
     }
 
-    public void connect(String host, int port) throws IOException {
-        InetAddress address = InetAddress.getByName(host);
-        mUdpConnection = new ClientUdpConnection(address, port, mHandler);
-        mTcpConnection = new ClientTcpConnection(address, port, mHandler);
-
-        //Send connection request
-        sendTcp(new ConnectPacket(mUdpConnection.getUdpPort()));
+    public void connect(String host, int tcpPort, int udpPort) {
+        try {
+            InetAddress address = InetAddress.getByName(host);
+            mTcpConnection.connect(address, tcpPort);
+            mUdpConnection.connect(address, udpPort);
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        }
     }
 
     public void addListener(ClientListener toAdd) {
         mClientObserver.addListener(toAdd);
-    }
-
-    public void sendTcp(Packet packet) {
-        try {
-            mTcpConnection.sendTcp(packet);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
     /**
@@ -108,19 +104,19 @@ public class Client implements EndPoint {
         mId = id;
     }
 
-    public void sendTcp(byte[] data) throws IOException {
+    public void sendTcp(Packet packet) {
+        mTcpConnection.sendTcp(packet.getData());
+    }
+
+    public void sendTcp(byte[] data) {
         mTcpConnection.sendTcp(data);
     }
 
     public void sendUdp(Packet packet) {
-        try {
-            mUdpConnection.sendUdp(packet);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        mUdpConnection.sendUdp(packet.getData());
     }
 
-    public void sendUdp(byte[] data) throws IOException {
+    public void sendUdp(byte[] data) {
         mUdpConnection.sendUdp(data);
     }
 
