@@ -41,7 +41,7 @@ public class GameScreen extends BaseScreen {
 
         mClientWorldModel = new ClientWorldModel(mClient);
 
-        mPlayerController = new PlayerController(mClientWorldModel.getCamera(), mClientWorldModel.getPlayer());
+        mPlayerController = new PlayerController(mClientWorldModel.getCamera(), mClientWorldModel);
         mWorldView = new WorldView(mClientWorldModel);
 
         Gdx.input.setInputProcessor(mPlayerController);

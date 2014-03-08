@@ -4,12 +4,13 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import se.rhel.client.Client;
 import se.rhel.model.*;
+import se.rhel.observer.ClientControllerListener;
 import se.rhel.observer.ClientListener;
 import se.rhel.packet.Packet;
 import se.rhel.packet.PlayerJoinPacket;
 import se.rhel.packet.RequestInitialStatePacket;
 
-public class ClientWorldModel implements BaseModel, ClientListener {
+public class ClientWorldModel implements BaseModel, ClientListener, ClientControllerListener {
 
     private FPSCamera mCamera;
     private Player mLocalPlayer;
@@ -79,5 +80,15 @@ public class ClientWorldModel implements BaseModel, ClientListener {
                 System.out.println(">   ClientWorldModel: Unhandled packet");
                 break;
         }
+    }
+
+    @Override
+    public void sendTCP(Packet packet) {
+        // mClient.sendTcp();
+    }
+
+    @Override
+    public void sendUDP(Packet packet) {
+        // mClient.sendUdp();
     }
 }
