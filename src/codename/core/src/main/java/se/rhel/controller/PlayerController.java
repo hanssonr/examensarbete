@@ -8,13 +8,16 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.math.collision.Ray;
 import com.badlogic.gdx.physics.bullet.dynamics.btCharacterControllerInterface;
 import com.badlogic.gdx.physics.bullet.dynamics.btKinematicCharacterController;
+import se.rhel.client.ClientController;
 import se.rhel.model.FPSCamera;
 import se.rhel.model.Player;
 import com.badlogic.gdx.Input.Keys;
+import se.rhel.model.client.ClientWorldModel;
+
 import java.util.HashMap;
 import java.util.Map;
 
-public class PlayerController implements InputProcessor {
+public class PlayerController extends ClientController implements InputProcessor {
 
     public static boolean DRAW_DEBUG = false;
     public static boolean DRAW_MESH = true;
@@ -51,13 +54,19 @@ public class PlayerController implements InputProcessor {
     }
 
 
-    public PlayerController(FPSCamera camera, Player player) {
+    public PlayerController(FPSCamera camera, ClientWorldModel model) {
         super();
 
+        super.addListener(model);
         mCamera = camera;
-        mPlayer = player;
+        mPlayer = model.getPlayer();
 
         Gdx.input.setCursorCatched(true);
+    }
+
+    @Override
+    public void send() {
+        // super.send();
     }
 
     public void processCurrentInput(float delta) {
