@@ -25,8 +25,6 @@ public class ServerPacketHandler extends BasePacketHandler {
 
         switch(mPacketType) {
             case CONNECT:
-                //mServer.sendToAllUDP(new ConnectAcceptPacket(Utils.getInstance().generateUniqueId()));
-                System.out.println("CONNECT");
                 break;
             case REQUEST_INITIAL_STATE:
                 RequestInitialStatePacket risp = new RequestInitialStatePacket(data);
@@ -44,7 +42,6 @@ public class ServerPacketHandler extends BasePacketHandler {
                 fromConnection.packageReceived();
                 break;
             default:
-                //System.out.println("DEFAULT PACKAGE");
                 break;
         }
     }

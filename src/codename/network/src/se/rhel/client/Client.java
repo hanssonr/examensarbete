@@ -33,7 +33,6 @@ public class Client implements EndPoint {
 
     @Override
     public void run() {
-        // System.out.println(">   Client: Client started");
         Log.info("Client", "Client started");
         while(mIsRunning) {
             // Do client stuff..
@@ -107,7 +106,7 @@ public class Client implements EndPoint {
     }
 
     public void sendTcp(byte[] data) {
-        System.out.println(">   Client: Send TCP > " + Packet.lookupPacket(data[0]));
+        Log.debug("Client", "Send TCP >" + Packet.lookupPacket(data[0]));
         mTcpConnection.sendTcp(data);
     }
 
@@ -116,7 +115,7 @@ public class Client implements EndPoint {
     }
 
     public void sendUdp(byte[] data) {
-        System.out.println(">   Client: Send UDP > " + Packet.lookupPacket(data[0]));
+        Log.trace("Client", "Send UDP >" + Packet.lookupPacket(data[0]));
         mUdpConnection.sendUdp(data);
     }
 

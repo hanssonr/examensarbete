@@ -79,7 +79,6 @@ public class ServerWorldModel implements BaseModel, ServerListener {
 
     @Override
     public void connected(Connection con) {
-        // System.out.println(">   ServerWorldModel: Some one connected to the server with id: " + con.getId());
         Log.debug("ServerWorldModel", "Some one connected to the server with id: " + con.getId());
 
         // Meaning, a new player should be added on the server
@@ -99,20 +98,17 @@ public class ServerWorldModel implements BaseModel, ServerListener {
         switch(Packet.lookupPacket(packet.getPacketId())) {
             case REQUEST_INITIAL_STATE:
                 // TODO: This is not very efficient, should be a bulk-package instead
-                // System.out.println(">   ServerWorldModel: Initial state requested from clientId: " + con.getId());
                 Log.debug("ServerWorldModel", "Initial state requested from clientId: " + con.getId());
 
                 // Sending all the players to the client requested, except self
                 for(Player p : getPlayersExcept(con.getId())) {
                     // TODO : This is just fake lol!
-                    // System.out.println(">   ServerWorldModel: Sending player to " + con.getId());
                     Log.debug("ServerWorldModel", "Sending player to " + con.getId());
                     mServer.sendTCP(new PlayerJoinPacket(0f, 10f, 0f), con);
                 }
                 break;
             default:
                 Log.debug("ServerWorldModel", "Unhandled packet");
-                // System.out.println(">   ServerWorldModel: Unhandled packet");
                 break;
         }
     }

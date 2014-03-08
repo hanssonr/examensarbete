@@ -182,12 +182,12 @@ public class Server implements EndPoint {
      * @throws IOException
      */
     public void sendUDP(Packet packet, Connection conn) {
-        System.out.println(">   Server: Send UDP > " + Packet.lookupPacket(packet.getPacketId()));
+        Log.trace("Server", "Send UDP > " + Packet.lookupPacket(packet.getPacketId()));
         conn.sendUdp(packet.getData(), conn);
     }
 
     public void sendTCP(Packet packet, Connection conn) {
-        System.out.println(">   Server: Send TCP > " + Packet.lookupPacket(packet.getPacketId()));
+        Log.debug("Server", "Send TCP > " + Packet.lookupPacket(packet.getPacketId()));
         conn.sendTcp(packet.getData());
     }
 
