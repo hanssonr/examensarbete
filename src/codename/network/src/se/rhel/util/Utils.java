@@ -1,4 +1,4 @@
-package se.rhel;
+package se.rhel.util;
 
 /**
  * Created by Emil on 2014-03-04.

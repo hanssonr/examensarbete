@@ -71,13 +71,15 @@ public class LaserMeshTestRenderer {
     public void render() {
 
         //this will push the triangles into the batch
-        drawTriangle();
-
+        drawTriangle(Color.RED);
         //this will render the triangles to GL
-        flush();
+        flush(Resources.INSTANCE.laser);
+
+        drawTriangle(Color.WHITE);
+        flush(Resources.INSTANCE.laser_o);
     }
 
-    void flush() {
+    void flush(Texture tex) {
         //if we've already flushed
         if (idx==0)
             return;
@@ -92,7 +94,7 @@ public class LaserMeshTestRenderer {
 
         //number of vertices we need to render
         int vertexCount = (idx/NUM_COMPONENTS);
-        Resources.INSTANCE.laser.bind();
+        tex.bind();
         //start the shader before setting any uniforms
         shader.begin();
 
@@ -109,11 +111,11 @@ public class LaserMeshTestRenderer {
         idx = 0;
     }
 
-    void drawTriangle() {
+    void drawTriangle(Color color) {
         //we don't want to hit any index out of bounds exception...
         //so we need to flush the batch if we can't store any more verts
         if (idx==verts.length)
-            flush();
+            flush(Resources.INSTANCE.laser);
 
         // Visual representation of the starting point bottom right
         Ray vis = cam.getPickRay(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
@@ -141,7 +143,8 @@ public class LaserMeshTestRenderer {
         to.set(vis4.direction).scl(50f).add(from);
         to2.set(vis3.direction).scl(50f).add(from2);
 
-        Color color = Color.RED;
+        from.add(cam.direction.cpy().scl(0.2f));
+        from2.add(cam.direction.cpy().scl(0.2f));
 
         //now we push the vertex data into our array
         //we are assuming (0, 0) is lower left, and Y is up

@@ -6,6 +6,7 @@ import se.rhel.UdpConnection;
 import se.rhel.observer.ClientListener;
 import se.rhel.observer.ClientObserver;
 import se.rhel.packet.*;
+import se.rhel.util.Log;
 
 import java.net.*;
 
@@ -32,7 +33,8 @@ public class Client implements EndPoint {
 
     @Override
     public void run() {
-        System.out.println(">   Client: Client started");
+        // System.out.println(">   Client: Client started");
+        Log.info("Client", "Client started");
         while(mIsRunning) {
             // Do client stuff..
             long startTime = System.currentTimeMillis();

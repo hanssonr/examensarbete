@@ -3,6 +3,7 @@ package se.rhel.server;
 import se.rhel.Connection;
 import se.rhel.packet.BasePacketHandler;
 import se.rhel.packet.RequestInitialStatePacket;
+import se.rhel.util.Log;
 
 /**
  * Created by rkh on 2014-03-05.
@@ -33,7 +34,7 @@ public class ServerPacketHandler extends BasePacketHandler {
 
                 // We really dont care about what packet has been sent, just tell
                 // the listeners about it
-                System.out.println(">   ServerPacketHandler: Number of active listeners: " + mServer.getObserver().nrOfListeners());
+                Log.debug("ServerPacketHandler", "Number of active listeners: " + mServer.getObserver().nrOfListeners());
                 mServer.getObserver().received(fromConnection, new RequestInitialStatePacket(id));
                 break;
             case IDLE_PACKET:

@@ -9,6 +9,7 @@ import se.rhel.observer.ClientListener;
 import se.rhel.packet.Packet;
 import se.rhel.packet.PlayerJoinPacket;
 import se.rhel.packet.RequestInitialStatePacket;
+import se.rhel.util.Log;
 
 public class ClientWorldModel implements BaseModel, ClientListener, ClientControllerListener {
 
@@ -71,13 +72,14 @@ public class ClientWorldModel implements BaseModel, ClientListener, ClientContro
     public void received(Packet packet) {
         switch(Packet.lookupPacket(packet.getPacketId())) {
             case PLAYER_JOIN:
-                System.out.println(">   ClientWorldModel: Player_Join packet - Player can be viewed on client!!");
+                // System.out.println(">   ClientWorldModel: Player_Join packet - Player can be viewed on client!!");
+                Log.debug("ClientWorldModel", "Player_Join packet - Player can be viewed on client!!");
                 ExternalPlayer ep = new ExternalPlayer(new Vector3(1f, 10f, 0f), mBulletWorld);
-                System.out.println(mPlayers);
                 mPlayers.add(ep);
                 break;
             default:
-                System.out.println(">   ClientWorldModel: Unhandled packet");
+                // System.out.println(">   ClientWorldModel: Unhandled packet");
+                Log.debug("ClientWorldModel", "Unhandled packet");
                 break;
         }
     }

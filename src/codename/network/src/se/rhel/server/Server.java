@@ -8,6 +8,7 @@ import se.rhel.Connection;
 import se.rhel.EndPoint;
 import se.rhel.packet.DisconnectPacket;
 import se.rhel.packet.Packet;
+import se.rhel.util.Log;
 
 import java.io.IOException;
 import java.net.*;
@@ -42,6 +43,8 @@ public class Server implements EndPoint {
 
 
     public Server() {
+        // Log level
+        Log.set(Log.LEVEL_DEBUG);
         mConnections = new ArrayList<>();
 
         mServerObserver = new ServerObserver();
@@ -51,7 +54,7 @@ public class Server implements EndPoint {
 
     @Override
     public void run() {
-        System.out.println(">   Server: Debug > Server started..");
+        Log.info("Server", "Server started...");
         while(mIsStarted) {
 
             // Do server stuff..
@@ -102,7 +105,7 @@ public class Server implements EndPoint {
                 // If there's been a certain amount of time since we heard from the client
                 if(timePassed > TIMEOUT_TIME) {
                     next.setConnected(false);
-                    System.out.println(">   Server: Time passed: " + timePassed + " Timeouttime: " + TIMEOUT_TIME + " Connection: " + next.getId() + " disconnected");
+                    Log.trace("Server", ">   Server: Time passed: " + timePassed + " Timeouttime: " + TIMEOUT_TIME + " Connection: " + next.getId() + " disconnected");
 
                     // Send packet that you are about to be disconnected / have been
                     // just for convinience for the client since we are going to disconnect anyways
@@ -142,7 +145,6 @@ public class Server implements EndPoint {
     Adds a connection object to the list of current connections
      */
     public boolean addConnection(Connection con) {
-        System.out.println("Connection should be added!");
         if(mConnections.contains(con))
             return false;
         if(mConnections.size() >= MAX_CONNECTIONS)
@@ -150,7 +152,6 @@ public class Server implements EndPoint {
 
         // Adding a unique ID to the new Connection
         mConnections.add(con);
-        System.out.println("Size: " + mConnections.size());
 
         // Telling whoever is listening
         mServerObserver.connected(con);

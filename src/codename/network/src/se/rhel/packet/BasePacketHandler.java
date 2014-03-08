@@ -1,6 +1,8 @@
 package se.rhel.packet;
 
 import se.rhel.observer.IObserver;
+import se.rhel.util.Log;
+
 import java.nio.ByteBuffer;
 
 /**
@@ -18,7 +20,7 @@ public abstract class BasePacketHandler {
 
         switch(mPacketType) {
             case DISCONNECT:
-                System.out.println(">   BasePacketHandler: Received packet DISCONNECT");
+                Log.debug("BasePacketHandler", "Received packet DISCONNECT");
                 break;
         }
     }

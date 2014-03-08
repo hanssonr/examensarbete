@@ -2,6 +2,7 @@ package se.rhel;
 
 import se.rhel.packet.BasePacketHandler;
 import se.rhel.packet.Packet;
+import se.rhel.util.Log;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -80,7 +81,8 @@ public class TcpConnection implements Runnable {
             e.printStackTrace();
         }
 
-        System.out.println(">   TcpConnection: Send > " + Packet.lookupPacket(data[0]));
+        // System.out.println(">   TcpConnection: Send > " + Packet.lookupPacket(data[0]));
+        Log.debug("TcpConnection", "Send " + Packet.lookupPacket(data[0]));
     }
 
     public void stop() {

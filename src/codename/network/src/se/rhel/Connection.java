@@ -1,6 +1,6 @@
 package se.rhel;
 
-import se.rhel.packet.BasePacketHandler;
+import se.rhel.util.Utils;
 
 import java.net.InetAddress;
 import java.net.Socket;

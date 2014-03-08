@@ -5,6 +5,7 @@ import se.rhel.observer.ClientObserver;
 import se.rhel.packet.BasePacketHandler;
 import se.rhel.packet.HandshakeResponsePacket;
 import se.rhel.packet.PlayerJoinPacket;
+import se.rhel.util.Log;
 
 /**
  * Created by rkh on 2014-03-05.
@@ -27,18 +28,18 @@ public class ClientPacketHandler extends BasePacketHandler {
                 int id = mBuf.getInt();
                 // Setting the ID on client
                 mClient.setId(id);
-                System.out.println(">   ClientPacketHandler: Connection accepted >> PLAYER_ID: " + id);
+                Log.debug("ClientPacketHandler", "Connection accepted >> PLAYER_ID: " + id);
                 break;
 
             case PLAYER_JOIN:
-                System.out.println(">   ClientPacketHandler: Player joined packet!");
+                Log.debug("ClientPacketHandler", "Player joined packet!");
                 // TODO: This is just fake!
                 ((ClientObserver)mObserver).received(new PlayerJoinPacket(0f, 10f, 0f));
                 break;
 
             case HANDSHAKE_RESPONSE:
                 HandshakeResponsePacket pkt = new HandshakeResponsePacket(data);
-                System.out.println(">   ClientPacketHandler: " + mPacketType + " ID: " + pkt.mId);
+                Log.debug("ClientPacketHandler", mPacketType + " ID: " + pkt.mId);
                 mClient.setId(pkt.mId);
 
                 // Telling listeners if they wants to do something

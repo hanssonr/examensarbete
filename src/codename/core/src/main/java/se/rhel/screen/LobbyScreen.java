@@ -49,7 +49,6 @@ public class LobbyScreen extends BaseScreen {
         startButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                Gdx.app.log("Button", "Game");
                 mGame.setScreen(new GameScreen(mGame, mServer));
             }
         });
