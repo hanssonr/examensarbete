@@ -6,6 +6,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 
 /**
+ * Group: Logic
+ *
  * Created by Emil on 2014-02-19.
  * assigned to libgdx-gradle-template in se.rhel.screen.scene
  */

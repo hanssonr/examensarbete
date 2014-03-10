@@ -12,6 +12,8 @@ import se.rhel.res.Resources;
 import se.rhel.screen.scene.MainMenu;
 
 /**
+ * Group: Logic
+ *
  * Created by Emil on 2014-02-18.
  * assigned to libgdx-gradle-template in se.rhel.screen
  */

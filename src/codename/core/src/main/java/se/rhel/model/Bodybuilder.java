@@ -9,6 +9,10 @@ import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
 import com.badlogic.gdx.math.Vector3;
 
+
+/**
+ * Group: Logic
+ */
 public enum Bodybuilder {
     INSTANCE;
 

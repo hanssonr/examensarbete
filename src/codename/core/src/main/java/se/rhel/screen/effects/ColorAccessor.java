@@ -4,6 +4,8 @@ import aurelienribon.tweenengine.TweenAccessor;
 import com.badlogic.gdx.graphics.Color;
 
 /**
+ * Group: Logic
+ *
  * Created by Emil on 2014-02-18.
  * assigned to libgdx-gradle-template in se.rhel.screen.effects
  */

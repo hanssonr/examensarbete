@@ -21,6 +21,8 @@ import se.rhel.res.Resources;
 import se.rhel.view.BulletHoleRenderer;
 
 /**
+ * Group: Network
+ *
  * Created by Emil on 2014-03-06.
  * assigned to libgdx-gradle-template in se.rhel.model
  */

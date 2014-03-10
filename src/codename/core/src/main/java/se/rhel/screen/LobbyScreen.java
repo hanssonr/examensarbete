@@ -14,6 +14,8 @@ import se.rhel.server.Server;
 
 
 /**
+ * Group: Mixed
+ *
  * Created by Emil on 2014-03-05.
  * assigned to libgdx-gradle-template in se.rhel.screen.scene
  */

@@ -16,6 +16,10 @@ import se.rhel.model.Entity.DynamicEntity;
 import se.rhel.res.Resources;
 import se.rhel.view.BulletHoleRenderer;
 
+
+/**
+ * Group: Logic
+ */
 public class Player extends DynamicEntity {
 
     public enum PLAYERSTATE {

@@ -1,6 +1,5 @@
 package se.rhel.view;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g3d.decals.CameraGroupStrategy;
 import com.badlogic.gdx.graphics.g3d.decals.Decal;
@@ -11,6 +10,8 @@ import se.rhel.model.FPSCamera;
 import se.rhel.res.Resources;
 
 /**
+ * Group: Logic
+ *
  * Created by Emil on 2014-02-21.
  * assigned to libgdx-gradle-template in se.rhel.view
  */

@@ -9,6 +9,8 @@ import se.rhel.model.BulletWorld;
 import se.rhel.res.Resources;
 
 /**
+ * Group: Logic
+ *
  * Created by Emil on 2014-02-26.
  * assigned to libgdx-gradle-template in se.rhel.view
  */

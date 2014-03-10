@@ -11,9 +11,9 @@ import se.rhel.model.client.ClientWorldModel;
 import se.rhel.model.server.ServerWorldModel;
 import se.rhel.view.WorldView;
 
-import java.io.IOException;
-
-
+/**
+ * Group: Mixed
+ */
 public class NetworkGameScreen extends BaseScreen {
 
 
@@ -38,7 +38,8 @@ public class NetworkGameScreen extends BaseScreen {
         // else/and assume client
         mClient = new Client();
         mClient.start();
-        mClient.connect("127.0.0.1", 4455, 5544);
+        mClient.connect("localhost", 4455, 5544);
+        //mClient.connect("192.168.0.101", 4455, 5544);
 
         mClientWorldModel = ClientWorldModel.newNetworkWorld(mClient);
 

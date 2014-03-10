@@ -11,6 +11,8 @@ import com.badlogic.gdx.physics.bullet.Bullet;
 import com.badlogic.gdx.utils.Array;
 
 /**
+ * Group: Logic
+ *
  * Created by Emil on 2014-02-18.
  * assigned to libgdx-gradle-template in se.rhel.res
  */

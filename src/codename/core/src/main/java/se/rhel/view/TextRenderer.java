@@ -9,6 +9,8 @@ import se.rhel.model.client.ClientWorldModel;
 import se.rhel.res.Resources;
 
 /**
+ * Group: Logic
+ *
  * Created by Emil on 2014-02-18.
  *
  */

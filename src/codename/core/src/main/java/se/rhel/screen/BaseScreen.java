@@ -1,9 +1,12 @@
 package se.rhel.screen;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import se.rhel.CodeName;
 
+
+/**
+ * Group: Logic
+ */
 public abstract class BaseScreen implements Screen {
 
     private CodeName mGame;

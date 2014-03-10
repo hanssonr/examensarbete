@@ -18,7 +18,6 @@ import com.badlogic.gdx.physics.bullet.linearmath.btVector3;
 import se.rhel.client.Client;
 import se.rhel.controller.PlayerController;
 import se.rhel.graphics.FrontFaceDepthShaderProvider;
-import se.rhel.model.BulletTest.DebugDrawer;
 import se.rhel.model.BulletWorld;
 import se.rhel.model.FPSCamera;
 import se.rhel.model.client.ClientWorldModel;
@@ -26,6 +25,9 @@ import se.rhel.res.Resources;
 
 import java.math.BigDecimal;
 
+/**
+ * Group: Logic
+ */
 public class WorldView {
 
     private FPSCamera weaponCam;

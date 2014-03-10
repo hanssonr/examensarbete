@@ -22,6 +22,10 @@ import com.badlogic.gdx.graphics.g3d.Renderable;
 import com.badlogic.gdx.graphics.g3d.Shader;
 import com.badlogic.gdx.graphics.g3d.utils.BaseShaderProvider;
 
+
+/**
+ * Group: Logic
+ */
 public class FrontFaceDepthShaderProvider extends BaseShaderProvider {
 	public final FrontFaceDepthShader.Config config;
 	

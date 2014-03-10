@@ -5,9 +5,6 @@ import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Quaternion;
 import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.math.collision.Ray;
-import com.badlogic.gdx.physics.bullet.dynamics.btCharacterControllerInterface;
-import com.badlogic.gdx.physics.bullet.dynamics.btKinematicCharacterController;
 import se.rhel.client.ClientController;
 import se.rhel.model.FPSCamera;
 import se.rhel.model.Player;
@@ -17,6 +14,10 @@ import se.rhel.model.client.ClientWorldModel;
 import java.util.HashMap;
 import java.util.Map;
 
+
+/**
+ * Group: Mixed
+ */
 public class PlayerController extends ClientController implements InputProcessor {
 
     public static boolean DRAW_DEBUG = false;

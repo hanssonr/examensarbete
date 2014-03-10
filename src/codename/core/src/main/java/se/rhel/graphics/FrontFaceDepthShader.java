@@ -25,6 +25,10 @@ import com.badlogic.gdx.graphics.g3d.shaders.DefaultShader;
 import com.badlogic.gdx.graphics.g3d.utils.RenderContext;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 
+
+/**
+ * Group: Logic
+ */
 public class FrontFaceDepthShader extends DefaultShader {
 	public static class Config extends DefaultShader.Config {
 		public boolean depthBufferOnly = false;

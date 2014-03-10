@@ -3,15 +3,14 @@ package se.rhel.screen.scene.local;
 import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Gdx;
 import se.rhel.CodeName;
-import se.rhel.client.Client;
 import se.rhel.controller.PlayerController;
 import se.rhel.model.client.ClientWorldModel;
-import se.rhel.model.server.ServerWorldModel;
 import se.rhel.screen.BaseScreen;
-import se.rhel.server.Server;
 import se.rhel.view.WorldView;
 
 /**
+ * Group: Logic
+ *
  * Created by Emil on 2014-03-10.
  * assigned to libgdx-gradle-template in se.rhel.screen.scene.local
  */

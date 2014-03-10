@@ -2,14 +2,13 @@ package se.rhel.model;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
-import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector3;
-import se.rhel.model.Entity.GameObject;
 
 
+/**
+ * Group: Logic
+ */
 public class FPSCamera extends PerspectiveCamera {
-
-    GameObject mObj;
 
     public static final Vector3 UP = new Vector3(0,1,0);
     private final Vector3 mOffset = new Vector3(0, 1f, 0);

@@ -6,7 +6,9 @@ import se.rhel.observer.TransitionObserver;
 import se.rhel.screen.LoadingScreen;
 import se.rhel.screen.effects.TransitionScreen;
 
-
+/**
+ * Group: Logic
+ */
 public class CodeName extends Game implements TransitionObserver.TransitionListener {
 
     public static final int RUNMODE_MENU = 0;

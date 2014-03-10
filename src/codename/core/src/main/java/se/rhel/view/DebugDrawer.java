@@ -1,10 +1,14 @@
-package se.rhel.model.BulletTest;
+package se.rhel.view;
 
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.physics.bullet.linearmath.btIDebugDraw;
 import com.badlogic.gdx.physics.bullet.linearmath.btVector3;
 
-/** @author xoppa */
+/**
+ * Group: Logic
+ *
+ * @author xoppa
+ * */
 public class DebugDrawer extends btIDebugDraw {
     public int debugMode = 0;
     public ShapeRenderer lineRenderer = new ShapeRenderer();

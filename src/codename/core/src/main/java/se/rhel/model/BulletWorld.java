@@ -1,6 +1,5 @@
 package se.rhel.model;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.VertexAttributes;
 import com.badlogic.gdx.graphics.g3d.Material;
@@ -14,13 +13,13 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.bullet.collision.*;
 import com.badlogic.gdx.physics.bullet.dynamics.*;
 import com.badlogic.gdx.physics.bullet.linearmath.btDefaultMotionState;
-import com.badlogic.gdx.physics.bullet.linearmath.btMotionState;
-import com.badlogic.gdx.physics.bullet.linearmath.btTransformFloatData;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.PerformanceCounter;
 import se.rhel.res.Resources;
 
 /**
+ * Group: Logic
+ *
  * Created by Emil on 2014-02-20.
  * assigned to libgdx-gradle-template in se.rhel.model
  */

@@ -4,6 +4,8 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.utils.Array;
 
 /**
+ * Group: Logic
+ *
  * Created by Emil on 2014-02-19.
  * assigned to libgdx-gradle-template in se.rhel.observer
  */

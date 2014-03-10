@@ -78,6 +78,7 @@ public class TcpConnection implements Runnable {
             output.write(data);
             output.flush();
         } catch (IOException e) {
+            stop();
             e.printStackTrace();
         }
 

@@ -6,6 +6,8 @@ import com.badlogic.gdx.math.Matrix4;
 import se.rhel.model.client.ClientWorldModel;
 
 /**
+ * Group: Logic
+ *
  * Created by Emil on 2014-02-18.
  * Abstract baseview for all 2D renderers
  */

@@ -17,6 +17,8 @@ import se.rhel.model.FPSCamera;
 import se.rhel.res.Resources;
 
 /**
+ * Group: Logic
+ *
  * Created by Emil on 2014-02-27.
  * assigned to libgdx-gradle-template in se.rhel.view
  */

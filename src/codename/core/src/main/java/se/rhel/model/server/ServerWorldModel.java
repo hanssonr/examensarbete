@@ -15,6 +15,9 @@ import se.rhel.util.Log;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Group: Mixed
+ */
 public class ServerWorldModel implements BaseModel, ServerListener {
 
     // private Array<Player> mPlayers = new Array<Player>();

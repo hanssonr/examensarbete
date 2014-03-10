@@ -2,16 +2,18 @@ package se.rhel.model.client;
 
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
-import com.sun.swing.internal.plaf.metal.resources.metal_it;
 import se.rhel.client.Client;
 import se.rhel.model.*;
 import se.rhel.observer.ClientControllerListener;
 import se.rhel.observer.ClientListener;
 import se.rhel.packet.Packet;
-import se.rhel.packet.PlayerJoinPacket;
 import se.rhel.packet.RequestInitialStatePacket;
 import se.rhel.util.Log;
 
+
+/**
+ * Group: Mixed
+ */
 public class ClientWorldModel implements BaseModel, ClientListener, ClientControllerListener {
 
     private FPSCamera mCamera;
