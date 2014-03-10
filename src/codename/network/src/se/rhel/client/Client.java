@@ -57,8 +57,8 @@ public class Client implements EndPoint {
         // We want to send still-alive-packages to the server
         if(mSendIdlePackage) {
             // Also send latency packet
-            startLatancy = System.currentTimeMillis();
             sendTcp(new LatencyPacket(mId));
+            startLatancy = System.currentTimeMillis();
             sendUdp(new IdlePacket(mId));
         }
     }

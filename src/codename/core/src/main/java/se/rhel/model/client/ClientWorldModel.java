@@ -32,12 +32,19 @@ public class ClientWorldModel implements BaseModel, ClientListener, ClientContro
         return new ClientWorldModel();
     }
 
+    /**
+     * Used for non-network play
+     */
     private ClientWorldModel() {
         mBulletWorld = new BulletWorld();
         mIsLocal = true;
         create();
     }
 
+    /**
+     * Used for networked play
+     * @param client
+     */
     private ClientWorldModel(Client client) {
         mBulletWorld = new BulletWorld();
         mPlayers = new Array<>();
