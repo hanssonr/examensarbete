@@ -81,7 +81,7 @@ public class TcpConnection implements Runnable {
             e.printStackTrace();
         }
 
-        Log.debug("TcpConnection", "Send " + Packet.lookupPacket(data[0]));
+        // Log.debug("TcpConnection", "Send " + Packet.lookupPacket(data[0]));
     }
 
     public void stop() {

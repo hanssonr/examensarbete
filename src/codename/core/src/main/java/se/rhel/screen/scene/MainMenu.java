@@ -10,6 +10,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import se.rhel.CodeName;
 import se.rhel.screen.BaseScreen;
 import se.rhel.screen.LobbyScreen;
+import se.rhel.screen.scene.local.GameScreen;
 
 /**
  * Created by Emil on 2014-02-18.
@@ -52,8 +53,8 @@ public class MainMenu extends BaseScreen {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 Gdx.app.log("Button", "Game");
-                // mGame.setScreenWithTransition(new GameScreen(mGame));
-                // mGame.setScreen(new GameScreen(mGame));
+                // mGame.setScreenWithTransition(new NetworkGameScreen(mGame));
+                mGame.setScreen(new GameScreen(mGame));
             }
         });
 

@@ -3,6 +3,7 @@ package se.rhel.server;
 import se.rhel.Connection;
 import se.rhel.packet.BasePacketHandler;
 import se.rhel.packet.IdlePacket;
+import se.rhel.packet.LatencyPacket;
 import se.rhel.packet.RequestInitialStatePacket;
 import se.rhel.util.Log;
 
@@ -40,6 +41,14 @@ public class ServerPacketHandler extends BasePacketHandler {
 
                 fromConnection = mServer.getConnection(ip.mPlayerId);
                 fromConnection.packageReceived();
+
+                // mServer.sendUDP(new IdlePacket(1), fromConnection);
+                break;
+            case LATENCY_PACKET:
+                // Sending a dummy response, i.e for latency measurement
+                LatencyPacket lp = new LatencyPacket(data);
+                fromConnection = mServer.getConnection(lp.mPlayerId);
+                mServer.sendTCP(new LatencyPacket(0), fromConnection);
                 break;
             default:
                 break;

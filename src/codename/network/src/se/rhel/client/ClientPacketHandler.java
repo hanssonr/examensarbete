@@ -42,6 +42,10 @@ public class ClientPacketHandler extends BasePacketHandler {
                 // that we're still alive, hopefully
                 mClient.sendIdlePackage(true);
                 break;
+            case LATENCY_PACKET:
+                mClient.setEndLatency();
+                Log.debug("ClientPacketHandler", "Latency: " + mClient.getLatency() + " ms");
+                break;
         }
     }
 }

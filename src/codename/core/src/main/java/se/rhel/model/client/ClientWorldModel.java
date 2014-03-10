@@ -2,6 +2,7 @@ package se.rhel.model.client;
 
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
+import com.sun.swing.internal.plaf.metal.resources.metal_it;
 import se.rhel.client.Client;
 import se.rhel.model.*;
 import se.rhel.observer.ClientControllerListener;
@@ -16,13 +17,29 @@ public class ClientWorldModel implements BaseModel, ClientListener, ClientContro
     private FPSCamera mCamera;
     private Player mLocalPlayer;
     private BulletWorld mBulletWorld;
+    private boolean mIsLocal;
 
     private Client mClient;
     private Array<ExternalPlayer> mPlayers;
 
-    public ClientWorldModel(Client client) {
+    public static ClientWorldModel newNetworkWorld(Client client) {
+        return new ClientWorldModel(client);
+    }
+
+    public static ClientWorldModel newLocalWorld() {
+        return new ClientWorldModel();
+    }
+
+    private ClientWorldModel() {
+        mBulletWorld = new BulletWorld();
+        mIsLocal = true;
+        create();
+    }
+
+    private ClientWorldModel(Client client) {
         mBulletWorld = new BulletWorld();
         mPlayers = new Array<>();
+        mIsLocal = false;
         mClient = client;
         mClient.addListener(this);
         mClient.sendTcp(new RequestInitialStatePacket(mClient.getId()));
@@ -46,8 +63,11 @@ public class ClientWorldModel implements BaseModel, ClientListener, ClientContro
         mBulletWorld.update(delta);
         mLocalPlayer.update(delta);
 
-        for (ExternalPlayer externalPlayer : mPlayers) {
-            externalPlayer.update(delta);
+        // Do client only updates
+        if(!mIsLocal) {
+            for (ExternalPlayer externalPlayer : mPlayers) {
+                externalPlayer.update(delta);
+            }
         }
     }
 

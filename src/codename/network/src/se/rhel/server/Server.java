@@ -145,6 +145,7 @@ public class Server implements EndPoint {
     Adds a connection object to the list of current connections
      */
     public boolean addConnection(Connection con) {
+        Log.debug("Server", "Should add connection with id " + con.getId());
         if(mConnections.contains(con))
             return false;
         if(mConnections.size() >= MAX_CONNECTIONS)
@@ -152,6 +153,7 @@ public class Server implements EndPoint {
 
         // Adding a unique ID to the new Connection
         mConnections.add(con);
+        Log.debug("Server", "Connection size: " + mConnections.size());
 
         // Telling whoever is listening
         mServerObserver.connected(con);

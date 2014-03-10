@@ -46,8 +46,8 @@ public class LoadingScreen implements Screen {
             if(CodeName.isInMenuMode()) {
                 mGame.setScreen(new MainMenu(mGame));
             } else {
-                // mGame.setScreen(new GameScreen(mGame));
-                // mGame.setScreenWithTransition(new GameScreen(mGame));
+                // mGame.setScreen(new NetworkGameScreen(mGame));
+                // mGame.setScreenWithTransition(new NetworkGameScreen(mGame));
             }
 
         }

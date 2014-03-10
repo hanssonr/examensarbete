@@ -119,6 +119,6 @@ public class UdpConnection implements Runnable {
     }
 
     public int getPort() {
-        return mSocket.getPort();
+        return mSocket.getLocalPort();
     }
 }

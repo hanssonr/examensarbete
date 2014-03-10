@@ -9,6 +9,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import se.rhel.CodeName;
 import se.rhel.screen.scene.UIComponents;
+import se.rhel.screen.scene.network.NetworkGameScreen;
 import se.rhel.server.Server;
 
 
@@ -49,7 +50,7 @@ public class LobbyScreen extends BaseScreen {
         startButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                mGame.setScreen(new GameScreen(mGame, mServer));
+                mGame.setScreen(new NetworkGameScreen(mGame, mServer));
             }
         });
 

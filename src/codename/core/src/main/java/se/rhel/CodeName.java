@@ -1,10 +1,8 @@
 package se.rhel;
 
 import com.badlogic.gdx.Game;
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import se.rhel.observer.TransitionObserver;
-import se.rhel.screen.GameScreen;
 import se.rhel.screen.LoadingScreen;
 import se.rhel.screen.effects.TransitionScreen;
 

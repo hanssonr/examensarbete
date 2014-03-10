@@ -1,9 +1,10 @@
-package se.rhel.screen;
+package se.rhel.screen.scene.network;
 
 import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Gdx;
 import se.rhel.client.Client;
 import se.rhel.CodeName;
+import se.rhel.screen.BaseScreen;
 import se.rhel.server.Server;
 import se.rhel.controller.PlayerController;
 import se.rhel.model.client.ClientWorldModel;
@@ -13,7 +14,7 @@ import se.rhel.view.WorldView;
 import java.io.IOException;
 
 
-public class GameScreen extends BaseScreen {
+public class NetworkGameScreen extends BaseScreen {
 
 
     private PlayerController mPlayerController;
@@ -25,7 +26,7 @@ public class GameScreen extends BaseScreen {
     private Client mClient;
     private ClientWorldModel mClientWorldModel;
 
-    public GameScreen(CodeName game, Server server) {
+    public NetworkGameScreen(CodeName game, Server server) {
         super(game);
         Gdx.app.setLogLevel(Application.LOG_NONE);
         mServer = server;
@@ -39,7 +40,7 @@ public class GameScreen extends BaseScreen {
         mClient.start();
         mClient.connect("127.0.0.1", 4455, 5544);
 
-        mClientWorldModel = new ClientWorldModel(mClient);
+        mClientWorldModel = ClientWorldModel.newNetworkWorld(mClient);
 
         mPlayerController = new PlayerController(mClientWorldModel.getCamera(), mClientWorldModel);
         mWorldView = new WorldView(mClientWorldModel);

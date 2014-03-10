@@ -22,6 +22,10 @@ public class Client implements EndPoint {
     private boolean mIsRunning;
     private boolean mSendIdlePackage;
 
+    private static long startLatancy;
+    private static long endLatency;
+    private long currLatency;
+
     public Client() {
         ClientPacketHandler mHandler = new ClientPacketHandler(this);
         mClientObserver = new ClientObserver();
@@ -52,12 +56,26 @@ public class Client implements EndPoint {
 
         // We want to send still-alive-packages to the server
         if(mSendIdlePackage) {
+            // Also send latency packet
+            startLatancy = System.currentTimeMillis();
+            sendTcp(new LatencyPacket(mId));
             sendUdp(new IdlePacket(mId));
         }
     }
 
     public void sendIdlePackage(boolean value) {
         mSendIdlePackage = value;
+    }
+
+    public void setEndLatency() {
+        endLatency = System.currentTimeMillis();
+    }
+
+    public static long getLatency() {
+        if(endLatency != 0L && startLatancy != 0L) {
+            return endLatency - startLatancy;
+        }
+        return -1L;
     }
 
     @Override

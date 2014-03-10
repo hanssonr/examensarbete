@@ -15,6 +15,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.bullet.linearmath.btIDebugDraw;
 import com.badlogic.gdx.physics.bullet.linearmath.btVector3;
+import se.rhel.client.Client;
 import se.rhel.controller.PlayerController;
 import se.rhel.graphics.FrontFaceDepthShaderProvider;
 import se.rhel.model.BulletTest.DebugDrawer;
@@ -32,6 +33,9 @@ public class WorldView {
     private TextRenderer mFPSRenderer;
     private TextRenderer mBulletLoadRenderer;
     private TextRenderer mPlayerPosRenderer;
+
+    // Networking stats
+    private TextRenderer mLatencyRenderer;
 
     private SpriteBatch mSpriteBatch;
     private ModelBatch mModelBatch;
@@ -81,6 +85,7 @@ public class WorldView {
         mFPSRenderer = TextRenderer.FPS(clientWorldModel, mSpriteBatch);
         mBulletLoadRenderer = new TextRenderer("Bullet init", new Vector2(10, Gdx.graphics.getHeight() - 30), clientWorldModel, mSpriteBatch);
         mPlayerPosRenderer = new TextRenderer("Player init", new Vector2(10, Gdx.graphics.getHeight() - 60), clientWorldModel, mSpriteBatch);
+        mLatencyRenderer = new TextRenderer("Latency init", new Vector2(Gdx.graphics.getWidth() - 60, Gdx.graphics.getHeight() - 10), clientWorldModel, mSpriteBatch);
 
         mEnvironment = new Environment();
         mEnvironment.set(new ColorAttribute(ColorAttribute.AmbientLight, 0.3f, 0.3f, 0.3f, 1.0f));
@@ -185,6 +190,12 @@ public class WorldView {
             float z = round(mServerWorldModel.getPlayer().getPosition().z, 3);
             mPlayerPosRenderer.setText("X: " + x + ", Y: " + y + ", Z: " + z);
             mPlayerPosRenderer.draw(delta);
+
+            if(Client.getLatency() != -1L) {
+                mLatencyRenderer.setText(Client.getLatency() + " ms");
+                mLatencyRenderer.draw(delta);
+            }
+
         }
 
         if(PlayerController.DRAW_DEBUG) {
