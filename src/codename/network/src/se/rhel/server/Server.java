@@ -181,7 +181,6 @@ public class Server implements EndPoint {
      * Send to a specific connection through UDP
      * @param packet
      * @param conn
-     * @throws IOException
      */
     public void sendUDP(Packet packet, Connection conn) {
         Log.trace("Server", "Send UDP > " + Packet.lookupPacket(packet.getPacketId()));
