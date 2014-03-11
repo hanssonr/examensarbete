@@ -10,6 +10,8 @@ import se.rhel.model.FPSCamera;
 import se.rhel.model.Player;
 import com.badlogic.gdx.Input.Keys;
 import se.rhel.model.client.ClientWorldModel;
+import se.rhel.packet.ConnectAcceptPacket;
+import se.rhel.packet.Packet;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -65,9 +67,9 @@ public class PlayerController extends ClientController implements InputProcessor
         Gdx.input.setCursorCatched(true);
     }
 
-    @Override
-    public void send() {
-        // super.send();
+    public void send(Packet packet) {
+        // Really just for clarity, can use methods in base class as well
+        // super.send(new ConnectAcceptPacket(1)); // Standard is TCP
     }
 
     public void processCurrentInput(float delta) {

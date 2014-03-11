@@ -10,7 +10,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import se.rhel.CodeName;
 import se.rhel.screen.BaseScreen;
 import se.rhel.screen.LobbyScreen;
-import se.rhel.screen.scene.local.GameScreen;
+import se.rhel.screen.local.GameScreen;
 
 /**
  * Group: Logic

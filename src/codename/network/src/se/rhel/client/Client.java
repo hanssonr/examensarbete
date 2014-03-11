@@ -9,6 +9,7 @@ import se.rhel.packet.*;
 import se.rhel.util.Log;
 
 import java.net.*;
+import java.util.ArrayList;
 
 public class Client implements EndPoint {
 
@@ -24,7 +25,8 @@ public class Client implements EndPoint {
 
     private static long startLatancy;
     private static long endLatency;
-    private long currLatency;
+    private static ArrayList<Long> mAverageLatancey = new ArrayList<>();
+    private static long currLatency = -1L;
 
     public Client() {
         ClientPacketHandler mHandler = new ClientPacketHandler(this);
@@ -53,7 +55,6 @@ public class Client implements EndPoint {
     }
 
     public void update () {
-
         // We want to send still-alive-packages to the server
         if(mSendIdlePackage) {
             // Also send latency packet
@@ -67,14 +68,37 @@ public class Client implements EndPoint {
         mSendIdlePackage = value;
     }
 
+    /**
+     * Should be called when a time has been measured between
+     * send and receive a packet
+     */
     public void setEndLatency() {
         endLatency = System.currentTimeMillis();
+
+        if(endLatency != 0L && startLatancy != 0L) {
+            mAverageLatancey.add((endLatency-startLatancy));
+        }
+
+        if(mAverageLatancey.size() == 10) {
+            long sum = 0L;
+            for(long latency : mAverageLatancey) {
+                sum += latency;
+            }
+            sum /= mAverageLatancey.size();
+            currLatency = sum;
+            mAverageLatancey.clear();
+        }
     }
 
+    /**
+     * Returns current average latency, or -1L if none
+     * @return long latency
+     */
     public static long getLatency() {
-        if(endLatency != 0L && startLatancy != 0L) {
-            return endLatency - startLatancy;
-        }
+        if(currLatency != -1L)
+            return currLatency;
+        if(mAverageLatancey.size() > 0)
+            return mAverageLatancey.get(0);
         return -1L;
     }
 
@@ -109,7 +133,7 @@ public class Client implements EndPoint {
      * If equals -1 it means that
      * the client haven't got response
      * from server yet
-     * @return
+     * @return clientId
      */
     public int getId() {
         return mId;
@@ -124,7 +148,7 @@ public class Client implements EndPoint {
     }
 
     public void sendTcp(byte[] data) {
-        Log.debug("Client", "Send TCP >" + Packet.lookupPacket(data[0]));
+        Log.trace("Client", "Send TCP > " + Packet.lookupPacket(data[0]));
         mTcpConnection.sendTcp(data);
     }
 
@@ -134,7 +158,7 @@ public class Client implements EndPoint {
 
     public void sendUdp(byte[] data) {
         Log.trace("Client", "Send UDP >" + Packet.lookupPacket(data[0]));
-        mUdpConnection.sendUdp(data);
+        mUdpConnection.sendUdpFromClient(data);
     }
 
 }

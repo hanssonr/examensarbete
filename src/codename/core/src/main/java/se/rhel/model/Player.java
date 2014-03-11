@@ -12,7 +12,7 @@ import com.badlogic.gdx.physics.bullet.collision.btCollisionShape;
 import com.badlogic.gdx.physics.bullet.dynamics.btRigidBodyConstructionInfo;
 import com.badlogic.gdx.physics.bullet.linearmath.btDefaultMotionState;
 import com.badlogic.gdx.physics.bullet.linearmath.btVector3;
-import se.rhel.model.Entity.DynamicEntity;
+import se.rhel.model.entity.DynamicEntity;
 import se.rhel.res.Resources;
 import se.rhel.view.BulletHoleRenderer;
 

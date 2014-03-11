@@ -19,8 +19,6 @@ public abstract class ClientController {
         mObserver.addListener(toAdd);
     }
 
-    public abstract void send();
-
     public void send(Packet packet) {
         send(packet, true);
     }

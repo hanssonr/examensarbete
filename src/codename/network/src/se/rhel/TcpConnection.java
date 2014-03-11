@@ -64,34 +64,48 @@ public class TcpConnection implements Runnable {
                 dis.read(data);
 
                 mPacketHandler.handlePacket(data);
-
-            } catch (Exception e) {
-                e.printStackTrace();
+            } catch (IOException e) {
+                // Swallow the exception and just close the socket
                 stop();
             }
         }
     }
 
-    public void sendTcp(byte[] data) {
-        try {
-            DataOutputStream output = new DataOutputStream(mSocket.getOutputStream());
-            output.write(data);
-            output.flush();
-        } catch (IOException e) {
-            stop();
-            e.printStackTrace();
-        }
+    /**
+     * @return true if the connection is open, otherwise false
+     */
+    public boolean isOpen() {
+       return mSocket.isClosed() == true ? false : true;
+    }
 
-        // Log.debug("TcpConnection", "Send " + Packet.lookupPacket(data[0]));
+    public void sendTcp(byte[] data) {
+        if(isOpen()) {
+            try {
+                DataOutputStream output = new DataOutputStream(mSocket.getOutputStream());
+                output.write(data);
+                output.flush();
+            } catch (IOException e) {
+                Log.error("TcpConnection", e.getMessage());
+            }
+        } else {
+            Log.error("TcpConnection", "Socket is closed");
+        }
     }
 
     public void stop() {
-        mShouldRun = false;
+        if(!mShouldRun) return;
+
+        Log.info("TcpConnection", "Closing TcpConnection");
         try {
-            mSocket.close();
+            if(!mSocket.isClosed()) {
+                mSocket.close();
+            } else {
+                Log.error("TcpConnection", "Socket is already closed");
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
+        mShouldRun = false;
     }
 
     public Socket getSocket() {

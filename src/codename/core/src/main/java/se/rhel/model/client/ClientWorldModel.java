@@ -113,11 +113,13 @@ public class ClientWorldModel implements BaseModel, ClientListener, ClientContro
 
     @Override
     public void sendTCP(Packet packet) {
+        Log.info("ClientWorldModel", "Input received from Controller - TCP send");
         // mClient.sendTcp();
     }
 
     @Override
     public void sendUDP(Packet packet) {
-        // mClient.sendUdp();
+        Log.info("ClientWorldModel", "Input received from Controller - UDP send");
+        // mClient.sendUdpFromServer();
     }
 }

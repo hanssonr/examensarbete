@@ -9,7 +9,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import se.rhel.CodeName;
 import se.rhel.screen.scene.UIComponents;
-import se.rhel.screen.scene.network.NetworkGameScreen;
+import se.rhel.screen.network.NetworkGameScreen;
 import se.rhel.server.Server;
 
 

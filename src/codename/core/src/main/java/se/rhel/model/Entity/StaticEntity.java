@@ -1,4 +1,4 @@
-package se.rhel.model.Entity;
+package se.rhel.model.entity;
 
 
 import com.badlogic.gdx.graphics.g3d.ModelInstance;

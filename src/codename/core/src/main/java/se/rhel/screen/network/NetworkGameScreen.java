@@ -1,4 +1,4 @@
-package se.rhel.screen.scene.network;
+package se.rhel.screen.network;
 
 import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Gdx;
@@ -15,7 +15,6 @@ import se.rhel.view.WorldView;
  * Group: Mixed
  */
 public class NetworkGameScreen extends BaseScreen {
-
 
     private PlayerController mPlayerController;
     private WorldView mWorldView;

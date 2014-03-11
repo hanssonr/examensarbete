@@ -1,4 +1,4 @@
-package se.rhel.screen.scene.local;
+package se.rhel.screen.local;
 
 import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Gdx;
@@ -12,7 +12,7 @@ import se.rhel.view.WorldView;
  * Group: Logic
  *
  * Created by Emil on 2014-03-10.
- * assigned to libgdx-gradle-template in se.rhel.screen.scene.local
+ * assigned to libgdx-gradle-template in se.rhel.screen.local
  */
 public class GameScreen extends BaseScreen {
 
@@ -38,6 +38,7 @@ public class GameScreen extends BaseScreen {
     public void update(float delta) {
         mPlayerController.processCurrentInput(delta);
         mClientWorldModel.update(delta);
+        System.out.println("hajj");
     }
 
     @Override

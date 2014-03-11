@@ -97,7 +97,7 @@ public class Server implements EndPoint {
 
             // Check for dead connections and reamove them
             if(!next.isConnected()) {
-                next.setDisconnected();
+                next.stop();
                 iterator.remove();
             } else {
                 long timePassed = System.currentTimeMillis() - next.getTimeLastPackage();
@@ -189,7 +189,7 @@ public class Server implements EndPoint {
     }
 
     public void sendTCP(Packet packet, Connection conn) {
-        Log.debug("Server", "Send TCP > " + Packet.lookupPacket(packet.getPacketId()));
+        Log.trace("Server", "Send TCP > " + Packet.lookupPacket(packet.getPacketId()));
         conn.sendTcp(packet.getData());
     }
 

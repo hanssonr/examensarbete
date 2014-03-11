@@ -34,8 +34,9 @@ public class Connection {
         mIsConnected = val;
     }
 
-    public void setDisconnected() {
+    public void stop() {
         mTcpConnection.stop();
+        mUdpConnection.stop();
     }
 
     @Override
@@ -91,7 +92,7 @@ public class Connection {
     }
 
     public void sendUdp(byte[] data, Connection connection) {
-        mUdpConnection.sendUdp(data, connection);
+        mUdpConnection.sendUdpFromServer(data, connection);
     }
 
     public void sendTcp(byte[] data) {

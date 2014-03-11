@@ -2,6 +2,7 @@ package se.rhel;
 
 import se.rhel.packet.BasePacketHandler;
 import se.rhel.packet.Packet;
+import se.rhel.util.Log;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
@@ -78,23 +79,37 @@ public class UdpConnection implements Runnable {
                 mPacketHandler.handlePacket(mPacket.getData());
 
             } catch (IOException e) {
-                e.printStackTrace();
+                // Swallow the exception and just close the socket
                 stop();
             }
         }
     }
 
+    public boolean isOpen() {
+        return mSocket.isClosed() == true ? false : true;
+    }
+
     public void stop() {
+        if(!mShouldRun) return;
+
+        Log.info("UdpConnection", "Closing UpdConnection");
+
+        if(!mSocket.isClosed()) {
+            mSocket.close();
+        } else {
+            Log.error("UpdConnection", "Socket already closed");
+        }
+
         mShouldRun = false;
-        mSocket.close();
     }
 
     /**
      * Sends UDP, used by Client
      * @param data
      */
-    public void sendUdp(byte[] data) {
+    public void sendUdpFromClient(byte[] data) {
         if(serverInitialization) { return; }
+        if(!isOpen()) return;
 
         try {
             mSocket.send(new DatagramPacket(data, data.length, mSocket.getInetAddress(), mSocket.getPort()));
@@ -108,8 +123,9 @@ public class UdpConnection implements Runnable {
      * @param data
      * @param connection
      */
-    public void sendUdp(byte[] data, Connection connection) {
+    public void sendUdpFromServer(byte[] data, Connection connection) {
         if(!serverInitialization) { return; }
+        if(!isOpen()) return;
 
         try {
             mSocket.send(new DatagramPacket(data, data.length, connection.getAddress(), connection.getPort()));
