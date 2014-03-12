@@ -11,17 +11,22 @@ import java.nio.ByteBuffer;
 public abstract class BasePacketHandler {
 
     protected ByteBuffer mBuf;
-    protected Packet.PacketType mPacketType;
+    private Class mClassType;
     protected IObserver mObserver;
+    protected Object mObj;
 
     public void handlePacket(byte[] data) {
         mBuf = ByteBuffer.wrap(data);
-        mPacketType = Packet.lookupPacket(mBuf.get());
+        mClassType = PacketManager.getInstance().getPacketType(mBuf.get());
 
-        switch(mPacketType) {
-            case DISCONNECT:
-                Log.debug("BasePacketHandler", "Received packet DISCONNECT");
-                break;
+        try {
+            mObj = mClassType.newInstance();
+
+        } catch (InstantiationException e) {
+            Log.error("BasePacketHandler", "No default constructor found in " + mClassType);
+            System.exit(1);
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
         }
     }
 

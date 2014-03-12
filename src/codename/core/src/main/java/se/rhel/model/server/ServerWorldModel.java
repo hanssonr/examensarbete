@@ -3,13 +3,14 @@ package se.rhel.model.server;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import se.rhel.Connection;
+import se.rhel.network.PlayerPacket;
+import se.rhel.packet.LatencyPacket;
 import se.rhel.server.Server;
 import se.rhel.model.BaseModel;
 import se.rhel.model.BulletWorld;
 import se.rhel.model.Player;
 import se.rhel.observer.ServerListener;
 import se.rhel.packet.Packet;
-import se.rhel.packet.PlayerJoinPacket;
 import se.rhel.util.Log;
 
 import java.util.HashMap;
@@ -87,7 +88,7 @@ public class ServerWorldModel implements BaseModel, ServerListener {
         // Meaning, a new player should be added on the server
         addPlayer(con.getId(), new Player(new Vector3(0, 10, 0), mBulletWorld));
         // And sending to all clients except the one joined
-        mServer.sendToAllTCPExcept(new PlayerJoinPacket(0f, 10f, 0f), con);
+        mServer.sendToAllTCPExcept(new PlayerPacket(0f, 10f, 0f), con);
     }
 
     @Override
@@ -98,21 +99,26 @@ public class ServerWorldModel implements BaseModel, ServerListener {
     @Override
     public void received(Connection con, Packet packet) {
 
-        switch(Packet.lookupPacket(packet.getPacketId())) {
-            case REQUEST_INITIAL_STATE:
-                // TODO: This is not very efficient, should be a bulk-package instead
-                Log.debug("ServerWorldModel", "Initial state requested from clientId: " + con.getId());
+//        switch(Packet.lookupPacket(packet.getPacketId())) {
+//            case REQUEST_INITIAL_STATE:
+//                // TODO: This is not very efficient, should be a bulk-package instead
+//                Log.debug("ServerWorldModel", "Initial state requested from clientId: " + con.getId());
+//
+//                // Sending all the players to the client requested, except self
+//                for(Player p : getPlayersExcept(con.getId())) {
+//                    // TODO : This is just fake lol!
+//                    Log.debug("ServerWorldModel", "Sending player to " + con.getId());
+//                    mServer.sendTCP(new PlayerPacket(0f, 10f, 0f), con);
+//                }
+//                break;
+//            default:
+//                Log.debug("ServerWorldModel", "Unhandled packet");
+//                break;
+//        }
+    }
 
-                // Sending all the players to the client requested, except self
-                for(Player p : getPlayersExcept(con.getId())) {
-                    // TODO : This is just fake lol!
-                    Log.debug("ServerWorldModel", "Sending player to " + con.getId());
-                    mServer.sendTCP(new PlayerJoinPacket(0f, 10f, 0f), con);
-                }
-                break;
-            default:
-                Log.debug("ServerWorldModel", "Unhandled packet");
-                break;
-        }
+    @Override
+    public void received(Connection con, Object obj) {
+        Log.debug("ServerWorldModel", "RECEIVED: " + obj + " FROM: " + con);
     }
 }

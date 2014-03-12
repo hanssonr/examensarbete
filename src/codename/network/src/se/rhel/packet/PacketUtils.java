@@ -9,14 +9,14 @@ import java.util.HashMap;
 public class PacketUtils {
 
     private static PacketUtils INSTANCE = null;
-    private static HashMap<Packet.PacketType, Byte> PACKETS = new HashMap<>();
+    private static HashMap<Class<?>, Byte> PACKETS = new HashMap<>();
     private static int UNIQUE_ID = -128;
 
     // Private constructor
     private PacketUtils() {
-        for(Packet.PacketType type : Packet.PacketType.values()) {
-            PACKETS.put(type, generateUniqueId());
-        }
+//        for(Packet.PacketType type : Packet.PacketType.values()) {
+//            PACKETS.put(type, generateUniqueId());
+//        }
     }
 
     public static synchronized PacketUtils getInstance() {
@@ -33,16 +33,16 @@ public class PacketUtils {
     }
 
     public Packet.PacketType getPacketType(byte id) {
-        for(Packet.PacketType type : PACKETS.keySet()) {
-            if (id == PACKETS.get(type)) {
-                return type;
-            }
-        }
+//        for(Packet.PacketType type : PACKETS.keySet()) {
+//            if (id == PACKETS.get(type)) {
+//                return type;
+//            }
+//        }
 
         return null;
     }
 
-        public byte getPacketId(Packet.PacketType type) {
+        public byte getPacketId(Class<?> type) {
         return PACKETS.get(type);
     }
 

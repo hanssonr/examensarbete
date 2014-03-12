@@ -8,6 +8,7 @@ import se.rhel.Connection;
 import se.rhel.EndPoint;
 import se.rhel.packet.DisconnectPacket;
 import se.rhel.packet.Packet;
+import se.rhel.packet.PacketRegisterInitializer;
 import se.rhel.util.Log;
 
 import java.io.IOException;
@@ -50,6 +51,8 @@ public class Server implements EndPoint {
         mServerObserver = new ServerObserver();
         mServerPacketHandler = new ServerPacketHandler(this);
         mServerPacketHandler.setObserver(mServerObserver);
+
+        PacketRegisterInitializer.register();
     }
 
     @Override
@@ -206,7 +209,7 @@ public class Server implements EndPoint {
         }
     }
 
-    public Connection getConnection(int id) {
+    public synchronized Connection getConnection(int id) {
         for (Connection connection : mConnections) {
             if(connection.getId() == id)
                 return connection;

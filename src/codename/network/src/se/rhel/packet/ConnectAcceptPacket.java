@@ -8,6 +8,6 @@ public class ConnectAcceptPacket extends Packet {
     private static int PACKET_SIZE = Byte.SIZE;
 
     public ConnectAcceptPacket(int id) {
-        super(PacketType.CONNECT_ACCEPT, PACKET_SIZE);
+        super(ConnectAcceptPacket.class, PACKET_SIZE);
     }
 }

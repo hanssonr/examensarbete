@@ -10,6 +10,8 @@ public abstract class Packet {
     protected byte[] mData;
     protected byte mPacketId;
 
+    public Packet() {}
+
     /**
      * Used when creating packet from input data
      * @param data
@@ -19,13 +21,9 @@ public abstract class Packet {
         mPacketId = mBuffer.get();
     }
 
-    /**
-     * Used when creating packet with own input
-     * @param type
-     * @param packetSize
-     */
-    public Packet(PacketType type, int packetSize) {
-        mPacketId = PacketUtils.getInstance().getPacketId(type);
+
+    public Packet(Class<?> classtype, int packetSize) {
+        mPacketId = (byte)PacketManager.getInstance().getPacketId(classtype);
 
         mData = new byte[packetSize];
         mBuffer = ByteBuffer.wrap(mData);
@@ -47,8 +45,7 @@ public abstract class Packet {
     public static enum PacketType {
         INVALID, HANDSHAKE_RESPONSE,
         CONNECT, CONNECT_ACCEPT,
-        DISCONNECT, PLAYER_JOIN,
-        REQUEST_INITIAL_STATE, IDLE_PACKET,
+        DISCONNECT, IDLE_PACKET,
         LATENCY_PACKET
     }
 }

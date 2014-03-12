@@ -8,8 +8,11 @@ public class LatencyPacket extends Packet {
     private static int PACKET_SIZE = Byte.SIZE + Integer.SIZE;
     public int mPlayerId;
 
+    public LatencyPacket() {
+    }
+
     public LatencyPacket(int id) {
-        super(PacketType.LATENCY_PACKET, PACKET_SIZE);
+        super(LatencyPacket.class, PACKET_SIZE);
         mBuffer.putInt(id);
     }
 

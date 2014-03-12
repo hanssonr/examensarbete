@@ -8,6 +8,6 @@ public class DisconnectPacket extends Packet {
     private static int PACKET_SIZE = Byte.SIZE;
 
     public DisconnectPacket() {
-        super(PacketType.DISCONNECT, PACKET_SIZE);
+        super(DisconnectPacket.class, PACKET_SIZE);
     }
 }

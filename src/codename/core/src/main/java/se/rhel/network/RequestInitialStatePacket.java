@@ -1,4 +1,6 @@
-package se.rhel.packet;
+package se.rhel.network;
+
+import se.rhel.packet.Packet;
 
 /**
  * Created by Emil on 2014-03-06.
@@ -9,8 +11,10 @@ public class RequestInitialStatePacket extends Packet {
     private static int PACKET_SIZE = Byte.SIZE + Integer.SIZE;
     public int mPlayerId;
 
+    public RequestInitialStatePacket() {}
+
     public RequestInitialStatePacket(int id) {
-        super(PacketType.REQUEST_INITIAL_STATE, PACKET_SIZE);
+        super(RequestInitialStatePacket.class, PACKET_SIZE);
         mBuffer.putInt(id);
     }
 

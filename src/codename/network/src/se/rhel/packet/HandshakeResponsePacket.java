@@ -1,5 +1,7 @@
 package se.rhel.packet;
 
+import org.omg.DynamicAny._DynAnyFactoryStub;
+
 import java.nio.ByteBuffer;
 
 /**
@@ -11,8 +13,10 @@ public class HandshakeResponsePacket extends Packet {
     private static int PACKET_SIZE = Byte.SIZE + Integer.SIZE;;
     public int mId;
 
+    public HandshakeResponsePacket() {}
+
     public HandshakeResponsePacket(int id) {
-        super(PacketType.HANDSHAKE_RESPONSE, PACKET_SIZE);
+        super(HandshakeResponsePacket.class, PACKET_SIZE);
 
         mBuffer.putInt(id);
     }

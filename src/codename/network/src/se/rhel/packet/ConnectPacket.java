@@ -10,7 +10,7 @@ public class ConnectPacket extends Packet {
     public int mPlayerId;
 
     public ConnectPacket(int playerId) {
-        super(PacketType.CONNECT, PACKET_SIZE);
+        super(ConnectPacket.class, PACKET_SIZE);
         mBuffer.putInt(playerId);
     }
 

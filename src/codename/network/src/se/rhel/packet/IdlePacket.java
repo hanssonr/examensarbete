@@ -9,8 +9,10 @@ public class IdlePacket extends Packet {
     private static int PACKET_SIZE = Byte.SIZE + Integer.SIZE;
     public int mPlayerId;
 
+    public IdlePacket() {}
+
     public IdlePacket(int id) {
-        super(PacketType.IDLE_PACKET, PACKET_SIZE);
+        super(IdlePacket.class, PACKET_SIZE);
         mBuffer.putInt(id);
     }
 

@@ -11,4 +11,5 @@ public interface ClientListener {
     public void connected();
     public void disconnected();
     public void received(Packet packet);
+    public void received(Object obj);
 }

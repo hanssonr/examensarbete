@@ -35,6 +35,8 @@ public class Client implements EndPoint {
 
         mTcpConnection = new TcpConnection(mHandler);
         mUdpConnection = new UdpConnection(mHandler);
+
+        PacketRegisterInitializer.register();
     }
 
     @Override

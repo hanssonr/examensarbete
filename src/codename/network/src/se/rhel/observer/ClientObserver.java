@@ -36,4 +36,11 @@ public class ClientObserver implements ClientListener, IObserver {
             clientListener.received(packet);
         }
     }
+
+    @Override
+    public void received(Object obj) {
+        for (ClientListener clientListener : mClientListeners) {
+            clientListener.received(obj);
+        }
+    }
 }

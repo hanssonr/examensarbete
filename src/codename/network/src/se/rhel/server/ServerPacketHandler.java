@@ -1,11 +1,10 @@
 package se.rhel.server;
 
 import se.rhel.Connection;
+import se.rhel.observer.ServerObserver;
 import se.rhel.packet.BasePacketHandler;
 import se.rhel.packet.IdlePacket;
 import se.rhel.packet.LatencyPacket;
-import se.rhel.packet.RequestInitialStatePacket;
-import se.rhel.util.Log;
 
 /**
  * Created by rkh on 2014-03-05.
@@ -19,39 +18,27 @@ public class ServerPacketHandler extends BasePacketHandler {
     }
 
     @Override
-    public void handlePacket(byte[] data)  {
+    public synchronized void handlePacket(byte[] data)  {
         super.handlePacket(data);
 
-        Connection fromConnection;
+        Connection fromConnection = mServer.getConnection(mBuf.getInt());
 
-        switch(mPacketType) {
-            case CONNECT:
-                break;
-            case REQUEST_INITIAL_STATE:
-                RequestInitialStatePacket risp = new RequestInitialStatePacket(data);
-                fromConnection = mServer.getConnection(risp.mPlayerId);
+        if (mObj instanceof IdlePacket) {
+            IdlePacket ip = new IdlePacket(data);
 
-                // We really dont care about what packet has been sent, just tell
-                // the listeners about it
-                Log.debug("ServerPacketHandler", "Number of active listeners: " + mServer.getObserver().nrOfListeners());
-                mServer.getObserver().received(fromConnection, new RequestInitialStatePacket(risp.mPlayerId));
-                break;
-            case IDLE_PACKET:
-                IdlePacket ip = new IdlePacket(data);
+            //fromConnection = mServer.getConnection(ip.mPlayerId);
+            fromConnection.packageReceived();
+        }
+        else if (mObj instanceof LatencyPacket) {
+            //Sending a dummy response, i.e for latency measurement
+            LatencyPacket lp = new LatencyPacket(data);
 
-                fromConnection = mServer.getConnection(ip.mPlayerId);
-                fromConnection.packageReceived();
-
-                // mServer.sendUDP(new IdlePacket(1), fromConnection);
-                break;
-            case LATENCY_PACKET:
-                // Sending a dummy response, i.e for latency measurement
-                LatencyPacket lp = new LatencyPacket(data);
-                fromConnection = mServer.getConnection(lp.mPlayerId);
-                mServer.sendTCP(new LatencyPacket(0), fromConnection);
-                break;
-            default:
-                break;
+            //fromConnection = mServer.getConnection(lp.mPlayerId);
+            mServer.sendTCP(new LatencyPacket(0), fromConnection);
+        }
+        else {
+            //fromConnection = mServer.getConnection(mBuf.getInt());
+            ((ServerObserver)mObserver).received(fromConnection, mObj);
         }
     }
 }

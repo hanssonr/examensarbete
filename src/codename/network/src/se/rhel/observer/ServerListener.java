@@ -11,4 +11,5 @@ public interface ServerListener {
     public void connected(Connection con);
     public void disconnected(Connection con);
     public void received(Connection con, Packet packet);
+    public void received(Connection con, Object obj);
 }

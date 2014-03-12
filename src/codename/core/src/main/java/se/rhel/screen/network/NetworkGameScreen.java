@@ -4,6 +4,11 @@ import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Gdx;
 import se.rhel.client.Client;
 import se.rhel.CodeName;
+import se.rhel.network.MyPacketRegisterInitializer;
+import se.rhel.network.PlayerPacket;
+import se.rhel.network.RequestInitialStatePacket;
+import se.rhel.packet.PacketManager;
+import se.rhel.packet.PacketRegisterInitializer;
 import se.rhel.screen.BaseScreen;
 import se.rhel.server.Server;
 import se.rhel.controller.PlayerController;
@@ -33,6 +38,8 @@ public class NetworkGameScreen extends BaseScreen {
         if(mServer != null) {
             mServerWorldModel = new ServerWorldModel(server);
         }
+
+        MyPacketRegisterInitializer.register();
 
         // else/and assume client
         mClient = new Client();
