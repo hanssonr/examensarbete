@@ -39,8 +39,6 @@ public class NetworkGameScreen extends BaseScreen {
             mServerWorldModel = new ServerWorldModel(server);
         }
 
-        MyPacketRegisterInitializer.register();
-
         // else/and assume client
         mClient = new Client();
         mClient.start();
