@@ -24,6 +24,8 @@ och server kan skicka viktiga meddelanden mellan varandra. Till exempel när en 
 Har legat i åtanke ett tag men engagemanget har inte varit där ännu. Först använde vi oss enbart av enums, vilket blev lite krångligare än vi från
 början insett. För att kunna skicka egna paket från exempelvis ClientWorldModel och ServerWorldModel så vart användaren tvungen att följa vissa regler.
 
+### Först var det enums
+
 Dels skriva en egen enum som implementerade IPacketType och registrera den i PacketManager..
 
 ```java
@@ -67,3 +69,39 @@ public class TestPacket extends Packet {
 
 .. fungerade det? Javisst, men det kändes inte helt intuitivt och aningen krångligt. Därför sökte vi nya lösningar.
 
+### Sen var det instanceof
+Efter några förslag och lite tid så kom vi fram till den (för närvarande) slutgiltliga lösningen
+
+Användaren skriver, precis som innan en egen klass för varje paket. Den enda
+restriktionen är att det måste finnas en tom konstruktor..
+
+```java
+public class Testpacket extends Packet {
+
+    private static int PACKET_SIZE = Byte.SIZE;
+
+    public TestPacket() {}
+
+    public TestPacket(int id) {
+        super(TestPacket.class, PACKET_SIZE);
+        mBuffer.putInt(id);
+    }
+}
+```
+
+.. samt, någonstans, registrera den nya klassen ..
+
+```java
+PacketManager.getInstance().registerPacket(TestPacket.class);
+```
+
+.. och därefter skicka och ta emot sina egna paket. Smutt!
+
+```java
+    @Override
+    public void received(Object obj) {
+        if (obj instanceof TestPacket) {
+            Log.debug("ClientWorldModel", "Success! Testpacket received");
+        }
+    }
+```
