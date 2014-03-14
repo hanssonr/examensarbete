@@ -37,7 +37,7 @@ public class GameScreen extends BaseScreen {
     @Override
     public void update(float delta) {
         mPlayerInput.processCurrentInput(delta);
-
+        
         mClientWorldModel.getPlayer().rotate(mPlayerInput.getRotation());
         mClientWorldModel.getPlayer().move(mPlayerInput.getDirection());
 
