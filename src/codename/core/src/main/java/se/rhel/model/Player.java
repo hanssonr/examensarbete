@@ -23,51 +23,59 @@ import se.rhel.view.BulletHoleRenderer;
 public class Player extends DynamicEntity {
 
     public enum PLAYERSTATE {
-            idle, running
-        }
+        idle, running
+    }
 
-        private FPSCamera mCamera;
+    private FPSCamera mCamera;
+    private PLAYERSTATE mState;
 
-        private PLAYERSTATE mState;
+    //Finals
+    private final float JUMP_HEIGHT = 7f;
+    private final float GRAVITY_POWER = 15f;
 
-        private float bobPower = 0.7f;
-        private float bobTimer = 0f;
-        private Vector3 bobVector = new Vector3();
+    //Bobbing
+    private float mBobPower = 0.7f;
+    private float mBobTimer = 0f;
+    private Vector3 mBobVector = new Vector3();
 
-        private BulletWorld mWorld;
-        private btRigidBody mBody;
+    private BulletWorld mWorld;
+    private btRigidBody mBody;
 
-        // Testing
-        private ClosestRayResultCallback rayTestCB;
-        public boolean hasShot = false;
+    private float mDeltaShoot;
+    private float mGravity = 0f;
 
-        public Vector3 from = new Vector3();
-        public Vector3 to = new Vector3();
+    //Actions
+    private boolean mIsJumping = false;
+    private boolean mOnGround = false;
 
-        public Vector3 fromGround = new Vector3();
-        public Vector3 toGround = new Vector3();
+    //RayCasts
+    private ClosestRayResultCallback rayTestCB;
+    public boolean mHasShot = false;
+    public Vector3 from = new Vector3();
+    public Vector3 to = new Vector3();
+    private Vector3 fromGround = new Vector3();
+    private Vector3 toGround = new Vector3();
 
-        private float deltaShoot;
 
-        //weapon
-        ModelInstance weapon;
-        Matrix4 weaponWorld = new Matrix4().idt();
-        Vector3 weaponOffset = new Vector3();
+    //Weapon
+    private ModelInstance mWeapon;
+    private Matrix4 mWeaponWorld = new Matrix4().idt();
+    private Vector3 mWeaponOffset = new Vector3();
 
-        public boolean mOnGround = false;
-        private static Vector2 mPlayersize = new Vector2(0.6f, 1.5f);
+    private Vector3 mVelocity = new Vector3();
+    private static Vector2 mPlayersize = new Vector2(0.6f, 1.5f);
 
-        public Player(Vector3 position, BulletWorld world) {
-            super(7f);
-            mWorld = world;
+    public Player(Vector3 position, BulletWorld world) {
+        super(7f);
+        mWorld = world;
 
-            getTransformation().setTranslation(position);
-            createPyshicsBody();
-            weapon = new ModelInstance(Resources.INSTANCE.fpsWeaponModel);
-            mWorld.fpsModel = weapon;
+        getTransformation().setTranslation(position);
+        createPyshicsBody();
+        mWeapon = new ModelInstance(Resources.INSTANCE.fpsWeaponModel);
+        mWorld.fpsModel = mWeapon;
 
-            mState = PLAYERSTATE.idle;
-        }
+        mState = PLAYERSTATE.idle;
+    }
 
     private void createPyshicsBody() {
         btCollisionShape playerShape = new btCapsuleShape(mPlayersize.x, mPlayersize.y);
@@ -89,41 +97,43 @@ public class Player extends DynamicEntity {
     public void update(float delta) {
         mBody.setGravity(Vector3.Zero);
         mTransformation.set(mBody.getCenterOfMassTransform());
+
         updateCamera(delta);
         updateWeapon();
         checkOnGround();
+        calculateGravity(delta);
 
-        // Update shooting for uneccesary drawing / spam shooting
-        if(hasShot) {
-            deltaShoot += delta;
-            if(deltaShoot > 0.3f) {
-                hasShot = false;
-                deltaShoot = 0f;
+        // Update shooting for unnecessary drawing / spam shooting
+        if(mHasShot) {
+            mDeltaShoot += delta;
+            if(mDeltaShoot > 0.3f) {
+                mHasShot = false;
+                mDeltaShoot = 0f;
             }
         }
     }
 
     private void updateWeapon() {
-        weaponWorld.set(mCamera.view.cpy().inv());
-        weaponWorld.getTranslation(weaponOffset);
-        weaponOffset.sub(mCamera.up.cpy().scl(0.7f));
-        weaponOffset.add(mCamera.direction);
-        weaponOffset.add(mCamera.getRight());
+        mWeaponWorld.set(mCamera.view.cpy().inv());
+        mWeaponWorld.getTranslation(mWeaponOffset);
+        mWeaponOffset.sub(mCamera.up.cpy().scl(0.7f));
+        mWeaponOffset.add(mCamera.direction);
+        mWeaponOffset.add(mCamera.getRight());
 
         if(mState == PLAYERSTATE.running) {
-            weaponOffset.add(bobVector.cpy().scl(bobPower));
+            mWeaponOffset.add(mBobVector.cpy().scl(mBobPower));
         }
 
-        weaponWorld.setTranslation(weaponOffset);
-        weapon.transform.set(weaponWorld);
+        mWeaponWorld.setTranslation(mWeaponOffset);
+        mWeapon.transform.set(mWeaponWorld);
     }
 
     public void shoot() {
 
-        if(hasShot)
+        if(mHasShot)
             return;
 
-        hasShot = true;
+        mHasShot = true;
 
         // We want a ray from middle of screen as basis of hit detection
         Ray ray = mCamera.getPickRay(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2);
@@ -161,7 +171,7 @@ public class Player extends DynamicEntity {
 
     private void updateCamera(float delta) {
         if(mCamera != null) {
-            bobTimer+=delta;
+            mBobTimer +=delta;
 
             mTransformation.getTranslation(mCamera.position);
             mCamera.position.add(mCamera.getOffset());
@@ -170,11 +180,11 @@ public class Player extends DynamicEntity {
             if(mState == PLAYERSTATE.running) {
                 Vector3 dir = mCamera.getRight().cpy();
                 dir.y = 1f;
-                float x = (float)Math.sin(bobTimer*10)*0.05f;
-                float y = (float)Math.cos(bobTimer * 20)*0.03f;
-                float z = (float)Math.sin(bobTimer*10)*0.05f;
-                bobVector.set(x, y, z);
-                mCamera.position.add(bobVector.scl(dir)).cpy().scl(bobPower);
+                float x = (float)Math.sin(mBobTimer * 10) * 0.05f;
+                float y = (float)Math.cos(mBobTimer * 20) * 0.03f;
+                float z = (float)Math.sin(mBobTimer * 10) * 0.05f;
+                mBobVector.set(x, y, z);
+                mCamera.position.add(mBobVector.scl(dir)).cpy().scl(mBobPower);
             }
 
             mCamera.update();
@@ -203,14 +213,41 @@ public class Player extends DynamicEntity {
         }
     }
 
+    public void jump() {
+        if(isGrounded()) {
+            mGravity = JUMP_HEIGHT;
+            mIsJumping = true;
+        }
+    }
+
+    private void calculateGravity(float delta) {
+        if(!isGrounded()) {
+            mGravity -= GRAVITY_POWER * delta;
+        } else {
+            if (mGravity < -10) mGravity = -10;
+            mGravity += GRAVITY_POWER * delta;
+            if (mGravity > 0) mGravity = 0;
+        }
+    }
+
     public void move(Vector3 direction) {
         mBody.activate(true);
-        direction.x *= mMovespeed;
-        direction.z *= mMovespeed;
-        mBody.setLinearVelocity(direction);
 
+        mVelocity.set(0,0,0);
+        mVelocity.add(mCamera.getForward().scl(direction.z * mMovespeed));
+        mVelocity.add(mCamera.getRight().scl(direction.x * mMovespeed));
 
-        if(Math.abs(direction.x) > 0 || Math.abs(direction.z) > 0) {
+        mVelocity.y = mGravity;
+
+        //Change gravity if jumping
+        if (mIsJumping) {
+            mVelocity.y = JUMP_HEIGHT;
+            mIsJumping = false;
+        }
+
+        mBody.setLinearVelocity(mVelocity);
+
+        if(Math.abs(mVelocity.x) > 0 || Math.abs(mVelocity.z) > 0) {
             mState = PLAYERSTATE.running;
         } else {
             mState = PLAYERSTATE.idle;
@@ -220,6 +257,12 @@ public class Player extends DynamicEntity {
     public void rotate(Vector3 axis, float angle) {
         Quaternion quat = new Quaternion().setFromAxis(axis, angle);
         mBody.setCenterOfMassTransform(mBody.getWorldTransform().rotate(quat));
+    }
+
+    public void rotate(Vector2 rotation) {
+        mCamera.rotate(mCamera.getRight(), rotation.y);
+        mCamera.rotate(FPSCamera.UP, rotation.x);
+        //mPlayer.rotate(FPSCamera.UP, rotation.x);
     }
 
     public Vector3 getPosition() {
