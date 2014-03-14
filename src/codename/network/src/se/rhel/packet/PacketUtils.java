@@ -32,15 +32,15 @@ public class PacketUtils {
         return (byte)id;
     }
 
-    public Packet.PacketType getPacketType(byte id) {
+//    public Packet.PacketType getPacketType(byte id) {
 //        for(Packet.PacketType type : PACKETS.keySet()) {
 //            if (id == PACKETS.get(type)) {
 //                return type;
 //            }
 //        }
-
-        return null;
-    }
+//
+//        return null;
+//    }
 
         public byte getPacketId(Class<?> type) {
         return PACKETS.get(type);

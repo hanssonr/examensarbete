@@ -6,20 +6,17 @@ package se.rhel.packet;
  */
 public class ConnectPacket extends Packet {
 
-    private static int PACKET_SIZE = Byte.SIZE + Integer.SIZE;
     public int mPlayerId;
 
     public ConnectPacket(int playerId) {
-        super(ConnectPacket.class, PACKET_SIZE);
-        mBuffer.putInt(playerId);
+        super(ConnectPacket.class);
+        super.putInt(playerId);
+        super.ready();
     }
 
     public ConnectPacket(byte[] data) {
         super(data);
 
-        mPlayerId = mBuffer.getInt();
+        mPlayerId = super.getInt();
     }
-
-
-
 }

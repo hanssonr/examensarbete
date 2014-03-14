@@ -4,9 +4,14 @@ import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Gdx;
 import se.rhel.client.Client;
 import se.rhel.CodeName;
+import se.rhel.network.MyPacketRegisterInitializer;
+import se.rhel.network.PlayerPacket;
+import se.rhel.network.RequestInitialStatePacket;
+import se.rhel.packet.PacketManager;
+import se.rhel.packet.PacketRegisterInitializer;
 import se.rhel.screen.BaseScreen;
 import se.rhel.server.Server;
-import se.rhel.view.input.PlayerInput;
+import se.rhel.controller.PlayerController;
 import se.rhel.model.client.ClientWorldModel;
 import se.rhel.model.server.ServerWorldModel;
 import se.rhel.view.WorldView;
@@ -16,7 +21,7 @@ import se.rhel.view.WorldView;
  */
 public class NetworkGameScreen extends BaseScreen {
 
-    private PlayerInput mPlayerInput;
+    private PlayerController mPlayerController;
     private WorldView mWorldView;
 
     private Server mServer;
@@ -42,26 +47,16 @@ public class NetworkGameScreen extends BaseScreen {
 
         mClientWorldModel = ClientWorldModel.newNetworkWorld(mClient);
 
-        mPlayerInput = new PlayerInput();
+        mPlayerController = new PlayerController(mClientWorldModel.getCamera(), mClientWorldModel);
         mWorldView = new WorldView(mClientWorldModel);
 
-        Gdx.input.setInputProcessor(mPlayerInput);
+        Gdx.input.setInputProcessor(mPlayerController);
     }
 
 
     @Override
     public void update(float delta) {
-        mPlayerInput.processCurrentInput(delta);
-
-        mClientWorldModel.getPlayer().rotate(mPlayerInput.getRotation());
-        mClientWorldModel.getPlayer().move(mPlayerInput.getDirection());
-
-        if (mPlayerInput.isShooting())
-            mClientWorldModel.getPlayer().shoot();
-
-        if (mPlayerInput.isJumping())
-            mClientWorldModel.getPlayer().jump();
-
+        mPlayerController.processCurrentInput(delta);
         mClientWorldModel.update(delta);
     }
 

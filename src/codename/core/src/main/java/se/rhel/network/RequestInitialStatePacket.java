@@ -8,19 +8,19 @@ import se.rhel.packet.Packet;
  */
 public class RequestInitialStatePacket extends Packet {
 
-    private static int PACKET_SIZE = Byte.SIZE + Integer.SIZE;
     public int mPlayerId;
 
     public RequestInitialStatePacket() {}
 
     public RequestInitialStatePacket(int id) {
-        super(RequestInitialStatePacket.class, PACKET_SIZE);
-        mBuffer.putInt(id);
+        super(RequestInitialStatePacket.class);
+        super.putInt(id);
+        super.ready();
     }
 
     public RequestInitialStatePacket(byte[] data) {
         super(data);
-        mPlayerId = mBuffer.getInt();
+        mPlayerId = super.getInt();
     }
 
 }

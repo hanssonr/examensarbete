@@ -5,9 +5,8 @@ package se.rhel.packet;
  */
 public class DisconnectPacket extends Packet {
 
-    private static int PACKET_SIZE = Byte.SIZE;
-
     public DisconnectPacket() {
-        super(DisconnectPacket.class, PACKET_SIZE);
+        super(DisconnectPacket.class);
+        super.ready();
     }
 }

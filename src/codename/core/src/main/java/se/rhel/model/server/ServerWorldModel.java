@@ -4,6 +4,9 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import se.rhel.Connection;
 import se.rhel.network.PlayerPacket;
+import se.rhel.network.RequestInitialStatePacket;
+import se.rhel.network.TestMaxPacket;
+import se.rhel.network.TestPacket;
 import se.rhel.packet.LatencyPacket;
 import se.rhel.server.Server;
 import se.rhel.model.BaseModel;
@@ -97,28 +100,18 @@ public class ServerWorldModel implements BaseModel, ServerListener {
     }
 
     @Override
-    public void received(Connection con, Packet packet) {
-
-//        switch(Packet.lookupPacket(packet.getPacketId())) {
-//            case REQUEST_INITIAL_STATE:
-//                // TODO: This is not very efficient, should be a bulk-package instead
-//                Log.debug("ServerWorldModel", "Initial state requested from clientId: " + con.getId());
-//
-//                // Sending all the players to the client requested, except self
-//                for(Player p : getPlayersExcept(con.getId())) {
-//                    // TODO : This is just fake lol!
-//                    Log.debug("ServerWorldModel", "Sending player to " + con.getId());
-//                    mServer.sendTCP(new PlayerPacket(0f, 10f, 0f), con);
-//                }
-//                break;
-//            default:
-//                Log.debug("ServerWorldModel", "Unhandled packet");
-//                break;
-//        }
-    }
-
-    @Override
     public void received(Connection con, Object obj) {
+
+        if(obj instanceof RequestInitialStatePacket) {
+            Log.debug("ServerWorldModel", "Initial state requested from clientId: " + con.getId());
+            mServer.sendTCP(new TestPacket(0, 1.1f, 1.2, 'a', Byte.valueOf("1"), Long.valueOf(2), Short.valueOf("1")), con);
+            mServer.sendTCP(new TestMaxPacket(1), con);
+            // Sending all the players to the client requested, except self
+            for(Player p : getPlayersExcept(con.getId())) {
+                Log.debug("ServerWorldModel", "Sending player to " + con.getId());
+                mServer.sendTCP(new PlayerPacket(0f, 10f, 0f), con);
+            }
+        }
         Log.debug("ServerWorldModel", "RECEIVED: " + obj + " FROM: " + con);
     }
 }

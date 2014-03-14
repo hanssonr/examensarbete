@@ -10,20 +10,18 @@ import java.nio.ByteBuffer;
  */
 public class HandshakeResponsePacket extends Packet {
 
-    private static int PACKET_SIZE = Byte.SIZE + Integer.SIZE;;
     public int mId;
 
     public HandshakeResponsePacket() {}
 
     public HandshakeResponsePacket(int id) {
-        super(HandshakeResponsePacket.class, PACKET_SIZE);
-
-        mBuffer.putInt(id);
+        super(HandshakeResponsePacket.class);
+        super.putInt(id);
+        super.ready();
     }
 
     public HandshakeResponsePacket(byte[] data) {
         super(data);
-
-        mId = mBuffer.getInt();
+        mId = super.getInt();
     }
 }

@@ -10,14 +10,21 @@ import java.nio.ByteBuffer;
  */
 public abstract class BasePacketHandler {
 
-    protected ByteBuffer mBuf;
-    private Class mClassType;
+    protected Class mClassType;
     protected IObserver mObserver;
     protected Object mObj;
+    protected Packet mUnknownPacket;
 
     public void handlePacket(byte[] data) {
-        mBuf = ByteBuffer.wrap(data);
-        mClassType = PacketManager.getInstance().getPacketType(mBuf.get());
+
+        mUnknownPacket = new Packet(data) {
+            @Override
+            public byte getPacketId() {
+                return super.getPacketId();
+            }
+        };
+
+        mClassType = PacketManager.getInstance().getPacketType(mUnknownPacket.getPacketId());
 
         try {
             mObj = mClassType.newInstance();

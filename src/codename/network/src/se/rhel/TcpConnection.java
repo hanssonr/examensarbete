@@ -60,7 +60,7 @@ public class TcpConnection implements Runnable {
         while(mShouldRun) {
             try {
                 DataInputStream dis = new DataInputStream(mSocket.getInputStream());
-                byte[] data = new byte[256];
+                byte[] data = new byte[Snaek.PACKAGE_SIZE];
                 dis.read(data);
 
                 mPacketHandler.handlePacket(data);
@@ -79,6 +79,7 @@ public class TcpConnection implements Runnable {
     }
 
     public void sendTcp(byte[] data) {
+        Log.debug("TcpConnection", "size: " + data.length);
         if(isOpen()) {
             try {
                 DataOutputStream output = new DataOutputStream(mSocket.getOutputStream());

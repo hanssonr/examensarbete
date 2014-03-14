@@ -36,13 +36,6 @@ public class ServerObserver implements ServerListener, IObserver {
     }
 
     @Override
-    public void received(Connection con, Packet packet) {
-        for (ServerListener serverListener : mServerListeners) {
-            serverListener.received(con, packet);
-        }
-    }
-
-    @Override
     public void received(Connection con, Object obj) {
         for (ServerListener serverListener : mServerListeners) {
             serverListener.received(con, obj);

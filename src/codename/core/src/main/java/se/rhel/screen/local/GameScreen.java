@@ -3,7 +3,7 @@ package se.rhel.screen.local;
 import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Gdx;
 import se.rhel.CodeName;
-import se.rhel.view.input.PlayerInput;
+import se.rhel.controller.PlayerController;
 import se.rhel.model.client.ClientWorldModel;
 import se.rhel.screen.BaseScreen;
 import se.rhel.view.WorldView;
@@ -16,7 +16,7 @@ import se.rhel.view.WorldView;
  */
 public class GameScreen extends BaseScreen {
 
-    private PlayerInput mPlayerInput;
+    private PlayerController mPlayerController;
     private WorldView mWorldView;
 
     private ClientWorldModel mClientWorldModel;
@@ -27,28 +27,17 @@ public class GameScreen extends BaseScreen {
 
         mClientWorldModel = ClientWorldModel.newLocalWorld();
 
-        mPlayerInput = new PlayerInput();
+        mPlayerController = new PlayerController(mClientWorldModel.getCamera(), mClientWorldModel);
         mWorldView = new WorldView(mClientWorldModel);
 
-        Gdx.input.setInputProcessor(mPlayerInput);
+        Gdx.input.setInputProcessor(mPlayerController);
     }
 
 
     @Override
     public void update(float delta) {
-        mPlayerInput.processCurrentInput(delta);
-
-        mClientWorldModel.getPlayer().rotate(mPlayerInput.getRotation());
-        mClientWorldModel.getPlayer().move(mPlayerInput.getDirection());
-
-        if (mPlayerInput.isShooting())
-            mClientWorldModel.getPlayer().shoot();
-
-        if (mPlayerInput.isJumping())
-            mClientWorldModel.getPlayer().jump();
-
+        mPlayerController.processCurrentInput(delta);
         mClientWorldModel.update(delta);
-        //System.out.println("hajj");
     }
 
     @Override

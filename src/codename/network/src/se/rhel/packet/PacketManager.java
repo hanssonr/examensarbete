@@ -1,5 +1,7 @@
 package se.rhel.packet;
 
+import se.rhel.util.Log;
+
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -7,7 +9,12 @@ import java.util.Map;
 public class PacketManager {
 
     private static PacketManager INSTANCE;
-    private int UNIQUE_ID = -127;
+    private int UNIQUE_ID = -121;
+
+    private static int[] RESERVED_IDS = new int[] { -127, -126, -125, -124, -123, -122 };
+    private static int pointer = 0;
+    private static boolean isIdsAvailable = true;
+
     private HashMap<Integer, Class<?>> PACKETS = new HashMap<>();
 
     public static PacketManager getInstance() {
@@ -18,17 +25,29 @@ public class PacketManager {
     }
 
     public void registerPacket(Class<?> packet) {
-        PACKETS.put((int)generateUniqueId(), packet);
+        StackTraceElement[] stackTraceElements = Thread.currentThread().getStackTrace();
+
+        // If the caller is server, use the reserved ids
+        if(stackTraceElements[2].getClassName().equals(PacketRegisterInitializer.class.getName())) {
+            if(isIdsAvailable) {
+                PACKETS.put(RESERVED_IDS[pointer], packet);
+                pointer++;
+
+                if(pointer == RESERVED_IDS.length) {
+                    isIdsAvailable = false;
+                }
+            } else {
+                Log.error("PacketManager", "No more reserved ids available!");
+            }
+
+        } else {
+            int id = (int)generateUniqueId();
+            PACKETS.put(id, packet);
+        }
     }
 
     public synchronized Class<?> getPacketType(int id) {
-        if (PACKETS.containsKey(id)) {
-            return PACKETS.get(id);
-        } else {
-            System.out.println("NO PACKET WITH ID " + id + " UNIQUE ID " + UNIQUE_ID);
-            System.exit(1);
-        }
-        return null;
+        return PACKETS.get(id);
     }
 
     public synchronized int getPacketId(Class<?> type) {

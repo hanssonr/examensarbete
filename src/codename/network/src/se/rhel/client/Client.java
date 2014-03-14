@@ -150,7 +150,7 @@ public class Client implements EndPoint {
     }
 
     public void sendTcp(byte[] data) {
-        Log.trace("Client", "Send TCP > " + Packet.lookupPacket(data[0]));
+        Log.trace("Client", "Send TCP > " + Packet.class.getName());
         mTcpConnection.sendTcp(data);
     }
 
@@ -159,7 +159,7 @@ public class Client implements EndPoint {
     }
 
     public void sendUdp(byte[] data) {
-        Log.trace("Client", "Send UDP >" + Packet.lookupPacket(data[0]));
+        Log.trace("Client", "Send UDP >" + Packet.class.getName());
         mUdpConnection.sendUdpFromClient(data);
     }
 

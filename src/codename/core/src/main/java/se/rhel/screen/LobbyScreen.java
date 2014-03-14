@@ -36,16 +36,14 @@ public class LobbyScreen extends BaseScreen {
         mStage = new Stage();
         mGame = game;
 
-        //Register network packages before instantiating Server/Clients
+        // Start the server if host
         MyPacketRegisterInitializer.register();
 
-        // Start the server if host
         if(isHost) {
             mServer = new Server();
             mServer.start();
             mServer.bind(4455, 5544);
         }
-
     }
 
     private void initStage() {

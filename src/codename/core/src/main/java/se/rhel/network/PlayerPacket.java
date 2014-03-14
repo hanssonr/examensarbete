@@ -10,7 +10,6 @@ import se.rhel.packet.Packet;
  */
 public class PlayerPacket extends Packet {
 
-    private static int PACKET_SIZE = Byte.SIZE + Float.SIZE * 3;
     public float x;
     public float y;
     public float z;
@@ -18,18 +17,18 @@ public class PlayerPacket extends Packet {
     public PlayerPacket() {}
 
     public PlayerPacket(float x, float y, float z) {
-        super(PlayerPacket.class, PACKET_SIZE);
-
-        mBuffer.putFloat(x);
-        mBuffer.putFloat(y);
-        mBuffer.putFloat(z);
+        super(PlayerPacket.class);
+        super.putFloat(x);
+        super.putFloat(y);
+        super.putFloat(z);
+        super.ready();
     }
 
     public PlayerPacket(byte[] data) {
         super(data);
 
-        x = mBuffer.getFloat();
-        y = mBuffer.getFloat();
-        z = mBuffer.getFloat();
+        x = super.getFloat();
+        y = super.getFloat();
+        z = super.getFloat();
     }
 }

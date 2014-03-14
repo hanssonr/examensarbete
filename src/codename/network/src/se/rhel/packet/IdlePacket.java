@@ -6,19 +6,18 @@ package se.rhel.packet;
  */
 public class IdlePacket extends Packet {
 
-    private static int PACKET_SIZE = Byte.SIZE + Integer.SIZE;
     public int mPlayerId;
 
     public IdlePacket() {}
 
     public IdlePacket(int id) {
-        super(IdlePacket.class, PACKET_SIZE);
-        mBuffer.putInt(id);
+        super(IdlePacket.class);
+        super.putInt(id);
+        super.ready();
     }
 
     public IdlePacket(byte[] data) {
         super(data);
-        mPlayerId = mBuffer.getInt();
+        mPlayerId = super.getInt();
     }
-
 }

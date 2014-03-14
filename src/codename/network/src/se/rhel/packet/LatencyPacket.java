@@ -5,19 +5,19 @@ package se.rhel.packet;
  * assigned to libgdx-gradle-template in se.rhel.packet
  */
 public class LatencyPacket extends Packet {
-    private static int PACKET_SIZE = Byte.SIZE + Integer.SIZE;
     public int mPlayerId;
 
     public LatencyPacket() {
     }
 
     public LatencyPacket(int id) {
-        super(LatencyPacket.class, PACKET_SIZE);
-        mBuffer.putInt(id);
+        super(LatencyPacket.class);
+        super.putInt(id);
+        super.ready();
     }
 
     public LatencyPacket(byte[] data) {
         super(data);
-        mPlayerId = mBuffer.getInt();
+        mPlayerId = super.getInt();
     }
 }

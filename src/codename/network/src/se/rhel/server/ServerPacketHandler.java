@@ -21,23 +21,24 @@ public class ServerPacketHandler extends BasePacketHandler {
     public synchronized void handlePacket(byte[] data)  {
         super.handlePacket(data);
 
-        Connection fromConnection = mServer.getConnection(mBuf.getInt());
+        Connection fromConnection;// = mServer.getConnection(mBuf.getInt());
 
         if (mObj instanceof IdlePacket) {
             IdlePacket ip = new IdlePacket(data);
 
-            //fromConnection = mServer.getConnection(ip.mPlayerId);
+            fromConnection = mServer.getConnection(ip.mPlayerId);
             fromConnection.packageReceived();
         }
         else if (mObj instanceof LatencyPacket) {
             //Sending a dummy response, i.e for latency measurement
             LatencyPacket lp = new LatencyPacket(data);
 
-            //fromConnection = mServer.getConnection(lp.mPlayerId);
+            fromConnection = mServer.getConnection(lp.mPlayerId);
             mServer.sendTCP(new LatencyPacket(0), fromConnection);
         }
         else {
-            //fromConnection = mServer.getConnection(mBuf.getInt());
+            int id = mUnknownPacket.getInt();
+            fromConnection = mServer.getConnection(id);
             ((ServerObserver)mObserver).received(fromConnection, mObj);
         }
     }

@@ -69,7 +69,7 @@ public class UdpConnection implements Runnable {
 
     public void run() {
         while(mShouldRun) {
-            byte[] buf = new byte[256];
+            byte[] buf = new byte[Snaek.PACKAGE_SIZE];
 
             try {
                 // Recieve UDP request

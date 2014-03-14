@@ -107,12 +107,12 @@ public class Server implements EndPoint {
 
                 // If there's been a certain amount of time since we heard from the client
                 if(timePassed > TIMEOUT_TIME) {
-                    next.setConnected(false);
+                    //next.setConnected(false);
                     Log.trace("Server", ">   Server: Time passed: " + timePassed + " Timeouttime: " + TIMEOUT_TIME + " Connection: " + next.getId() + " disconnected");
 
                     // Send packet that you are about to be disconnected / have been
                     // just for convinience for the client since we are going to disconnect anyways
-                    sendTCP(new DisconnectPacket(), next);
+                    //sendTCP(new DisconnectPacket(), next);
                 }
             }
         }
@@ -186,12 +186,12 @@ public class Server implements EndPoint {
      * @param conn
      */
     public void sendUDP(Packet packet, Connection conn) {
-        Log.trace("Server", "Send UDP > " + Packet.lookupPacket(packet.getPacketId()));
+        Log.trace("Server", "Send UDP > " + Packet.class.getName());
         conn.sendUdp(packet.getData(), conn);
     }
 
     public void sendTCP(Packet packet, Connection conn) {
-        Log.trace("Server", "Send TCP > " + Packet.lookupPacket(packet.getPacketId()));
+        Log.trace("Server", "Send TCP > " + Packet.class.getName());
         conn.sendTcp(packet.getData());
     }
 

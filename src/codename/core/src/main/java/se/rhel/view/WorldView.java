@@ -16,12 +16,12 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.bullet.linearmath.btIDebugDraw;
 import com.badlogic.gdx.physics.bullet.linearmath.btVector3;
 import se.rhel.client.Client;
+import se.rhel.controller.PlayerController;
 import se.rhel.graphics.FrontFaceDepthShaderProvider;
 import se.rhel.model.BulletWorld;
 import se.rhel.model.FPSCamera;
 import se.rhel.model.client.ClientWorldModel;
 import se.rhel.res.Resources;
-import se.rhel.view.input.PlayerInput;
 
 import java.math.BigDecimal;
 
@@ -114,7 +114,7 @@ public class WorldView {
         // mAnimationController.update(delta);
         weaponCam.position.set(mServerWorldModel.getCamera().position);
 
-        if(PlayerInput.DRAW_MESH) {
+        if(PlayerController.DRAW_MESH) {
             // Cel-shading
             buffer1.begin();
             Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
@@ -183,7 +183,7 @@ public class WorldView {
 
 
 
-        if(PlayerInput.DRAW_DEBUG_INFO) {
+        if(PlayerController.DRAW_DEBUG_INFO) {
             mFPSRenderer.draw(delta);
             mBulletLoadRenderer.setText(BulletWorld.PERFORMANCE + "\n test");
             mBulletLoadRenderer.draw(delta);
@@ -200,7 +200,7 @@ public class WorldView {
 
         }
 
-        if(PlayerInput.DRAW_DEBUG) {
+        if(PlayerController.DRAW_DEBUG) {
             mDebugDrawer.lineRenderer.setProjectionMatrix(mServerWorldModel.getCamera().combined);
             mDebugDrawer.begin();
             mServerWorldModel.getBulletWorld().getCollisionWorld().debugDrawWorld();
@@ -208,8 +208,8 @@ public class WorldView {
         }
 
         // Ray
-        if(PlayerInput.DRAW_SHOOT_DEBUG) {
-            if(mServerWorldModel.getPlayer().mHasShot) {
+        if(PlayerController.DRAW_SHOOT_DEBUG) {
+            if(mServerWorldModel.getPlayer().hasShot) {
 
                 btVector3 from = new btVector3(mServerWorldModel.getPlayer().from.x, mServerWorldModel.getPlayer().from.y, mServerWorldModel.getPlayer().from.z);
                 btVector3 to = new btVector3(mServerWorldModel.getPlayer().to.x, mServerWorldModel.getPlayer().to.y, mServerWorldModel.getPlayer().to.z);
@@ -225,7 +225,7 @@ public class WorldView {
             }
         }
 
-        if(mServerWorldModel.getPlayer().mHasShot) {
+        if(mServerWorldModel.getPlayer().hasShot) {
             // mLaserRenderer.shoot();
             lmtr.render();
         }
