@@ -22,7 +22,13 @@ public class PacketManager {
     }
 
     public synchronized Class<?> getPacketType(int id) {
-        return PACKETS.get(id);
+        if (PACKETS.containsKey(id)) {
+            return PACKETS.get(id);
+        } else {
+            System.out.println("NO PACKET WITH ID " + id + " UNIQUE ID " + UNIQUE_ID);
+            System.exit(1);
+        }
+        return null;
     }
 
     public synchronized int getPacketId(Class<?> type) {

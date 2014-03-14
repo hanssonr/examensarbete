@@ -1,50 +1,42 @@
-package se.rhel.controller;
+package se.rhel.view.input;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.math.MathUtils;
-import com.badlogic.gdx.math.Quaternion;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
-import se.rhel.client.ClientController;
-import se.rhel.model.FPSCamera;
-import se.rhel.model.Player;
 import com.badlogic.gdx.Input.Keys;
-import se.rhel.model.client.ClientWorldModel;
-import se.rhel.packet.ConnectAcceptPacket;
-import se.rhel.packet.Packet;
 
 import java.util.HashMap;
 import java.util.Map;
 
 
 /**
- * Group: Mixed
+ * Group: Logic
  */
-public class PlayerController extends ClientController implements InputProcessor {
+public class PlayerInput implements InputProcessor {
 
     public static boolean DRAW_DEBUG = false;
     public static boolean DRAW_MESH = true;
     public static boolean DRAW_DEBUG_INFO = true;
     public static boolean DRAW_SHOOT_DEBUG = false;
 
-    FPSCamera mCamera;
-    Player mPlayer;
-
-    Quaternion rQuat = new Quaternion();
-    Vector3 movement = new Vector3();
-    Vector3 tmp = new Vector3();
+    private boolean mPlayerShot = false;
+    private boolean mPlayerJump = false;
+    private Vector2 mRotation = Vector2.Zero;
+    private Vector3 mDirection = Vector3.Zero;
 
     //Finals
-    final float JUMP_HEIGHT = 7f;
     final float MOUSE_SPEED = 5f;
     final float MAX_YROT = 80f;
     final float MIN_YROT = -80f;
 
     //Rotation
-    float xRot = 0, yRot = 0, currentRot = 0;
+    float currentRot = 0;
 
     public enum MapKeys {
-        LEFT, RIGHT, FORWARD, BACK, JUMP
+        LEFT, RIGHT, FORWARD, BACK, JUMP, SHOOT
     }
 
     private static final Map<MapKeys, Boolean> mKeys = new HashMap<MapKeys, Boolean>();
@@ -54,79 +46,82 @@ public class PlayerController extends ClientController implements InputProcessor
         mKeys.put(MapKeys.FORWARD, false);
         mKeys.put(MapKeys.BACK, false);
         mKeys.put(MapKeys.JUMP, false);
+        mKeys.put(MapKeys.SHOOT, false);
     }
 
-
-    public PlayerController(FPSCamera camera, ClientWorldModel model) {
-        super();
-
-        super.addListener(model);
-        mCamera = camera;
-        mPlayer = model.getPlayer();
-
+    public PlayerInput() {
         Gdx.input.setCursorCatched(true);
     }
 
-    public void send(Packet packet) {
-        // Really just for clarity, can use methods in base class as well
-        // super.send(new ConnectAcceptPacket(1)); // Standard is TCP
+    public Vector2 getRotation() {
+        return mRotation;
+    }
+
+    public Vector3 getDirection() {
+        return mDirection;
+    }
+
+    public boolean isShooting() {
+        return mPlayerShot;
+    }
+
+    public boolean isJumping() {
+        return mPlayerJump;
     }
 
     public void processCurrentInput(float delta) {
         if(Gdx.input.isCursorCatched()) {
-            //Get the amount of rotation during last frame
-            xRot = -Gdx.input.getDeltaX() * MOUSE_SPEED * delta;
-            yRot = -Gdx.input.getDeltaY() * MOUSE_SPEED * delta;
 
-            //Y-rotation
-            currentRot += yRot;
+            // ROTATION
+
+            //Get the amount of rotation during last frame
+            mRotation.x = -Gdx.input.getDeltaX() * MOUSE_SPEED * delta;
+            mRotation.y = -Gdx.input.getDeltaY() * MOUSE_SPEED * delta;
+
+            currentRot += mRotation.y;
+
+            //prevent deadlock
+            if (currentRot < MIN_YROT || currentRot > MAX_YROT) {
+                mRotation.y = 0;
+            }
+
             currentRot = MathUtils.clamp(currentRot, MIN_YROT, MAX_YROT);
 
-            if (currentRot > MIN_YROT && currentRot < MAX_YROT && yRot != 0) {
-                mCamera.rotate(mCamera.getRight(), yRot);
-            }
 
-            //X-rotation
-            if (xRot != 0) {
-                mCamera.rotate(FPSCamera.UP, xRot);
-                //mPlayer.rotate(FPSCamera.UP, xRot);
-            }
+            // MOVEMENT
+            mDirection.set(0,0,0);
 
-            //Zero out movement
-            tmp.set(Vector3.Zero);
-
-            //Calculate movement
             if(mKeys.get(MapKeys.FORWARD)) {
-               tmp.add(mCamera.getForward());
+                mDirection.z = 1;
             }
             if(mKeys.get(MapKeys.BACK)) {
-                tmp.sub(mCamera.getForward());
+                mDirection.z = -1;
             }
 
             if(mKeys.get(MapKeys.LEFT)) {
-                tmp.sub(mCamera.getRight());
+                mDirection.x = -1;
             }
             if(mKeys.get(MapKeys.RIGHT)) {
-                tmp.add(mCamera.getRight());
+                mDirection.x = 1;
             }
 
-            tmp.nor();
-            movement.x = tmp.x;
-            movement.z = tmp.z;
+            mDirection.nor();
 
-            if(!mPlayer.isGrounded()) {
-                movement.y -=  15 * delta;
-            } else {
-                if(movement.y < -10) movement.y = -10;
-                movement.y += 15 * delta;
-                if(movement.y > 0) movement.y = 0;
+
+            // JUMP
+            mPlayerJump = false;
+            if(mKeys.get(MapKeys.JUMP)) {
+                mPlayerJump = true;
             }
 
-            if(mKeys.get(MapKeys.JUMP) && mPlayer.isGrounded()) {
-                movement.y = JUMP_HEIGHT;
+            // SHOOT
+            mPlayerShot = false;
+            if(mKeys.get(MapKeys.SHOOT)) {
+                mPlayerShot = true;
+
+                mKeys.put(MapKeys.SHOOT, false);
             }
 
-            mPlayer.move(movement);
         }
     }
 
@@ -135,19 +130,19 @@ public class PlayerController extends ClientController implements InputProcessor
         switch(keycode) {
             case Keys.LEFT:
             case Keys.A:
-                mKeys.get(mKeys.put(MapKeys.LEFT, true));
+                mKeys.put(MapKeys.LEFT, true);
                 break;
             case Keys.RIGHT:
             case Keys.D:
-                mKeys.get(mKeys.put(MapKeys.RIGHT, true));
+                mKeys.put(MapKeys.RIGHT, true);
                 break;
             case Keys.UP:
             case Keys.W:
-                mKeys.get(mKeys.put(MapKeys.FORWARD, true));
+                mKeys.put(MapKeys.FORWARD, true);
                 break;
             case Keys.DOWN:
             case Keys.S:
-                mKeys.get(mKeys.put(MapKeys.BACK, true));
+                mKeys.put(MapKeys.BACK, true);
                 break;
 
             case Keys.ESCAPE:
@@ -158,7 +153,7 @@ public class PlayerController extends ClientController implements InputProcessor
                 Gdx.input.setCursorCatched(!Gdx.input.isCursorCatched());
                 break;
             case Keys.SPACE:
-                mKeys.get(mKeys.put(MapKeys.JUMP, true));
+                mKeys.put(MapKeys.JUMP, true);
                 break;
             case Keys.F2:
                 DRAW_DEBUG = !DRAW_DEBUG;
@@ -181,22 +176,22 @@ public class PlayerController extends ClientController implements InputProcessor
         switch(keycode) {
             case Keys.LEFT:
             case Keys.A:
-                mKeys.get(mKeys.put(MapKeys.LEFT, false));
+                mKeys.put(MapKeys.LEFT, false);
                 break;
             case Keys.RIGHT:
             case Keys.D:
-                mKeys.get(mKeys.put(MapKeys.RIGHT, false));
+                mKeys.put(MapKeys.RIGHT, false);
                 break;
             case Keys.UP:
             case Keys.W:
-                mKeys.get(mKeys.put(MapKeys.FORWARD, false));
+                mKeys.put(MapKeys.FORWARD, false);
                 break;
             case Keys.DOWN:
             case Keys.S:
-                mKeys.get(mKeys.put(MapKeys.BACK, false));
+                mKeys.put(MapKeys.BACK, false);
                 break;
             case Keys.SPACE:
-                mKeys.get(mKeys.put(MapKeys.JUMP, false));
+                mKeys.put(MapKeys.JUMP, false);
                 break;
         }
         return true;
@@ -209,7 +204,11 @@ public class PlayerController extends ClientController implements InputProcessor
 
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-        mPlayer.shoot();
+        switch(button) {
+            case Input.Buttons.LEFT:
+                mKeys.put(MapKeys.SHOOT, true);
+        }
+
         return true;
     }
 

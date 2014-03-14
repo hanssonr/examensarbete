@@ -39,7 +39,7 @@ public class ClientPacketHandler extends BasePacketHandler {
         else if (mObj instanceof LatencyPacket) {
 
             mClient.setEndLatency();
-            Log.debug("ClientPacketHandler", "Latency: " + mClient.getLatency() + " ms");
+            //Log.debug("ClientPacketHandler", "Latency: " + mClient.getLatency() + " ms");
 
         }
         else {
