@@ -239,6 +239,7 @@ public class Player extends DynamicEntity {
 
         mVelocity.y = mGravity;
 
+        //Change gravity if jumping
         if (mIsJumping) {
             mVelocity.y = JUMP_HEIGHT;
             mIsJumping = false;
