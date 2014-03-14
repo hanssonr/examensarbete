@@ -109,7 +109,8 @@ public class ServerWorldModel implements BaseModel, ServerListener {
             // Sending all the players to the client requested, except self
             for(Player p : getPlayersExcept(con.getId())) {
                 Log.debug("ServerWorldModel", "Sending player to " + con.getId());
-                mServer.sendTCP(new PlayerPacket(0f, 10f, 0f), con);
+                PlayerPacket pp = new PlayerPacket(0f, 10f, 0f);
+                mServer.sendTCP(pp, con);
             }
         }
         Log.debug("ServerWorldModel", "RECEIVED: " + obj + " FROM: " + con);

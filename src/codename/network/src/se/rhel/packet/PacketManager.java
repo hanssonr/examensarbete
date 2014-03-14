@@ -24,13 +24,14 @@ public class PacketManager {
         return INSTANCE;
     }
 
-    public void registerPacket(Class<?> packet) {
+    public synchronized void registerPacket(Class<?> packet) {
         StackTraceElement[] stackTraceElements = Thread.currentThread().getStackTrace();
 
         // If the caller is server, use the reserved ids
         if(stackTraceElements[2].getClassName().equals(PacketRegisterInitializer.class.getName())) {
             if(isIdsAvailable) {
                 PACKETS.put(RESERVED_IDS[pointer], packet);
+                Log.debug("PacketManager", "        > ID: " + RESERVED_IDS[pointer] + ", Packet: " + packet.getName());
                 pointer++;
 
                 if(pointer == RESERVED_IDS.length) {
@@ -42,6 +43,8 @@ public class PacketManager {
 
         } else {
             int id = (int)generateUniqueId();
+            System.out.println("        > ID: " + id + ", Packet: " + packet.getName());
+            Log.debug("PacketManager", "        > ID: " + id + ", Packet: " + packet.getName());
             PACKETS.put(id, packet);
         }
     }
