@@ -4,12 +4,13 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import se.rhel.client.Client;
 import se.rhel.model.*;
-import se.rhel.network.PlayerPacket;
-import se.rhel.network.TestPacket;
+import se.rhel.network.packet.PlayerPacket;
+import se.rhel.network.model.ExternalPlayer;
+import se.rhel.packet.TestPacket;
 import se.rhel.observer.ClientControllerListener;
 import se.rhel.observer.ClientListener;
 import se.rhel.packet.Packet;
-import se.rhel.network.RequestInitialStatePacket;
+import se.rhel.network.packet.RequestInitialStatePacket;
 import se.rhel.util.Log;
 
 

@@ -1,8 +1,12 @@
-package se.rhel.network;
+package se.rhel.network.packet;
 
 import se.rhel.packet.PacketManager;
+import se.rhel.packet.TestMaxPacket;
+import se.rhel.packet.TestPacket;
 
 /**
+ * Group: Network
+ *
  * Created by rkh on 2014-03-12.
  */
 public class MyPacketRegisterInitializer {

@@ -1,8 +1,10 @@
-package se.rhel.network;
+package se.rhel.network.packet;
 
 import se.rhel.packet.Packet;
 
 /**
+ * Group: Network
+ *
  * Created by Emil on 2014-03-06.
  * assigned to libgdx-gradle-template in se.rhel.packet
  */
