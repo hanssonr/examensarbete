@@ -3,6 +3,7 @@ package se.rhel.client;
 import se.rhel.UdpConnection;
 import se.rhel.observer.ClientObserver;
 import se.rhel.packet.BasePacketHandler;
+import se.rhel.packet.ConnectionDetailPacket;
 import se.rhel.packet.HandshakeResponsePacket;
 import se.rhel.packet.LatencyPacket;
 import se.rhel.util.Log;
@@ -31,12 +32,14 @@ public class ClientPacketHandler extends BasePacketHandler {
             UdpConnection c = mClient.getUDPConnection();
 
             // Telling listeners if they wants to do something
-                    ((ClientObserver) mObserver).connected();
+            ((ClientObserver) mObserver).connected();
 
             // Also, since the connection been accepted, we can start telling the server
             // that we're still alive, hopefully
             mClient.sendIdlePackage(true);
 
+            // Tell server what udp port to send on
+            mClient.sendTcp(new ConnectionDetailPacket(mClient.getId(), c.getLocalPort()));
         }
         else if (mObj instanceof LatencyPacket) {
 

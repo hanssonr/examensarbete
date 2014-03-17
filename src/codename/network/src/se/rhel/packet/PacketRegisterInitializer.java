@@ -12,7 +12,7 @@ public class PacketRegisterInitializer {
 
         PacketManager.getInstance().registerPacket(IdlePacket.class);
         PacketManager.getInstance().registerPacket(DisconnectPacket.class);
-        PacketManager.getInstance().registerPacket(ConnectPacket.class);
+        PacketManager.getInstance().registerPacket(ConnectionDetailPacket.class);
         PacketManager.getInstance().registerPacket(HandshakeResponsePacket.class);
         PacketManager.getInstance().registerPacket(LatencyPacket.class);
         PacketManager.getInstance().registerPacket(IdlePacket.class);

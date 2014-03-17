@@ -3,6 +3,7 @@ package se.rhel.server;
 import se.rhel.Connection;
 import se.rhel.observer.ServerObserver;
 import se.rhel.packet.BasePacketHandler;
+import se.rhel.packet.ConnectionDetailPacket;
 import se.rhel.packet.IdlePacket;
 import se.rhel.packet.LatencyPacket;
 
@@ -35,6 +36,11 @@ public class ServerPacketHandler extends BasePacketHandler {
 
             fromConnection = mServer.getConnection(lp.mPlayerId);
             mServer.sendTCP(new LatencyPacket(0), fromConnection);
+        }
+        else if (mObj instanceof ConnectionDetailPacket) {
+            ConnectionDetailPacket cdp = new ConnectionDetailPacket(data);
+            Connection c = mServer.getConnection(cdp.mPlayerId);
+            c.setUdpPort(cdp.mUdpPort);
         }
         else {
             int id = mUnknownPacket.getInt();

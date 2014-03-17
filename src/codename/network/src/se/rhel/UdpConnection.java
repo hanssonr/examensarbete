@@ -1,7 +1,6 @@
 package se.rhel;
 
 import se.rhel.packet.BasePacketHandler;
-import se.rhel.packet.Packet;
 import se.rhel.util.Log;
 
 import java.io.IOException;
@@ -86,7 +85,7 @@ public class UdpConnection implements Runnable {
     }
 
     public boolean isOpen() {
-        return mSocket.isClosed() == true ? false : true;
+        return !mSocket.isClosed();
     }
 
     public void stop() {

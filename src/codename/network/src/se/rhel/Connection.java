@@ -14,6 +14,7 @@ public class Connection {
     private boolean mIsConnected;
     private long mLastPackageTime;
     private final int mId;
+    private int mUdpSendPort = -1;
 
     protected UdpConnection mUdpConnection;
     protected TcpConnection mTcpConnection;
@@ -73,7 +74,7 @@ public class Connection {
 
     public boolean isConnected() { return mIsConnected; }
     public Socket getSocket() { return mTcpConnection.getSocket(); }
-    public int getPort() { return mUdpConnection.getPort(); }
+    public int getPort() { return mUdpSendPort; }
     public InetAddress getAddress() { return mTcpConnection.getInetAddress(); }
     public int getId() {
         return mId;
@@ -97,5 +98,9 @@ public class Connection {
 
     public void sendTcp(byte[] data) {
         mTcpConnection.sendTcp(data);
+    }
+
+    public void setUdpPort(int udpPort) {
+        mUdpSendPort = udpPort;
     }
 }

@@ -124,8 +124,8 @@ public class Client implements EndPoint {
     public void connect(String host, int tcpPort, int udpPort) {
         try {
             InetAddress address = InetAddress.getByName(host);
-            mTcpConnection.connect(address, tcpPort);
             mUdpConnection.connect(address, udpPort);
+            mTcpConnection.connect(address, tcpPort);
         } catch (UnknownHostException e) {
             e.printStackTrace();
         }

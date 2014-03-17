@@ -75,11 +75,11 @@ public class TcpConnection implements Runnable {
      * @return true if the connection is open, otherwise false
      */
     public boolean isOpen() {
-       return mSocket.isClosed() == true ? false : true;
+       return !mSocket.isClosed();
     }
 
     public void sendTcp(byte[] data) {
-        Log.debug("TcpConnection", "size: " + data.length);
+       // Log.debug("TcpConnection", "size: " + data.length);
         if(isOpen()) {
             try {
                 DataOutputStream output = new DataOutputStream(mSocket.getOutputStream());
