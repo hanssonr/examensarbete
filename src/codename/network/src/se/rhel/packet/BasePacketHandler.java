@@ -25,9 +25,6 @@ public abstract class BasePacketHandler {
         };
 
         mClassType = PacketManager.getInstance().getPacketType(mUnknownPacket.getPacketId());
-        if(mClassType == null) {
-            System.out.println();
-        }
 
         try {
             mObj = mClassType.newInstance();
