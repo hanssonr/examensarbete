@@ -1,5 +1,6 @@
 package se.rhel.network.packet;
 
+import se.rhel.network.PlayerMovePacket;
 import se.rhel.packet.PacketManager;
 import se.rhel.packet.TestMaxPacket;
 import se.rhel.packet.TestPacket;
