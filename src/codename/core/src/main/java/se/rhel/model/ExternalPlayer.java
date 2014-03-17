@@ -1,6 +1,8 @@
 package se.rhel.model;
 
+import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.graphics.g3d.utils.AnimationController;
+import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Quaternion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
@@ -29,15 +31,21 @@ public class ExternalPlayer extends DynamicEntity {
     private BulletWorld mWorld;
     private btRigidBody mBody;
     private AnimationController mAnimationController;
+    private ModelInstance mAnimated;
+
+    private int mClientId;
 
     private static Vector2 mPlayersize = new Vector2(0.6f, 1.5f);
 
-    public ExternalPlayer(Vector3 position, BulletWorld world) {
+    public ExternalPlayer(int clientId, Vector3 position, BulletWorld world) {
         super(7f);
         mWorld = world;
+        mClientId = clientId;
+        mAnimated = new ModelInstance(Resources.INSTANCE.playerModelAnimated);
 
         getTransformation().setTranslation(position);
         createPyshicsBody();
+
 
         mState = PLAYERSTATE.idle;
     }
@@ -47,7 +55,7 @@ public class ExternalPlayer extends DynamicEntity {
         btRigidBodyConstructionInfo playerInfo = new btRigidBodyConstructionInfo(5f, null, playerShape, Vector3.Zero);
         btDefaultMotionState playerMotionState = new btDefaultMotionState(getTransformation());
 
-        mAnimationController = new AnimationController(Resources.INSTANCE.playerModelInstanceAnimated);
+        mAnimationController = new AnimationController(mAnimated);
         mAnimationController.setAnimation("walk", -1);
 
         mBody = new btRigidBody(playerInfo);
@@ -57,15 +65,15 @@ public class ExternalPlayer extends DynamicEntity {
         mWorld.addToWorld(playerShape,
                 playerInfo,
                 playerMotionState,
-                Resources.INSTANCE.playerModelInstanceAnimated,
+                mAnimated,
                 mBody);
     }
 
     public void update(float delta) {
         mAnimationController.update(delta);
-        mBody.setGravity(Vector3.Zero);
-        mTransformation.set(mBody.getCenterOfMassTransform());
-
+        // mBody.setGravity(Vector3.Zero);
+        // mTransformation.set(mBody.getCenterOfMassTransform());
+        mAnimated.transform.set(mBody.getCenterOfMassTransform());
     }
 
     public void move(Vector3 direction) {
@@ -95,7 +103,18 @@ public class ExternalPlayer extends DynamicEntity {
         return mBody.getLinearVelocity().cpy();
     }
 
+    public void setPosition(float x, float y, float z) {
+        // mBody.activate(true);
+        Vector3 toPos = new Vector3(x, y, z);
+        Matrix4 m = new Matrix4(toPos, mBody.getOrientation(), new Vector3(1f, 1f, 1f));
+        mBody.setCenterOfMassTransform(m);
+    }
+
     public float getMoveSpeed() {
         return mMovespeed;
+    }
+
+    public int getClientId() {
+        return mClientId;
     }
 }

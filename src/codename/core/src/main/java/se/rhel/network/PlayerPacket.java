@@ -10,14 +10,16 @@ import se.rhel.packet.Packet;
  */
 public class PlayerPacket extends Packet {
 
+    public int clientId;
     public float x;
     public float y;
     public float z;
 
     public PlayerPacket() {}
 
-    public PlayerPacket(float x, float y, float z) {
+    public PlayerPacket(int clientId, float x, float y, float z) {
         super(PlayerPacket.class);
+        super.putInt(clientId);
         super.putFloat(x);
         super.putFloat(y);
         super.putFloat(z);
@@ -26,7 +28,7 @@ public class PlayerPacket extends Packet {
 
     public PlayerPacket(byte[] data) {
         super(data);
-
+        clientId = super.getInt();
         x = super.getFloat();
         y = super.getFloat();
         z = super.getFloat();

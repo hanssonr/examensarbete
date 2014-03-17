@@ -39,7 +39,7 @@ public class ServerPacketHandler extends BasePacketHandler {
         else {
             int id = mUnknownPacket.getInt();
             fromConnection = mServer.getConnection(id);
-            ((ServerObserver)mObserver).received(fromConnection, mObj);
+            ((ServerObserver)mObserver).received(fromConnection, mObj, data);
         }
     }
 }

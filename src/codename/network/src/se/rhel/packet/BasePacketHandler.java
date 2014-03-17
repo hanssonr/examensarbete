@@ -17,6 +17,14 @@ public abstract class BasePacketHandler {
 
     public void handlePacket(byte[] data) {
 
+        if(data[0] == -118) {
+            System.out.println();
+        }
+
+        if(data[0] == 0) {
+            throw new IllegalArgumentException("Packet missing id");
+        }
+
         mUnknownPacket = new Packet(data) {
             @Override
             public byte getPacketId() {

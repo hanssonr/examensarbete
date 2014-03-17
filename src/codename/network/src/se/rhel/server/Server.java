@@ -190,6 +190,14 @@ public class Server implements EndPoint {
         conn.sendUdp(packet.getData(), conn);
     }
 
+    public void sendToAllUDPExcept(Packet packet, Connection except) {
+        for(Connection con : mConnections) {
+            if(!con.equals(except)) {
+                sendUDP(packet, con);
+            }
+        }
+    }
+
     public void sendTCP(Packet packet, Connection conn) {
         Log.trace("Server", "Send TCP > " + Packet.class.getName());
         conn.sendTcp(packet.getData());

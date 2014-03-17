@@ -126,6 +126,7 @@ public class UdpConnection implements Runnable {
     public void sendUdpFromServer(byte[] data, Connection connection) {
         if(!serverInitialization) { return; }
         if(!isOpen()) return;
+        if(connection.getPort() == -1) return;
 
         try {
             mSocket.send(new DatagramPacket(data, data.length, connection.getAddress(), connection.getPort()));
@@ -135,6 +136,10 @@ public class UdpConnection implements Runnable {
     }
 
     public int getPort() {
+        return mSocket.getPort();
+    }
+
+    public int getLocalPort() {
         return mSocket.getLocalPort();
     }
 }

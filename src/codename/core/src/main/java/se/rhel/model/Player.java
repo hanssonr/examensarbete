@@ -269,6 +269,12 @@ public class Player extends DynamicEntity {
         return mBody.getCenterOfMassPosition();
     }
 
+    public void setPosition(Vector3 val) {
+        mBody.translate(val);
+        Matrix4 m = new Matrix4(val, mBody.getOrientation(), new Vector3(1f, 1f, 1f));
+        mBody.setCenterOfMassTransform(m);
+    }
+
     public Vector3 getVelocity() {
         return mBody.getLinearVelocity().cpy();
     }

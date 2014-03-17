@@ -4,6 +4,7 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import se.rhel.client.Client;
 import se.rhel.model.*;
+import se.rhel.network.PlayerMovePacket;
 import se.rhel.network.PlayerPacket;
 import se.rhel.network.TestPacket;
 import se.rhel.observer.ClientControllerListener;
@@ -87,7 +88,16 @@ public class ClientWorldModel implements BaseModel, ClientListener, ClientContro
         return mLocalPlayer;
     }
     public FPSCamera getCamera() { return mCamera; }
+
     public Array<ExternalPlayer> getPlayers() { return mPlayers; }
+    public ExternalPlayer getExternalPlayer(int id) {
+        for (ExternalPlayer externalPlayer : mPlayers) {
+            if(externalPlayer.getClientId() == id) {
+                return externalPlayer;
+            }
+        }
+        return null;
+    }
 
     @Override
     public void connected() {
@@ -104,13 +114,26 @@ public class ClientWorldModel implements BaseModel, ClientListener, ClientContro
         Log.debug("ClientWorldModel", "RECEIVED: " + obj);
         if (obj instanceof PlayerPacket) {
             Log.debug("ClientWorldModel", "Player_Join packet - Player can be viewed on client!!");
-            ExternalPlayer ep = new ExternalPlayer(new Vector3(1f, 10f, 0f), mBulletWorld);
+            PlayerPacket pp = new PlayerPacket(data);
+            ExternalPlayer ep = new ExternalPlayer(pp.clientId, new Vector3(pp.x, pp.y, pp.z), mBulletWorld);
             mPlayers.add(ep);
         }
         else if(obj instanceof TestPacket) {
             Log.debug("ClientWorldModel", "TestPacket received");
             TestPacket tp = new TestPacket(data);
             System.out.println();
+        }
+        else if(obj instanceof PlayerMovePacket) {
+            // An external player have moved and should be updated, accordingly
+            PlayerMovePacket pmp = new PlayerMovePacket(data);
+
+            ExternalPlayer ep = getExternalPlayer(pmp.clientId);
+            if(ep == null) {
+                return;
+            }
+
+            // Set the position
+            ep.setPosition(pmp.x, pmp.y, pmp.z);
         }
     }
 

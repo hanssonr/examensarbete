@@ -12,5 +12,6 @@ public class MyPacketRegisterInitializer {
         PacketManager.getInstance().registerPacket(RequestInitialStatePacket.class);
         PacketManager.getInstance().registerPacket(TestPacket.class);
         PacketManager.getInstance().registerPacket(TestMaxPacket.class);
+        PacketManager.getInstance().registerPacket(PlayerMovePacket.class);
     }
 }

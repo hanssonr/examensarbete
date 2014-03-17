@@ -1,5 +1,6 @@
 package se.rhel.client;
 
+import se.rhel.UdpConnection;
 import se.rhel.observer.ClientObserver;
 import se.rhel.packet.BasePacketHandler;
 import se.rhel.packet.HandshakeResponsePacket;
@@ -27,9 +28,10 @@ public class ClientPacketHandler extends BasePacketHandler {
             HandshakeResponsePacket pkt = new HandshakeResponsePacket(data);
             Log.debug("ClientPacketHandler", mObj.getClass() + " ID: " + pkt.mId);
             mClient.setId(pkt.mId);
+            UdpConnection c = mClient.getUDPConnection();
 
             // Telling listeners if they wants to do something
-            ((ClientObserver)mObserver).connected();
+                    ((ClientObserver) mObserver).connected();
 
             // Also, since the connection been accepted, we can start telling the server
             // that we're still alive, hopefully

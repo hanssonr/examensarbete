@@ -2,8 +2,10 @@ package se.rhel.screen.network;
 
 import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.math.Vector3;
 import se.rhel.client.Client;
 import se.rhel.CodeName;
+import se.rhel.network.PlayerMovePacket;
 import se.rhel.screen.BaseScreen;
 import se.rhel.server.Server;
 import se.rhel.view.input.PlayerInput;
@@ -21,9 +23,11 @@ public class NetworkGameScreen extends BaseScreen {
 
     private Server mServer;
     private ServerWorldModel mServerWorldModel;
+    private boolean mUpdateServer = false;
 
     private Client mClient;
     private ClientWorldModel mClientWorldModel;
+    private Vector3 mLastKnownPosition = Vector3.Zero;
 
     public NetworkGameScreen(CodeName game, Server server) {
         super(game);
@@ -32,6 +36,7 @@ public class NetworkGameScreen extends BaseScreen {
 
         if(mServer != null) {
             mServerWorldModel = new ServerWorldModel(server);
+            mUpdateServer = true;
         }
 
         // else/and assume client
@@ -63,6 +68,16 @@ public class NetworkGameScreen extends BaseScreen {
             mClientWorldModel.getPlayer().jump();
 
         mClientWorldModel.update(delta);
+        if(mUpdateServer) mServerWorldModel.update(delta);
+
+        // Network stuff
+        if(mClient.getId() != -1) {
+            // Send move packet
+            if(mClientWorldModel.getPlayer().getPosition().dst(mLastKnownPosition) > 0.5f) {
+                mClient.sendUdp(new PlayerMovePacket(mClient.getId(), mClientWorldModel.getPlayer().getPosition().x, mClientWorldModel.getPlayer().getPosition().y, mClientWorldModel.getPlayer().getPosition().z));
+                mLastKnownPosition = mClientWorldModel.getPlayer().getPosition().cpy();
+            }
+        }
     }
 
     @Override

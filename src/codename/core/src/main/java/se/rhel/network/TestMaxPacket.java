@@ -11,10 +11,10 @@ public class TestMaxPacket extends Packet {
 
     public TestMaxPacket(int id) {
         super(TestMaxPacket.class);
-        int max = 508;
+        int max = 511;
 
-        for (int i = 0; i < max; i+=4) {
-            putInt(1);
+        for (int i = 0; i < max; i++) {
+            putByte(Byte.valueOf("1"));
         }
         ready();
     }

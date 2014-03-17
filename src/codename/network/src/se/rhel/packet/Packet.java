@@ -54,12 +54,13 @@ public abstract class Packet {
     public void ready() {
         if(mIsReady) return;
 
-        byte[] temp = mMaxBuffer.array();
+        // byte[] temp = mMaxBuffer.array();
+
         // TODO: Varför fungerar inte detta
-        mData = mMaxBuffer.array(); //new byte[mMaxBuffer.position()];
+        mData = new byte[mMaxBuffer.position()];
 
         for (int i = 0; i < mData.length; i++) {
-            mData[i] = temp[i];
+            mData[i] = mMaxBuffer.get(i);
         }
 
         mIsReady = true;

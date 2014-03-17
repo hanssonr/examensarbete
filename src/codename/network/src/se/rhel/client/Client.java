@@ -19,7 +19,7 @@ public class Client implements EndPoint {
     private TcpConnection mTcpConnection;
     private ClientObserver mClientObserver;
 
-    private int mId;
+    private int mId = -1;
     private boolean mIsRunning;
     private boolean mSendIdlePackage;
 
@@ -115,6 +115,10 @@ public class Client implements EndPoint {
         if(!mIsRunning)
             return;
         mIsRunning = false;
+    }
+
+    public UdpConnection getUDPConnection() {
+        return mUdpConnection;
     }
 
     public void connect(String host, int tcpPort, int udpPort) {
