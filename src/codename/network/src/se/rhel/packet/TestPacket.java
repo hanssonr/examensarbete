@@ -1,8 +1,8 @@
-package se.rhel.network;
-
-import se.rhel.packet.Packet;
+package se.rhel.packet;
 
 /**
+ * Ska inte räknas!!!!
+ *
  * Created by Emil on 2014-03-14.
  */
 public class TestPacket extends Packet {

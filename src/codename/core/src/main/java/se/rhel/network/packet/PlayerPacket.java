@@ -1,8 +1,10 @@
-package se.rhel.network;
+package se.rhel.network.packet;
 
 import se.rhel.packet.Packet;
 
 /**
+ * Group: Network
+ *
  * 0    = (byte) packet id
  * 1-4  = (float) x position
  * 5-8  = (float) y position

@@ -88,7 +88,6 @@ public class ClientWorldModel implements BaseModel, ClientListener, ClientContro
         return mLocalPlayer;
     }
     public FPSCamera getCamera() { return mCamera; }
-
     public Array<ExternalPlayer> getPlayers() { return mPlayers; }
     public ExternalPlayer getExternalPlayer(int id) {
         for (ExternalPlayer externalPlayer : mPlayers) {

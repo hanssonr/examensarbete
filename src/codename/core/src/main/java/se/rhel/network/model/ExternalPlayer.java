@@ -1,4 +1,4 @@
-package se.rhel.model;
+package se.rhel.network.model;
 
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.graphics.g3d.utils.AnimationController;
@@ -11,6 +11,7 @@ import com.badlogic.gdx.physics.bullet.collision.btCollisionShape;
 import com.badlogic.gdx.physics.bullet.dynamics.btRigidBody;
 import com.badlogic.gdx.physics.bullet.dynamics.btRigidBodyConstructionInfo;
 import com.badlogic.gdx.physics.bullet.linearmath.btDefaultMotionState;
+import se.rhel.model.BulletWorld;
 import se.rhel.model.entity.DynamicEntity;
 import se.rhel.res.Resources;
 
