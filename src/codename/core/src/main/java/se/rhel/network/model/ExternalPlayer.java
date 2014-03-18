@@ -6,6 +6,7 @@ import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Quaternion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.math.collision.BoundingBox;
 import com.badlogic.gdx.physics.bullet.collision.btCapsuleShape;
 import com.badlogic.gdx.physics.bullet.collision.btCollisionShape;
 import com.badlogic.gdx.physics.bullet.dynamics.btRigidBody;
@@ -34,6 +35,7 @@ public class ExternalPlayer extends DynamicEntity {
     private AnimationController mAnimationController;
     private ModelInstance mAnimated;
     private Quaternion mRotation;
+    private BoundingBox mBox;
 
     private int mClientId;
 
@@ -45,6 +47,7 @@ public class ExternalPlayer extends DynamicEntity {
         mClientId = clientId;
         mRotation = new Quaternion();
         mAnimated = new ModelInstance(Resources.INSTANCE.playerModelAnimated);
+        mBox = mAnimated.model.calculateBoundingBox(new BoundingBox());
 
         getTransformation().setTranslation(position);
         createPyshicsBody();
@@ -74,10 +77,8 @@ public class ExternalPlayer extends DynamicEntity {
 
     public void update(float delta) {
         mAnimationController.update(delta);
-        // mBody.setGravity(Vector3.Zero);
-        // mTransformation.set(mBody.getCenterOfMassTransform());
-        // mAnimated.transform.rotate(mRotation);
         mAnimated.transform.set(mBody.getCenterOfMassTransform());
+        mAnimated.transform.setTranslation(mBody.getCenterOfMassPosition().sub(new Vector3(0, mBox.getDimensions().y/2.0f, 0)));
     }
 
     public void move(Vector3 direction) {
