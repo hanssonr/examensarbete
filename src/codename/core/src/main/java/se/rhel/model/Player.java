@@ -265,6 +265,17 @@ public class Player extends DynamicEntity {
         //mPlayer.rotate(FPSCamera.UP, rotation.x);
     }
 
+    public Quaternion getRotation() {
+        Quaternion q = new Quaternion();
+        mCamera.view.cpy().inv().getRotation(q);
+        // mCamera.combined.getRotation(q);
+        return q;
+    }
+
+    public void rotate(Quaternion q) {
+        mCamera.rotate(q);
+    }
+
     public Vector3 getPosition() {
         return mBody.getCenterOfMassPosition();
     }

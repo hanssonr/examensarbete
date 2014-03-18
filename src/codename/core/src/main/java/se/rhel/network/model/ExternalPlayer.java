@@ -33,6 +33,7 @@ public class ExternalPlayer extends DynamicEntity {
     private btRigidBody mBody;
     private AnimationController mAnimationController;
     private ModelInstance mAnimated;
+    private Quaternion mRotation;
 
     private int mClientId;
 
@@ -42,6 +43,7 @@ public class ExternalPlayer extends DynamicEntity {
         super(7f);
         mWorld = world;
         mClientId = clientId;
+        mRotation = new Quaternion();
         mAnimated = new ModelInstance(Resources.INSTANCE.playerModelAnimated);
 
         getTransformation().setTranslation(position);
@@ -74,6 +76,7 @@ public class ExternalPlayer extends DynamicEntity {
         mAnimationController.update(delta);
         // mBody.setGravity(Vector3.Zero);
         // mTransformation.set(mBody.getCenterOfMassTransform());
+        // mAnimated.transform.rotate(mRotation);
         mAnimated.transform.set(mBody.getCenterOfMassTransform());
     }
 
@@ -104,10 +107,14 @@ public class ExternalPlayer extends DynamicEntity {
         return mBody.getLinearVelocity().cpy();
     }
 
-    public void setPosition(float x, float y, float z) {
+    public void setPosition(float x, float y, float z, float rX, float rY, float rZ, float rW) {
         // mBody.activate(true);
         Vector3 toPos = new Vector3(x, y, z);
-        Matrix4 m = new Matrix4(toPos, mBody.getOrientation(), new Vector3(1f, 1f, 1f));
+        Vector3 scale = new Vector3();
+        System.out.println("    > Rotation X: " + rX + ", Y: " + rY + ", Z: " + rZ + ", W: " + rW);
+        mRotation = new Quaternion(0, rY, 0, rW);
+        mBody.getWorldTransform().getScale(scale);
+        Matrix4 m = new Matrix4(toPos, mRotation, scale);
         mBody.setCenterOfMassTransform(m);
     }
 

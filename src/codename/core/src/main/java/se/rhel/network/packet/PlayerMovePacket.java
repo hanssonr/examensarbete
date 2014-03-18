@@ -7,22 +7,32 @@ import se.rhel.packet.AClientPacket;
  */
 public class PlayerMovePacket extends AClientPacket {
 
-    public float x, y, z;
+    public float pX, pY, pZ;
+    public float rX, rY, rZ, rW;
 
     public PlayerMovePacket() {}
 
-    public PlayerMovePacket(int clientId, float x, float y, float z) {
+    public PlayerMovePacket(int clientId, float px, float py, float pz, float rx, float ry, float rz, float rw) {
         super(clientId, PlayerMovePacket.class);
-        putFloat(x);
-        putFloat(y);
-        putFloat(z);
+        putFloat(px);
+        putFloat(py);
+        putFloat(pz);
+        putFloat(rx);
+        putFloat(ry);
+        putFloat(rz);
+        putFloat(rw);
         ready();
     }
 
     public PlayerMovePacket(byte[] data) {
         super(data);
-        x = getFloat();
-        y = getFloat();
-        z = getFloat();
+        pX = getFloat();
+        pY = getFloat();
+        pZ = getFloat();
+
+        rX = getFloat();
+        rY = getFloat();
+        rZ = getFloat();
+        rW = getFloat();
     }
 }

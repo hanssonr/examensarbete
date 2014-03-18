@@ -111,7 +111,7 @@ public class ClientWorldModel implements BaseModel, ClientListener, ClientContro
 
     @Override
     public void received(Object obj, byte[] data) {
-        Log.debug("ClientWorldModel", "RECEIVED: " + obj);
+        // Log.debug("ClientWorldModel", "RECEIVED: " + obj);
         if (obj instanceof PlayerPacket) {
             Log.debug("ClientWorldModel", "Player_Join packet - Player can be viewed on client!!");
             PlayerPacket pp = new PlayerPacket(data);
@@ -132,8 +132,8 @@ public class ClientWorldModel implements BaseModel, ClientListener, ClientContro
                 return;
             }
 
-            // Set the position
-            ep.setPosition(pmp.x, pmp.y, pmp.z);
+            // Set the position & rotation
+            ep.setPosition(pmp.pX, pmp.pY, pmp.pZ, pmp.rX, pmp.rY, pmp.rZ, pmp.rW);
         }
     }
 

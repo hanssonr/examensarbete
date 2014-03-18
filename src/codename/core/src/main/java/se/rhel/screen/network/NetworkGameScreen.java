@@ -74,9 +74,14 @@ public class NetworkGameScreen extends BaseScreen {
         if(mClient.getId() != -1) {
             // Send move packet
             if(mClientWorldModel.getPlayer().getPosition().dst(mLastKnownPosition) > 0.01f) {
-                mClient.sendUdp(new PlayerMovePacket(mClient.getId(), mClientWorldModel.getPlayer().getPosition().x, mClientWorldModel.getPlayer().getPosition().y, mClientWorldModel.getPlayer().getPosition().z));
+
                 mLastKnownPosition = mClientWorldModel.getPlayer().getPosition().cpy();
             }
+            mClient.sendUdp(
+                    new PlayerMovePacket(mClient.getId(),
+                            mClientWorldModel.getPlayer().getPosition().x, mClientWorldModel.getPlayer().getPosition().y, mClientWorldModel.getPlayer().getPosition().z,
+                            mClientWorldModel.getPlayer().getRotation().x, mClientWorldModel.getPlayer().getRotation().y, mClientWorldModel.getPlayer().getRotation().z,
+                            mClientWorldModel.getPlayer().getRotation().w));
         }
     }
 

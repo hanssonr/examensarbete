@@ -1,6 +1,8 @@
 package se.rhel.model.server;
 
+import com.badlogic.gdx.math.Quaternion;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.physics.bullet.softbody.btSoftBodySolverOutput;
 import com.badlogic.gdx.utils.Array;
 import se.rhel.Connection;
 import se.rhel.network.packet.PlayerMovePacket;
@@ -116,33 +118,23 @@ public class ServerWorldModel implements BaseModel, ServerListener {
                     mServer.sendTCP(pp, con);
                 }
             }
-
-            /*
-            for(Player p : getPlayersExcept(con.getId())) {
-                Log.debug("ServerWorldModel", "Sending player to " + con.getId());
-                PlayerPacket pp = new PlayerPacket(0f, 10f, 0f);
-                mServer.sendTCP(pp, con);
-            }*/
         }
         else if(obj instanceof PlayerMovePacket) {
             PlayerMovePacket pmp = new PlayerMovePacket(data);
             int playerId = pmp.clientId;
 
             // Set the position
-            Vector3 pos = new Vector3(pmp.x, pmp.y, pmp.z).cpy();
+            Vector3 pos = new Vector3(pmp.pX, pmp.pY, pmp.pZ).cpy();
+            Quaternion q = new Quaternion(pmp.rX, pmp.rY, pmp.rZ, pmp.rW);
             Player p = getPlayer(playerId);
             if(p == null) return;
 
             p.setPosition(pos);
+            // p.rotate(q);
 
             // Notify the other clients, if any
-            Vector3 tmp = getPlayer(playerId).getPosition();
-            // mServer.sendToAllUDPExcept(new PlayerPacket(0f, 0f, 0f), con);
-            mServer.sendToAllUDPExcept(new PlayerMovePacket(playerId, tmp.x, tmp.y, tmp.z), con);
-            // mServer.sendToAllTCPExcept(new PlayerMovePacket(playerId, tmp.x, tmp.y, tmp.z), con);
-        }
-        else if(obj instanceof  PlayerPacket) {
-            System.out.println("    SOMETHING IS TERRIBLY WRONG!!!!");
+            Vector3 tmp = p.getPosition();
+            mServer.sendToAllUDPExcept(new PlayerMovePacket(playerId, tmp.x, tmp.y, tmp.z, q.x, q.y, q.z, q.w), con);
         }
     }
 }
