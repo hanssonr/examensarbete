@@ -3,6 +3,7 @@ package se.rhel.packet;
 import se.rhel.observer.IObserver;
 import se.rhel.util.Log;
 
+import java.lang.reflect.InvocationTargetException;
 import java.nio.ByteBuffer;
 
 /**
@@ -35,12 +36,17 @@ public abstract class BasePacketHandler {
         mClassType = PacketManager.getInstance().getPacketType(mUnknownPacket.getPacketId());
 
         try {
-            mObj = mClassType.newInstance();
+            //mObj = mClassType.newInstance();
+            mObj = mClassType.getConstructor(byte[].class).newInstance(data);
 
         } catch (InstantiationException e) {
             Log.error("BasePacketHandler", "No default constructor found in " + mClassType);
             System.exit(1);
         } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
             e.printStackTrace();
         }
     }

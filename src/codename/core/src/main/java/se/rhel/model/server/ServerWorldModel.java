@@ -100,13 +100,13 @@ public class ServerWorldModel implements BaseModel, ServerListener {
     }
 
     @Override
-    public void received(Connection con, Object obj, byte[] data) {
+    public void received(Connection con, Object obj) {
 
         if(obj instanceof RequestInitialStatePacket) {
             Log.debug("ServerWorldModel", "Initial state requested from clientId: " + con.getId());
-            mServer.sendTCP(new TestPacket(0, 1.1f, 1.2, 'a', Byte.valueOf("1"), Long.valueOf(2), Short.valueOf("1")), con);
-            TestMaxPacket tmp = new TestMaxPacket(1);
-            mServer.sendTCP(tmp, con);
+            //mServer.sendTCP(new TestPacket(0, 1.1f, 1.2, 'a', Byte.valueOf("1"), Long.valueOf(2), Short.valueOf("1")), con);
+            //TestMaxPacket tmp = new TestMaxPacket(1);
+            //mServer.sendTCP(tmp, con);
 
             // Sending all the players to the client requested, except self
             for(Integer i : mPlayers.keySet()) {
@@ -118,17 +118,15 @@ public class ServerWorldModel implements BaseModel, ServerListener {
             }
         }
         else if(obj instanceof PlayerMovePacket) {
-            PlayerMovePacket pmp = new PlayerMovePacket(data);
+            PlayerMovePacket pmp = (PlayerMovePacket)obj;
             int playerId = pmp.clientId;
 
             // Set the position
-            Vector3 pos = new Vector3(pmp.pX, pmp.pY, pmp.pZ).cpy();
-            // Quaternion q = new Quaternion(pmp.rX, pmp.rY, pmp.rZ, pmp.rW);
+            Vector3 pos = new Vector3(pmp.pX, pmp.pY, pmp.pZ);
             Player p = getPlayer(playerId);
             if(p == null) return;
 
             p.setPosition(pos);
-            // p.rotate(q);
 
             // Notify the other clients, if any
             Vector3 tmp = p.getPosition();

@@ -110,11 +110,13 @@ public class ExternalPlayer extends DynamicEntity {
 
     public void setPosition(float x, float y, float z, float rY, float rW) {
         Vector3 toPos = new Vector3(x, y, z);
-        Vector3 scale = new Vector3();
-        double mag = Math.sqrt(rW*rW + rY * rY);
+        double mag = Math.sqrt(rW * rW + rY * rY);
         mRotation = new Quaternion(0, (float)(rY/mag), 0, (float)(rW/mag));
-        mBody.getWorldTransform().getScale(scale);
-        Matrix4 m = new Matrix4(toPos, mRotation, scale);
+
+        Matrix4 m = new Matrix4();
+        m.rotate(mRotation);
+        m.setTranslation(toPos);
+
         mBody.setCenterOfMassTransform(m);
     }
 

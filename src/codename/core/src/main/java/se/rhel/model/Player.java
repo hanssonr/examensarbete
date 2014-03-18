@@ -267,7 +267,6 @@ public class Player extends DynamicEntity {
     public Quaternion getRotation() {
         Quaternion q = new Quaternion();
         mCamera.view.cpy().inv().getRotation(q);
-        // mCamera.invProjectionView.getRotation(q);
         return q;
     }
 
