@@ -78,8 +78,8 @@ public class ClientWorldModel implements BaseModel, ClientListener, ClientContro
 
         // Do client only updates
         if(!mIsLocal) {
-            for (ExternalPlayer externalPlayer : mPlayers) {
-                externalPlayer.update(delta);
+            for (int i = 0; i < mPlayers.size; i++) {
+                mPlayers.get(i).update(delta);
             }
         }
     }
@@ -90,6 +90,7 @@ public class ClientWorldModel implements BaseModel, ClientListener, ClientContro
     }
     public FPSCamera getCamera() { return mCamera; }
     public Array<ExternalPlayer> getPlayers() { return mPlayers; }
+
     public ExternalPlayer getExternalPlayer(int id) {
         for (ExternalPlayer externalPlayer : mPlayers) {
             if(externalPlayer.getClientId() == id) {
@@ -127,13 +128,15 @@ public class ClientWorldModel implements BaseModel, ClientListener, ClientContro
             // An external player have moved and should be updated, accordingly
             PlayerMovePacket pmp = new PlayerMovePacket(data);
 
-            ExternalPlayer ep = getExternalPlayer(pmp.clientId);
-            if(ep == null) {
-                return;
-            }
+            ExternalPlayer ep;
+            synchronized (ep = getExternalPlayer(pmp.clientId)) {
+                if(ep == null) {
+                    return;
+                }
 
-            // Set the position & rotation
-            ep.setPosition(pmp.pX, pmp.pY, pmp.pZ, pmp.rX, pmp.rY, pmp.rZ, pmp.rW);
+                // Set the position & rotation
+                ep.setPosition(pmp.pX, pmp.pY, pmp.pZ, pmp.rX, pmp.rY, pmp.rZ, pmp.rW);
+            }
         }
     }
 
