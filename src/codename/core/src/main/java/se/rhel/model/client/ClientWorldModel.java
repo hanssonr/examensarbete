@@ -2,7 +2,7 @@ package se.rhel.model.client;
 
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
-import se.rhel.client.Client;
+import se.rhel.Client;
 import se.rhel.model.*;
 import se.rhel.network.packet.PlayerMovePacket;
 import se.rhel.network.model.ExternalPlayer;
@@ -135,7 +135,7 @@ public class ClientWorldModel implements BaseModel, ClientListener, ClientContro
                 }
 
                 // Set the position & rotation
-                ep.setPosition(pmp.pX, pmp.pY, pmp.pZ, pmp.rX, pmp.rY, pmp.rZ, pmp.rW);
+                ep.setPosition(pmp.pX, pmp.pY, pmp.pZ, pmp.rY, pmp.rW);
             }
         }
     }

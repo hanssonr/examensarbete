@@ -1,6 +1,7 @@
 package se.rhel.server;
 
 import se.rhel.Connection;
+import se.rhel.Server;
 import se.rhel.observer.ServerObserver;
 import se.rhel.packet.BasePacketHandler;
 import se.rhel.packet.ConnectionDetailPacket;

@@ -1,8 +1,6 @@
 package se.rhel.model.server;
 
-import com.badlogic.gdx.math.Quaternion;
 import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.physics.bullet.softbody.btSoftBodySolverOutput;
 import com.badlogic.gdx.utils.Array;
 import se.rhel.Connection;
 import se.rhel.network.packet.PlayerMovePacket;
@@ -10,7 +8,7 @@ import se.rhel.network.packet.PlayerPacket;
 import se.rhel.network.packet.RequestInitialStatePacket;
 import se.rhel.packet.TestMaxPacket;
 import se.rhel.packet.TestPacket;
-import se.rhel.server.Server;
+import se.rhel.Server;
 import se.rhel.model.BaseModel;
 import se.rhel.model.BulletWorld;
 import se.rhel.model.Player;
@@ -125,7 +123,7 @@ public class ServerWorldModel implements BaseModel, ServerListener {
 
             // Set the position
             Vector3 pos = new Vector3(pmp.pX, pmp.pY, pmp.pZ).cpy();
-            Quaternion q = new Quaternion(pmp.rX, pmp.rY, pmp.rZ, pmp.rW);
+            // Quaternion q = new Quaternion(pmp.rX, pmp.rY, pmp.rZ, pmp.rW);
             Player p = getPlayer(playerId);
             if(p == null) return;
 
@@ -134,7 +132,7 @@ public class ServerWorldModel implements BaseModel, ServerListener {
 
             // Notify the other clients, if any
             Vector3 tmp = p.getPosition();
-            mServer.sendToAllUDPExcept(new PlayerMovePacket(playerId, tmp.x, tmp.y, tmp.z, q.x, q.y, q.z, q.w), con);
+            mServer.sendToAllUDPExcept(new PlayerMovePacket(playerId, tmp.x, tmp.y, tmp.z, pmp.rY, pmp.rW), con);
         }
     }
 }

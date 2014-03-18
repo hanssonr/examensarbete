@@ -3,11 +3,12 @@ package se.rhel.screen.network;
 import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector3;
-import se.rhel.client.Client;
+import se.rhel.Client;
 import se.rhel.CodeName;
+import se.rhel.Snaek;
 import se.rhel.network.packet.PlayerMovePacket;
 import se.rhel.screen.BaseScreen;
-import se.rhel.server.Server;
+import se.rhel.Server;
 import se.rhel.view.input.PlayerInput;
 import se.rhel.model.client.ClientWorldModel;
 import se.rhel.model.server.ServerWorldModel;
@@ -40,10 +41,7 @@ public class NetworkGameScreen extends BaseScreen {
         }
 
         // else/and assume client
-        mClient = new Client();
-        mClient.start();
-        mClient.connect("localhost", 4455, 5544);
-        //mClient.connect("192.168.0.101", 4455, 5544);
+        mClient = Snaek.newClient(4455, 5544, "localhost");
 
         mClientWorldModel = ClientWorldModel.newNetworkWorld(mClient);
 
@@ -74,14 +72,12 @@ public class NetworkGameScreen extends BaseScreen {
         if(mClient.getId() != -1) {
             // Send move packet
             if(mClientWorldModel.getPlayer().getPosition().dst(mLastKnownPosition) > 0.01f) {
-
                 mLastKnownPosition = mClientWorldModel.getPlayer().getPosition().cpy();
             }
             mClient.sendUdp(
                     new PlayerMovePacket(mClient.getId(),
                             mClientWorldModel.getPlayer().getPosition().x, mClientWorldModel.getPlayer().getPosition().y, mClientWorldModel.getPlayer().getPosition().z,
-                            mClientWorldModel.getPlayer().getRotation().x, mClientWorldModel.getPlayer().getRotation().y, mClientWorldModel.getPlayer().getRotation().z,
-                            mClientWorldModel.getPlayer().getRotation().w));
+                            mClientWorldModel.getPlayer().getRotation().y, mClientWorldModel.getPlayer().getRotation().w));
         }
     }
 

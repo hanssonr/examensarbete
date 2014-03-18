@@ -8,10 +8,11 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import se.rhel.CodeName;
+import se.rhel.Snaek;
 import se.rhel.network.packet.MyPacketRegisterInitializer;
 import se.rhel.screen.scene.UIComponents;
 import se.rhel.screen.network.NetworkGameScreen;
-import se.rhel.server.Server;
+import se.rhel.Server;
 
 
 /**
@@ -40,9 +41,7 @@ public class LobbyScreen extends BaseScreen {
 
         //Start the server if host
         if(isHost) {
-            mServer = new Server();
-            mServer.start();
-            mServer.bind(4455, 5544);
+            mServer = Snaek.newServer(4455, 5544);
         }
     }
 

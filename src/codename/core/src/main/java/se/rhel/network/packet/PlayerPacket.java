@@ -1,7 +1,6 @@
 package se.rhel.network.packet;
 
 import se.rhel.packet.AClientPacket;
-import se.rhel.packet.Packet;
 
 /**
  * Group: Network
