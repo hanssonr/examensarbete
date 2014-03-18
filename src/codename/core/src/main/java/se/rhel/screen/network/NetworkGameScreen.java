@@ -5,7 +5,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector3;
 import se.rhel.client.Client;
 import se.rhel.CodeName;
-import se.rhel.network.PlayerMovePacket;
+import se.rhel.network.packet.PlayerMovePacket;
 import se.rhel.screen.BaseScreen;
 import se.rhel.server.Server;
 import se.rhel.view.input.PlayerInput;
@@ -73,7 +73,7 @@ public class NetworkGameScreen extends BaseScreen {
         // Network stuff
         if(mClient.getId() != -1) {
             // Send move packet
-            if(mClientWorldModel.getPlayer().getPosition().dst(mLastKnownPosition) > 0.5f) {
+            if(mClientWorldModel.getPlayer().getPosition().dst(mLastKnownPosition) > 0.01f) {
                 mClient.sendUdp(new PlayerMovePacket(mClient.getId(), mClientWorldModel.getPlayer().getPosition().x, mClientWorldModel.getPlayer().getPosition().y, mClientWorldModel.getPlayer().getPosition().z));
                 mLastKnownPosition = mClientWorldModel.getPlayer().getPosition().cpy();
             }

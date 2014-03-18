@@ -1,6 +1,6 @@
 package se.rhel.network.packet;
 
-import se.rhel.packet.Packet;
+import se.rhel.packet.AClientPacket;
 
 /**
  * Group: Network
@@ -8,21 +8,17 @@ import se.rhel.packet.Packet;
  * Created by Emil on 2014-03-06.
  * assigned to libgdx-gradle-template in se.rhel.packet
  */
-public class RequestInitialStatePacket extends Packet {
-
-    public int mPlayerId;
+public class RequestInitialStatePacket extends AClientPacket {
 
     public RequestInitialStatePacket() {}
 
-    public RequestInitialStatePacket(int id) {
-        super(RequestInitialStatePacket.class);
-        super.putInt(id);
+    public RequestInitialStatePacket(int clientId) {
+        super(clientId, RequestInitialStatePacket.class);
         super.ready();
     }
 
     public RequestInitialStatePacket(byte[] data) {
         super(data);
-        mPlayerId = super.getInt();
     }
 
 }

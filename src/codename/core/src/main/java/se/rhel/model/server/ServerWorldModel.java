@@ -3,10 +3,9 @@ package se.rhel.model.server;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import se.rhel.Connection;
-import se.rhel.network.*;
+import se.rhel.network.packet.PlayerMovePacket;
 import se.rhel.network.packet.PlayerPacket;
 import se.rhel.network.packet.RequestInitialStatePacket;
-import se.rhel.packet.LatencyPacket;
 import se.rhel.packet.TestMaxPacket;
 import se.rhel.packet.TestPacket;
 import se.rhel.server.Server;
@@ -14,7 +13,6 @@ import se.rhel.model.BaseModel;
 import se.rhel.model.BulletWorld;
 import se.rhel.model.Player;
 import se.rhel.observer.ServerListener;
-import se.rhel.packet.Packet;
 import se.rhel.util.Log;
 
 import java.util.HashMap;
@@ -140,8 +138,8 @@ public class ServerWorldModel implements BaseModel, ServerListener {
             // Notify the other clients, if any
             Vector3 tmp = getPlayer(playerId).getPosition();
             // mServer.sendToAllUDPExcept(new PlayerPacket(0f, 0f, 0f), con);
-            // mServer.sendToAllUDPExcept(new PlayerMovePacket(playerId, tmp.x, tmp.y, tmp.z), con);
-            mServer.sendToAllTCPExcept(new PlayerMovePacket(playerId, tmp.x, tmp.y, tmp.z), con);
+            mServer.sendToAllUDPExcept(new PlayerMovePacket(playerId, tmp.x, tmp.y, tmp.z), con);
+            // mServer.sendToAllTCPExcept(new PlayerMovePacket(playerId, tmp.x, tmp.y, tmp.z), con);
         }
         else if(obj instanceof  PlayerPacket) {
             System.out.println("    SOMETHING IS TERRIBLY WRONG!!!!");

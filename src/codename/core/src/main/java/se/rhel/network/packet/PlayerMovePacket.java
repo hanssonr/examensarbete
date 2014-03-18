@@ -1,20 +1,18 @@
-package se.rhel.network;
+package se.rhel.network.packet;
 
-import se.rhel.packet.Packet;
+import se.rhel.packet.AClientPacket;
 
 /**
  * Created by Emil on 2014-03-17.
  */
-public class PlayerMovePacket extends Packet {
+public class PlayerMovePacket extends AClientPacket {
 
-    public int clientId;
     public float x, y, z;
 
     public PlayerMovePacket() {}
 
     public PlayerMovePacket(int clientId, float x, float y, float z) {
-        super(PlayerMovePacket.class);
-        putInt(clientId);
+        super(clientId, PlayerMovePacket.class);
         putFloat(x);
         putFloat(y);
         putFloat(z);
@@ -23,7 +21,6 @@ public class PlayerMovePacket extends Packet {
 
     public PlayerMovePacket(byte[] data) {
         super(data);
-        clientId = getInt();
         x = getFloat();
         y = getFloat();
         z = getFloat();

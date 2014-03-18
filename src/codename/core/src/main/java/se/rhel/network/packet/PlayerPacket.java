@@ -1,5 +1,6 @@
 package se.rhel.network.packet;
 
+import se.rhel.packet.AClientPacket;
 import se.rhel.packet.Packet;
 
 /**
@@ -10,9 +11,8 @@ import se.rhel.packet.Packet;
  * 5-8  = (float) y position
  * 9-12 = (float) z position
  */
-public class PlayerPacket extends Packet {
+public class PlayerPacket extends AClientPacket {
 
-    public int clientId;
     public float x;
     public float y;
     public float z;
@@ -20,8 +20,7 @@ public class PlayerPacket extends Packet {
     public PlayerPacket() {}
 
     public PlayerPacket(int clientId, float x, float y, float z) {
-        super(PlayerPacket.class);
-        super.putInt(clientId);
+        super(clientId, PlayerPacket.class);
         super.putFloat(x);
         super.putFloat(y);
         super.putFloat(z);
@@ -30,7 +29,6 @@ public class PlayerPacket extends Packet {
 
     public PlayerPacket(byte[] data) {
         super(data);
-        clientId = super.getInt();
         x = super.getFloat();
         y = super.getFloat();
         z = super.getFloat();

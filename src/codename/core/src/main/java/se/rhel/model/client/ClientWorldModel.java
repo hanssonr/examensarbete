@@ -4,7 +4,7 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import se.rhel.client.Client;
 import se.rhel.model.*;
-import se.rhel.network.PlayerMovePacket;
+import se.rhel.network.packet.PlayerMovePacket;
 import se.rhel.network.model.ExternalPlayer;
 import se.rhel.network.packet.PlayerPacket;
 import se.rhel.network.packet.RequestInitialStatePacket;
