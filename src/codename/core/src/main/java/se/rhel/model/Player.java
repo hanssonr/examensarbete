@@ -262,7 +262,6 @@ public class Player extends DynamicEntity {
     public void rotate(Vector2 rotation) {
         mCamera.rotate(mCamera.getRight(), rotation.y);
         mCamera.rotate(FPSCamera.UP, rotation.x);
-        //mPlayer.rotate(FPSCamera.UP, rotation.x);
     }
 
     public Quaternion getRotation() {
@@ -270,10 +269,6 @@ public class Player extends DynamicEntity {
         mCamera.view.cpy().inv().getRotation(q);
         // mCamera.combined.getRotation(q);
         return q;
-    }
-
-    public void rotate(Quaternion q) {
-        mCamera.rotate(q);
     }
 
     public Vector3 getPosition() {

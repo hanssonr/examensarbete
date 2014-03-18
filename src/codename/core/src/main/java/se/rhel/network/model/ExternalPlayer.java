@@ -12,6 +12,7 @@ import com.badlogic.gdx.physics.bullet.dynamics.btRigidBody;
 import com.badlogic.gdx.physics.bullet.dynamics.btRigidBodyConstructionInfo;
 import com.badlogic.gdx.physics.bullet.linearmath.btDefaultMotionState;
 import se.rhel.model.BulletWorld;
+import se.rhel.model.FPSCamera;
 import se.rhel.model.entity.DynamicEntity;
 import se.rhel.res.Resources;
 
@@ -108,11 +109,10 @@ public class ExternalPlayer extends DynamicEntity {
     }
 
     public void setPosition(float x, float y, float z, float rX, float rY, float rZ, float rW) {
-        // mBody.activate(true);
         Vector3 toPos = new Vector3(x, y, z);
         Vector3 scale = new Vector3();
-        System.out.println("    > Rotation X: " + rX + ", Y: " + rY + ", Z: " + rZ + ", W: " + rW);
-        mRotation = new Quaternion(0, rY, 0, rW);
+        double mag = Math.sqrt(rW*rW + rY * rY);
+        mRotation = new Quaternion(0, (float)(rY/mag), 0, (float)(rW/mag));
         mBody.getWorldTransform().getScale(scale);
         Matrix4 m = new Matrix4(toPos, mRotation, scale);
         mBody.setCenterOfMassTransform(m);
