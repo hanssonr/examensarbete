@@ -115,6 +115,7 @@ public class ExternalPlayer extends DynamicEntity {
         mRotation = new Quaternion(0, (float)(rY/mag), 0, (float)(rW/mag));
         mBody.getWorldTransform().getScale(scale);
         Matrix4 m = new Matrix4(toPos, mRotation, scale);
+
         mBody.setCenterOfMassTransform(m);
     }
 
