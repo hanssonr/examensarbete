@@ -1,12 +1,5 @@
 package se.rhel;
 
-import se.rhel.client.Client;
-import se.rhel.client.ClientPacketHandler;
-import se.rhel.server.Server;
-
-import java.io.IOException;
-import java.net.SocketException;
-
 public class Main {
 
     public static void main(String[] args) {

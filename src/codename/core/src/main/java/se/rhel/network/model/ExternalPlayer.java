@@ -107,7 +107,7 @@ public class ExternalPlayer extends DynamicEntity {
         return mBody.getLinearVelocity().cpy();
     }
 
-    public void setPosition(float x, float y, float z, float rX, float rY, float rZ, float rW) {
+    public void setPosition(float x, float y, float z, float rY, float rW) {
         Vector3 toPos = new Vector3(x, y, z);
         Vector3 scale = new Vector3();
         double mag = Math.sqrt(rW*rW + rY * rY);

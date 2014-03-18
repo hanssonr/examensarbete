@@ -1,8 +1,9 @@
-package se.rhel.client;
+package se.rhel;
 
 import se.rhel.EndPoint;
 import se.rhel.TcpConnection;
 import se.rhel.UdpConnection;
+import se.rhel.client.ClientPacketHandler;
 import se.rhel.observer.ClientListener;
 import se.rhel.observer.ClientObserver;
 import se.rhel.packet.*;
@@ -28,7 +29,7 @@ public class Client implements EndPoint {
     private static ArrayList<Long> mAverageLatancey = new ArrayList<>();
     private static long currLatency = -1L;
 
-    public Client() {
+    Client() {
         ClientPacketHandler mHandler = new ClientPacketHandler(this);
         mClientObserver = new ClientObserver();
         mHandler.setObserver(mClientObserver);

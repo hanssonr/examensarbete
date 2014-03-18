@@ -1,8 +1,8 @@
 package se.rhel.server;
 
 import se.rhel.Connection;
+import se.rhel.Server;
 import se.rhel.TcpConnection;
-import se.rhel.packet.ConnectAcceptPacket;
 import se.rhel.packet.HandshakeResponsePacket;
 
 import java.io.IOException;

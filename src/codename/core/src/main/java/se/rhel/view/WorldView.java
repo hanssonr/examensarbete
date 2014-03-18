@@ -15,7 +15,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.bullet.linearmath.btIDebugDraw;
 import com.badlogic.gdx.physics.bullet.linearmath.btVector3;
-import se.rhel.client.Client;
+import se.rhel.Client;
 import se.rhel.graphics.FrontFaceDepthShaderProvider;
 import se.rhel.model.BulletWorld;
 import se.rhel.model.FPSCamera;

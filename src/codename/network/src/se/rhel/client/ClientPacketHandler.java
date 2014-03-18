@@ -1,5 +1,6 @@
 package se.rhel.client;
 
+import se.rhel.Client;
 import se.rhel.UdpConnection;
 import se.rhel.observer.ClientObserver;
 import se.rhel.packet.BasePacketHandler;

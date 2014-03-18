@@ -1,4 +1,4 @@
-package se.rhel.server;
+package se.rhel;
 
 import se.rhel.TcpConnection;
 import se.rhel.UdpConnection;
@@ -9,6 +9,8 @@ import se.rhel.EndPoint;
 import se.rhel.packet.DisconnectPacket;
 import se.rhel.packet.Packet;
 import se.rhel.packet.PacketRegisterInitializer;
+import se.rhel.server.ServerPacketHandler;
+import se.rhel.server.TcpListener;
 import se.rhel.util.Log;
 
 import java.io.IOException;
@@ -43,7 +45,7 @@ public class Server implements EndPoint {
     private ServerPacketHandler mServerPacketHandler;
 
 
-    public Server() {
+    Server() {
         // Log level
         Log.set(Log.LEVEL_DEBUG);
         mConnections = new ArrayList<>();
