@@ -31,9 +31,9 @@ public class ClientObserver implements ClientListener, IObserver {
     }
 
     @Override
-    public void received(Object obj, byte[] data) {
+    public void received(Object obj) {
         for (ClientListener clientListener : mClientListeners) {
-            clientListener.received(obj, data);
+            clientListener.received(obj);
         }
     }
 }

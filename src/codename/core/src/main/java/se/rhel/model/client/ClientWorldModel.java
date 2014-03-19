@@ -111,22 +111,22 @@ public class ClientWorldModel implements BaseModel, ClientListener, ClientContro
     }
 
     @Override
-    public void received(Object obj, byte[] data) {
+    public void received(Object obj) {
         // Log.debug("ClientWorldModel", "RECEIVED: " + obj);
         if (obj instanceof PlayerPacket) {
             Log.debug("ClientWorldModel", "Player_Join packet - Player can be viewed on client!!");
-            PlayerPacket pp = new PlayerPacket(data);
+            PlayerPacket pp = (PlayerPacket)obj;
             ExternalPlayer ep = new ExternalPlayer(pp.clientId, new Vector3(pp.x, pp.y, pp.z), mBulletWorld);
             mPlayers.add(ep);
         }
         else if(obj instanceof TestPacket) {
             Log.debug("ClientWorldModel", "TestPacket received");
-            TestPacket tp = new TestPacket(data);
+            TestPacket tp = (TestPacket)obj;
             System.out.println();
         }
         else if(obj instanceof PlayerMovePacket) {
             // An external player have moved and should be updated, accordingly
-            PlayerMovePacket pmp = new PlayerMovePacket(data);
+            PlayerMovePacket pmp = (PlayerMovePacket)obj;
 
             ExternalPlayer ep;
             synchronized (ep = getExternalPlayer(pmp.clientId)) {

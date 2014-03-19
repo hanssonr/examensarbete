@@ -6,6 +6,7 @@ import com.badlogic.gdx.math.Vector3;
 import se.rhel.Client;
 import se.rhel.CodeName;
 import se.rhel.Snaek;
+import se.rhel.model.FPSCamera;
 import se.rhel.network.packet.PlayerMovePacket;
 import se.rhel.screen.BaseScreen;
 import se.rhel.Server;
@@ -29,6 +30,7 @@ public class NetworkGameScreen extends BaseScreen {
     private Client mClient;
     private ClientWorldModel mClientWorldModel;
     private Vector3 mLastKnownPosition = Vector3.Zero;
+    private float mLastKnownRotation = 0f;
 
     public NetworkGameScreen(CodeName game, Server server) {
         super(game);
@@ -71,13 +73,17 @@ public class NetworkGameScreen extends BaseScreen {
         // Network stuff
         if(mClient.getId() != -1) {
             // Send move packet
-            if(mClientWorldModel.getPlayer().getPosition().dst(mLastKnownPosition) > 0.01f) {
+
+            if(mClientWorldModel.getPlayer().getPosition().dst(mLastKnownPosition) > 0.01f ||
+                    mClientWorldModel.getPlayer().getRotation().getAxisAngle(FPSCamera.UP.cpy()) != mLastKnownRotation)  {
                 mLastKnownPosition = mClientWorldModel.getPlayer().getPosition().cpy();
+                mLastKnownRotation = mClientWorldModel.getPlayer().getRotation().getAxisAngle(FPSCamera.UP.cpy());
+
+                mClient.sendUdp(
+                        new PlayerMovePacket(mClient.getId(),
+                                mClientWorldModel.getPlayer().getPosition().x, mClientWorldModel.getPlayer().getPosition().y, mClientWorldModel.getPlayer().getPosition().z,
+                                mClientWorldModel.getPlayer().getRotation().y, mClientWorldModel.getPlayer().getRotation().w));
             }
-            mClient.sendUdp(
-                    new PlayerMovePacket(mClient.getId(),
-                            mClientWorldModel.getPlayer().getPosition().x, mClientWorldModel.getPlayer().getPosition().y, mClientWorldModel.getPlayer().getPosition().z,
-                            mClientWorldModel.getPlayer().getRotation().y, mClientWorldModel.getPlayer().getRotation().w));
         }
     }
 

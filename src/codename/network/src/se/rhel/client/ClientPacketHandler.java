@@ -9,6 +9,8 @@ import se.rhel.packet.HandshakeResponsePacket;
 import se.rhel.packet.LatencyPacket;
 import se.rhel.util.Log;
 
+import java.lang.reflect.InvocationTargetException;
+
 
 /**
  * Created by rkh on 2014-03-05.
@@ -27,7 +29,7 @@ public class ClientPacketHandler extends BasePacketHandler {
         super.handlePacket(data);
 
         if (mObj instanceof HandshakeResponsePacket) {
-            HandshakeResponsePacket pkt = new HandshakeResponsePacket(data);
+            HandshakeResponsePacket pkt = (HandshakeResponsePacket)mObj;
             Log.debug("ClientPacketHandler", mObj.getClass() + " ID: " + pkt.mId);
             mClient.setId(pkt.mId);
             UdpConnection c = mClient.getUDPConnection();
@@ -49,7 +51,7 @@ public class ClientPacketHandler extends BasePacketHandler {
 
         }
         else {
-            ((ClientObserver)mObserver).received(mObj, data);
+            ((ClientObserver)mObserver).received(mObj);
         }
     }
 }
