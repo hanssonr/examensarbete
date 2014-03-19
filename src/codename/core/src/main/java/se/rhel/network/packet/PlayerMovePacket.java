@@ -3,6 +3,8 @@ package se.rhel.network.packet;
 import se.rhel.packet.AClientPacket;
 
 /**
+ * Group: Network
+ *
  * Created by Emil on 2014-03-17.
  */
 public class PlayerMovePacket extends AClientPacket {
