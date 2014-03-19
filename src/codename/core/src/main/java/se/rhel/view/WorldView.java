@@ -115,6 +115,7 @@ public class WorldView {
         weaponCam.position.set(mServerWorldModel.getCamera().position);
 
         if(PlayerInput.DRAW_MESH) {
+
             // Cel-shading
             buffer1.begin();
             Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
@@ -174,7 +175,7 @@ public class WorldView {
             Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
 
             mModelBatch.begin(mServerWorldModel.getCamera());
-            mModelBatch.render(Resources.INSTANCE.modelInstanceArray);
+            mModelBatch.render(Resources.INSTANCE.modelInstanceArray, mEnvironment);
             mModelBatch.render(mServerWorldModel.getBulletWorld().instances, mEnvironment);
             // mModelBatch.render(mServerWorldModel.getBulletWorld().fpsModel, mEnvironment);
             mModelBatch.render(mServerWorldModel.getBulletWorld().levelInstance, mEnvironment);

@@ -118,7 +118,8 @@ public class BulletWorld implements BaseModel {
     }
 
     public void addToWorld(btCollisionShape shape, btRigidBodyConstructionInfo info, btDefaultMotionState motionState, ModelInstance instance, btRigidBody body) {
-        instances.add(instance);
+        // instances.add(instance);
+        Resources.INSTANCE.modelInstanceArray.add(instance);
         this.addToWorld(shape, info, motionState, body);
     }
 

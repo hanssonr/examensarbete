@@ -123,12 +123,11 @@ public class ServerWorldModel implements BaseModel, ServerListener {
 
             // Set the position
             Vector3 pos = new Vector3(pmp.pX, pmp.pY, pmp.pZ).cpy();
-            // Quaternion q = new Quaternion(pmp.rX, pmp.rY, pmp.rZ, pmp.rW);
+
             Player p = getPlayer(playerId);
             if(p == null) return;
 
             p.setPosition(pos);
-            // p.rotate(q);
 
             // Notify the other clients, if any
             Vector3 tmp = p.getPosition();

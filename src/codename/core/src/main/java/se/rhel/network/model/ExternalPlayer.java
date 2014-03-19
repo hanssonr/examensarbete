@@ -24,6 +24,9 @@ import se.rhel.res.Resources;
  */
 public class ExternalPlayer extends DynamicEntity {
 
+    public static final String ANIMATION_STILL = "Default Take";
+    public static final String ANIMATION_WALK = "walk";
+
     public enum PLAYERSTATE {
         idle, running
     }
@@ -37,6 +40,8 @@ public class ExternalPlayer extends DynamicEntity {
     private Quaternion mRotation;
     private BoundingBox mBox;
 
+    private Vector3 mLastKnownPosition, mCurrentPosition;
+
     private int mClientId;
 
     private static Vector2 mPlayersize = new Vector2(0.6f, 1.5f);
@@ -46,6 +51,8 @@ public class ExternalPlayer extends DynamicEntity {
         mWorld = world;
         mClientId = clientId;
         mRotation = new Quaternion();
+        mLastKnownPosition = new Vector3();
+        mCurrentPosition = new Vector3();
         mAnimated = new ModelInstance(Resources.INSTANCE.playerModelAnimated);
         mBox = mAnimated.model.calculateBoundingBox(new BoundingBox());
 
@@ -62,7 +69,7 @@ public class ExternalPlayer extends DynamicEntity {
         btDefaultMotionState playerMotionState = new btDefaultMotionState(getTransformation());
 
         mAnimationController = new AnimationController(mAnimated);
-        mAnimationController.setAnimation("walk", -1);
+        mAnimationController.setAnimation(ANIMATION_STILL, -1);
 
         mBody = new btRigidBody(playerInfo);
         mBody.setMotionState(playerMotionState);
@@ -76,9 +83,19 @@ public class ExternalPlayer extends DynamicEntity {
     }
 
     public void update(float delta) {
+
+
+        if(mCurrentPosition.dst(mLastKnownPosition) > 0.01f) {
+            mAnimationController.setAnimation(ANIMATION_STILL, -1);
+        } else {
+            mAnimationController.setAnimation(ANIMATION_STILL, -1);
+        }
+
+        mAnimated.transform.getTranslation(mCurrentPosition);
         mAnimationController.update(delta);
         mAnimated.transform.set(mBody.getCenterOfMassTransform());
-        mAnimated.transform.setTranslation(mBody.getCenterOfMassPosition().sub(new Vector3(0, mBox.getDimensions().y/2.0f, 0)));
+        mAnimated.transform.setTranslation(mBody.getCenterOfMassPosition().sub(new Vector3(0, mBox.getDimensions().y / 2.0f, 0)));
+        mAnimated.transform.getTranslation(mLastKnownPosition);
     }
 
     public void move(Vector3 direction) {

@@ -20,5 +20,4 @@ public class Snaek {
         return c;
     }
 
-
 }
