@@ -24,7 +24,7 @@ import se.rhel.res.Resources;
  */
 public class ExternalPlayer extends DynamicEntity {
 
-    public static final String ANIMATION_STILL = "Default Take";
+    public static final String ANIMATION_IDLE = "idle";
     public static final String ANIMATION_WALK = "walk";
 
     public enum PLAYERSTATE {
@@ -69,7 +69,7 @@ public class ExternalPlayer extends DynamicEntity {
         btDefaultMotionState playerMotionState = new btDefaultMotionState(getTransformation());
 
         mAnimationController = new AnimationController(mAnimated);
-        mAnimationController.setAnimation(ANIMATION_STILL, -1);
+        mAnimationController.setAnimation(ANIMATION_IDLE, -1);
 
         mBody = new btRigidBody(playerInfo);
         mBody.setMotionState(playerMotionState);
@@ -86,9 +86,22 @@ public class ExternalPlayer extends DynamicEntity {
 
 
         if(mCurrentPosition.dst(mLastKnownPosition) > 0.01f) {
-            mAnimationController.setAnimation(ANIMATION_STILL, -1);
+            if(ANIMATION_IDLE.equals(mAnimationController.current.animation.id)) {
+                mAnimationController.setAnimation(ANIMATION_WALK, -1, 2f, new AnimationController.AnimationListener() {
+                    @Override
+                    public void onEnd(AnimationController.AnimationDesc animation) {
+
+                    }
+
+                    @Override
+                    public void onLoop(AnimationController.AnimationDesc animation) {
+                    }
+                });
+            }
         } else {
-            mAnimationController.setAnimation(ANIMATION_STILL, -1);
+            if(ANIMATION_WALK.equals(mAnimationController.current.animation.id)) {
+                mAnimationController.setAnimation(ANIMATION_IDLE, -1);
+            }
         }
 
         mAnimated.transform.getTranslation(mCurrentPosition);

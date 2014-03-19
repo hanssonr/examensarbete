@@ -47,7 +47,7 @@ public enum Resources {
         mManager.load("obj/level/level_xlarge_vis.g3db", Model.class);
         //mManager.load("obj/player/player.g3db", Model.class);
         mManager.load("obj/player/wep/FirstPersonWeapon.g3db", Model.class);
-        mManager.load("obj/player/animated/MyMinecraftPlayer_animated.g3db", Model.class);
+        mManager.load("obj/player/animated/MyMinecraftPlayer_animated_idle.g3db", Model.class);
         //mManager.load("obj/player/mcplayer.g3db", Model.class);
         //mManager.load("obj/beretta/beretta.obj", Model.class);
         //mManager.load("obj/skybox/spacesphere.obj", Model.class);
@@ -87,7 +87,7 @@ public enum Resources {
         ModelInstance instance = new ModelInstance(firstPersonWeaponModel, 5f, 0.1f, -15f);
         modelInstanceArray.add(instance);
 
-        playerModelAnimated = mManager.get("obj/player/animated/MyMinecraftPlayer_animated.g3db", Model.class);
+        playerModelAnimated = mManager.get("obj/player/animated/MyMinecraftPlayer_animated_idle.g3db", Model.class);
         setupMaterial(playerModelAnimated);
         playerModelInstanceAnimated = new ModelInstance(playerModelAnimated, 10f, 0.1f, -15f);
 
