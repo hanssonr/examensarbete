@@ -42,10 +42,8 @@ public class NetworkGameScreen extends BaseScreen {
             mUpdateServer = true;
         }
 
-        // else/and assume client
         mClient = Snaek.newClient(4455, 5544, "localhost");
-
-        mClientWorldModel = ClientWorldModel.newNetworkWorld(mClient);
+        mClientWorldModel = new ClientWorldModel(mClient);
 
         mPlayerInput = new PlayerInput();
         mWorldView = new WorldView(mClientWorldModel);

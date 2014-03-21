@@ -18,52 +18,18 @@ import se.rhel.util.Log;
 /**
  * Group: Mixed
  */
-public class ClientWorldModel implements BaseModel, ClientListener, ClientControllerListener {
-
-    private FPSCamera mCamera;
-    private Player mLocalPlayer;
-    private BulletWorld mBulletWorld;
-    private boolean mIsLocal;
+public class ClientWorldModel extends WorldModel implements ClientListener, ClientControllerListener {
 
     private Client mClient;
     private Array<ExternalPlayer> mPlayers;
 
-    public static ClientWorldModel newNetworkWorld(Client client) {
-        return new ClientWorldModel(client);
-    }
+    public ClientWorldModel(Client client) {
+        super();
 
-    public static ClientWorldModel newLocalWorld() {
-        return new ClientWorldModel();
-    }
-
-    /**
-     * Used for non-network play
-     */
-    private ClientWorldModel() {
-        mBulletWorld = new BulletWorld();
-        mIsLocal = true;
-        create();
-    }
-
-    /**
-     * Used for networked play
-     * @param client
-     */
-    private ClientWorldModel(Client client) {
-        mBulletWorld = new BulletWorld();
         mPlayers = new Array<>();
-        mIsLocal = false;
         mClient = client;
         mClient.addListener(this);
         mClient.sendTcp(new RequestInitialStatePacket(mClient.getId()));
-        create();
-    }
-
-    @Override
-    public void create() {
-        mCamera = new FPSCamera(75, 0.1f, 1000f);
-        mLocalPlayer = new Player(new Vector3(0, 10, 0), mBulletWorld);
-        mLocalPlayer.attachCamera(mCamera);
     }
 
     @Override
@@ -73,23 +39,12 @@ public class ClientWorldModel implements BaseModel, ClientListener, ClientContro
 
     @Override
     public void update(float delta) {
-        mBulletWorld.update(delta);
-        mLocalPlayer.update(delta);
+        super.update(delta);
 
-        // Do client only updates
-        if(!mIsLocal) {
-            for (int i = 0; i < mPlayers.size; i++) {
-                mPlayers.get(i).update(delta);
-            }
+        for (int i = 0; i < mPlayers.size; i++) {
+            mPlayers.get(i).update(delta);
         }
     }
-
-    public BulletWorld getBulletWorld() { return mBulletWorld; }
-    public Player getPlayer() {
-        return mLocalPlayer;
-    }
-    public FPSCamera getCamera() { return mCamera; }
-    public Array<ExternalPlayer> getPlayers() { return mPlayers; }
 
     public ExternalPlayer getExternalPlayer(int id) {
         for (ExternalPlayer externalPlayer : mPlayers) {
@@ -112,17 +67,15 @@ public class ClientWorldModel implements BaseModel, ClientListener, ClientContro
 
     @Override
     public void received(Object obj) {
-        // Log.debug("ClientWorldModel", "RECEIVED: " + obj);
         if (obj instanceof PlayerPacket) {
             Log.debug("ClientWorldModel", "Player_Join packet - Player can be viewed on client!!");
             PlayerPacket pp = (PlayerPacket)obj;
-            ExternalPlayer ep = new ExternalPlayer(pp.clientId, new Vector3(pp.x, pp.y, pp.z), mBulletWorld);
+            ExternalPlayer ep = new ExternalPlayer(pp.clientId, new Vector3(pp.x, pp.y, pp.z), getBulletWorld());
             mPlayers.add(ep);
         }
         else if(obj instanceof TestPacket) {
             Log.debug("ClientWorldModel", "TestPacket received");
             TestPacket tp = (TestPacket)obj;
-            System.out.println();
         }
         else if(obj instanceof PlayerMovePacket) {
             // An external player have moved and should be updated, accordingly
