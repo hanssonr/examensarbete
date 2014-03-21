@@ -1,9 +1,8 @@
 package se.rhel.view;
 
-import com.badlogic.gdx.physics.bullet.collision.btPositionAndRadius;
 import com.badlogic.gdx.utils.Array;
 import se.rhel.model.WorldModel;
-import se.rhel.model.client.ClientWorldModel;
+
 
 import java.util.Iterator;
 
