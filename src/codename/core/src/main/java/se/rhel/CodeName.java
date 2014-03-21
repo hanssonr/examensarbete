@@ -5,6 +5,7 @@ import com.badlogic.gdx.Screen;
 import se.rhel.observer.TransitionObserver;
 import se.rhel.screen.LoadingScreen;
 import se.rhel.screen.effects.TransitionScreen;
+import se.rhel.util.Log;
 
 /**
  * Group: Logic
@@ -24,6 +25,8 @@ public class CodeName extends Game implements TransitionObserver.TransitionListe
 
     public CodeName(int mode) {
         mRunMode = mode;
+        // Log level
+        Log.set(Log.LEVEL_DEBUG);
     }
 
     @Override

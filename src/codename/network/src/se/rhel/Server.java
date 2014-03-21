@@ -46,8 +46,6 @@ public class Server implements EndPoint {
 
 
     Server() {
-        // Log level
-        Log.set(Log.LEVEL_DEBUG);
         mConnections = new ArrayList<>();
 
         mServerObserver = new ServerObserver();
