@@ -84,11 +84,13 @@ public class ServerWorldModel extends WorldModel implements ServerListener {
 
             if(!obj.isStaticOrKinematicObject()) {
                 //Player hit
-                Player p = (Player)obj.userData;
-                int id = getPlayerId(p);
+                if(obj.userData instanceof Player) {
+                    Player p = (Player)obj.userData;
+                    int id = getPlayerId(p);
 
-                //Send damage to clients
-                mServer.sendToAllUDP(new DamagePacket(id));
+                    //Send damage to clients
+                    mServer.sendToAllUDP(new DamagePacket(id));
+                }
             }
         }
     }
