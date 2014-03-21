@@ -2,6 +2,7 @@ package se.rhel.view;
 
 import com.badlogic.gdx.physics.bullet.collision.btPositionAndRadius;
 import com.badlogic.gdx.utils.Array;
+import se.rhel.model.WorldModel;
 import se.rhel.model.client.ClientWorldModel;
 
 import java.util.Iterator;
@@ -11,12 +12,12 @@ import java.util.Iterator;
  */
 public class LaserView {
 
-    private ClientWorldModel mWorldModel;
+    private WorldModel mWorldModel;
     private Array<LaserMeshTestRenderer> mLasers;
 
-    public LaserView(ClientWorldModel cwm) {
+    public LaserView(WorldModel wm) {
         mLasers = new Array<>();
-        mWorldModel = cwm;
+        mWorldModel = wm;
     }
 
     public void add() {

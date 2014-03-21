@@ -19,6 +19,7 @@ import se.rhel.Client;
 import se.rhel.graphics.FrontFaceDepthShaderProvider;
 import se.rhel.model.BulletWorld;
 import se.rhel.model.FPSCamera;
+import se.rhel.model.WorldModel;
 import se.rhel.model.client.ClientWorldModel;
 import se.rhel.res.Resources;
 import se.rhel.view.input.PlayerInput;
