@@ -3,6 +3,7 @@ package se.rhel.model.server;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import se.rhel.Connection;
+import se.rhel.model.WorldModel;
 import se.rhel.network.packet.PlayerMovePacket;
 import se.rhel.network.packet.PlayerPacket;
 import se.rhel.network.packet.RequestInitialStatePacket;
@@ -21,25 +22,22 @@ import java.util.Map;
 /**
  * Group: Mixed
  */
-public class ServerWorldModel implements BaseModel, ServerListener {
+public class ServerWorldModel extends WorldModel implements ServerListener {
 
-    // private Array<Player> mPlayers = new Array<Player>();
     // Linkin ID's and Players
     private HashMap<Integer, Player> mPlayers;
-    private BulletWorld mBulletWorld;
-
     private Server mServer;
 
     public ServerWorldModel(Server server) {
+        super();
+
         mServer = server;
-        mPlayers = new HashMap<>();
         mServer.addListener(this);
-        create();
+        mPlayers = new HashMap<>();
     }
 
     @Override
     public void create() {
-        mBulletWorld = new BulletWorld();
     }
 
     @Override
@@ -49,7 +47,7 @@ public class ServerWorldModel implements BaseModel, ServerListener {
 
     @Override
     public void update(float delta) {
-        mBulletWorld.update(delta);
+        getBulletWorld().update(delta);
 
         for(Player p : mPlayers.values()) {
             // TODO: Server should update players
@@ -82,14 +80,12 @@ public class ServerWorldModel implements BaseModel, ServerListener {
         return toReturn;
     }
 
-    public BulletWorld getBulletWorld() { return mBulletWorld; }
-
     @Override
     public void connected(Connection con) {
         Log.debug("ServerWorldModel", "Some one connected to the server with id: " + con.getId());
 
         // Meaning, a new player should be added on the server
-        addPlayer(con.getId(), new Player(new Vector3(0, 10, 0), mBulletWorld));
+        addPlayer(con.getId(), new Player(new Vector3(0, 10, 0), getBulletWorld()));
         // And sending to all clients except the one joined
         mServer.sendToAllTCPExcept(new PlayerPacket(con.getId(), 0f, 10f, 0f), con);
     }
@@ -104,9 +100,6 @@ public class ServerWorldModel implements BaseModel, ServerListener {
 
         if(obj instanceof RequestInitialStatePacket) {
             Log.debug("ServerWorldModel", "Initial state requested from clientId: " + con.getId());
-            //mServer.sendTCP(new TestPacket(0, 1.1f, 1.2, 'a', Byte.valueOf("1"), Long.valueOf(2), Short.valueOf("1")), con);
-            //TestMaxPacket tmp = new TestMaxPacket(1);
-            //mServer.sendTCP(tmp, con);
 
             // Sending all the players to the client requested, except self
             for(Integer i : mPlayers.keySet()) {
@@ -119,19 +112,17 @@ public class ServerWorldModel implements BaseModel, ServerListener {
         }
         else if(obj instanceof PlayerMovePacket) {
             PlayerMovePacket pmp = (PlayerMovePacket)obj;
-            int playerId = pmp.clientId;
 
             // Set the position
-            Vector3 pos = new Vector3(pmp.pX, pmp.pY, pmp.pZ).cpy();
-
-            Player p = getPlayer(playerId);
+            Vector3 pos = new Vector3(pmp.pX, pmp.pY, pmp.pZ);
+            Player p = getPlayer(pmp.clientId);
             if(p == null) return;
 
             p.setPosition(pos);
 
             // Notify the other clients, if any
             Vector3 tmp = p.getPosition();
-            mServer.sendToAllUDPExcept(new PlayerMovePacket(playerId, tmp.x, tmp.y, tmp.z, pmp.rY, pmp.rW), con);
+            mServer.sendToAllUDPExcept(new PlayerMovePacket(pmp.clientId, tmp.x, tmp.y, tmp.z, pmp.rY, pmp.rW), con);
         }
     }
 }
