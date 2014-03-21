@@ -13,6 +13,7 @@ import com.badlogic.gdx.physics.bullet.dynamics.btRigidBodyConstructionInfo;
 import com.badlogic.gdx.physics.bullet.linearmath.btDefaultMotionState;
 import com.badlogic.gdx.physics.bullet.linearmath.btVector3;
 import se.rhel.model.entity.DynamicEntity;
+import se.rhel.model.physics.BulletWorld;
 import se.rhel.res.Resources;
 import se.rhel.view.BulletHoleRenderer;
 
@@ -85,6 +86,7 @@ public class Player extends DynamicEntity {
         mBody = new btRigidBody(playerInfo);
         mBody.setMotionState(playerMotionState);
         mBody.setGravity(Vector3.Zero);
+        mBody.userData = this;
 
         rayTestCB = new ClosestRayResultCallback(Vector3.Zero, Vector3.Z);
 
@@ -102,15 +104,6 @@ public class Player extends DynamicEntity {
         updateWeapon();
         checkOnGround();
         calculateGravity(delta);
-
-        // Update shooting for unnecessary drawing / spam shooting
-        if(mHasShot) {
-            mDeltaShoot += delta;
-            if(mDeltaShoot > 0.3f) {
-                mHasShot = false;
-                mDeltaShoot = 0f;
-            }
-        }
     }
 
     private void updateWeapon() {

@@ -1,4 +1,4 @@
-package se.rhel.model;
+package se.rhel.model.physics;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.VertexAttributes;
@@ -15,6 +15,7 @@ import com.badlogic.gdx.physics.bullet.dynamics.*;
 import com.badlogic.gdx.physics.bullet.linearmath.btDefaultMotionState;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.PerformanceCounter;
+import se.rhel.model.BaseModel;
 import se.rhel.res.Resources;
 
 /**
@@ -79,7 +80,7 @@ public class BulletWorld implements BaseModel {
         mBodies.add(levelBody);
         mCollisionWorld.addRigidBody(levelBody);
 
-        // addSpheres();
+        addSpheres();
     }
 
     public void addSpheres() {
@@ -96,25 +97,21 @@ public class BulletWorld implements BaseModel {
         mBodyInfos.add(sphereInfo);
 
         // Create the spheres
-        for(float x = -20f; x <= 20f; x += 5f) {
-            for(float y = 5f; y <= 15f; y += 2f) {
-                for(float z = -20f; z <= 20f; z+= 2f) {
 
-                    ModelInstance sphere = new ModelInstance(sphereModel);
-                    sphere.materials.get(0).set(ColorAttribute.createDiffuse(x+0.5f* MathUtils.random(), y+0.5f*MathUtils.random(), z+0.5f*MathUtils.random(), 1));
-                    instances.add(sphere);
-                    sphere.transform.trn(x+0.1f* MathUtils.random(), y+0.1f*MathUtils.random(), z+0.1f*MathUtils.random());
-                    btDefaultMotionState sphereMotionState = new btDefaultMotionState();
-                    sphereMotionState.setWorldTransform(sphere.transform);
-                    mMotionStates.add(sphereMotionState);
-                    btRigidBody sphereBody = new btRigidBody(sphereInfo);
-                    sphereBody.setMotionState(sphereMotionState);
-                    mBodies.add(sphereBody);
-                    mCollisionWorld.addRigidBody(sphereBody);
-
-                }
-            }
+        for(int i = 1; i < 11; i++) {
+            ModelInstance sphere = new ModelInstance(sphereModel);
+            sphere.materials.get(0).set(ColorAttribute.createDiffuse(0.5f* MathUtils.random(), 0.5f*MathUtils.random(), 0.5f*MathUtils.random(), 1));
+            sphere.transform.trn(15, i, 55);
+            instances.add(sphere);
+            btDefaultMotionState sphereMotionState = new btDefaultMotionState();
+            sphereMotionState.setWorldTransform(sphere.transform);
+            mMotionStates.add(sphereMotionState);
+            btRigidBody sphereBody = new btRigidBody(sphereInfo);
+            sphereBody.setMotionState(sphereMotionState);
+            mBodies.add(sphereBody);
+            mCollisionWorld.addRigidBody(sphereBody);
         }
+
     }
 
     public void addToWorld(btCollisionShape shape, btRigidBodyConstructionInfo info, btDefaultMotionState motionState, ModelInstance instance, btRigidBody body) {

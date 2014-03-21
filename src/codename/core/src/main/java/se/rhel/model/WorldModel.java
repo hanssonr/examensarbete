@@ -1,6 +1,7 @@
 package se.rhel.model;
 
 import com.badlogic.gdx.math.Vector3;
+import se.rhel.model.physics.BulletWorld;
 
 /**
  * Group: Logic

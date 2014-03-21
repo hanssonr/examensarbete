@@ -12,7 +12,7 @@ import com.badlogic.gdx.physics.bullet.collision.btCollisionShape;
 import com.badlogic.gdx.physics.bullet.dynamics.btRigidBody;
 import com.badlogic.gdx.physics.bullet.dynamics.btRigidBodyConstructionInfo;
 import com.badlogic.gdx.physics.bullet.linearmath.btDefaultMotionState;
-import se.rhel.model.BulletWorld;
+import se.rhel.model.physics.BulletWorld;
 import se.rhel.model.entity.DynamicEntity;
 import se.rhel.res.Resources;
 
@@ -84,8 +84,7 @@ public class ExternalPlayer extends DynamicEntity {
 
     public void update(float delta) {
 
-
-        if(mCurrentPosition.dst(mLastKnownPosition) > 0.01f) {
+        if(mCurrentPosition.dst(mLastKnownPosition) > 0f) {
             if(ANIMATION_IDLE.equals(mAnimationController.current.animation.id)) {
                 mAnimationController.setAnimation(ANIMATION_WALK, -1, 2f, new AnimationController.AnimationListener() {
                     @Override
