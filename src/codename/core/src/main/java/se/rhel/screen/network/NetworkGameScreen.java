@@ -8,12 +8,15 @@ import se.rhel.CodeName;
 import se.rhel.Snaek;
 import se.rhel.model.FPSCamera;
 import se.rhel.network.packet.PlayerMovePacket;
+import se.rhel.network.packet.ShootPacket;
 import se.rhel.screen.BaseScreen;
 import se.rhel.Server;
 import se.rhel.view.input.PlayerInput;
 import se.rhel.model.client.ClientWorldModel;
 import se.rhel.model.server.ServerWorldModel;
 import se.rhel.view.WorldView;
+
+import java.lang.reflect.Array;
 
 /**
  * Group: Mixed
@@ -59,8 +62,13 @@ public class NetworkGameScreen extends BaseScreen {
         mClientWorldModel.getPlayer().rotate(mPlayerInput.getRotation());
         mClientWorldModel.getPlayer().move(mPlayerInput.getDirection());
 
-        if (mPlayerInput.isShooting())
-            mClientWorldModel.getPlayer().shoot();
+        if (mPlayerInput.isShooting()) {
+            Vector3[] rays = mClientWorldModel.getPlayer().shoot();
+
+            if(rays != null) {
+                mClient.sendTcp(new ShootPacket(mClient.getId(), rays[0], rays[1]));
+            }
+        }
 
         if (mPlayerInput.isJumping())
             mClientWorldModel.getPlayer().jump();

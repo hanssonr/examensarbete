@@ -3,6 +3,7 @@ package se.rhel.model;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.math.*;
+import com.badlogic.gdx.math.collision.BoundingBox;
 import com.badlogic.gdx.physics.bullet.collision.*;
 import com.badlogic.gdx.physics.bullet.dynamics.btRigidBody;
 import com.badlogic.gdx.math.collision.Ray;
@@ -16,6 +17,8 @@ import se.rhel.model.entity.DynamicEntity;
 import se.rhel.model.physics.BulletWorld;
 import se.rhel.res.Resources;
 import se.rhel.view.BulletHoleRenderer;
+
+import java.lang.reflect.Array;
 
 
 /**
@@ -39,6 +42,7 @@ public class Player extends DynamicEntity {
     private float mBobTimer = 0f;
     private Vector3 mBobVector = new Vector3();
 
+    //Physics / Collision
     private BulletWorld mWorld;
     private btRigidBody mBody;
 
@@ -56,7 +60,6 @@ public class Player extends DynamicEntity {
     public Vector3 to = new Vector3();
     private Vector3 fromGround = new Vector3();
     private Vector3 toGround = new Vector3();
-
 
     //Weapon
     private ModelInstance mWeapon;
@@ -84,6 +87,7 @@ public class Player extends DynamicEntity {
         btDefaultMotionState playerMotionState = new btDefaultMotionState(getTransformation());
 
         mBody = new btRigidBody(playerInfo);
+        mBody.userData = this;
         mBody.setMotionState(playerMotionState);
         mBody.setGravity(Vector3.Zero);
         mBody.userData = this;
@@ -121,10 +125,10 @@ public class Player extends DynamicEntity {
         mWeapon.transform.set(mWeaponWorld);
     }
 
-    public void shoot() {
+    public Vector3[] shoot() {
 
         if(mHasShot)
-            return;
+            return null;
 
         mHasShot = true;
 
@@ -134,7 +138,11 @@ public class Player extends DynamicEntity {
 
         // For debugging purposes
         from.set(ray.origin);
-        to.set(ray.direction).scl(50f).add(from);
+        to.set(ray.direction).scl(75f).add(from);
+
+        Vector3[] rays = new Vector3[2];
+        rays[0] = from;
+        rays[1] = to;
 
         rayTestCB.setCollisionObject(null);
         rayTestCB.setClosestHitFraction(1f);
@@ -144,13 +152,8 @@ public class Player extends DynamicEntity {
         mWorld.getCollisionWorld().rayTest(from, to, rayTestCB);
 
         if (rayTestCB.hasHit()) {
-            to.set(new Vector3(rayTestCB.getHitPointWorld().getX(), rayTestCB.getHitPointWorld().getY(), rayTestCB.getHitPointWorld().getZ()));
+            //to.set(new Vector3(rayTestCB.getHitPointWorld().getX(), rayTestCB.getHitPointWorld().getY(), rayTestCB.getHitPointWorld().getZ()));
             final btCollisionObject obj = rayTestCB.getCollisionObject();
-            if (!obj.isStaticOrKinematicObject()) {
-                final btRigidBody body = (btRigidBody)(obj);
-                body.activate();
-                body.applyCentralImpulse(Vector3.tmp2.set(ray.direction).scl(20f));
-            }
 
             if(obj.isStaticOrKinematicObject()) {
                 btVector3 v = rayTestCB.getHitPointWorld();
@@ -160,6 +163,8 @@ public class Player extends DynamicEntity {
                 t.dispose();
             }
         }
+
+        return rays;
     }
 
     private void updateCamera(float delta) {

@@ -1,18 +1,25 @@
 package se.rhel.model.server;
 
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.physics.bullet.collision.ClosestRayResultCallback;
+import com.badlogic.gdx.physics.bullet.collision.btCollisionObject;
 import com.badlogic.gdx.utils.Array;
 import se.rhel.Connection;
 import se.rhel.model.WorldModel;
 import se.rhel.network.packet.PlayerMovePacket;
 import se.rhel.network.packet.PlayerPacket;
 import se.rhel.network.packet.RequestInitialStatePacket;
+import se.rhel.packet.TestMaxPacket;
+import se.rhel.packet.TestPacket;
 import se.rhel.Server;
+import se.rhel.model.BaseModel;
+import se.rhel.model.BulletWorld;
 import se.rhel.model.Player;
 import se.rhel.observer.ServerListener;
 import se.rhel.util.Log;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 /**
@@ -57,6 +64,40 @@ public class ServerWorldModel extends WorldModel implements ServerListener {
 
     private Player getPlayer(int id) {
         return mPlayers.get(id);
+    }
+
+    private int getPlayerId(Player p) {
+        Iterator it = mPlayers.entrySet().iterator();
+
+        while(it.hasNext()) {
+            Map.Entry<Integer, Player> pairs = (Map.Entry)it.next();
+            if (pairs.getValue().equals(p)) {
+                return pairs.getKey();
+            }
+        }
+
+        throw new IllegalArgumentException("Player could not be found");
+    }
+
+    private void checkShootCollision(Vector3 from, Vector3 to) {
+        //Create ray
+        ClosestRayResultCallback res = new ClosestRayResultCallback(from, to);
+
+        //Check if it collides with anything that could loose health
+        getBulletWorld().getCollisionWorld().rayTest(from, to, res);
+
+        if(res.hasHit()) {
+            final btCollisionObject obj = res.getCollisionObject();
+
+            if(!obj.isStaticOrKinematicObject()) {
+                //Player hit
+                Player p = (Player)obj.userData;
+                int id = getPlayerId(p);
+
+                //Send damage to clients
+                mServer.sendToAllUDP(new DamagePacket(id));
+            }
+        }
     }
 
     /**
@@ -119,6 +160,12 @@ public class ServerWorldModel extends WorldModel implements ServerListener {
             // Notify the other clients, if any
             Vector3 tmp = p.getPosition();
             mServer.sendToAllUDPExcept(new PlayerMovePacket(pmp.clientId, tmp.x, tmp.y, tmp.z, pmp.rY, pmp.rW), con);
+        }
+        else if (obj instanceof ShootPacket) {
+            Log.debug("ServerWorldModel", "ShotPacket received on server");
+            ShootPacket sp = (ShootPacket)obj;
+
+            checkShootCollision(sp.mFrom, sp.mTo);
         }
     }
 }
