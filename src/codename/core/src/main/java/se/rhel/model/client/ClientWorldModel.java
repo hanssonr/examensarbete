@@ -4,6 +4,7 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import se.rhel.Client;
 import se.rhel.model.*;
+import se.rhel.network.packet.DamagePacket;
 import se.rhel.network.packet.PlayerMovePacket;
 import se.rhel.network.model.ExternalPlayer;
 import se.rhel.network.packet.PlayerPacket;
@@ -13,6 +14,8 @@ import se.rhel.observer.ClientListener;
 import se.rhel.packet.Packet;
 import se.rhel.packet.TestPacket;
 import se.rhel.util.Log;
+
+import java.util.ArrayList;
 
 
 /**
@@ -90,6 +93,11 @@ public class ClientWorldModel extends WorldModel implements ClientListener, Clie
                 // Set the position & rotation
                 ep.setPosition(pmp.pX, pmp.pY, pmp.pZ, pmp.rY, pmp.rW);
             }
+        }
+        else if (obj instanceof DamagePacket) {
+            DamagePacket dp = (DamagePacket)obj;
+
+            Log.debug("ClientWorldModel", "Received DamagePacket, Playerid: " + dp.mPlayerId + " got shot");
         }
     }
 

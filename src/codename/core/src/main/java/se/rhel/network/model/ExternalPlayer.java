@@ -72,6 +72,7 @@ public class ExternalPlayer extends DynamicEntity {
         mAnimationController.setAnimation(ANIMATION_IDLE, -1);
 
         mBody = new btRigidBody(playerInfo);
+        mBody.userData = this;
         mBody.setMotionState(playerMotionState);
         mBody.setGravity(Vector3.Zero);
 
@@ -148,6 +149,17 @@ public class ExternalPlayer extends DynamicEntity {
         m.setTranslation(toPos);
 
         mBody.setCenterOfMassTransform(m);
+    }
+
+    public void setPosition(Vector3 val) {
+        mBody.translate(val);
+        Matrix4 m = new Matrix4(val, mBody.getOrientation(), new Vector3(1f, 1f, 1f));
+        mBody.setCenterOfMassTransform(m);
+    }
+
+    public void destroy() {
+        mWorld.getCollisionWorld().removeCollisionObject(mBody);
+        mBody.dispose();
     }
 
     public float getMoveSpeed() {
