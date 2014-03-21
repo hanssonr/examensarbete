@@ -22,6 +22,7 @@ import se.rhel.model.FPSCamera;
 import se.rhel.model.client.ClientWorldModel;
 import se.rhel.res.Resources;
 import se.rhel.view.input.PlayerInput;
+import se.rhel.view.sfx.SoundManager;
 
 import java.math.BigDecimal;
 
@@ -35,6 +36,7 @@ public class WorldView {
     private TextRenderer mFPSRenderer;
     private TextRenderer mBulletLoadRenderer;
     private TextRenderer mPlayerPosRenderer;
+    private LaserView mLaserView;
 
     // Networking stats
     private TextRenderer mLatencyRenderer;
@@ -43,7 +45,6 @@ public class WorldView {
     private ModelBatch mModelBatch;
     private ShapeRenderer mCrosshairRenderer;
     private BulletHoleRenderer mBulletHoleRenderer;
-    private LaserRenderer mLaserRenderer;
     private EntitySystemRenderer mEntitySystem;
 
     private ClientWorldModel mServerWorldModel;
@@ -66,14 +67,11 @@ public class WorldView {
     private FrontFaceDepthShaderProvider depthShaderProvider = new FrontFaceDepthShaderProvider();
     private ModelBatch depthModelBatch = new ModelBatch(depthShaderProvider);
 
-    private LaserMeshTestRenderer lmtr;
-
     public WorldView(ClientWorldModel clientWorldModel) {
         weaponCam = new FPSCamera(68, 0.1f, 5);
         mServerWorldModel = clientWorldModel;
         mSpriteBatch = new SpriteBatch();
         mModelBatch = new ModelBatch();
-        lmtr = new LaserMeshTestRenderer(clientWorldModel.getCamera());
 
         mCrosshairRenderer = new ShapeRenderer();
         mBulletHoleRenderer = new BulletHoleRenderer(mServerWorldModel.getCamera());
@@ -96,8 +94,6 @@ public class WorldView {
                 new DirectionalLight().set(0.8f, 0.8f, 0.8f, -1f, -0.8f, -0.2f)
         );
 
-        mLaserRenderer = new LaserRenderer(mServerWorldModel.getCamera());
-
         // mAnimationController = new AnimationController(Resources.INSTANCE.playerModelInstanceAnimated);
         // mAnimationController.setAnimation("walk", -1);
         // mServerWorldModel.getBulletWorld().levelInstance.add(Resources.INSTANCE.playerModelInstanceAnimated);
@@ -107,6 +103,8 @@ public class WorldView {
         mEnvironment.add(new DirectionalLight().set(0.8f, 0.8f, 0.8f, -1f, -0.8f, -0.2f));
         mEnvironment.add(new DirectionalLight().set(0.8f, 0.8f, 0.8f, -0.5f, -1f, 0.7f));
         */
+        mLaserView = new LaserView(mServerWorldModel);
+        SoundManager.INSTANCE.playMusic(true, .2f);
     }
 
     public void render(float delta) {
@@ -227,9 +225,12 @@ public class WorldView {
         }
 
         if(mServerWorldModel.getPlayer().mHasShot) {
-            // mLaserRenderer.shoot();
-            lmtr.render();
+            mServerWorldModel.getPlayer().mHasShot = false;
+            mLaserView.add();
+            SoundManager.INSTANCE.playSound(SoundManager.SoundType.LASER);
         }
+        mLaserView.render(delta);
+
         // mLaserRenderer.draw(delta);
 
         // "Crosshair"

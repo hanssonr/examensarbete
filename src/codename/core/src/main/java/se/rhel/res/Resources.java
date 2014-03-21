@@ -1,6 +1,8 @@
 package se.rhel.res;
 
 import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g3d.Material;
@@ -40,6 +42,9 @@ public enum Resources {
     public Texture hole;
     public Texture laser, laser_o, laser_a, laserStart, lasterStart_o;
 
+    public Music theme, menutheme;
+    public Sound laserShot;
+
     public void load() {
         mManager.load("data/fonts/hud.fnt", BitmapFont.class);
         //mManager.load("obj/ship/ship.obj", Model.class);
@@ -61,6 +66,10 @@ public enum Resources {
         mManager.load("tex/hole.png", Texture.class);
 
         mManager.load("obj/player/wep/FPSWeapon.g3db", Model.class);
+
+        mManager.load("sfx/sound/lasershot.wav", Sound.class);
+        mManager.load("sfx/music/menutheme.mp3", Music.class);
+        mManager.load("sfx/music/theme.mp3", Music.class);
         // mManager.load("obj/level/testbox.obj", Model.class);
 
         Bullet.init();
@@ -79,6 +88,9 @@ public enum Resources {
         laserStart = mManager.get("tex/laser/laser_start_b.png", Texture.class);
         lasterStart_o = mManager.get("tex/laser/laser_start_o.png", Texture.class);
 
+        menutheme = mManager.get("sfx/music/menutheme.mp3", Music.class);
+        theme = mManager.get("sfx/music/theme.mp3", Music.class);
+        laserShot = mManager.get("sfx/sound/lasershot.wav", Sound.class);
         // Model space = mManager.get("obj/skybox/spacesphere.obj", Model.class);
         // instance = new ModelInstance(space);
         // modelInstanceArray.add(instance);

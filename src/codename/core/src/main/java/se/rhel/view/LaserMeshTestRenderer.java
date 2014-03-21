@@ -17,6 +17,15 @@ import se.rhel.res.Resources;
  */
 public class LaserMeshTestRenderer {
 
+    private Color c = new Color(1f, 1f, 1f, 1f);
+    private Color c1 = new Color(1f, 0f, 0f, 1f);
+    private float alpha = 1f;
+    private boolean mFirst = true;
+    private Vector3 from = new Vector3();
+    private Vector3 from2 = new Vector3();
+    private Vector3 to = new Vector3();
+    private Vector3 to2 = new Vector3();
+
     protected static ShaderProgram createMeshShader() {
         ShaderProgram.pedantic = false;
         // ShaderProgram shader = new ShaderProgram(VERT_SHADER, FRAG_SHADER);
@@ -68,17 +77,52 @@ public class LaserMeshTestRenderer {
         mesh.setIndices(new short[]{0, 1, 2, 2, 3, 0});
         shader = createMeshShader();
         this.cam = cam;
+
+        createMeshVertices();
     }
 
-    public void render() {
+    private void createMeshVertices() {
+        // Visual representation of the starting point bottom right
+        Ray vis = cam.getPickRay(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        vis = vis.cpy();
+
+        // bottom right + 20%
+        Ray vis2 = cam.getPickRay(Gdx.graphics.getWidth(), Gdx.graphics.getHeight() * 0.8f);
+        vis2 = vis2.cpy();
+
+        // Middle + 20%
+        Ray vis3 = cam.getPickRay(Gdx.graphics.getWidth() / 2, (Gdx.graphics.getHeight() / 2));
+        vis3 = vis3.cpy();
+
+        // Middle
+        Ray vis4 = cam.getPickRay(Gdx.graphics.getWidth() / 2, (Gdx.graphics.getHeight() / 2) * 0.9f);
+        vis4 = vis4.cpy();
+
+        from.set(vis.origin);
+        from2.set(vis2.origin);
+        to.set(vis4.direction).scl(50f).add(from);
+        to2.set(vis3.direction).scl(50f).add(from2);
+
+        from.add(cam.direction.cpy().scl(0.2f));
+        from2.add(cam.direction.cpy().scl(0.2f));
+        mFirst = false;
+    }
+
+    public boolean render(float delta) {
+
+        alpha -= (delta * 5);
+        c.a = alpha;
+        c1.a = alpha;
 
         //this will push the triangles into the batch
-        drawTriangle(Color.RED);
+        drawTriangle(c1);
         //this will render the triangles to GL
         flush(Resources.INSTANCE.laser);
 
-        drawTriangle(Color.WHITE);
+        drawTriangle(c);
         flush(Resources.INSTANCE.laser_o);
+
+        return alpha > 0f ? true : false;
     }
 
     void flush(Texture tex) {
@@ -118,35 +162,6 @@ public class LaserMeshTestRenderer {
         //so we need to flush the batch if we can't store any more verts
         if (idx==verts.length)
             flush(Resources.INSTANCE.laser);
-
-        // Visual representation of the starting point bottom right
-        Ray vis = cam.getPickRay(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        vis = vis.cpy();
-
-        // bottom right + 20%
-        Ray vis2 = cam.getPickRay(Gdx.graphics.getWidth(), Gdx.graphics.getHeight() * 0.8f);
-        vis2 = vis2.cpy();
-
-        // Middle + 20%
-        Ray vis3 = cam.getPickRay(Gdx.graphics.getWidth() / 2, (Gdx.graphics.getHeight() / 2));
-        vis3 = vis3.cpy();
-
-        // Middle
-        Ray vis4 = cam.getPickRay(Gdx.graphics.getWidth() / 2, (Gdx.graphics.getHeight() / 2) * 0.9f);
-        vis4 = vis4.cpy();
-
-        Vector3 from = new Vector3();
-        Vector3 from2 = new Vector3();
-        Vector3 to = new Vector3();
-        Vector3 to2 = new Vector3();
-
-        from.set(vis.origin);
-        from2.set(vis2.origin);
-        to.set(vis4.direction).scl(50f).add(from);
-        to2.set(vis3.direction).scl(50f).add(from2);
-
-        from.add(cam.direction.cpy().scl(0.2f));
-        from2.add(cam.direction.cpy().scl(0.2f));
 
         //now we push the vertex data into our array
         //we are assuming (0, 0) is lower left, and Y is up

@@ -11,6 +11,7 @@ import se.rhel.CodeName;
 import se.rhel.screen.BaseScreen;
 import se.rhel.screen.LobbyScreen;
 import se.rhel.screen.local.GameScreen;
+import se.rhel.view.sfx.SoundManager;
 
 /**
  * Group: Logic
@@ -28,6 +29,7 @@ public class MainMenu extends BaseScreen {
     public MainMenu(CodeName game) {
         super(game);
 
+        SoundManager.INSTANCE.playMenuMusic();
         mStage = new Stage();
         mGame = game;
     }
