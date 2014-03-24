@@ -91,13 +91,8 @@ public class ClientWorldModel extends WorldModel implements ClientListener, Clie
                 }
 
                 // Set the position & rotation
-                ep.setPosition(pmp.pX, pmp.pY, pmp.pZ, pmp.rY, pmp.rW);
+                ep.setPositionAndRotation(pmp.pX, pmp.pY, pmp.pZ, pmp.rY, pmp.rW);
             }
-        }
-        else if (obj instanceof DamagePacket) {
-            DamagePacket dp = (DamagePacket)obj;
-
-            Log.debug("ClientWorldModel", "Received DamagePacket, Playerid: " + dp.mPlayerId + " got shot");
         }
     }
 

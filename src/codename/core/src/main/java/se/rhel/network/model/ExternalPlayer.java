@@ -12,8 +12,9 @@ import com.badlogic.gdx.physics.bullet.collision.btCollisionShape;
 import com.badlogic.gdx.physics.bullet.dynamics.btRigidBody;
 import com.badlogic.gdx.physics.bullet.dynamics.btRigidBodyConstructionInfo;
 import com.badlogic.gdx.physics.bullet.linearmath.btDefaultMotionState;
-import se.rhel.model.physics.BulletWorld;
-import se.rhel.model.entity.DynamicEntity;
+import se.rhel.model.BulletWorld;
+import se.rhel.model.entity.DamageableEntity;
+import se.rhel.model.entity.DummyEntity;
 import se.rhel.res.Resources;
 
 /**
@@ -22,10 +23,13 @@ import se.rhel.res.Resources;
  * Created by Emil on 2014-03-06.
  * assigned to libgdx-gradle-template in se.rhel.model
  */
-public class ExternalPlayer extends DynamicEntity {
+public class ExternalPlayer extends DummyEntity {
 
     public static final String ANIMATION_IDLE = "idle";
     public static final String ANIMATION_WALK = "walk";
+
+    private static Vector2 mPlayersize = new Vector2(0.6f, 1.5f);
+    private static int MAX_HEALTH = 100;
 
     public enum PLAYERSTATE {
         idle, running
@@ -33,8 +37,6 @@ public class ExternalPlayer extends DynamicEntity {
 
     private PLAYERSTATE mState;
 
-    private BulletWorld mWorld;
-    private btRigidBody mBody;
     private AnimationController mAnimationController;
     private ModelInstance mAnimated;
     private Quaternion mRotation;
@@ -44,48 +46,25 @@ public class ExternalPlayer extends DynamicEntity {
 
     private int mClientId;
 
-    private static Vector2 mPlayersize = new Vector2(0.6f, 1.5f);
-
     public ExternalPlayer(int clientId, Vector3 position, BulletWorld world) {
-        super(7f);
-        mWorld = world;
+        super(world, mPlayersize.x, mPlayersize.y, new ModelInstance(Resources.INSTANCE.playerModelAnimated), MAX_HEALTH, 7, position);
         mClientId = clientId;
         mRotation = new Quaternion();
         mLastKnownPosition = new Vector3();
         mCurrentPosition = new Vector3();
-        mAnimated = new ModelInstance(Resources.INSTANCE.playerModelAnimated);
+        mAnimated = getInstance();
         mBox = mAnimated.model.calculateBoundingBox(new BoundingBox());
 
         getTransformation().setTranslation(position);
-        createPyshicsBody();
-
-
-        mState = PLAYERSTATE.idle;
-    }
-
-    private void createPyshicsBody() {
-        btCollisionShape playerShape = new btCapsuleShape(mPlayersize.x, mPlayersize.y);
-        btRigidBodyConstructionInfo playerInfo = new btRigidBodyConstructionInfo(5f, null, playerShape, Vector3.Zero);
-        btDefaultMotionState playerMotionState = new btDefaultMotionState(getTransformation());
 
         mAnimationController = new AnimationController(mAnimated);
         mAnimationController.setAnimation(ANIMATION_IDLE, -1);
 
-        mBody = new btRigidBody(playerInfo);
-        mBody.userData = this;
-        mBody.setMotionState(playerMotionState);
-        mBody.setGravity(Vector3.Zero);
-
-        mWorld.addToWorld(playerShape,
-                playerInfo,
-                playerMotionState,
-                mAnimated,
-                mBody);
+        mState = PLAYERSTATE.idle;
     }
 
     public void update(float delta) {
-
-        if(mCurrentPosition.dst(mLastKnownPosition) > 0f) {
+        if(mCurrentPosition.dst(mLastKnownPosition) > 0.01f) {
             if(ANIMATION_IDLE.equals(mAnimationController.current.animation.id)) {
                 mAnimationController.setAnimation(ANIMATION_WALK, -1, 2f, new AnimationController.AnimationListener() {
                     @Override
@@ -106,63 +85,9 @@ public class ExternalPlayer extends DynamicEntity {
 
         mAnimated.transform.getTranslation(mCurrentPosition);
         mAnimationController.update(delta);
-        mAnimated.transform.set(mBody.getCenterOfMassTransform());
-        mAnimated.transform.setTranslation(mBody.getCenterOfMassPosition().sub(new Vector3(0, mBox.getDimensions().y / 2.0f, 0)));
+        mAnimated.transform.set(getBody().getCenterOfMassTransform());
+        mAnimated.transform.setTranslation(getBody().getCenterOfMassPosition().sub(new Vector3(0, mBox.getDimensions().y / 2.0f, 0)));
         mAnimated.transform.getTranslation(mLastKnownPosition);
-    }
-
-    public void move(Vector3 direction) {
-        mBody.activate(true);
-        direction.x *= mMovespeed;
-        direction.z *= mMovespeed;
-        mBody.setLinearVelocity(direction);
-
-
-        if(Math.abs(direction.x) > 0 || Math.abs(direction.z) > 0) {
-            mState = PLAYERSTATE.running;
-        } else {
-            mState = PLAYERSTATE.idle;
-        }
-    }
-
-    public void rotate(Vector3 axis, float angle) {
-        Quaternion quat = new Quaternion().setFromAxis(axis, angle);
-        mBody.setCenterOfMassTransform(mBody.getWorldTransform().rotate(quat));
-    }
-
-    public Vector3 getPosition() {
-        return mBody.getCenterOfMassPosition();
-    }
-
-    public Vector3 getVelocity() {
-        return mBody.getLinearVelocity().cpy();
-    }
-
-    public void setPosition(float x, float y, float z, float rY, float rW) {
-        Vector3 toPos = new Vector3(x, y, z);
-        double mag = Math.sqrt(rW * rW + rY * rY);
-        mRotation = new Quaternion(0, (float)(rY/mag), 0, (float)(rW/mag));
-
-        Matrix4 m = new Matrix4();
-        m.rotate(mRotation);
-        m.setTranslation(toPos);
-
-        mBody.setCenterOfMassTransform(m);
-    }
-
-    public void setPosition(Vector3 val) {
-        mBody.translate(val);
-        Matrix4 m = new Matrix4(val, mBody.getOrientation(), new Vector3(1f, 1f, 1f));
-        mBody.setCenterOfMassTransform(m);
-    }
-
-    public void destroy() {
-        mWorld.getCollisionWorld().removeCollisionObject(mBody);
-        mBody.dispose();
-    }
-
-    public float getMoveSpeed() {
-        return mMovespeed;
     }
 
     public int getClientId() {

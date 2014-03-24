@@ -46,7 +46,9 @@ public class NetworkGameScreen extends BaseScreen {
         }
 
         mClient = Snaek.newClient(4455, 5544, "localhost");
+        //mClient = Snaek.newClient(4455, 5544, "192.168.0.101");
         mClientWorldModel = new ClientWorldModel(mClient);
+        mClientWorldModel.create();
 
         mPlayerInput = new PlayerInput();
         mWorldView = new WorldView(mClientWorldModel);
@@ -64,6 +66,7 @@ public class NetworkGameScreen extends BaseScreen {
 
         if (mPlayerInput.isShooting()) {
             Vector3[] rays = mClientWorldModel.getPlayer().shoot();
+            mClientWorldModel.checkShootCollision(rays);
 
             if(rays != null) {
                 mClient.sendTcp(new ShootPacket(mClient.getId(), rays[0], rays[1]));

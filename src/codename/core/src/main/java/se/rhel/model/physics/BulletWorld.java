@@ -1,4 +1,4 @@
-package se.rhel.model.physics;
+package se.rhel.model;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.VertexAttributes;
@@ -15,7 +15,6 @@ import com.badlogic.gdx.physics.bullet.dynamics.*;
 import com.badlogic.gdx.physics.bullet.linearmath.btDefaultMotionState;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.PerformanceCounter;
-import se.rhel.model.BaseModel;
 import se.rhel.res.Resources;
 
 /**
@@ -80,7 +79,7 @@ public class BulletWorld implements BaseModel {
         mBodies.add(levelBody);
         mCollisionWorld.addRigidBody(levelBody);
 
-        addSpheres();
+        //ddSpheres();
     }
 
     public void addSpheres() {
@@ -97,26 +96,30 @@ public class BulletWorld implements BaseModel {
         mBodyInfos.add(sphereInfo);
 
         // Create the spheres
+        for(float x = -5f; x <= 5f; x += 2f) {
+            for(float y = 10f; y <= 16f; y += 2f) {
+                for(float z = -5f; z <= 5f; z+= 2f) {
 
-        for(int i = 1; i < 11; i++) {
-            ModelInstance sphere = new ModelInstance(sphereModel);
-            sphere.materials.get(0).set(ColorAttribute.createDiffuse(0.5f* MathUtils.random(), 0.5f*MathUtils.random(), 0.5f*MathUtils.random(), 1));
-            sphere.transform.trn(15, i, 55);
-            instances.add(sphere);
-            btDefaultMotionState sphereMotionState = new btDefaultMotionState();
-            sphereMotionState.setWorldTransform(sphere.transform);
-            mMotionStates.add(sphereMotionState);
-            btRigidBody sphereBody = new btRigidBody(sphereInfo);
-            sphereBody.setMotionState(sphereMotionState);
-            mBodies.add(sphereBody);
-            mCollisionWorld.addRigidBody(sphereBody);
+                    ModelInstance sphere = new ModelInstance(sphereModel);
+                    sphere.materials.get(0).set(ColorAttribute.createDiffuse(x+0.5f* MathUtils.random(), y+0.5f*MathUtils.random(), z+0.5f*MathUtils.random(), 1));
+                    instances.add(sphere);
+                    sphere.transform.trn(x+0.1f* MathUtils.random(), y+0.1f*MathUtils.random(), z+0.1f*MathUtils.random());
+                    btDefaultMotionState sphereMotionState = new btDefaultMotionState();
+                    sphereMotionState.setWorldTransform(sphere.transform);
+                    mMotionStates.add(sphereMotionState);
+                    btRigidBody sphereBody = new btRigidBody(sphereInfo);
+                    sphereBody.userData = 99;
+                    sphereBody.setMotionState(sphereMotionState);
+                    mBodies.add(sphereBody);
+                    mCollisionWorld.addRigidBody(sphereBody);
+
+                }
+            }
         }
-
     }
 
     public void addToWorld(btCollisionShape shape, btRigidBodyConstructionInfo info, btDefaultMotionState motionState, ModelInstance instance, btRigidBody body) {
-        // instances.add(instance);
-        Resources.INSTANCE.modelInstanceArray.add(instance);
+        instances.add(instance);
         this.addToWorld(shape, info, motionState, body);
     }
 
@@ -130,6 +133,10 @@ public class BulletWorld implements BaseModel {
         mCollisionWorld.addRigidBody(body);
     }
 
+    public void removeInstance(ModelInstance instance) {
+        instances.removeValue(instance, true);
+    }
+
     @Override
     public void update(float delta) {
 
@@ -139,16 +146,9 @@ public class BulletWorld implements BaseModel {
         PERFORMANCE_COUNTER.stop();
 
         //int c = mMotionStates.size;
-        int c = instances.size;
-        for (int i = 0; i < c; i++) {
-            mMotionStates.get(i).getWorldTransform(instances.get(i).transform);
-        }
-
-//        for(btRigidBody b : mBodies) {
-//            //b.applyCentralForce(new Vector3(5, 0, 0));
-//            // b.getMotionState().
-//            // b.setLinearVelocity(new Vector3(10, 0 ,0));
-//            // b.applyGravity();
+//        int c = instances.size;
+//        for (int i = 0; i < c; i++) {
+//          mMotionStates.get(i).getWorldTransform(instances.get(i).transform);
 //        }
 
         PERFORMANCE = "Bullet: " + (int)(PERFORMANCE_COUNTER.load.value*100f) + " %";

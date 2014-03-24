@@ -30,6 +30,7 @@ public class Client implements EndPoint {
     private static long currLatency = -1L;
 
     Client() {
+        Log.set(Log.LEVEL_DEBUG);
         ClientPacketHandler mHandler = new ClientPacketHandler(this);
         mClientObserver = new ClientObserver();
         mHandler.setObserver(mClientObserver);
