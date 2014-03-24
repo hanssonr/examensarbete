@@ -90,7 +90,7 @@ public class Player extends DynamicEntity {
         mBody.userData = this;
         mBody.setMotionState(playerMotionState);
         mBody.setGravity(Vector3.Zero);
-        mBody.userData = this;
+        mBody.setCollisionFlags(btCollisionObject.CollisionFlags.CF_CHARACTER_OBJECT);
 
         rayTestCB = new ClosestRayResultCallback(Vector3.Zero, Vector3.Z);
 
@@ -165,6 +165,39 @@ public class Player extends DynamicEntity {
         }
 
         return rays;
+    }
+
+    public Vector3[] getVisualRepresentationShoot() {
+        // Visual representation of the starting point bottom right
+        Ray vis = mCamera.getPickRay(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        vis = vis.cpy();
+
+        // bottom right + 20%
+        Ray vis2 = mCamera.getPickRay(Gdx.graphics.getWidth(), Gdx.graphics.getHeight() * 0.8f);
+        vis2 = vis2.cpy();
+
+        // Middle + 20%
+        Ray vis3 = mCamera.getPickRay(Gdx.graphics.getWidth() / 2, (Gdx.graphics.getHeight() / 2));
+        vis3 = vis3.cpy();
+
+        // Middle
+        Ray vis4 = mCamera.getPickRay(Gdx.graphics.getWidth() / 2, (Gdx.graphics.getHeight() / 2) * 0.9f);
+        vis4 = vis4.cpy();
+
+        Vector3 from = new Vector3();
+        Vector3 from2 = new Vector3();
+        Vector3 to = new Vector3();
+        Vector3 to2 = new Vector3();
+
+        from.set(vis.origin);
+        from2.set(vis2.origin);
+        to.set(vis4.direction).scl(50f).add(from);
+        to2.set(vis3.direction).scl(50f).add(from2);
+
+        from.add(mCamera.direction.cpy().scl(0.2f));
+        from2.add(mCamera.direction.cpy().scl(0.2f));
+
+        return new Vector3[] {from, to, from2, to2};
     }
 
     private void updateCamera(float delta) {

@@ -1,6 +1,8 @@
 package se.rhel.network.model;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
+import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.utils.AnimationController;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Quaternion;
@@ -8,6 +10,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.math.collision.BoundingBox;
 import com.badlogic.gdx.physics.bullet.collision.btCapsuleShape;
+import com.badlogic.gdx.physics.bullet.collision.btCollisionObject;
 import com.badlogic.gdx.physics.bullet.collision.btCollisionShape;
 import com.badlogic.gdx.physics.bullet.dynamics.btRigidBody;
 import com.badlogic.gdx.physics.bullet.dynamics.btRigidBodyConstructionInfo;
@@ -41,6 +44,8 @@ public class ExternalPlayer extends DynamicEntity {
     private BoundingBox mBox;
 
     private Vector3 mLastKnownPosition, mCurrentPosition;
+    private Vector3 mFrom, mTo, mFrom2, mTo2;
+    private boolean mHasShot = false;
 
     private int mClientId;
 
@@ -71,10 +76,17 @@ public class ExternalPlayer extends DynamicEntity {
         mAnimationController = new AnimationController(mAnimated);
         mAnimationController.setAnimation(ANIMATION_IDLE, -1);
 
+        /*
+        for(int i = 0; i < mAnimated.materials.size; i++) {
+            mAnimated.materials.get(i).set(ColorAttribute.createDiffuse(Color.RED));
+        }
+        */
+
         mBody = new btRigidBody(playerInfo);
         mBody.userData = this;
         mBody.setMotionState(playerMotionState);
         mBody.setGravity(Vector3.Zero);
+        mBody.setCollisionFlags(0);
 
         mWorld.addToWorld(playerShape,
                 playerInfo,
@@ -136,6 +148,26 @@ public class ExternalPlayer extends DynamicEntity {
 
     public Vector3 getVelocity() {
         return mBody.getLinearVelocity().cpy();
+    }
+
+    public void shoot(Vector3 from, Vector3 to, Vector3 from2, Vector3 to2) {
+        mHasShot = true;
+        mFrom = from;
+        mTo = to;
+        mFrom2 = from2;
+        mTo2 = to2;
+    }
+
+    public boolean hasShot() {
+        return mHasShot;
+    }
+
+    public void setShot(boolean val) {
+        mHasShot = val;
+    }
+
+    public Vector3[] getVisualShootRepresentation() {
+        return new Vector3[] {mFrom, mTo, mFrom2, mTo2};
     }
 
     public void setPosition(float x, float y, float z, float rY, float rW) {

@@ -53,6 +53,7 @@ public class BulletWorld implements BaseModel {
 
     public BulletWorld() {
         create();
+        new MyContactListener();
     }
 
     @Override

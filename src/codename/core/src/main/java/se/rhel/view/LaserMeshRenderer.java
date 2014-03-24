@@ -2,6 +2,8 @@ package se.rhel.view;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.*;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.g3d.decals.Decal;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.math.collision.Ray;
@@ -15,7 +17,7 @@ import se.rhel.res.Resources;
  * Created by Emil on 2014-03-01.
  * assigned to libgdx-gradle-template in se.rhel.view
  */
-public class LaserMeshTestRenderer {
+public class LaserMeshRenderer {
 
     private Color c = new Color(1f, 1f, 1f, 1f);
     private Color c1 = new Color(1f, 0f, 0f, 1f);
@@ -69,7 +71,7 @@ public class LaserMeshTestRenderer {
     //The index position
     private int idx = 0;
 
-    public LaserMeshTestRenderer(FPSCamera cam) {
+    public LaserMeshRenderer(FPSCamera cam) {
         mesh = new Mesh(false, 6, 6,
                 new VertexAttribute(VertexAttributes.Usage.Position, POSITION_COMPONENTS, "a_position"),
                 new VertexAttribute(VertexAttributes.Usage.Color, COLOR_COMPONENTS, "a_color"),
@@ -79,6 +81,22 @@ public class LaserMeshTestRenderer {
         this.cam = cam;
 
         createMeshVertices();
+    }
+
+    public LaserMeshRenderer(FPSCamera cam, Vector3[] verts) {
+        mesh = new Mesh(false, 6, 6,
+                new VertexAttribute(VertexAttributes.Usage.Position, POSITION_COMPONENTS, "a_position"),
+                new VertexAttribute(VertexAttributes.Usage.Color, COLOR_COMPONENTS, "a_color"),
+                new VertexAttribute(VertexAttributes.Usage.TextureCoordinates, 2, ShaderProgram.TEXCOORD_ATTRIBUTE+"0" ));
+        mesh.setIndices(new short[]{0, 1, 2, 2, 3, 0});
+        shader = createMeshShader();
+        this.cam = cam;
+
+        from = verts[0];
+        to = verts[1];
+        from2 = verts[2];
+        to2 = verts[3];
+
     }
 
     private void createMeshVertices() {

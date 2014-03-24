@@ -4,11 +4,8 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import se.rhel.Client;
 import se.rhel.model.*;
-import se.rhel.network.packet.DamagePacket;
-import se.rhel.network.packet.PlayerMovePacket;
+import se.rhel.network.packet.*;
 import se.rhel.network.model.ExternalPlayer;
-import se.rhel.network.packet.PlayerPacket;
-import se.rhel.network.packet.RequestInitialStatePacket;
 import se.rhel.observer.ClientControllerListener;
 import se.rhel.observer.ClientListener;
 import se.rhel.packet.Packet;
@@ -58,6 +55,10 @@ public class ClientWorldModel extends WorldModel implements ClientListener, Clie
         return null;
     }
 
+    public Array<ExternalPlayer> getExternalPlayers() {
+        return mPlayers;
+    }
+
     @Override
     public void connected() {
 
@@ -98,6 +99,13 @@ public class ClientWorldModel extends WorldModel implements ClientListener, Clie
             DamagePacket dp = (DamagePacket)obj;
 
             Log.debug("ClientWorldModel", "Received DamagePacket, Playerid: " + dp.mPlayerId + " got shot");
+        }
+        else if (obj instanceof ShootPacket) {
+            // Visual representation of shoot
+            Log.debug("ServerWorldModel", "ShotPacket received on client");
+            ShootPacket sp = (ShootPacket)obj;
+
+            getExternalPlayer(sp.clientId).shoot(sp.vFrom, sp.vTo, sp.vFrom2, sp.vTo2);
         }
     }
 

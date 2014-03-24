@@ -17,6 +17,7 @@ import com.badlogic.gdx.physics.bullet.linearmath.btIDebugDraw;
 import com.badlogic.gdx.physics.bullet.linearmath.btVector3;
 import se.rhel.Client;
 import se.rhel.graphics.FrontFaceDepthShaderProvider;
+import se.rhel.model.client.ClientWorldModel;
 import se.rhel.model.physics.BulletWorld;
 import se.rhel.model.FPSCamera;
 import se.rhel.model.WorldModel;
@@ -45,8 +46,8 @@ public class WorldView {
     private ModelBatch mModelBatch;
     private ShapeRenderer mCrosshairRenderer;
     private BulletHoleRenderer mBulletHoleRenderer;
-    private LaserRenderer mLaserRenderer;
     private EntitySystemRenderer mEntitySystem;
+    private DecalRenderer mDecalRenderer;
 
     private WorldModel mWorldModel;
 
@@ -77,6 +78,7 @@ public class WorldView {
         mCrosshairRenderer = new ShapeRenderer();
         mBulletHoleRenderer = new BulletHoleRenderer(mWorldModel.getCamera());
         mEntitySystem = new EntitySystemRenderer();
+        mDecalRenderer = new DecalRenderer(mWorldModel.getCamera());
 
         mAimDebugDrawer = new DebugDrawer();
         mDebugDrawer = new DebugDrawer();
@@ -113,12 +115,15 @@ public class WorldView {
         // mAnimationController.update(delta);
         weaponCam.position.set(mWorldModel.getCamera().position);
 
+
         if(PlayerInput.DRAW_MESH) {
             // Cel-shading
             buffer1.begin();
             Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
             Gdx.gl.glClearColor(0, 1, 1, 1);
             Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
+            Gdx.gl.glEnable(GL20.GL_BLEND);
+            Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
 //
 //            Gdx.gl.glCullFace(GL20.GL_BACK);
 //            Gdx.gl.glEnable(GL20.GL_DEPTH_TEST);
@@ -171,6 +176,8 @@ public class WorldView {
             Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
             Gdx.gl.glClearColor(0, 1, 1, 1);
             Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
+            Gdx.gl.glEnable(GL20.GL_BLEND);
+            Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
 
             mModelBatch.begin(mWorldModel.getCamera());
             mModelBatch.render(Resources.INSTANCE.modelInstanceArray);
@@ -226,9 +233,20 @@ public class WorldView {
 
         if(mWorldModel.getPlayer().mHasShot) {
             mWorldModel.getPlayer().mHasShot = false;
-            mLaserView.add();
+            mLaserView.add(mWorldModel.getPlayer().getVisualRepresentationShoot());
             SoundManager.INSTANCE.playSound(SoundManager.SoundType.LASER);
         }
+
+        // Check if any external player has shot
+        for(int i = 0; i < ((ClientWorldModel)mWorldModel).getExternalPlayers().size; i++) {
+            if(((ClientWorldModel)mWorldModel).getExternalPlayers().get(i).hasShot()) {
+                ((ClientWorldModel)mWorldModel).getExternalPlayers().get(i).setShot(false);
+
+                mLaserView.add(((ClientWorldModel)mWorldModel).getExternalPlayers().get(i).getVisualShootRepresentation());
+                SoundManager.INSTANCE.playSound(SoundManager.SoundType.LASER);
+            }
+        }
+
         mLaserView.render(delta);
 
         // mLaserRenderer.draw(delta);
@@ -243,6 +261,11 @@ public class WorldView {
         Gdx.gl.glClear(GL10.GL_DEPTH_BUFFER_BIT);
         mModelBatch.render(mWorldModel.getBulletWorld().fpsModel, mEnvironment);
         mModelBatch.end();
+
+        for(int i = 0; i < ((ClientWorldModel)mWorldModel).getExternalPlayers().size; i++) {
+            mDecalRenderer.draw(delta, ((ClientWorldModel)mWorldModel).getExternalPlayers().get(i).getPosition());
+        }
+
     }
 
     /**

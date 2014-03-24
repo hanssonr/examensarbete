@@ -161,6 +161,9 @@ public class ServerWorldModel extends WorldModel implements ServerListener {
             ShootPacket sp = (ShootPacket)obj;
 
             checkShootCollision(sp.mFrom, sp.mTo);
+
+            ShootPacket sendP = new ShootPacket(sp.clientId, Vector3.Zero, Vector3.Zero, sp.vFrom, sp.vTo, sp.vFrom2, sp.vTo2);
+            mServer.sendToAllTCPExcept(sendP, con);
         }
     }
 }
