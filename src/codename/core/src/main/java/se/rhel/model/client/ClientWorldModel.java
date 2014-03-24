@@ -99,12 +99,10 @@ public class ClientWorldModel extends WorldModel implements ClientListener, Clie
     @Override
     public void sendTCP(Packet packet) {
         Log.info("ClientWorldModel", "Input received from Controller - TCP send");
-        // mClient.sendTcp();
     }
 
     @Override
     public void sendUDP(Packet packet) {
         Log.info("ClientWorldModel", "Input received from Controller - UDP send");
-        // mClient.sendUdpFromServer();
     }
 }
