@@ -2,19 +2,12 @@ package se.rhel.network.model;
 
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.graphics.g3d.utils.AnimationController;
-import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Quaternion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.math.collision.BoundingBox;
-import com.badlogic.gdx.physics.bullet.collision.btCapsuleShape;
-import com.badlogic.gdx.physics.bullet.collision.btCollisionShape;
-import com.badlogic.gdx.physics.bullet.dynamics.btRigidBody;
-import com.badlogic.gdx.physics.bullet.dynamics.btRigidBodyConstructionInfo;
-import com.badlogic.gdx.physics.bullet.linearmath.btDefaultMotionState;
-import se.rhel.model.BulletWorld;
-import se.rhel.model.entity.DamageableEntity;
 import se.rhel.model.entity.DummyEntity;
+import se.rhel.model.physics.BulletWorld;
 import se.rhel.res.Resources;
 
 /**

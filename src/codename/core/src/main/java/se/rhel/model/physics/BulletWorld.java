@@ -1,4 +1,4 @@
-package se.rhel.model;
+package se.rhel.model.physics;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.VertexAttributes;
@@ -15,6 +15,7 @@ import com.badlogic.gdx.physics.bullet.dynamics.*;
 import com.badlogic.gdx.physics.bullet.linearmath.btDefaultMotionState;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.PerformanceCounter;
+import se.rhel.model.BaseModel;
 import se.rhel.res.Resources;
 
 /**

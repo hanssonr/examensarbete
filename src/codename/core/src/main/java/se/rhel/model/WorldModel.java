@@ -3,8 +3,9 @@ package se.rhel.model;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.bullet.collision.*;
 import com.badlogic.gdx.physics.bullet.linearmath.btVector3;
-import se.rhel.model.entity.DamageableEntity;
+import se.rhel.model.entity.DamageAbleEntity;
 import se.rhel.model.entity.DummyEntity;
+import se.rhel.model.physics.BulletWorld;
 import se.rhel.view.BulletHoleRenderer;
 
 import java.util.ArrayList;
@@ -20,7 +21,7 @@ public class WorldModel implements BaseModel {
     private Player mPlayer;
     private BulletWorld mBulletWorld;
     private DummyEntity dummyplayer;
-    private ArrayList<DamageableEntity> mDestroy = new ArrayList<>();
+    private ArrayList<DamageAbleEntity> mDestroy = new ArrayList<>();
 
     public WorldModel() {
         mBulletWorld = new BulletWorld();
@@ -79,10 +80,10 @@ public class WorldModel implements BaseModel {
 
             Object hit = obj.userData;
 
-            if(hit instanceof DamageableEntity) {
-                ((DamageableEntity) hit).damageEntity(25);
-                System.out.println("HIT: " + ((DamageableEntity) hit).getHealth());
-                if(!((DamageableEntity) hit).isAlive()) mDestroy.add((DamageableEntity) hit);
+            if(hit instanceof DamageAbleEntity) {
+                ((DamageAbleEntity) hit).damageEntity(25);
+                System.out.println("HIT: " + ((DamageAbleEntity) hit).getHealth());
+                if(!((DamageAbleEntity) hit).isAlive()) mDestroy.add((DamageAbleEntity) hit);
 
                 //mShootCollisions.add(obj);
             }

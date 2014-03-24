@@ -1,18 +1,12 @@
 package se.rhel.model.server;
 
 import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.physics.bullet.collision.ClosestRayResultCallback;
-import com.badlogic.gdx.physics.bullet.collision.btCollisionObject;
 import com.badlogic.gdx.utils.Array;
 import se.rhel.Connection;
 import se.rhel.model.WorldModel;
 import se.rhel.network.model.ExternalPlayer;
 import se.rhel.network.packet.*;
-import se.rhel.packet.TestMaxPacket;
-import se.rhel.packet.TestPacket;
 import se.rhel.Server;
-import se.rhel.model.BaseModel;
-import se.rhel.model.BulletWorld;
 import se.rhel.model.Player;
 import se.rhel.observer.ServerListener;
 import se.rhel.util.Log;
