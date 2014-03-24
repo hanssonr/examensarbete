@@ -17,7 +17,6 @@ import com.badlogic.gdx.physics.bullet.linearmath.btIDebugDraw;
 import com.badlogic.gdx.physics.bullet.linearmath.btVector3;
 import se.rhel.Client;
 import se.rhel.graphics.FrontFaceDepthShaderProvider;
-import se.rhel.model.client.ClientWorldModel;
 import se.rhel.model.physics.BulletWorld;
 import se.rhel.model.FPSCamera;
 import se.rhel.model.WorldModel;
@@ -115,69 +114,31 @@ public class WorldView {
         // mAnimationController.update(delta);
         weaponCam.position.set(mWorldModel.getCamera().position);
 
-
         if(PlayerInput.DRAW_MESH) {
             // Cel-shading
             buffer1.begin();
-            Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-            Gdx.gl.glClearColor(0, 1, 1, 1);
-            Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
-            Gdx.gl.glEnable(GL20.GL_BLEND);
-            Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
-//
-//            Gdx.gl.glCullFace(GL20.GL_BACK);
-//            Gdx.gl.glEnable(GL20.GL_DEPTH_TEST);
-//            Gdx.gl.glDepthFunc(GL20.GL_LEQUAL);
-//            Gdx.gl.glDepthMask(true);
+                Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+                Gdx.gl.glClearColor(0, 1, 1, 1);
+                Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
 
-            mModelBatch.begin(mWorldModel.getCamera());
-            mModelBatch.render(Resources.INSTANCE.modelInstanceArray);
-            mModelBatch.render(mWorldModel.getBulletWorld().instances, mEnvironment);
-            mModelBatch.render(mWorldModel.getBulletWorld().levelInstance, mEnvironment);
-            mModelBatch.end();
+                mModelBatch.begin(mWorldModel.getCamera());
+                    mModelBatch.render(mWorldModel.getBulletWorld().levelInstance, mEnvironment);
+                    mModelBatch.render(Resources.INSTANCE.modelInstanceArray);
+                    mModelBatch.render(mWorldModel.getBulletWorld().instances, mEnvironment);
+                mModelBatch.end();
 
-            mBulletHoleRenderer.draw(delta);
-
+                mBulletHoleRenderer.draw(delta);
             buffer1.end();
 
             buffer1.getColorBufferTexture().bind();
-            // Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
             toonShader.begin();
-            fullscreenQuad.render(toonShader, GL20.GL_TRIANGLE_STRIP, 0, 4);
+                fullscreenQuad.render(toonShader, GL20.GL_TRIANGLE_STRIP, 0, 4);
             toonShader.end();
-
-            /*
-            depthFrameBuffer.begin();
-            Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-            Gdx.gl.glClearColor(0, 1, 1, 1);
-            Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
-            Gdx.gl.glCullFace(GL20.GL_BACK);
-            Gdx.gl.glEnable(GL20.GL_DEPTH_TEST);
-            Gdx.gl.glDepthFunc(GL20.GL_LEQUAL);
-            Gdx.gl.glDepthMask(true);
-
-            depthModelBatch.begin(mServerWorldModel.getCamera());
-            depthModelBatch.render(mServerWorldModel.getBulletWorld().levelInstance, mEnvironment);
-            depthModelBatch.end();
-            depthFrameBuffer.end();
-
-            depthFrameBuffer.getColorBufferTexture().bind();
-            outLineShader.begin();
-            Gdx.gl.glEnable(GL10.GL_BLEND);
-            Gdx.gl.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
-            // Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
-
-            fullscreenQuad.render(outLineShader, GL20.GL_TRIANGLE_STRIP, 0, 4);
-            outLineShader.end();
-            */
-
 
         } else {
             Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
             Gdx.gl.glClearColor(0, 1, 1, 1);
             Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
-            Gdx.gl.glEnable(GL20.GL_BLEND);
-            Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
 
             mModelBatch.begin(mWorldModel.getCamera());
             mModelBatch.render(Resources.INSTANCE.modelInstanceArray);
@@ -261,11 +222,6 @@ public class WorldView {
         Gdx.gl.glClear(GL10.GL_DEPTH_BUFFER_BIT);
         mModelBatch.render(mWorldModel.getBulletWorld().fpsModel, mEnvironment);
         mModelBatch.end();
-
-        for(int i = 0; i < ((ClientWorldModel)mWorldModel).getExternalPlayers().size; i++) {
-            mDecalRenderer.draw(delta, ((ClientWorldModel)mWorldModel).getExternalPlayers().get(i).getPosition());
-        }
-
     }
 
     /**

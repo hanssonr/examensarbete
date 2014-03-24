@@ -30,7 +30,6 @@ public class ClientPacketHandler extends BasePacketHandler {
 
         if (mObj instanceof HandshakeResponsePacket) {
             HandshakeResponsePacket pkt = (HandshakeResponsePacket)mObj;
-            Log.debug("ClientPacketHandler", mObj.getClass() + " ID: " + pkt.mId);
             mClient.setId(pkt.mId);
             UdpConnection c = mClient.getUDPConnection();
 
@@ -45,10 +44,7 @@ public class ClientPacketHandler extends BasePacketHandler {
             mClient.sendTcp(new ConnectionDetailPacket(mClient.getId(), c.getLocalPort()));
         }
         else if (mObj instanceof LatencyPacket) {
-
             mClient.setEndLatency();
-            Log.debug("ClientPacketHandler", "Latency: " + mClient.getLatency() + " ms");
-
         }
         else {
             ((ClientObserver)mObserver).received(mObj);

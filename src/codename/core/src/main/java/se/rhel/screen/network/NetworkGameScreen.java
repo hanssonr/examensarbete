@@ -65,9 +65,9 @@ public class NetworkGameScreen extends BaseScreen {
         if (mPlayerInput.isShooting()) {
             Vector3[] rays = mClientWorldModel.getPlayer().shoot();
             Vector3[] visVerts = mClientWorldModel.getPlayer().getVisualRepresentationShoot();
-
+            mClientWorldModel.checkShootCollision(rays);
             if(rays != null) {
-                mClient.sendTcp(new ShootPacket(mClient.getId(), rays[0], rays[1], visVerts[0], visVerts[1], visVerts[2], visVerts[3]));
+                mClient.sendTcp(new ShootPacket(mClient.getId(), rays[0], rays[1]));
             }
         }
 

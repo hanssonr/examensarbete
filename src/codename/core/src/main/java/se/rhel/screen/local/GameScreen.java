@@ -2,6 +2,7 @@ package se.rhel.screen.local;
 
 import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.math.Vector3;
 import se.rhel.CodeName;
 import se.rhel.model.WorldModel;
 import se.rhel.view.input.PlayerInput;
@@ -27,6 +28,7 @@ public class GameScreen extends BaseScreen {
         Gdx.app.setLogLevel(Application.LOG_NONE);
 
         mWorldModel = new WorldModel();
+        mWorldModel.create();
 
         mPlayerInput = new PlayerInput();
         mWorldView = new WorldView(mWorldModel);
@@ -43,7 +45,7 @@ public class GameScreen extends BaseScreen {
         mWorldModel.getPlayer().move(mPlayerInput.getDirection());
 
         if (mPlayerInput.isShooting())
-            mWorldModel.getPlayer().shoot();
+            mWorldModel.checkShootCollision(mWorldModel.getPlayer().shoot());
 
         if (mPlayerInput.isJumping())
             mWorldModel.getPlayer().jump();
