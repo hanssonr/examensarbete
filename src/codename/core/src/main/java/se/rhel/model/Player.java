@@ -13,6 +13,7 @@ import com.badlogic.gdx.physics.bullet.collision.btCollisionShape;
 import com.badlogic.gdx.physics.bullet.dynamics.btRigidBodyConstructionInfo;
 import com.badlogic.gdx.physics.bullet.linearmath.btDefaultMotionState;
 import com.badlogic.gdx.physics.bullet.linearmath.btVector3;
+import se.rhel.model.entity.DamageAbleEntity;
 import se.rhel.model.entity.DynamicEntity;
 import se.rhel.model.physics.BulletWorld;
 import se.rhel.res.Resources;
@@ -24,7 +25,7 @@ import java.lang.reflect.Array;
 /**
  * Group: Logic
  */
-public class Player extends DynamicEntity {
+public class Player extends DamageAbleEntity {
 
     public enum PLAYERSTATE {
         idle, running
@@ -236,7 +237,7 @@ public class Player extends DynamicEntity {
     public void move(Vector3 direction) {
         getBody().activate(true);
 
-        mVelocity.set(0,0,0);
+        mVelocity.set(0, 0, 0);
         mVelocity.add(mCamera.getForward().scl(direction.z * mMovespeed));
         mVelocity.add(mCamera.getRight().scl(direction.x * mMovespeed));
 

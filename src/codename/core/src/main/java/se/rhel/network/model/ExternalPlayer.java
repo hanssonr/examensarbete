@@ -95,6 +95,18 @@ public class ExternalPlayer extends DummyEntity {
         mTo2 = to2;
     }
 
+    public boolean hasShot() {
+        return mHasShot;
+    }
+
+    public void setShot(boolean val) {
+        mHasShot = val;
+    }
+
+    public Vector3[] getVisualShootRepresentation() {
+        return new Vector3[] {mFrom, mTo, mFrom2, mTo2};
+    }
+
     public int getClientId() {
         return mClientId;
     }

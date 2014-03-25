@@ -19,5 +19,7 @@ public class MyPacketRegisterInitializer {
         PacketManager.getInstance().registerPacket(PlayerMovePacket.class);
         PacketManager.getInstance().registerPacket(ShootPacket.class);
         PacketManager.getInstance().registerPacket(DamagePacket.class);
+        PacketManager.getInstance().registerPacket(BulletHolePacket.class);
+        PacketManager.getInstance().registerPacket(DeadEntityPacket.class);
     }
 }

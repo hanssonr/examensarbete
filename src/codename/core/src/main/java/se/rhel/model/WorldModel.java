@@ -21,7 +21,7 @@ public class WorldModel implements BaseModel {
     private Player mPlayer;
     private BulletWorld mBulletWorld;
     private DummyEntity dummyplayer;
-    private ArrayList<DamageAbleEntity> mDestroy = new ArrayList<>();
+    protected ArrayList<DamageAbleEntity> mDestroy = new ArrayList<>();
 
     public WorldModel() {
         mBulletWorld = new BulletWorld();
@@ -53,58 +53,15 @@ public class WorldModel implements BaseModel {
             mDestroy.get(i).destroy();
             i++;
         }
-
-
     }
 
-    public void checkShootCollision(Vector3[] fromTo) {
-        Vector3 from = fromTo[0];
-        Vector3 to = fromTo[1];
-
-        //Create ray
-        ClosestRayResultCallback res = new ClosestRayResultCallback(from, to);
-
-        //Check if it collides with anything that could loose health
-        getBulletWorld().getCollisionWorld().rayTest(from, to, res);
-
-        if(res.hasHit()) {
-            btCollisionObject obj = res.getCollisionObject();
-
-            if(obj.isStaticOrKinematicObject()) {
-                btVector3 v = res.getHitPointWorld();
-                btVector3 t = res.getHitNormalWorld();
-                BulletHoleRenderer.addBullethole(new Vector3(v.getX(), v.getY(), v.getZ()), new Vector3(t.getX(), t.getY(), t.getZ()).nor());
-                v.dispose();
-                t.dispose();
-            }
-
-            Object hit = obj.userData;
-
-            if(hit instanceof DamageAbleEntity) {
-                ((DamageAbleEntity) hit).damageEntity(25);
-                System.out.println("HIT: " + ((DamageAbleEntity) hit).getHealth());
-                if(!((DamageAbleEntity) hit).isAlive()) mDestroy.add((DamageAbleEntity) hit);
-
-                //mShootCollisions.add(obj);
-            }
-//            else if (obj.userData == 99) {
-//                final btRigidBody body = (btRigidBody)(obj);
-//                body.activate();
-//                Vector3 dir = to.cpy().sub(from);
-//                dir.nor();
-//                body.applyCentralImpulse(dir.scl(20f));
-//            }
-        }
-    }
 
     public BulletWorld getBulletWorld() {
         return mBulletWorld;
     }
-
     public Player getPlayer() {
         return mPlayer;
     }
-
     public FPSCamera getCamera() {
         return mCamera;
     }

@@ -4,16 +4,14 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import se.rhel.Client;
 import se.rhel.model.*;
-import se.rhel.network.packet.DamagePacket;
-import se.rhel.network.packet.PlayerMovePacket;
+import se.rhel.network.packet.*;
 import se.rhel.network.model.ExternalPlayer;
-import se.rhel.network.packet.PlayerPacket;
-import se.rhel.network.packet.RequestInitialStatePacket;
 import se.rhel.observer.ClientControllerListener;
 import se.rhel.observer.ClientListener;
 import se.rhel.packet.Packet;
 import se.rhel.packet.TestPacket;
 import se.rhel.util.Log;
+import se.rhel.view.BulletHoleRenderer;
 
 import java.util.ArrayList;
 
@@ -95,20 +93,48 @@ public class ClientWorldModel extends WorldModel implements ClientListener, Clie
                 }
 
                 // Set the position & rotation
-                ep.setPosition(pmp.pX, pmp.pY, pmp.pZ, pmp.rY, pmp.rW);
+                ep.setPositionAndRotation(pmp.pX, pmp.pY, pmp.pZ, pmp.rY, pmp.rW);
             }
         }
         else if (obj instanceof DamagePacket) {
+            // A player has been damaged
             DamagePacket dp = (DamagePacket)obj;
 
-            Log.debug("ClientWorldModel", "Received DamagePacket, Playerid: " + dp.mPlayerId + " got shot");
+            // Well, darn, it was me
+            if(dp.clientId == mClient.getId()) {
+                getPlayer().damageEntity(dp.amount);
+            } else {
+                // Phew, it was somebody else
+                ExternalPlayer ep = getExternalPlayer(dp.clientId);
+                ep.damageEntity(dp.amount);
+            }
+
+            Log.debug("ClientWorldModel", "Received DamagePacket, Playerid: " + dp.clientId + " got shot with amount: " + dp.amount);
         }
         else if (obj instanceof ShootPacket) {
             // Visual representation of shoot
-            Log.debug("ServerWorldModel", "ShotPacket received on client");
+            Log.debug("ClientWorldModel", "ShotPacket received on client");
             ShootPacket sp = (ShootPacket)obj;
 
             getExternalPlayer(sp.clientId).shoot(sp.vFrom, sp.vTo, sp.vFrom2, sp.vTo2);
+        }
+        else if (obj instanceof BulletHolePacket) {
+            Log.debug("ClientWorldModel", "BulletHolePacket received on client");
+            // Someone else has shot, and missed, thus bullethole at this position
+            BulletHolePacket bhp = (BulletHolePacket)obj;
+
+            // Draw bullethole
+            BulletHoleRenderer.addBullethole(bhp.hitWorld, bhp.hitNormal);
+        }
+        else if (obj instanceof DeadEntityPacket) {
+            DeadEntityPacket dep = (DeadEntityPacket)obj;
+
+            if(dep.clientId == mClient.getId()) {
+                Log.debug("ClientWorldModel", "I AM DEAD");
+            } else {
+                Log.debug("ClientWorldModel", "Someone else is DEAD with id: " + dep.clientId);
+            }
+
         }
     }
 

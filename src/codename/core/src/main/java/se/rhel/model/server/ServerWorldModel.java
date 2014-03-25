@@ -6,6 +6,8 @@ import com.badlogic.gdx.physics.bullet.collision.btCollisionObject;
 import com.badlogic.gdx.utils.Array;
 import se.rhel.Connection;
 import se.rhel.model.WorldModel;
+import se.rhel.model.entity.DamageAbleEntity;
+import se.rhel.model.physics.MyContactListener;
 import se.rhel.network.model.ExternalPlayer;
 import se.rhel.network.packet.*;
 import se.rhel.Server;
@@ -138,10 +140,35 @@ public class ServerWorldModel extends WorldModel implements ServerListener {
             Log.debug("ServerWorldModel", "ShotPacket received on server");
             ShootPacket sp = (ShootPacket)obj;
 
-            checkShootCollision(sp.mFrom, sp.mTo);
-
-            ShootPacket sendP = new ShootPacket(sp.clientId, Vector3.Zero, Vector3.Zero, sp.vFrom, sp.vTo, sp.vFrom2, sp.vTo2);
+            // Resend to other clients that a player has shot for visual feedback
+            ShootPacket sendP = new ShootPacket(sp.clientId, sp.mFrom, sp.mTo, sp.vFrom, sp.vTo, sp.vFrom2, sp.vTo2);
             mServer.sendToAllTCPExcept(sendP, con);
+
+            // But what should we do on the server, eh?
+            MyContactListener.CollisionObject co = MyContactListener.checkShootCollision(getBulletWorld().getCollisionWorld(), new Vector3[]{sp.mFrom, sp.mTo});
+            if(co.type == MyContactListener.CollisionObject.CollisionType.WORLD) {
+                // World hit
+                mServer.sendToAllTCPExcept(new BulletHolePacket(co.hitPoint, co.hitNormal), con);
+            } else {
+                // Entity hit
+                if(co.entity instanceof  ExternalPlayer) {
+                    ExternalPlayer ep = (ExternalPlayer) co.entity;
+                    // Damage player on server
+                    ep.damageEntity(25);
+                    Log.debug("ServerWorldModel", "ServerHit: " + co.entity.getHealth());
+
+                    // Notify clients
+                    mServer.sendToAllTCP(new DamagePacket(ep.getClientId(), 25));
+
+                    // If the entity died
+                    if(!co.entity.isAlive()) {
+                        mDestroy.add(co.entity);
+
+                        // .. also notify clients
+                        mServer.sendToAllTCP(new DeadEntityPacket(ep.getClientId()));
+                    }
+                }
+            }
         }
     }
 }

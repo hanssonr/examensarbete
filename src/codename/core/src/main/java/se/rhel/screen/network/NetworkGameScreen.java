@@ -7,10 +7,12 @@ import se.rhel.Client;
 import se.rhel.CodeName;
 import se.rhel.Snaek;
 import se.rhel.model.FPSCamera;
+import se.rhel.model.physics.MyContactListener;
 import se.rhel.network.packet.PlayerMovePacket;
 import se.rhel.network.packet.ShootPacket;
 import se.rhel.screen.BaseScreen;
 import se.rhel.Server;
+import se.rhel.view.BulletHoleRenderer;
 import se.rhel.view.input.PlayerInput;
 import se.rhel.model.client.ClientWorldModel;
 import se.rhel.model.server.ServerWorldModel;
@@ -47,6 +49,7 @@ public class NetworkGameScreen extends BaseScreen {
 
         mClient = Snaek.newClient(4455, 5544, "localhost");
         mClientWorldModel = new ClientWorldModel(mClient);
+        mClientWorldModel.create();
 
         mPlayerInput = new PlayerInput();
         mWorldView = new WorldView(mClientWorldModel);
@@ -65,9 +68,18 @@ public class NetworkGameScreen extends BaseScreen {
         if (mPlayerInput.isShooting()) {
             Vector3[] rays = mClientWorldModel.getPlayer().shoot();
             Vector3[] visVerts = mClientWorldModel.getPlayer().getVisualRepresentationShoot();
-            mClientWorldModel.checkShootCollision(rays);
+
+            // Check shoot collision local
+            MyContactListener.CollisionObject co = MyContactListener.checkShootCollision(mClientWorldModel.getBulletWorld().getCollisionWorld(), rays);
+            // If we have hit the world, just draw a bullethole (it doesn't matter if the server says otherwise)
+            if(co.type == MyContactListener.CollisionObject.CollisionType.WORLD) {
+                // Draw bullethole
+                BulletHoleRenderer.addBullethole(co.hitPoint, co.hitNormal);
+            }
+
             if(rays != null) {
-                mClient.sendTcp(new ShootPacket(mClient.getId(), rays[0], rays[1]));
+                // Also notify the server that we have shot
+                mClient.sendTcp(new ShootPacket(mClient.getId(), rays[0], rays[1], visVerts[0], visVerts[1], visVerts[2], visVerts[3]));
             }
         }
 

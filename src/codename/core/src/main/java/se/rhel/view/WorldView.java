@@ -17,6 +17,7 @@ import com.badlogic.gdx.physics.bullet.linearmath.btIDebugDraw;
 import com.badlogic.gdx.physics.bullet.linearmath.btVector3;
 import se.rhel.Client;
 import se.rhel.graphics.FrontFaceDepthShaderProvider;
+import se.rhel.model.client.ClientWorldModel;
 import se.rhel.model.physics.BulletWorld;
 import se.rhel.model.FPSCamera;
 import se.rhel.model.WorldModel;
@@ -107,6 +108,7 @@ public class WorldView {
         */
         mLaserView = new LaserView(worldModel);
         SoundManager.INSTANCE.playMusic(true, .2f);
+        mDecalRenderer = new DecalRenderer(mWorldModel.getCamera());
     }
 
     public void render(float delta) {
@@ -147,8 +149,6 @@ public class WorldView {
             mModelBatch.render(mWorldModel.getBulletWorld().levelInstance, mEnvironment);
             mModelBatch.end();
         }
-
-
 
         if(PlayerInput.DRAW_DEBUG_INFO) {
             mFPSRenderer.draw(delta);
@@ -199,14 +199,17 @@ public class WorldView {
         }
 
         // Check if any external player has shot
-        for(int i = 0; i < ((ClientWorldModel)mWorldModel).getExternalPlayers().size; i++) {
-            if(((ClientWorldModel)mWorldModel).getExternalPlayers().get(i).hasShot()) {
-                ((ClientWorldModel)mWorldModel).getExternalPlayers().get(i).setShot(false);
+        if(mWorldModel instanceof  ClientWorldModel) {
+            for(int i = 0; i < ((ClientWorldModel)mWorldModel).getExternalPlayers().size; i++) {
+                if(((ClientWorldModel)mWorldModel).getExternalPlayers().get(i).hasShot()) {
+                    ((ClientWorldModel)mWorldModel).getExternalPlayers().get(i).setShot(false);
 
-                mLaserView.add(((ClientWorldModel)mWorldModel).getExternalPlayers().get(i).getVisualShootRepresentation());
-                SoundManager.INSTANCE.playSound(SoundManager.SoundType.LASER);
+                    mLaserView.add(((ClientWorldModel)mWorldModel).getExternalPlayers().get(i).getVisualShootRepresentation());
+                    SoundManager.INSTANCE.playSound(SoundManager.SoundType.LASER);
+                }
             }
         }
+
 
         mLaserView.render(delta);
 
@@ -222,6 +225,12 @@ public class WorldView {
         Gdx.gl.glClear(GL10.GL_DEPTH_BUFFER_BIT);
         mModelBatch.render(mWorldModel.getBulletWorld().fpsModel, mEnvironment);
         mModelBatch.end();
+
+        if(mWorldModel instanceof ClientWorldModel) {
+            for(int i = 0; i < ((ClientWorldModel)mWorldModel).getExternalPlayers().size; i++) {
+                mDecalRenderer.draw(delta, ((ClientWorldModel)mWorldModel).getExternalPlayers().get(i).getPosition());
+            }
+        }
     }
 
     /**

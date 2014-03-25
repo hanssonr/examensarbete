@@ -5,6 +5,8 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector3;
 import se.rhel.CodeName;
 import se.rhel.model.WorldModel;
+import se.rhel.model.physics.MyContactListener;
+import se.rhel.view.BulletHoleRenderer;
 import se.rhel.view.input.PlayerInput;
 import se.rhel.model.client.ClientWorldModel;
 import se.rhel.screen.BaseScreen;
@@ -44,8 +46,18 @@ public class GameScreen extends BaseScreen {
         mWorldModel.getPlayer().rotate(mPlayerInput.getRotation());
         mWorldModel.getPlayer().move(mPlayerInput.getDirection());
 
-        if (mPlayerInput.isShooting())
-            mWorldModel.checkShootCollision(mWorldModel.getPlayer().shoot());
+        if (mPlayerInput.isShooting()) {
+            MyContactListener.CollisionObject co = MyContactListener.checkShootCollision(mWorldModel.getBulletWorld().getCollisionWorld(), mWorldModel.getPlayer().shoot());
+
+            if(co.type == MyContactListener.CollisionObject.CollisionType.WORLD) {
+                // World hit
+                BulletHoleRenderer.addBullethole(co.hitPoint, co.hitNormal);
+            } else {
+                // Entity hit
+                co.entity.damageEntity(25);
+            }
+        }
+            // mWorldModel.checkShootCollision(mWorldModel.getPlayer().shoot());
 
         if (mPlayerInput.isJumping())
             mWorldModel.getPlayer().jump();
