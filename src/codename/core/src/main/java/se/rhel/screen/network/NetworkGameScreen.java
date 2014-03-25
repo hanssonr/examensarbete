@@ -72,7 +72,7 @@ public class NetworkGameScreen extends BaseScreen {
             // Check shoot collision local
             MyContactListener.CollisionObject co = MyContactListener.checkShootCollision(mClientWorldModel.getBulletWorld().getCollisionWorld(), rays);
             // If we have hit the world, just draw a bullethole (it doesn't matter if the server says otherwise)
-            if(co.type == MyContactListener.CollisionObject.CollisionType.WORLD) {
+            if(co != null && co.type == MyContactListener.CollisionObject.CollisionType.WORLD) {
                 // Draw bullethole
                 BulletHoleRenderer.addBullethole(co.hitPoint, co.hitNormal);
             }
