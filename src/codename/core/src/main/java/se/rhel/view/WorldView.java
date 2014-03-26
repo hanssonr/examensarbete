@@ -21,6 +21,7 @@ import se.rhel.model.client.ClientWorldModel;
 import se.rhel.model.physics.BulletWorld;
 import se.rhel.model.FPSCamera;
 import se.rhel.model.WorldModel;
+import se.rhel.network.model.ExternalPlayer;
 import se.rhel.res.Resources;
 import se.rhel.view.input.PlayerInput;
 import se.rhel.view.sfx.SoundManager;
@@ -69,6 +70,9 @@ public class WorldView {
     private FrontFaceDepthShaderProvider depthShaderProvider = new FrontFaceDepthShaderProvider();
     private ModelBatch depthModelBatch = new ModelBatch(depthShaderProvider);
 
+    private ParticleRenderer particleRenderer;
+    private int mPreviousHealth = 100;
+
     public WorldView(WorldModel worldModel) {
         weaponCam = new FPSCamera(68, 0.1f, 5);
         mWorldModel = worldModel;
@@ -109,6 +113,8 @@ public class WorldView {
         mLaserView = new LaserView(worldModel);
         SoundManager.INSTANCE.playMusic(true, .2f);
         mDecalRenderer = new DecalRenderer(mWorldModel.getCamera());
+
+        particleRenderer = new ParticleRenderer(mWorldModel, mSpriteBatch, mWorldModel.getCamera());
     }
 
     public void render(float delta) {
@@ -130,6 +136,7 @@ public class WorldView {
                 mModelBatch.end();
 
                 mBulletHoleRenderer.draw(delta);
+
             buffer1.end();
 
             buffer1.getColorBufferTexture().bind();
@@ -226,11 +233,21 @@ public class WorldView {
         mModelBatch.render(mWorldModel.getBulletWorld().fpsModel, mEnvironment);
         mModelBatch.end();
 
+        // External stuff
         if(mWorldModel instanceof ClientWorldModel) {
             for(int i = 0; i < ((ClientWorldModel)mWorldModel).getExternalPlayers().size; i++) {
-                mDecalRenderer.draw(delta, ((ClientWorldModel)mWorldModel).getExternalPlayers().get(i).getPosition());
+                ExternalPlayer ep = ((ClientWorldModel)mWorldModel).getExternalPlayers().get(i);
+
+                mDecalRenderer.draw(delta, ep.getPosition());
+
+                if(ep.getHealth() < mPreviousHealth) {
+                    particleRenderer.addEffect(ep.getPosition());
+                    mPreviousHealth = ep.getHealth();
+                }
             }
+            particleRenderer.draw(delta);
         }
+
     }
 
     /**

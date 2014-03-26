@@ -37,7 +37,10 @@ public class DamageAbleEntity extends DynamicEntity {
     public void damageEntity(int amount) {
         mHealth -= amount;
 
-        if(mHealth <= 0) mAlive = false;
+        if(mHealth <= 0) {
+            mHealth = 0;
+            mAlive = false;
+        }
     }
 
     public void destroy() {

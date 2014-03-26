@@ -44,6 +44,7 @@ public class Player extends DamageAbleEntity {
     private Vector3 mBobVector = new Vector3();
 
     private float mDeltaShoot;
+    private float mRespawnTimer;
     private float mGravity = 0f;
 
     //Actions
@@ -85,20 +86,27 @@ public class Player extends DamageAbleEntity {
     }
 
     public void update(float delta) {
-        getBody().setGravity(Vector3.Zero);
-        mTransformation.set(getBody().getCenterOfMassTransform());
+        if(isAlive()) {
+            getBody().setGravity(Vector3.Zero);
+            mTransformation.set(getBody().getCenterOfMassTransform());
 
-        updateCamera(delta);
-        updateWeapon();
-        checkOnGround();
-        calculateGravity(delta);
+            updateCamera(delta);
+            updateWeapon();
+            checkOnGround();
+            calculateGravity(delta);
 
-        // Update shooting for unnecessary drawing / spam shooting
-        if(mHasShot) {
-            mDeltaShoot += delta;
-            if(mDeltaShoot > 0.3f) {
-                mHasShot = false;
-                mDeltaShoot = 0f;
+            // Update shooting for unnecessary drawing / spam shooting
+            if(mHasShot) {
+                mDeltaShoot += delta;
+                if(mDeltaShoot > 0.3f) {
+                    mHasShot = false;
+                    mDeltaShoot = 0f;
+                }
+            }
+        } else {
+            mRespawnTimer += delta;
+            if(mRespawnTimer > 5f) {
+
             }
         }
     }

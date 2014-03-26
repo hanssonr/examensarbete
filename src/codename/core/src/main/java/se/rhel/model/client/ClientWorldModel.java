@@ -131,6 +131,9 @@ public class ClientWorldModel extends WorldModel implements ClientListener {
 
             if(dep.clientId == mClient.getId()) {
                 Log.debug("ClientWorldModel", "I AM DEAD");
+                if(getPlayer().getHealth() != 0) {
+                    getPlayer().damageEntity(100);
+                }
             } else {
                 Log.debug("ClientWorldModel", "Someone else is DEAD with id: " + dep.clientId);
             }

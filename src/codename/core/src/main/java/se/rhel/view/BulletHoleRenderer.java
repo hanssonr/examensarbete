@@ -22,7 +22,7 @@ public class BulletHoleRenderer {
     private static Array<Decal> mDecals;
 
     private static Array<Decal> mBulletholes;
-    private static int MAX_BULLET_DECALS = 10;
+    private static int MAX_BULLET_DECALS = 1000;
     private static int CURRENT = 0;
 
     public BulletHoleRenderer(FPSCamera camera) {
