@@ -3,24 +3,16 @@ package se.rhel.model;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.math.*;
-import com.badlogic.gdx.math.collision.BoundingBox;
 import com.badlogic.gdx.physics.bullet.collision.*;
-import com.badlogic.gdx.physics.bullet.dynamics.btRigidBody;
 import com.badlogic.gdx.math.collision.Ray;
 import com.badlogic.gdx.physics.bullet.collision.ClosestRayResultCallback;
 import com.badlogic.gdx.physics.bullet.collision.btCollisionObject;
 import com.badlogic.gdx.physics.bullet.collision.btCollisionShape;
 import com.badlogic.gdx.physics.bullet.dynamics.btRigidBodyConstructionInfo;
 import com.badlogic.gdx.physics.bullet.linearmath.btDefaultMotionState;
-import com.badlogic.gdx.physics.bullet.linearmath.btVector3;
 import se.rhel.model.entity.DamageAbleEntity;
-import se.rhel.model.entity.DynamicEntity;
 import se.rhel.model.physics.BulletWorld;
 import se.rhel.res.Resources;
-import se.rhel.view.BulletHoleRenderer;
-
-import java.lang.reflect.Array;
-
 
 /**
  * Group: Logic

@@ -12,6 +12,8 @@ import se.rhel.network.model.ExternalPlayer;
 import se.rhel.view.BulletHoleRenderer;
 
 /**
+ * Group Logic
+ *
  * Created by Emil on 2014-03-21.
  */
 public class MyContactListener extends ContactListener {

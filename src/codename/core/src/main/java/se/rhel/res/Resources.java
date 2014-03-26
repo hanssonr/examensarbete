@@ -54,7 +54,7 @@ public enum Resources {
         mManager.load("obj/level/level_xlarge_vis.g3db", Model.class);
         //mManager.load("obj/player/player.g3db", Model.class);
         mManager.load("obj/player/wep/FirstPersonWeapon.g3db", Model.class);
-        mManager.load("obj/laser.g3db", Model.class);
+        //mManager.load("obj/laser.g3db", Model.class);
         mManager.load("obj/player/animated/MyMinecraftPlayer_animated_idle.g3db", Model.class);
         //mManager.load("obj/player/mcplayer.g3db", Model.class);
         //mManager.load("obj/beretta/beretta.obj", Model.class);
@@ -102,7 +102,7 @@ public enum Resources {
         laserShot = mManager.get("sfx/sound/lasershot.wav", Sound.class);
 
         firstPersonWeaponModel = mManager.get("obj/player/wep/FirstPersonWeapon.g3db", Model.class);
-        laserModel = mManager.get("obj/laser.g3db", Model.class);
+        //laserModel = mManager.get("obj/laser.g3db", Model.class);
         ModelInstance instance = new ModelInstance(firstPersonWeaponModel, 5f, 0.1f, -15f);
         modelInstanceArray.add(instance);
 
