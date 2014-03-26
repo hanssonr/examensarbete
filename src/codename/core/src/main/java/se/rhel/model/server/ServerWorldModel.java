@@ -1,12 +1,9 @@
 package se.rhel.model.server;
 
 import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.physics.bullet.collision.ClosestRayResultCallback;
-import com.badlogic.gdx.physics.bullet.collision.btCollisionObject;
 import com.badlogic.gdx.utils.Array;
 import se.rhel.Connection;
 import se.rhel.model.WorldModel;
-import se.rhel.model.entity.DamageAbleEntity;
 import se.rhel.model.physics.MyContactListener;
 import se.rhel.network.model.ExternalPlayer;
 import se.rhel.network.packet.*;

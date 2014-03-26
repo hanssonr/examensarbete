@@ -1,12 +1,9 @@
 package se.rhel.model;
 
 import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.physics.bullet.collision.*;
-import com.badlogic.gdx.physics.bullet.linearmath.btVector3;
 import se.rhel.model.entity.DamageAbleEntity;
 import se.rhel.model.entity.DummyEntity;
 import se.rhel.model.physics.BulletWorld;
-import se.rhel.view.BulletHoleRenderer;
 
 import java.util.ArrayList;
 
@@ -59,9 +56,11 @@ public class WorldModel implements BaseModel {
     public BulletWorld getBulletWorld() {
         return mBulletWorld;
     }
+
     public Player getPlayer() {
         return mPlayer;
     }
+
     public FPSCamera getCamera() {
         return mCamera;
     }

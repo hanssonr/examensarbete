@@ -6,14 +6,10 @@ import se.rhel.Client;
 import se.rhel.model.*;
 import se.rhel.network.packet.*;
 import se.rhel.network.model.ExternalPlayer;
-import se.rhel.observer.ClientControllerListener;
 import se.rhel.observer.ClientListener;
-import se.rhel.packet.Packet;
 import se.rhel.packet.TestPacket;
 import se.rhel.util.Log;
 import se.rhel.view.BulletHoleRenderer;
-
-import java.util.ArrayList;
 
 
 /**
