@@ -16,11 +16,15 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.bullet.linearmath.btIDebugDraw;
 import com.badlogic.gdx.physics.bullet.linearmath.btVector3;
+import com.badlogic.gdx.utils.Array;
 import se.rhel.Client;
 import se.rhel.graphics.FrontFaceDepthShaderProvider;
 import se.rhel.model.BaseWorldModel;
 import se.rhel.model.IWorldModel;
 import se.rhel.model.client.ClientWorldModel;
+import se.rhel.model.entity.DamageAbleEntity;
+import se.rhel.model.entity.DummyEntity;
+import se.rhel.model.entity.IEntity;
 import se.rhel.model.physics.BulletWorld;
 import se.rhel.model.FPSCamera;
 import se.rhel.model.WorldModel;
@@ -85,7 +89,7 @@ public class WorldView {
         mModelBatch = new ModelBatch();
 
         mPlayerRenderer = new PlayerRenderer(mCamera, mWorldModel.getPlayer());
-        mExtPlayerRenderer = new ExternalPlayerRenderer(mCamera, mWorldModel.getExternalPlayers());
+        mExtPlayerRenderer = new ExternalPlayerRenderer(mWorldModel.getExternalPlayers());
 
         mCrosshairRenderer = new ShapeRenderer();
         mBulletHoleRenderer = new BulletHoleRenderer(mCamera);
@@ -118,6 +122,7 @@ public class WorldView {
 
     public void update(float delta) {
         mPlayerRenderer.update(delta);
+        mExtPlayerRenderer.update(delta);
     }
 
     public void render(float delta) {
@@ -131,8 +136,9 @@ public class WorldView {
 
                 mModelBatch.begin(mCamera);
                     mModelBatch.render(mWorldModel.getBulletWorld().levelInstance, mEnvironment);
-                    mModelBatch.render(Resources.INSTANCE.modelInstanceArray);
-                    mModelBatch.render(mWorldModel.getBulletWorld().instances, mEnvironment);
+                    //mModelBatch.render(Resources.INSTANCE.modelInstanceArray);
+                    //mModelBatch.render(mWorldModel.getBulletWorld().instances, mEnvironment);
+                    mExtPlayerRenderer.render(mModelBatch, mEnvironment);
                 mModelBatch.end();
 
                 mBulletHoleRenderer.draw(delta);
@@ -152,7 +158,6 @@ public class WorldView {
             mModelBatch.begin(mCamera);
             mModelBatch.render(Resources.INSTANCE.modelInstanceArray);
             mModelBatch.render(mWorldModel.getBulletWorld().instances, mEnvironment);
-            // mModelBatch.render(mServerWorldModel.getBulletWorld().fpsModel, mEnvironment);
             mModelBatch.render(mWorldModel.getBulletWorld().levelInstance, mEnvironment);
             mModelBatch.end();
         }
@@ -216,19 +221,31 @@ public class WorldView {
         mModelBatch.end();
 
         // External stuff
-        if(mWorldModel instanceof ClientWorldModel) {
-            for(int i = 0; i < ((ClientWorldModel)mWorldModel).getExternalPlayers().size; i++) {
-                ExternalPlayer ep = ((ClientWorldModel)mWorldModel).getExternalPlayers().get(i);
+        for (int i = 0; i < mWorldModel.getExternalPlayers().size; i++) {
+            DamageAbleEntity de = (DamageAbleEntity)mWorldModel.getExternalPlayers().get(i);
 
-                mDecalRenderer.draw(delta, ep.getPosition());
+            mDecalRenderer.draw(delta, de.getPosition());
 
-                if(ep.getHealth() < mPreviousHealth) {
-                    particleRenderer.addEffect(ep.getPosition());
-                    mPreviousHealth = ep.getHealth();
-                }
+            if(de.getHealth() < mPreviousHealth) {
+                particleRenderer.addEffect(de.getPosition());
+                mPreviousHealth = de.getHealth();
             }
             particleRenderer.draw(delta);
         }
+
+//        if(mWorldModel instanceof ClientWorldModel) {
+//            for(int i = 0; i < ((ClientWorldModel)mWorldModel).getExternalPlayers().size; i++) {
+//                ExternalPlayer ep = (ExternalPlayer)((ClientWorldModel)mWorldModel).getExternalPlayers().get(i);
+//
+//                mDecalRenderer.draw(delta, ep.getPosition());
+//
+//                if(ep.getHealth() < mPreviousHealth) {
+//                    particleRenderer.addEffect(ep.getPosition());
+//                    mPreviousHealth = ep.getHealth();
+//                }
+//            }
+//            particleRenderer.draw(delta);
+//        }
 
     }
 
@@ -293,5 +310,9 @@ public class WorldView {
 
     public FPSCamera getCamera() {
         return mCamera;
+    }
+
+    public ExternalPlayerRenderer getExternalPlayerRenderer() {
+        return mExtPlayerRenderer;
     }
 }

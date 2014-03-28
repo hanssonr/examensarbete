@@ -104,7 +104,6 @@ public class PlayerInput implements InputProcessor {
 
             // JUMP
             if(mKeys.get(MapKeys.JUMP)) {
-                // mKeys.put(MapKeys.JUMP, false);
                 // TODO: Borde bara skickas en gång
                 EventHandler.events.notify(new ViewEvent(EventType.JUMP));
             }

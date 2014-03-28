@@ -33,7 +33,7 @@ public class DecalRenderer {
         Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
 
         mDecal_team_m.setPosition(pos.x, pos.y + 2f, pos.z);
-        mDecal_team_m.lookAt(mCamera.position, mCamera.UP);
+        mDecal_team_m.lookAt(mCamera.position, FPSCamera.UP);
         mDecalBatch.add(mDecal_team_m);
         mDecalBatch.flush();
     }

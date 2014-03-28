@@ -6,13 +6,12 @@ import se.rhel.Client;
 import se.rhel.event.EventHandler;
 import se.rhel.event.NetworkEvent;
 import se.rhel.model.*;
-import se.rhel.model.physics.MyContactListener;
+import se.rhel.model.entity.IEntity;
 import se.rhel.network.packet.*;
 import se.rhel.network.model.ExternalPlayer;
 import se.rhel.observer.ClientListener;
 import se.rhel.packet.TestPacket;
 import se.rhel.util.Log;
-import se.rhel.view.BulletHoleRenderer;
 
 
 /**
@@ -22,7 +21,7 @@ public class ClientWorldModel extends BaseWorldModel implements ClientListener, 
 
     private Client mClient;
     private Player mPlayer;
-    private Array<ExternalPlayer> mPlayers;
+    private Array<IEntity> mPlayers;
 
     public ClientWorldModel(Client client) {
         super();
@@ -44,9 +43,10 @@ public class ClientWorldModel extends BaseWorldModel implements ClientListener, 
     }
 
     public ExternalPlayer getExternalPlayer(int id) {
-        for (ExternalPlayer externalPlayer : mPlayers) {
-            if(externalPlayer.getClientId() == id) {
-                return externalPlayer;
+        for (IEntity entity : mPlayers) {
+            ExternalPlayer ep = (ExternalPlayer)entity;
+            if(ep.getClientId() == id) {
+                return ep;
             }
         }
         return null;
@@ -56,7 +56,7 @@ public class ClientWorldModel extends BaseWorldModel implements ClientListener, 
         return mPlayer;
     }
 
-    public Array<ExternalPlayer> getExternalPlayers() {
+    public Array<IEntity> getExternalPlayers() {
         return mPlayers;
     }
 
@@ -77,6 +77,7 @@ public class ClientWorldModel extends BaseWorldModel implements ClientListener, 
             PlayerPacket pp = (PlayerPacket)obj;
             ExternalPlayer ep = new ExternalPlayer(pp.clientId, new Vector3(pp.x, pp.y, pp.z), getBulletWorld());
             mPlayers.add(ep);
+            EventHandler.events.notify(new NetworkEvent(pp));
         }
         else if(obj instanceof TestPacket) {
             Log.debug("ClientWorldModel", "TestPacket received");

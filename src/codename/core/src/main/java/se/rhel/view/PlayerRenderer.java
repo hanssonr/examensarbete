@@ -42,7 +42,6 @@ public class PlayerRenderer {
     }
 
     public void update(float delta) {
-
         updateCamera(delta);
         updateWeapon();
 

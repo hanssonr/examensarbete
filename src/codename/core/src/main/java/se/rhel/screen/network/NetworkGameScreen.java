@@ -10,6 +10,7 @@ import se.rhel.event.*;
 import se.rhel.model.FPSCamera;
 import se.rhel.network.packet.BulletHolePacket;
 import se.rhel.network.packet.PlayerMovePacket;
+import se.rhel.network.packet.PlayerPacket;
 import se.rhel.network.packet.ShootPacket;
 import se.rhel.packet.Packet;
 import se.rhel.screen.BaseScreen;
@@ -52,7 +53,6 @@ public class NetworkGameScreen extends BaseScreen implements ViewListener, Model
 
         mClient = Snaek.newClient(4455, 5544, "localhost");
         mClientWorldModel = new ClientWorldModel(mClient);
-        //mClientWorldModel.create();
 
         mPlayerInput = new PlayerInput();
 
@@ -96,7 +96,6 @@ public class NetworkGameScreen extends BaseScreen implements ViewListener, Model
             }
         }
 
-        mClientWorldModel.update(delta);
         mWorldView.update(delta);
     }
 
@@ -160,6 +159,9 @@ public class NetworkGameScreen extends BaseScreen implements ViewListener, Model
             // Draw bullethole
             BulletHoleRenderer.addBullethole(bhp.hitWorld, bhp.hitNormal);
         }
-
+        else if(packet instanceof PlayerPacket) {
+            PlayerPacket pp = (PlayerPacket)packet;
+            mWorldView.getExternalPlayerRenderer().addPlayerAnimation(mClientWorldModel.getExternalPlayer(pp.clientId));
+        }
     }
 }

@@ -35,7 +35,7 @@ public class GameScreen extends BaseScreen implements ViewListener, ModelListene
         Gdx.app.setLogLevel(Application.LOG_NONE);
 
         mWorldModel = new WorldModel();
-        mWorldModel.create();
+        //mWorldModel.create();
 
         mPlayerInput = new PlayerInput();
         mWorldView = new WorldView(mWorldModel);
@@ -56,6 +56,7 @@ public class GameScreen extends BaseScreen implements ViewListener, ModelListene
         mWorldModel.getPlayer().move(mPlayerInput.getDirection());
         mWorldModel.getPlayer().rotate(mPlayerInput.getRotation());
 
+        mWorldView.getCamera().rotate(mPlayerInput.getRotation());
 
         mWorldModel.update(delta);
         mWorldView.update(delta);
@@ -97,14 +98,16 @@ public class GameScreen extends BaseScreen implements ViewListener, ModelListene
                 rays[1] = to;
                 MyContactListener.CollisionObject co = MyContactListener.checkShootCollision(mWorldModel.getBulletWorld().getCollisionWorld(), rays);
 
-                if(co.type == MyContactListener.CollisionObject.CollisionType.WORLD) {
-                    // World hit
-                    BulletHoleRenderer.addBullethole(co.hitPoint, co.hitNormal);
-                } else {
-                    // Entity hit
-                    co.entity.damageEntity(25);
+                if (co != null) {
+                    if(co.type == MyContactListener.CollisionObject.CollisionType.WORLD) {
+                        // World hit
+                        BulletHoleRenderer.addBullethole(co.hitPoint, co.hitNormal);
+                    } else {
+                        // Entity hit
+                        co.entity.damageEntity(25);
+                    }
+                    break;
                 }
-                break;
         }
 
     }

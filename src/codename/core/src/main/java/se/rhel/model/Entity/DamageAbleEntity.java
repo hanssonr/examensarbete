@@ -1,6 +1,5 @@
 package se.rhel.model.entity;
 
-import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import se.rhel.model.physics.BulletWorld;
 
 

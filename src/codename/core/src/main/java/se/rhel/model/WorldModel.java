@@ -2,12 +2,10 @@ package se.rhel.model;
 
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
-import se.rhel.network.model.ExternalPlayer;
-import se.rhel.model.entity.DamageAbleEntity;
 import se.rhel.model.entity.DummyEntity;
-import se.rhel.model.physics.BulletWorld;
-import se.rhel.model.physics.MyContactListener;
-import se.rhel.view.BulletHoleRenderer;
+import se.rhel.model.entity.IEntity;
+import se.rhel.model.entity.DamageAbleEntity;
+import se.rhel.network.model.ExternalPlayer;
 
 import java.util.ArrayList;
 
@@ -19,14 +17,18 @@ import java.util.ArrayList;
 public class WorldModel extends BaseWorldModel implements BaseModel, IWorldModel {
 
     private Player mPlayer;
-    private BulletWorld mBulletWorld;
-    private DummyEntity dummyplayer;
     protected ArrayList<DamageAbleEntity> mDestroy = new ArrayList<>();
-    private Array<ExternalPlayer> mPlayers = new Array<>();
+    private Array<IEntity> mPlayers = new Array<>();
 
     public WorldModel() {
         super();
         mPlayer = new Player(new Vector3(0, 20, 0), getBulletWorld());
+
+        mPlayers.add(new DummyEntity(getBulletWorld(), 0.7f, 1.6f, 100, 7f, new Vector3(5, 20, 10)));
+        mPlayers.add(new DummyEntity(getBulletWorld(), 0.7f, 1.6f, 100, 7f, new Vector3(20, 10, -10)));
+        mPlayers.add(new DummyEntity(getBulletWorld(), 0.7f, 1.6f, 100, 7f, new Vector3(-10, 50, -10)));
+        mPlayers.add(new DummyEntity(getBulletWorld(), 0.7f, 1.6f, 100, 7f, new Vector3(-15, 5, 15)));
+        mPlayers.add(new DummyEntity(getBulletWorld(), 0.7f, 1.6f, 100, 7f, new Vector3(0, 100, -5)));
     }
 
     @Override
@@ -42,18 +44,18 @@ public class WorldModel extends BaseWorldModel implements BaseModel, IWorldModel
     public void update(float delta) {
         super.update(delta);
         mPlayer.update(delta);
-    }
 
-    public BulletWorld getBulletWorld() {
-        return mBulletWorld;
+        for(int i = 0; i < mPlayers.size; i++) {
+            DummyEntity de = (DummyEntity)mPlayers.get(i);
+            de.update(delta);
+        }
     }
 
     public Player getPlayer() {
         return mPlayer;
     }
 
-    @Override
-    public Array<ExternalPlayer> getExternalPlayers() {
+    public Array<IEntity> getExternalPlayers() {
         return mPlayers;
     }
 
