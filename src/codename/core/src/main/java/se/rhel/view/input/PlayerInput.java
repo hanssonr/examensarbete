@@ -29,8 +29,8 @@ public class PlayerInput implements InputProcessor {
 
     //Finals
     final float MOUSE_SPEED = 5f;
-    final float MAX_YROT = 80f;
-    final float MIN_YROT = -80f;
+    final float MAX_YROT = 60f;
+    final float MIN_YROT = -60f;
 
     //Rotation
     float currentRot = 0;

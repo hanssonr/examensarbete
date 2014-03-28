@@ -3,6 +3,7 @@ package se.rhel.model.entity;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Quaternion;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.bullet.collision.btCollisionShape;
 import com.badlogic.gdx.physics.bullet.dynamics.btRigidBody;
@@ -26,13 +27,13 @@ public abstract class GameObject {
     public Matrix4 getTransformation() { return mTransformation; }
 
     public void createPhysicBody(btCollisionShape shape, btRigidBodyConstructionInfo info,
-                                 btDefaultMotionState motionstate, Object userdata, ModelInstance instance)
+                                 btDefaultMotionState motionstate, Object userdata  )
     {
         mBody = new btRigidBody(info);
         mBody.userData = userdata;
         mBody.setMotionState(motionstate);
 
-        mPhysicsworld.addToWorld(shape, info, motionstate, instance, mBody);
+        mPhysicsworld.addToWorld(shape, info, motionstate, mBody);
     }
 
     protected abstract void destroy();
@@ -59,17 +60,11 @@ public abstract class GameObject {
         getBody().setCenterOfMassTransform(m);
     }
 
-    public void setPositionAndRotation(float x, float y, float z, float rY, float rW) {
-        Vector3 toPos = new Vector3(x, y, z);
-        double mag = Math.sqrt(rW * rW + rY * rY);
-        Quaternion rotation = new Quaternion(0, (float)(rY/mag), 0, (float)(rW/mag));
-
+    public void setPositionAndRotation(Vector3 position, float rotX) {
         Matrix4 m = new Matrix4();
-        m.rotate(rotation);
-        m.setTranslation(toPos);
+        m.rotate(Vector3.Y, rotX);
+        m.setTranslation(position);
 
         getBody().setCenterOfMassTransform(m);
     }
-
-
 }

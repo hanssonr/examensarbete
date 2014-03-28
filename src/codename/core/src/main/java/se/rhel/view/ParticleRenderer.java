@@ -1,6 +1,5 @@
 package se.rhel.view;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.ParticleEffect;
 import com.badlogic.gdx.graphics.g2d.ParticleEffectPool;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -8,7 +7,7 @@ import com.badlogic.gdx.math.Quaternion;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import se.rhel.model.FPSCamera;
-import se.rhel.model.WorldModel;
+import se.rhel.model.IWorldModel;
 
 /**
  * Created by Emil on 2014-03-25.
@@ -31,11 +30,11 @@ public class ParticleRenderer extends A2DView {
         }
     }
 
-    public ParticleRenderer(WorldModel model, SpriteBatch batch, FPSCamera cam) {
+    public ParticleRenderer(IWorldModel model, SpriteBatch batch, FPSCamera cam) {
         super(model, batch);
         mCamera = cam;
 
-        mBloodEffect.load(Gdx.files.internal("tex/particle/blood.p"), Gdx.files.internal("tex/particle"));
+        //mBloodEffect.load(Gdx.files.internal("tex/particle/blood.p"), Gdx.files.internal("tex/particle"));
         mBloodEffectPool = new ParticleEffectPool(mBloodEffect, 1, 20);
 
         addEffect(new Vector3(0f, 2f, 0f));

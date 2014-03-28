@@ -13,12 +13,10 @@ public class DamageAbleEntity extends DynamicEntity {
 
     protected boolean mAlive = true;
     protected int mHealth;
-    private ModelInstance mInstance;
 
-    protected DamageAbleEntity(BulletWorld world, ModelInstance instance, int maxHealth, float movespeed) {
+    protected DamageAbleEntity(BulletWorld world, int maxHealth, float movespeed) {
         super(world, movespeed);
 
-        mInstance = instance;
         mHealth = maxHealth;
     }
 
@@ -28,10 +26,6 @@ public class DamageAbleEntity extends DynamicEntity {
 
     public int getHealth() {
         return mHealth;
-    }
-
-    public ModelInstance getInstance() {
-        return mInstance;
     }
 
     public void damageEntity(int amount) {
@@ -44,7 +38,6 @@ public class DamageAbleEntity extends DynamicEntity {
     }
 
     public void destroy() {
-        getWorld().removeInstance(mInstance);
         getWorld().getCollisionWorld().removeCollisionObject(getBody());
     }
 }

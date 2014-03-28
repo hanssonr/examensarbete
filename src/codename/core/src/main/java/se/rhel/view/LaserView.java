@@ -2,7 +2,9 @@ package se.rhel.view;
 
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
-import se.rhel.model.WorldModel;
+import se.rhel.model.BaseWorldModel;
+import se.rhel.model.FPSCamera;
+import se.rhel.model.IWorldModel;
 
 
 import java.util.Iterator;
@@ -12,16 +14,18 @@ import java.util.Iterator;
  */
 public class LaserView {
 
-    private WorldModel mWorldModel;
+    private IWorldModel mWorldModel;
     private Array<LaserMeshRenderer> mLasers;
+    private FPSCamera mCamera;
 
-    public LaserView(WorldModel wm) {
+    public LaserView(IWorldModel wm, FPSCamera camera) {
         mLasers = new Array<>();
         mWorldModel = wm;
+        mCamera = camera;
     }
 
     public void add(Vector3[] verts) {
-        LaserMeshRenderer lmr = new LaserMeshRenderer(mWorldModel.getCamera(), verts);
+        LaserMeshRenderer lmr = new LaserMeshRenderer(mCamera, verts);
         mLasers.add(lmr);
     }
 

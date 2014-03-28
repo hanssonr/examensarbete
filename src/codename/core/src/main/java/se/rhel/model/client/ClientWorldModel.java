@@ -15,28 +15,25 @@ import se.rhel.view.BulletHoleRenderer;
 /**
  * Group: Mixed
  */
-public class ClientWorldModel extends WorldModel implements ClientListener {
+public class ClientWorldModel extends BaseWorldModel implements ClientListener, IWorldModel {
 
     private Client mClient;
+    private Player mPlayer;
     private Array<ExternalPlayer> mPlayers;
 
     public ClientWorldModel(Client client) {
         super();
 
+        mPlayer = new Player(new Vector3(0, 20, 0), getBulletWorld());
         mPlayers = new Array<>();
         mClient = client;
         mClient.addListener(this);
         mClient.sendTcp(new RequestInitialStatePacket(mClient.getId()));
     }
 
-    @Override
-    public void dispose() {
-
-    }
-
-    @Override
     public void update(float delta) {
         super.update(delta);
+        mPlayer.update(delta);
 
         for (int i = 0; i < mPlayers.size; i++) {
             mPlayers.get(i).update(delta);
@@ -50,6 +47,10 @@ public class ClientWorldModel extends WorldModel implements ClientListener {
             }
         }
         return null;
+    }
+
+    public Player getPlayer() {
+        return mPlayer;
     }
 
     public Array<ExternalPlayer> getExternalPlayers() {
@@ -89,7 +90,7 @@ public class ClientWorldModel extends WorldModel implements ClientListener {
                 }
 
                 // Set the position & rotation
-                ep.setPositionAndRotation(pmp.pX, pmp.pY, pmp.pZ, pmp.rY, pmp.rW);
+                ep.setPositionAndRotation(pmp.mPosition, pmp.mRotX);
             }
         }
         else if (obj instanceof DamagePacket) {
@@ -98,7 +99,7 @@ public class ClientWorldModel extends WorldModel implements ClientListener {
 
             // Well, darn, it was me
             if(dp.clientId == mClient.getId()) {
-                getPlayer().damageEntity(dp.amount);
+                mPlayer.damageEntity(dp.amount);
             } else {
                 // Phew, it was somebody else
                 ExternalPlayer ep = getExternalPlayer(dp.clientId);
@@ -127,8 +128,8 @@ public class ClientWorldModel extends WorldModel implements ClientListener {
 
             if(dep.clientId == mClient.getId()) {
                 Log.debug("ClientWorldModel", "I AM DEAD");
-                if(getPlayer().getHealth() != 0) {
-                    getPlayer().damageEntity(100);
+                if(mPlayer.getHealth() != 0) {
+                    mPlayer.damageEntity(100);
                 }
             } else {
                 Log.debug("ClientWorldModel", "Someone else is DEAD with id: " + dep.clientId);

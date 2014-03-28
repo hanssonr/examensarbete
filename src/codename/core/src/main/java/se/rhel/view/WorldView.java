@@ -17,6 +17,8 @@ import com.badlogic.gdx.physics.bullet.linearmath.btIDebugDraw;
 import com.badlogic.gdx.physics.bullet.linearmath.btVector3;
 import se.rhel.Client;
 import se.rhel.graphics.FrontFaceDepthShaderProvider;
+import se.rhel.model.BaseWorldModel;
+import se.rhel.model.IWorldModel;
 import se.rhel.model.client.ClientWorldModel;
 import se.rhel.model.physics.BulletWorld;
 import se.rhel.model.FPSCamera;
@@ -33,8 +35,6 @@ import java.math.BigDecimal;
  */
 public class WorldView {
 
-    private FPSCamera weaponCam;
-
     private TextRenderer mFPSRenderer;
     private TextRenderer mBulletLoadRenderer;
     private TextRenderer mPlayerPosRenderer;
@@ -50,7 +50,7 @@ public class WorldView {
     private EntitySystemRenderer mEntitySystem;
     private DecalRenderer mDecalRenderer;
 
-    private WorldModel mWorldModel;
+    private IWorldModel mWorldModel;
 
     private Environment mEnvironment;
 
@@ -73,16 +73,23 @@ public class WorldView {
     private ParticleRenderer particleRenderer;
     private int mPreviousHealth = 100;
 
-    public WorldView(WorldModel worldModel) {
-        weaponCam = new FPSCamera(68, 0.1f, 5);
+    private FPSCamera mCamera = new FPSCamera(75, 0.1f, 1000f);
+
+    private PlayerRenderer mPlayerRenderer;
+    private ExternalPlayerRenderer mExtPlayerRenderer;
+
+    public WorldView(IWorldModel worldModel) {
         mWorldModel = worldModel;
         mSpriteBatch = new SpriteBatch();
         mModelBatch = new ModelBatch();
 
+        mPlayerRenderer = new PlayerRenderer(mCamera, mWorldModel.getPlayer());
+        mExtPlayerRenderer = new ExternalPlayerRenderer(mCamera, mWorldModel.getExternalPlayers());
+
         mCrosshairRenderer = new ShapeRenderer();
-        mBulletHoleRenderer = new BulletHoleRenderer(mWorldModel.getCamera());
+        mBulletHoleRenderer = new BulletHoleRenderer(mCamera);
         mEntitySystem = new EntitySystemRenderer();
-        mDecalRenderer = new DecalRenderer(mWorldModel.getCamera());
+        mDecalRenderer = new DecalRenderer(mCamera);
 
         mAimDebugDrawer = new DebugDrawer();
         mDebugDrawer = new DebugDrawer();
@@ -101,26 +108,18 @@ public class WorldView {
                 new DirectionalLight().set(0.8f, 0.8f, 0.8f, -1f, -0.8f, -0.2f)
         );
 
-        // mAnimationController = new AnimationController(Resources.INSTANCE.playerModelInstanceAnimated);
-        // mAnimationController.setAnimation("walk", -1);
-        // mServerWorldModel.getBulletWorld().levelInstance.add(Resources.INSTANCE.playerModelInstanceAnimated);
-        // Resources.INSTANCE.modelInstanceArray.add
-
-        /*
-        mEnvironment.add(new DirectionalLight().set(0.8f, 0.8f, 0.8f, -1f, -0.8f, -0.2f));
-        mEnvironment.add(new DirectionalLight().set(0.8f, 0.8f, 0.8f, -0.5f, -1f, 0.7f));
-        */
-        mLaserView = new LaserView(worldModel);
+        mLaserView = new LaserView(worldModel, mCamera);
         SoundManager.INSTANCE.playMusic(true, .2f);
-        mDecalRenderer = new DecalRenderer(mWorldModel.getCamera());
+        mDecalRenderer = new DecalRenderer(mCamera);
 
-        particleRenderer = new ParticleRenderer(mWorldModel, mSpriteBatch, mWorldModel.getCamera());
+        particleRenderer = new ParticleRenderer(mWorldModel, mSpriteBatch, mCamera);
+    }
+
+    public void update(float delta) {
+        mPlayerRenderer.update(delta);
     }
 
     public void render(float delta) {
-
-        // mAnimationController.update(delta);
-        weaponCam.position.set(mWorldModel.getCamera().position);
 
         if(PlayerInput.DRAW_MESH) {
             // Cel-shading
@@ -129,7 +128,7 @@ public class WorldView {
                 Gdx.gl.glClearColor(0, 1, 1, 1);
                 Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
 
-                mModelBatch.begin(mWorldModel.getCamera());
+                mModelBatch.begin(mCamera);
                     mModelBatch.render(mWorldModel.getBulletWorld().levelInstance, mEnvironment);
                     mModelBatch.render(Resources.INSTANCE.modelInstanceArray);
                     mModelBatch.render(mWorldModel.getBulletWorld().instances, mEnvironment);
@@ -149,7 +148,7 @@ public class WorldView {
             Gdx.gl.glClearColor(0, 1, 1, 1);
             Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
 
-            mModelBatch.begin(mWorldModel.getCamera());
+            mModelBatch.begin(mCamera);
             mModelBatch.render(Resources.INSTANCE.modelInstanceArray);
             mModelBatch.render(mWorldModel.getBulletWorld().instances, mEnvironment);
             // mModelBatch.render(mServerWorldModel.getBulletWorld().fpsModel, mEnvironment);
@@ -175,7 +174,7 @@ public class WorldView {
         }
 
         if(PlayerInput.DRAW_DEBUG) {
-            mDebugDrawer.lineRenderer.setProjectionMatrix(mWorldModel.getCamera().combined);
+            mDebugDrawer.lineRenderer.setProjectionMatrix(mCamera.combined);
             mDebugDrawer.begin();
             mWorldModel.getBulletWorld().getCollisionWorld().debugDrawWorld();
             mDebugDrawer.end();
@@ -188,7 +187,7 @@ public class WorldView {
                 btVector3 from = new btVector3(mWorldModel.getPlayer().from.x, mWorldModel.getPlayer().from.y, mWorldModel.getPlayer().from.z);
                 btVector3 to = new btVector3(mWorldModel.getPlayer().to.x, mWorldModel.getPlayer().to.y, mWorldModel.getPlayer().to.z);
                 btVector3 c = new btVector3(1f, 1f, 1f);
-                mAimDebugDrawer.lineRenderer.setProjectionMatrix(mWorldModel.getCamera().combined);
+                mAimDebugDrawer.lineRenderer.setProjectionMatrix(mCamera.combined);
                 mAimDebugDrawer.begin();
                 mAimDebugDrawer.drawLine(from, to, c);
                 mAimDebugDrawer.end();
@@ -201,7 +200,7 @@ public class WorldView {
 
         if(mWorldModel.getPlayer().mHasShot) {
             mWorldModel.getPlayer().mHasShot = false;
-            mLaserView.add(mWorldModel.getPlayer().getVisualRepresentationShoot());
+            //mLaserView.add(mWorldModel.getPlayer().getVisualRepresentationShoot());
             SoundManager.INSTANCE.playSound(SoundManager.SoundType.LASER);
         }
 
@@ -228,9 +227,9 @@ public class WorldView {
         mCrosshairRenderer.circle(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2, 5f);
         mCrosshairRenderer.end();
 
-        mModelBatch.begin(mWorldModel.getCamera());
+        mModelBatch.begin(mCamera);
         Gdx.gl.glClear(GL10.GL_DEPTH_BUFFER_BIT);
-        mModelBatch.render(mWorldModel.getBulletWorld().fpsModel, mEnvironment);
+            mPlayerRenderer.render(mModelBatch, mEnvironment);
         mModelBatch.end();
 
         // External stuff
@@ -302,5 +301,9 @@ public class WorldView {
 
     public void dispose() {
         mModelBatch.dispose();
+    }
+
+    public FPSCamera getCamera() {
+        return mCamera;
     }
 }

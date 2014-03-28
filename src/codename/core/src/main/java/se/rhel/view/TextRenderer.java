@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
+import se.rhel.model.IWorldModel;
 import se.rhel.model.WorldModel;
 import se.rhel.model.client.ClientWorldModel;
 import se.rhel.res.Resources;
@@ -25,13 +26,13 @@ public class TextRenderer extends A2DView {
     private boolean mFps = false;
 
     // Used for rendering fps only
-    private TextRenderer(WorldModel model, SpriteBatch batch) {
+    private TextRenderer(IWorldModel model, SpriteBatch batch) {
         this("", FPS_POS, model, batch);
         mFps = true;
     }
 
     // Normal constructor
-    public TextRenderer(String text, Vector2 pos, WorldModel model, SpriteBatch batch) {
+    public TextRenderer(String text, Vector2 pos, IWorldModel model, SpriteBatch batch) {
         super(model, batch);
         mPosition = pos;
         mText = text;
@@ -65,7 +66,7 @@ public class TextRenderer extends A2DView {
     }
 
     // Helper for not calling wrong constructor
-    public static TextRenderer FPS(WorldModel model, SpriteBatch batch) {
+    public static TextRenderer FPS(IWorldModel model, SpriteBatch batch) {
         return new TextRenderer(model, batch);
     }
 }

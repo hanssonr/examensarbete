@@ -40,6 +40,7 @@ public class NetworkGameScreen extends BaseScreen {
     public NetworkGameScreen(CodeName game, Server server) {
         super(game);
         Gdx.app.setLogLevel(Application.LOG_NONE);
+
         mServer = server;
 
         if(mServer != null) {
@@ -49,7 +50,7 @@ public class NetworkGameScreen extends BaseScreen {
 
         mClient = Snaek.newClient(4455, 5544, "localhost");
         mClientWorldModel = new ClientWorldModel(mClient);
-        mClientWorldModel.create();
+        //mClientWorldModel.create();
 
         mPlayerInput = new PlayerInput();
         mWorldView = new WorldView(mClientWorldModel);
@@ -62,26 +63,33 @@ public class NetworkGameScreen extends BaseScreen {
     public void update(float delta) {
         mPlayerInput.processCurrentInput(delta);
 
-        mClientWorldModel.getPlayer().rotate(mPlayerInput.getRotation());
+        //mClientWorldModel.getPlayer().rotate(mPlayerInput.getRotation());
+
+//        mVelocity.add(mCamera.getForward().scl(direction.z * mMovespeed));
+//        mVelocity.add(mCamera.getRight().scl(direction.x * mMovespeed));
+
         mClientWorldModel.getPlayer().move(mPlayerInput.getDirection());
+        mClientWorldModel.getPlayer().rotate(mPlayerInput.getRotation());
 
-        if (mPlayerInput.isShooting()) {
-            Vector3[] rays = mClientWorldModel.getPlayer().shoot();
-            Vector3[] visVerts = mClientWorldModel.getPlayer().getVisualRepresentationShoot();
+        mWorldView.getCamera().rotate(mPlayerInput.getRotation());
 
-            // Check shoot collision local
-            MyContactListener.CollisionObject co = MyContactListener.checkShootCollision(mClientWorldModel.getBulletWorld().getCollisionWorld(), rays);
-            // If we have hit the world, just draw a bullethole (it doesn't matter if the server says otherwise)
-            if(co != null && co.type == MyContactListener.CollisionObject.CollisionType.WORLD) {
-                // Draw bullethole
-                BulletHoleRenderer.addBullethole(co.hitPoint, co.hitNormal);
-            }
-
-            if(rays != null) {
-                // Also notify the server that we have shot
-                mClient.sendTcp(new ShootPacket(mClient.getId(), rays[0], rays[1], visVerts[0], visVerts[1], visVerts[2], visVerts[3]));
-            }
-        }
+//        if (mPlayerInput.isShooting()) {
+//            Vector3[] rays = mClientWorldModel.getPlayer().shoot();
+//            Vector3[] visVerts = mClientWorldModel.getPlayer().getVisualRepresentationShoot();
+//
+//            // Check shoot collision local
+//            MyContactListener.CollisionObject co = MyContactListener.checkShootCollision(mClientWorldModel.getBulletWorld().getCollisionWorld(), rays);
+//            // If we have hit the world, just draw a bullethole (it doesn't matter if the server says otherwise)
+//            if(co != null && co.type == MyContactListener.CollisionObject.CollisionType.WORLD) {
+//                // Draw bullethole
+//                BulletHoleRenderer.addBullethole(co.hitPoint, co.hitNormal);
+//            }
+//
+//            if(rays != null) {
+//                // Also notify the server that we have shot
+//                mClient.sendTcp(new ShootPacket(mClient.getId(), rays[0], rays[1], visVerts[0], visVerts[1], visVerts[2], visVerts[3]));
+//            }
+//        }
 
         if (mPlayerInput.isJumping())
             mClientWorldModel.getPlayer().jump();
@@ -94,16 +102,18 @@ public class NetworkGameScreen extends BaseScreen {
             // Send move packet
 
             if(mClientWorldModel.getPlayer().getPosition().dst(mLastKnownPosition) > 0.01f ||
-                    mClientWorldModel.getPlayer().getRotation().getAxisAngle(FPSCamera.UP.cpy()) != mLastKnownRotation)  {
+                    mClientWorldModel.getPlayer().getRotation() != mLastKnownRotation)  {
                 mLastKnownPosition = mClientWorldModel.getPlayer().getPosition().cpy();
-                mLastKnownRotation = mClientWorldModel.getPlayer().getRotation().getAxisAngle(FPSCamera.UP.cpy());
+                mLastKnownRotation = mClientWorldModel.getPlayer().getRotation();
 
                 mClient.sendUdp(
                         new PlayerMovePacket(mClient.getId(),
-                                mClientWorldModel.getPlayer().getPosition().x, mClientWorldModel.getPlayer().getPosition().y, mClientWorldModel.getPlayer().getPosition().z,
-                                mClientWorldModel.getPlayer().getRotation().y, mClientWorldModel.getPlayer().getRotation().w));
+                        mClientWorldModel.getPlayer().getPosition(), mClientWorldModel.getPlayer().getRotation()));
             }
         }
+
+        mClientWorldModel.update(delta);
+        mWorldView.update(delta);
     }
 
     @Override

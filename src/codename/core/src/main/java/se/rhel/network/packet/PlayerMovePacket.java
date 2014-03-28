@@ -1,5 +1,6 @@
 package se.rhel.network.packet;
 
+import com.badlogic.gdx.math.Vector3;
 import se.rhel.packet.AClientPacket;
 
 /**
@@ -9,27 +10,25 @@ import se.rhel.packet.AClientPacket;
  */
 public class PlayerMovePacket extends AClientPacket {
 
-    public float pX, pY, pZ;
-    public float rY, rW;
+    public Vector3 mPosition = new Vector3();
+    public float mRotX;
 
     public PlayerMovePacket() {}
 
-    public PlayerMovePacket(int clientId, float px, float py, float pz, float ry, float rw) {
+    public PlayerMovePacket(int clientId, Vector3 position, float rotX) {
         super(clientId, PlayerMovePacket.class);
-        putFloat(px);
-        putFloat(py);
-        putFloat(pz);
-        putFloat(ry);
-        putFloat(rw);
+        putFloat(position.x);
+        putFloat(position.y);
+        putFloat(position.z);
+        putFloat(rotX);
         ready();
     }
 
     public PlayerMovePacket(byte[] data) {
         super(data);
-        pX = getFloat();
-        pY = getFloat();
-        pZ = getFloat();
-        rY = getFloat();
-        rW = getFloat();
+        mPosition.x = getFloat();
+        mPosition.y = getFloat();
+        mPosition.z = getFloat();
+        mRotX = getFloat();
     }
 }

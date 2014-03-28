@@ -2,6 +2,7 @@ package se.rhel.model;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 
 
@@ -42,6 +43,11 @@ public class FPSCamera extends PerspectiveCamera {
         Vector3 ret = new Vector3();
         ret.set(direction.x, 0, direction.z);
         return ret.nor();
+    }
+
+    public void rotate(Vector2 amount) {
+        rotate(getRight(), amount.y);
+        rotate(FPSCamera.UP, amount.x);
     }
 
 }

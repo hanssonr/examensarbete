@@ -43,26 +43,32 @@ public class GameScreen extends BaseScreen {
     public void update(float delta) {
         mPlayerInput.processCurrentInput(delta);
         
-        mWorldModel.getPlayer().rotate(mPlayerInput.getRotation());
+//        mWorldModel.getPlayer().rotate(mPlayerInput.getRotation());
+//        mWorldModel.getPlayer().move(mPlayerInput.getDirection());
+
         mWorldModel.getPlayer().move(mPlayerInput.getDirection());
+        mWorldModel.getPlayer().rotate(mPlayerInput.getRotation());
 
-        if (mPlayerInput.isShooting()) {
-            MyContactListener.CollisionObject co = MyContactListener.checkShootCollision(mWorldModel.getBulletWorld().getCollisionWorld(), mWorldModel.getPlayer().shoot());
+        mWorldView.getCamera().rotate(mPlayerInput.getRotation());
 
-            if(co.type == MyContactListener.CollisionObject.CollisionType.WORLD) {
-                // World hit
-                BulletHoleRenderer.addBullethole(co.hitPoint, co.hitNormal);
-            } else {
-                // Entity hit
-                co.entity.damageEntity(25);
-            }
-        }
+//        if (mPlayerInput.isShooting()) {
+//            MyContactListener.CollisionObject co = MyContactListener.checkShootCollision(mWorldModel.getBulletWorld().getCollisionWorld(), mWorldModel.getPlayer().shoot());
+//
+//            if(co.type == MyContactListener.CollisionObject.CollisionType.WORLD) {
+//                // World hit
+//                BulletHoleRenderer.addBullethole(co.hitPoint, co.hitNormal);
+//            } else {
+//                // Entity hit
+//                co.entity.damageEntity(25);
+//            }
+//        }
             // mWorldModel.checkShootCollision(mWorldModel.getPlayer().shoot());
 
         if (mPlayerInput.isJumping())
             mWorldModel.getPlayer().jump();
 
         mWorldModel.update(delta);
+        mWorldView.update(delta);
     }
 
     @Override

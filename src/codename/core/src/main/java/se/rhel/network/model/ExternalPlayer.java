@@ -49,42 +49,42 @@ public class ExternalPlayer extends DummyEntity {
         mRotation = new Quaternion();
         mLastKnownPosition = new Vector3();
         mCurrentPosition = new Vector3();
-        mAnimated = getInstance();
-        mBox = mAnimated.model.calculateBoundingBox(new BoundingBox());
+        //mAnimated = getInstance();
+        //mBox = mAnimated.model.calculateBoundingBox(new BoundingBox());
 
         getTransformation().setTranslation(position);
 
-        mAnimationController = new AnimationController(mAnimated);
-        mAnimationController.setAnimation(ANIMATION_IDLE, -1);
+//        mAnimationController = new AnimationController(mAnimated);
+//        mAnimationController.setAnimation(ANIMATION_IDLE, -1);
 
         mState = PLAYERSTATE.idle;
     }
 
     public void update(float delta) {
-        if(mCurrentPosition.dst(mLastKnownPosition) > 0.01f) {
-            if(ANIMATION_IDLE.equals(mAnimationController.current.animation.id)) {
-                mAnimationController.setAnimation(ANIMATION_WALK, -1, 2f, new AnimationController.AnimationListener() {
-                    @Override
-                    public void onEnd(AnimationController.AnimationDesc animation) {
-
-                    }
-
-                    @Override
-                    public void onLoop(AnimationController.AnimationDesc animation) {
-                    }
-                });
-            }
-        } else {
-            if(ANIMATION_WALK.equals(mAnimationController.current.animation.id)) {
-                mAnimationController.setAnimation(ANIMATION_IDLE, -1);
-            }
-        }
-
-        mAnimated.transform.getTranslation(mCurrentPosition);
-        mAnimationController.update(delta);
-        mAnimated.transform.set(getBody().getCenterOfMassTransform());
-        mAnimated.transform.setTranslation(getBody().getCenterOfMassPosition().sub(new Vector3(0, mBox.getDimensions().y / 2.0f, 0)));
-        mAnimated.transform.getTranslation(mLastKnownPosition);
+//        if(mCurrentPosition.dst(mLastKnownPosition) > 0.01f) {
+//            if(ANIMATION_IDLE.equals(mAnimationController.current.animation.id)) {
+//                mAnimationController.setAnimation(ANIMATION_WALK, -1, 2f, new AnimationController.AnimationListener() {
+//                    @Override
+//                    public void onEnd(AnimationController.AnimationDesc animation) {
+//
+//                    }
+//
+//                    @Override
+//                    public void onLoop(AnimationController.AnimationDesc animation) {
+//                    }
+//                });
+//            }
+//        } else {
+//            if(ANIMATION_WALK.equals(mAnimationController.current.animation.id)) {
+//                mAnimationController.setAnimation(ANIMATION_IDLE, -1);
+//            }
+//        }
+//
+//        mAnimated.transform.getTranslation(mCurrentPosition);
+//        mAnimationController.update(delta);
+//        mAnimated.transform.set(getBody().getCenterOfMassTransform());
+//        mAnimated.transform.setTranslation(getBody().getCenterOfMassPosition().sub(new Vector3(0, mBox.getDimensions().y / 2.0f, 0)));
+//        mAnimated.transform.getTranslation(mLastKnownPosition);
     }
 
     public void shoot(Vector3 from, Vector3 to, Vector3 from2, Vector3 to2) {

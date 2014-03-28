@@ -3,7 +3,7 @@ package se.rhel.model.server;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import se.rhel.Connection;
-import se.rhel.model.WorldModel;
+import se.rhel.model.BaseWorldModel;
 import se.rhel.model.physics.MyContactListener;
 import se.rhel.network.model.ExternalPlayer;
 import se.rhel.network.packet.*;
@@ -19,7 +19,7 @@ import java.util.Map;
 /**
  * Group: Mixed
  */
-public class ServerWorldModel extends WorldModel implements ServerListener {
+public class ServerWorldModel extends BaseWorldModel implements ServerListener {
 
     // Linkin ID's and Players
     private HashMap<Integer, ExternalPlayer> mPlayers;
@@ -34,17 +34,8 @@ public class ServerWorldModel extends WorldModel implements ServerListener {
     }
 
     @Override
-    public void create() {
-    }
-
-    @Override
-    public void dispose() {
-
-    }
-
-    @Override
     public void update(float delta) {
-        getBulletWorld().update(delta);
+        super.update(delta);
 
         for(ExternalPlayer p : mPlayers.values()) {
             p.update(delta);
@@ -123,15 +114,14 @@ public class ServerWorldModel extends WorldModel implements ServerListener {
             PlayerMovePacket pmp = (PlayerMovePacket)obj;
 
             // Set the position
-            Vector3 pos = new Vector3(pmp.pX, pmp.pY, pmp.pZ);
             ExternalPlayer p = getPlayer(pmp.clientId);
             if(p == null) return;
 
-            p.setPosition(pos);
+            p.setPosition(pmp.mPosition);
 
             // Notify the other clients, if any
             Vector3 tmp = p.getPosition();
-            mServer.sendToAllUDPExcept(new PlayerMovePacket(pmp.clientId, tmp.x, tmp.y, tmp.z, pmp.rY, pmp.rW), con);
+            mServer.sendToAllUDPExcept(new PlayerMovePacket(pmp.clientId, pmp.mPosition, pmp.mRotX), con);
         }
         else if (obj instanceof ShootPacket) {
             Log.debug("ServerWorldModel", "ShotPacket received on server");

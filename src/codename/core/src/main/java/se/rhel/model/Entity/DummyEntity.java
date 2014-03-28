@@ -30,7 +30,7 @@ public class DummyEntity extends DamageAbleEntity {
     private Vector3 mLastKnownPosition, mCurrentPosition;
 
     public DummyEntity(BulletWorld world, float radius, float height, ModelInstance instance, int maxHealth, float movespeed, Vector3 position) {
-        super(world, instance, maxHealth, movespeed);
+        super(world, maxHealth, movespeed);
         mLastKnownPosition = new Vector3();
         mCurrentPosition = new Vector3();
         mAnimated = instance;
@@ -49,7 +49,7 @@ public class DummyEntity extends DamageAbleEntity {
         mAnimationController = new AnimationController(mAnimated);
         mAnimationController.setAnimation(ANIMATION_IDLE, -1);
 
-        super.createPhysicBody(shape, info, motionstate, this, mAnimated);
+        super.createPhysicBody(shape, info, motionstate, this);
     }
 
     public void update(float delta) {
