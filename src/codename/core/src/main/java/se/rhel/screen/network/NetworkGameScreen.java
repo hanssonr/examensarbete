@@ -6,10 +6,12 @@ import com.badlogic.gdx.math.Vector3;
 import se.rhel.Client;
 import se.rhel.CodeName;
 import se.rhel.Snaek;
+import se.rhel.event.*;
 import se.rhel.model.FPSCamera;
-import se.rhel.model.physics.MyContactListener;
+import se.rhel.network.packet.BulletHolePacket;
 import se.rhel.network.packet.PlayerMovePacket;
 import se.rhel.network.packet.ShootPacket;
+import se.rhel.packet.Packet;
 import se.rhel.screen.BaseScreen;
 import se.rhel.Server;
 import se.rhel.view.BulletHoleRenderer;
@@ -23,7 +25,7 @@ import java.lang.reflect.Array;
 /**
  * Group: Mixed
  */
-public class NetworkGameScreen extends BaseScreen {
+public class NetworkGameScreen extends BaseScreen implements ViewListener, ModelListener, NetworkListener {
 
     private PlayerInput mPlayerInput;
     private WorldView mWorldView;
@@ -53,6 +55,14 @@ public class NetworkGameScreen extends BaseScreen {
         //mClientWorldModel.create();
 
         mPlayerInput = new PlayerInput();
+
+        // Listen to view events
+        EventHandler.events.listen(ViewEvent.class, this);
+        // Listen to model events
+        EventHandler.events.listen(ModelEvent.class, this);
+        // Listen to network events
+        EventHandler.events.listen(NetworkEvent.class, this);
+
         mWorldView = new WorldView(mClientWorldModel);
 
         Gdx.input.setInputProcessor(mPlayerInput);
@@ -126,5 +136,56 @@ public class NetworkGameScreen extends BaseScreen {
         super.dispose();
 
         mWorldView.dispose();
+    }
+
+    @Override
+    public void inputEvent(EventType type) {
+        switch (type) {
+            case JUMP:
+                mClientWorldModel.getPlayer().jump();
+                break;
+            case SHOOT:
+                // Just notify the model
+                mClientWorldModel.getPlayer().shoot();
+                break;
+        }
+    }
+
+    @Override
+    public void playerEvent(EventType type) {
+        switch (type) {
+            case SHOOT:
+                Vector3[] collide = mClientWorldModel.getCamera().getShootRay();
+                Vector3[] visual = mClientWorldModel.getCamera().getVisualRepresentationShoot();
+
+                // The collision
+                mClientWorldModel.checkShootCollision(collide);
+
+                // The rendering & sound
+                mWorldView.shoot(visual);
+
+                // The network, notify the server that we have shot
+                mClient.sendTcp(new ShootPacket(mClient.getId(), collide[0], collide[1], visual[0], visual[1], visual[2], visual[3]));
+                break;
+            default:
+                break;
+        }
+    }
+
+    @Override
+    public void networkEvent(Packet packet) {
+
+        if(packet instanceof ShootPacket) {
+            ShootPacket sp = (ShootPacket) packet;
+
+            // The rendering and sound
+            mWorldView.shoot(new Vector3[]{sp.vFrom, sp.vTo, sp.vFrom2, sp.vTo2});
+        }
+        else if(packet instanceof BulletHolePacket) {
+            BulletHolePacket bhp = (BulletHolePacket) packet;
+            // Draw bullethole
+            BulletHoleRenderer.addBullethole(bhp.hitWorld, bhp.hitNormal);
+        }
+
     }
 }

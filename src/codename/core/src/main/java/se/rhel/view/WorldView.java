@@ -13,6 +13,7 @@ import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.bullet.linearmath.btIDebugDraw;
 import com.badlogic.gdx.physics.bullet.linearmath.btVector3;
 import se.rhel.Client;
@@ -183,7 +184,7 @@ public class WorldView {
         // Ray
         if(PlayerInput.DRAW_SHOOT_DEBUG) {
             if(mWorldModel.getPlayer().mHasShot) {
-
+                /*
                 btVector3 from = new btVector3(mWorldModel.getPlayer().from.x, mWorldModel.getPlayer().from.y, mWorldModel.getPlayer().from.z);
                 btVector3 to = new btVector3(mWorldModel.getPlayer().to.x, mWorldModel.getPlayer().to.y, mWorldModel.getPlayer().to.z);
                 btVector3 c = new btVector3(1f, 1f, 1f);
@@ -195,27 +196,9 @@ public class WorldView {
                 from.dispose();
                 to.dispose();
                 c.dispose();
+                */
             }
         }
-
-        if(mWorldModel.getPlayer().mHasShot) {
-            mWorldModel.getPlayer().mHasShot = false;
-            //mLaserView.add(mWorldModel.getPlayer().getVisualRepresentationShoot());
-            SoundManager.INSTANCE.playSound(SoundManager.SoundType.LASER);
-        }
-
-        // Check if any external player has shot
-        if(mWorldModel instanceof  ClientWorldModel) {
-            for(int i = 0; i < ((ClientWorldModel)mWorldModel).getExternalPlayers().size; i++) {
-                if(((ClientWorldModel)mWorldModel).getExternalPlayers().get(i).hasShot()) {
-                    ((ClientWorldModel)mWorldModel).getExternalPlayers().get(i).setShot(false);
-
-                    mLaserView.add(((ClientWorldModel)mWorldModel).getExternalPlayers().get(i).getVisualShootRepresentation());
-                    SoundManager.INSTANCE.playSound(SoundManager.SoundType.LASER);
-                }
-            }
-        }
-
 
         mLaserView.render(delta);
 
@@ -247,6 +230,11 @@ public class WorldView {
             particleRenderer.draw(delta);
         }
 
+    }
+
+    public void shoot(Vector3[] verts) {
+        mLaserView.add(verts);
+        SoundManager.INSTANCE.playSound(SoundManager.SoundType.LASER);
     }
 
     /**

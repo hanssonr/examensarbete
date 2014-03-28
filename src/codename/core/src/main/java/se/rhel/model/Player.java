@@ -8,6 +8,9 @@ import com.badlogic.gdx.physics.bullet.collision.btCollisionObject;
 import com.badlogic.gdx.physics.bullet.collision.btCollisionShape;
 import com.badlogic.gdx.physics.bullet.dynamics.btRigidBodyConstructionInfo;
 import com.badlogic.gdx.physics.bullet.linearmath.btDefaultMotionState;
+import se.rhel.event.EventHandler;
+import se.rhel.event.EventType;
+import se.rhel.event.ModelEvent;
 import se.rhel.model.entity.DamageAbleEntity;
 import se.rhel.model.physics.BulletWorld;
 import se.rhel.res.Resources;
@@ -36,8 +39,6 @@ public class Player extends DamageAbleEntity {
     //RayCasts
     private ClosestRayResultCallback rayTestCB;
     public boolean mHasShot = false;
-    public Vector3 from = new Vector3();
-    public Vector3 to = new Vector3();
     private Vector3 fromGround = new Vector3();
     private Vector3 toGround = new Vector3();
 
@@ -83,6 +84,14 @@ public class Player extends DamageAbleEntity {
             if(mRespawnTimer > 5f) {
 
             }
+        }
+    }
+
+    public void shoot() {
+        // If can shoot
+        if(!mHasShot) {
+            mHasShot = true;
+            EventHandler.events.notify(new ModelEvent(EventType.SHOOT));
         }
     }
 
@@ -137,7 +146,6 @@ public class Player extends DamageAbleEntity {
         }
 
         getBody().setLinearVelocity(mVelocity);
-    }
 
     public Vector3 getVelocity() {
         return mVelocity;
@@ -154,13 +162,6 @@ public class Player extends DamageAbleEntity {
     public float getRotation() {
         return mRotation;
     }
-//
-//    public Quaternion getRotation() {
-//        Quaternion q = new Quaternion();
-//        mCamera.view.cpy().inv().getRotation(q);
-//        return q;
-//    }
-
 
     public boolean isGrounded() {
         return mOnGround;

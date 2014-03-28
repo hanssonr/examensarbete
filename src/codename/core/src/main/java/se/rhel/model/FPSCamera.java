@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.math.collision.Ray;
 
 
 /**
@@ -48,6 +49,58 @@ public class FPSCamera extends PerspectiveCamera {
     public void rotate(Vector2 amount) {
         rotate(getRight(), amount.y);
         rotate(FPSCamera.UP, amount.x);
+    }
+
+    public Vector3[] getShootRay() {
+        Vector3 from = new Vector3();
+        Vector3 to = new Vector3();
+
+        // We want a ray from middle of screen as basis of hit detection
+        Ray ray = getPickRay(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2);
+        ray = ray.cpy();
+
+        // For debugging purposes
+        from.set(ray.origin);
+        to.set(ray.direction).scl(75f).add(from);
+
+        Vector3[] rays = new Vector3[2];
+        rays[0] = ray.origin;
+        rays[1] = ray.direction.cpy().scl(75f).add(from);
+
+        return rays;
+    }
+
+    public Vector3[] getVisualRepresentationShoot() {
+        // Visual representation of the starting point bottom right
+        Ray vis = getPickRay(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        vis = vis.cpy();
+
+        // bottom right + 20%
+        Ray vis2 = getPickRay(Gdx.graphics.getWidth(), Gdx.graphics.getHeight() * 0.8f);
+        vis2 = vis2.cpy();
+
+        // Middle + 20%
+        Ray vis3 = getPickRay(Gdx.graphics.getWidth() / 2, (Gdx.graphics.getHeight() / 2));
+        vis3 = vis3.cpy();
+
+        // Middle
+        Ray vis4 = getPickRay(Gdx.graphics.getWidth() / 2, (Gdx.graphics.getHeight() / 2) * 0.9f);
+        vis4 = vis4.cpy();
+
+        Vector3 from = new Vector3();
+        Vector3 from2 = new Vector3();
+        Vector3 to = new Vector3();
+        Vector3 to2 = new Vector3();
+
+        from.set(vis.origin);
+        from2.set(vis2.origin);
+        to.set(vis4.direction).scl(50f).add(from);
+        to2.set(vis3.direction).scl(50f).add(from2);
+
+        from.add(direction.cpy().scl(0.2f));
+        from2.add(direction.cpy().scl(0.2f));
+
+        return new Vector3[] {from, to, from2, to2};
     }
 
 }

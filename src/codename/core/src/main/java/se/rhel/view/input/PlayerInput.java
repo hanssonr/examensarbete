@@ -7,6 +7,10 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.Input.Keys;
+import se.rhel.event.EventHandler;
+import se.rhel.event.EventType;
+import se.rhel.event.Events;
+import se.rhel.event.ViewEvent;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -22,8 +26,6 @@ public class PlayerInput implements InputProcessor {
     public static boolean DRAW_DEBUG_INFO = true;
     public static boolean DRAW_SHOOT_DEBUG = false;
 
-    private boolean mPlayerShot = false;
-    private boolean mPlayerJump = false;
     private Vector2 mRotation = Vector2.Zero;
     private Vector3 mDirection = Vector3.Zero;
 
@@ -56,18 +58,10 @@ public class PlayerInput implements InputProcessor {
     public Vector2 getRotation() {
         return mRotation;
     }
-
     public Vector3 getDirection() {
         return mDirection;
     }
 
-    public boolean isShooting() {
-        return mPlayerShot;
-    }
-
-    public boolean isJumping() {
-        return mPlayerJump;
-    }
 
     public void processCurrentInput(float delta) {
         if(Gdx.input.isCursorCatched()) {
@@ -109,17 +103,16 @@ public class PlayerInput implements InputProcessor {
 
 
             // JUMP
-            mPlayerJump = false;
             if(mKeys.get(MapKeys.JUMP)) {
-                mPlayerJump = true;
+                // mKeys.put(MapKeys.JUMP, false);
+                // TODO: Borde bara skickas en gång
+                EventHandler.events.notify(new ViewEvent(EventType.JUMP));
             }
 
             // SHOOT
-            mPlayerShot = false;
             if(mKeys.get(MapKeys.SHOOT)) {
-                mPlayerShot = true;
-
                 mKeys.put(MapKeys.SHOOT, false);
+                EventHandler.events.notify(new ViewEvent(EventType.SHOOT));
             }
 
         }
