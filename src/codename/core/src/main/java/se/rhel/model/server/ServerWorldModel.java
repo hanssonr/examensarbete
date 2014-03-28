@@ -3,6 +3,7 @@ package se.rhel.model.server;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import se.rhel.Connection;
+import se.rhel.event.Events;
 import se.rhel.model.WorldModel;
 import se.rhel.model.physics.MyContactListener;
 import se.rhel.network.model.ExternalPlayer;

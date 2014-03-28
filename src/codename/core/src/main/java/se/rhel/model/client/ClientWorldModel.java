@@ -3,7 +3,10 @@ package se.rhel.model.client;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import se.rhel.Client;
+import se.rhel.event.EventHandler;
+import se.rhel.event.NetworkEvent;
 import se.rhel.model.*;
+import se.rhel.model.physics.MyContactListener;
 import se.rhel.network.packet.*;
 import se.rhel.network.model.ExternalPlayer;
 import se.rhel.observer.ClientListener;
@@ -112,15 +115,15 @@ public class ClientWorldModel extends WorldModel implements ClientListener {
             Log.debug("ClientWorldModel", "ShotPacket received on client");
             ShootPacket sp = (ShootPacket)obj;
 
-            getExternalPlayer(sp.clientId).shoot(sp.vFrom, sp.vTo, sp.vFrom2, sp.vTo2);
+            // Notify listeners about that an external player has shot
+            EventHandler.events.notify(new NetworkEvent(sp));
         }
         else if (obj instanceof BulletHolePacket) {
             Log.debug("ClientWorldModel", "BulletHolePacket received on client");
             // Someone else has shot, and missed, thus bullethole at this position
             BulletHolePacket bhp = (BulletHolePacket)obj;
 
-            // Draw bullethole
-            BulletHoleRenderer.addBullethole(bhp.hitWorld, bhp.hitNormal);
+            EventHandler.events.notify(new NetworkEvent(bhp));
         }
         else if (obj instanceof DeadEntityPacket) {
             DeadEntityPacket dep = (DeadEntityPacket)obj;

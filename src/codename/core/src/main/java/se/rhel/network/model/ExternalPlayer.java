@@ -38,8 +38,6 @@ public class ExternalPlayer extends DummyEntity {
     private BoundingBox mBox;
 
     private Vector3 mLastKnownPosition, mCurrentPosition;
-    private Vector3 mFrom, mTo, mFrom2, mTo2;
-    private boolean mHasShot = false;
 
     private int mClientId;
 
@@ -85,26 +83,6 @@ public class ExternalPlayer extends DummyEntity {
         mAnimated.transform.set(getBody().getCenterOfMassTransform());
         mAnimated.transform.setTranslation(getBody().getCenterOfMassPosition().sub(new Vector3(0, mBox.getDimensions().y / 2.0f, 0)));
         mAnimated.transform.getTranslation(mLastKnownPosition);
-    }
-
-    public void shoot(Vector3 from, Vector3 to, Vector3 from2, Vector3 to2) {
-        mHasShot = true;
-        mFrom = from;
-        mTo = to;
-        mFrom2 = from2;
-        mTo2 = to2;
-    }
-
-    public boolean hasShot() {
-        return mHasShot;
-    }
-
-    public void setShot(boolean val) {
-        mHasShot = val;
-    }
-
-    public Vector3[] getVisualShootRepresentation() {
-        return new Vector3[] {mFrom, mTo, mFrom2, mTo2};
     }
 
     public int getClientId() {

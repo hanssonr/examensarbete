@@ -1,15 +1,16 @@
 package se.rhel.model;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.math.*;
 import com.badlogic.gdx.physics.bullet.collision.*;
-import com.badlogic.gdx.math.collision.Ray;
 import com.badlogic.gdx.physics.bullet.collision.ClosestRayResultCallback;
 import com.badlogic.gdx.physics.bullet.collision.btCollisionObject;
 import com.badlogic.gdx.physics.bullet.collision.btCollisionShape;
 import com.badlogic.gdx.physics.bullet.dynamics.btRigidBodyConstructionInfo;
 import com.badlogic.gdx.physics.bullet.linearmath.btDefaultMotionState;
+import se.rhel.event.EventHandler;
+import se.rhel.event.EventType;
+import se.rhel.event.ModelEvent;
 import se.rhel.model.entity.DamageAbleEntity;
 import se.rhel.model.physics.BulletWorld;
 import se.rhel.res.Resources;
@@ -46,8 +47,6 @@ public class Player extends DamageAbleEntity {
     //RayCasts
     private ClosestRayResultCallback rayTestCB;
     public boolean mHasShot = false;
-    public Vector3 from = new Vector3();
-    public Vector3 to = new Vector3();
     private Vector3 fromGround = new Vector3();
     private Vector3 toGround = new Vector3();
 
@@ -118,59 +117,12 @@ public class Player extends DamageAbleEntity {
         getInstance().transform.set(mWeaponWorld);
     }
 
-    public Vector3[] shoot() {
-
-        if(mHasShot)
-            return null;
-
-        mHasShot = true;
-
-        // We want a ray from middle of screen as basis of hit detection
-        Ray ray = mCamera.getPickRay(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2);
-        ray = ray.cpy();
-
-        // For debugging purposes
-        from.set(ray.origin);
-        to.set(ray.direction).scl(75f).add(from);
-
-        Vector3[] rays = new Vector3[2];
-        rays[0] = ray.origin;
-        rays[1] = ray.direction.cpy().scl(75f).add(from);
-
-        return rays;
-    }
-
-    public Vector3[] getVisualRepresentationShoot() {
-        // Visual representation of the starting point bottom right
-        Ray vis = mCamera.getPickRay(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        vis = vis.cpy();
-
-        // bottom right + 20%
-        Ray vis2 = mCamera.getPickRay(Gdx.graphics.getWidth(), Gdx.graphics.getHeight() * 0.8f);
-        vis2 = vis2.cpy();
-
-        // Middle + 20%
-        Ray vis3 = mCamera.getPickRay(Gdx.graphics.getWidth() / 2, (Gdx.graphics.getHeight() / 2));
-        vis3 = vis3.cpy();
-
-        // Middle
-        Ray vis4 = mCamera.getPickRay(Gdx.graphics.getWidth() / 2, (Gdx.graphics.getHeight() / 2) * 0.9f);
-        vis4 = vis4.cpy();
-
-        Vector3 from = new Vector3();
-        Vector3 from2 = new Vector3();
-        Vector3 to = new Vector3();
-        Vector3 to2 = new Vector3();
-
-        from.set(vis.origin);
-        from2.set(vis2.origin);
-        to.set(vis4.direction).scl(50f).add(from);
-        to2.set(vis3.direction).scl(50f).add(from2);
-
-        from.add(mCamera.direction.cpy().scl(0.2f));
-        from2.add(mCamera.direction.cpy().scl(0.2f));
-
-        return new Vector3[] {from, to, from2, to2};
+    public void shoot() {
+        // If can shoot
+        if(!mHasShot) {
+            mHasShot = true;
+            EventHandler.events.notify(new ModelEvent(EventType.SHOOT));
+        }
     }
 
     private void updateCamera(float delta) {

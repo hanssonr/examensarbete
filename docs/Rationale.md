@@ -1,5 +1,12 @@
 # Beslut och vägskäl
 
+## Java
+Java valdes över andra språk eftersom det först och främst är det språk som vi känner oss tryggast i. Dessutom fungerar Java väl när det kommer till mätning av kod och
+
+## LibGDX
+
+## KryoNet eller eget
+
 ## NIO vs. IO
 När det var dags att börja skriva på nätverksimplementationen ställdes vi kanske inför vårat största val hittills nämligen vilket av Javas APIer för nätverk som vi skulle använda.
 Skillnaden dem emellan är kanske, rent teknisk, inte allt för stor – [1] IO är Stream oriented samt blockerar sina trådar, medan NIO är Buffer oriented, non blocking samt använder
@@ -105,3 +112,6 @@ PacketManager.getInstance().registerPacket(TestPacket.class);
         }
     }
 ```
+
+### Förbättringar
+Några små förbättringar har sedan gjorts till just paket-hanteringen, bland annat behöver inte användaren längre specifiera hur stort ett paket ska vara utan det räcker med super(KlassNamn.class); samt super.putInt(1); och super.ready();.
