@@ -73,36 +73,10 @@ public class NetworkGameScreen extends BaseScreen implements ViewListener, Model
     public void update(float delta) {
         mPlayerInput.processCurrentInput(delta);
 
-        //mClientWorldModel.getPlayer().rotate(mPlayerInput.getRotation());
-
-//        mVelocity.add(mCamera.getForward().scl(direction.z * mMovespeed));
-//        mVelocity.add(mCamera.getRight().scl(direction.x * mMovespeed));
-
         mClientWorldModel.getPlayer().move(mPlayerInput.getDirection());
         mClientWorldModel.getPlayer().rotate(mPlayerInput.getRotation());
 
         mWorldView.getCamera().rotate(mPlayerInput.getRotation());
-
-//        if (mPlayerInput.isShooting()) {
-//            Vector3[] rays = mClientWorldModel.getPlayer().shoot();
-//            Vector3[] visVerts = mClientWorldModel.getPlayer().getVisualRepresentationShoot();
-//
-//            // Check shoot collision local
-//            MyContactListener.CollisionObject co = MyContactListener.checkShootCollision(mClientWorldModel.getBulletWorld().getCollisionWorld(), rays);
-//            // If we have hit the world, just draw a bullethole (it doesn't matter if the server says otherwise)
-//            if(co != null && co.type == MyContactListener.CollisionObject.CollisionType.WORLD) {
-//                // Draw bullethole
-//                BulletHoleRenderer.addBullethole(co.hitPoint, co.hitNormal);
-//            }
-//
-//            if(rays != null) {
-//                // Also notify the server that we have shot
-//                mClient.sendTcp(new ShootPacket(mClient.getId(), rays[0], rays[1], visVerts[0], visVerts[1], visVerts[2], visVerts[3]));
-//            }
-//        }
-
-        if (mPlayerInput.isJumping())
-            mClientWorldModel.getPlayer().jump();
 
         mClientWorldModel.update(delta);
         if(mUpdateServer) mServerWorldModel.update(delta);
@@ -155,8 +129,8 @@ public class NetworkGameScreen extends BaseScreen implements ViewListener, Model
     public void playerEvent(EventType type) {
         switch (type) {
             case SHOOT:
-                Vector3[] collide = mClientWorldModel.getCamera().getShootRay();
-                Vector3[] visual = mClientWorldModel.getCamera().getVisualRepresentationShoot();
+                Vector3[] collide = mWorldView.getCamera().getShootRay();
+                Vector3[] visual = mWorldView.getCamera().getVisualRepresentationShoot();
 
                 // The collision
                 mClientWorldModel.checkShootCollision(collide);

@@ -34,7 +34,7 @@ public class LaserView {
 
         if(mToAdd.size != 0) {
             for(Vector3[] verts : mToAdd) {
-                LaserMeshRenderer lmr = new LaserMeshRenderer(mWorldModel.getCamera(), verts);
+                LaserMeshRenderer lmr = new LaserMeshRenderer(mCamera, verts);
                 mLasers.add(lmr);
             }
         }

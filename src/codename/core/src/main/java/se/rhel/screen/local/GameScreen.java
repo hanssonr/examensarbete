@@ -52,29 +52,10 @@ public class GameScreen extends BaseScreen implements ViewListener, ModelListene
     @Override
     public void update(float delta) {
         mPlayerInput.processCurrentInput(delta);
-        
-//        mWorldModel.getPlayer().rotate(mPlayerInput.getRotation());
-//        mWorldModel.getPlayer().move(mPlayerInput.getDirection());
 
         mWorldModel.getPlayer().move(mPlayerInput.getDirection());
         mWorldModel.getPlayer().rotate(mPlayerInput.getRotation());
-        // mWorldModel.checkShootCollision(mWorldModel.getPlayer().shoot());
 
-        if (mPlayerInput.isShooting()) {
-            MyContactListener.CollisionObject co = MyContactListener.checkShootCollision(mWorldModel.getBulletWorld().getCollisionWorld(), mWorldModel.getPlayer().shoot());
-
-            if(co.type == MyContactListener.CollisionObject.CollisionType.WORLD) {
-                // World hit
-                BulletHoleRenderer.addBullethole(co.hitPoint, co.hitNormal);
-            } else {
-                // Entity hit
-                co.entity.damageEntity(25);
-            }
-        }
-            // mWorldModel.checkShootCollision(mWorldModel.getPlayer().shoot());
-
-        if (mPlayerInput.isJumping())
-            mWorldModel.getPlayer().jump();
 
         mWorldModel.update(delta);
         mWorldView.update(delta);
@@ -102,7 +83,7 @@ public class GameScreen extends BaseScreen implements ViewListener, ModelListene
             case SHOOT:
                 mWorldModel.getPlayer().shoot();
                 // We want a ray from middle of screen as basis of hit detection
-                Ray ray = mWorldModel.getCamera().getPickRay(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2);
+                Ray ray = mWorldView.getCamera().getPickRay(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2);
                 ray = ray.cpy();
 
                 // For debugging purposes
@@ -133,8 +114,8 @@ public class GameScreen extends BaseScreen implements ViewListener, ModelListene
 
         switch(type) {
             case SHOOT:
-                Vector3[] collide = mWorldModel.getCamera().getShootRay();
-                Vector3[] visual = mWorldModel.getCamera().getVisualRepresentationShoot();
+                Vector3[] collide = mWorldView.getCamera().getShootRay();
+                Vector3[] visual = mWorldView.getCamera().getVisualRepresentationShoot();
 
                 // The collision
                 mWorldModel.checkShootCollision(collide);

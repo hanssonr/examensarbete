@@ -146,6 +146,7 @@ public class Player extends DamageAbleEntity {
         }
 
         getBody().setLinearVelocity(mVelocity);
+    }
 
     public Vector3 getVelocity() {
         return mVelocity;
