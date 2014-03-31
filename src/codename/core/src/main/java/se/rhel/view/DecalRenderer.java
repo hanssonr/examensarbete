@@ -7,7 +7,6 @@ import com.badlogic.gdx.graphics.g3d.decals.CameraGroupStrategy;
 import com.badlogic.gdx.graphics.g3d.decals.Decal;
 import com.badlogic.gdx.graphics.g3d.decals.DecalBatch;
 import com.badlogic.gdx.math.Vector3;
-import se.rhel.model.FPSCamera;
 import se.rhel.res.Resources;
 
 /**
@@ -28,13 +27,13 @@ public class DecalRenderer {
     }
 
     public void draw(float delta, Vector3 pos) {
-        Gdx.gl.glEnable(GL20.GL_DEPTH_TEST);
         Gdx.gl.glEnable(GL20.GL_BLEND);
-        Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
 
         mDecal_team_m.setPosition(pos.x, pos.y + 2f, pos.z);
         mDecal_team_m.lookAt(mCamera.position, FPSCamera.UP);
         mDecalBatch.add(mDecal_team_m);
         mDecalBatch.flush();
+
+        Gdx.gl.glDisable(GL20.GL_BLEND);
     }
 }

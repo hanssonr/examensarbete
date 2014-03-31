@@ -1,4 +1,4 @@
-package se.rhel.model;
+package se.rhel.view;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.PerspectiveCamera;

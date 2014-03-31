@@ -7,7 +7,6 @@ import se.rhel.Client;
 import se.rhel.CodeName;
 import se.rhel.Snaek;
 import se.rhel.event.*;
-import se.rhel.model.FPSCamera;
 import se.rhel.network.packet.BulletHolePacket;
 import se.rhel.network.packet.PlayerMovePacket;
 import se.rhel.network.packet.PlayerPacket;
@@ -20,8 +19,6 @@ import se.rhel.view.input.PlayerInput;
 import se.rhel.model.client.ClientWorldModel;
 import se.rhel.model.server.ServerWorldModel;
 import se.rhel.view.WorldView;
-
-import java.lang.reflect.Array;
 
 /**
  * Group: Mixed
