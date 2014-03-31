@@ -82,6 +82,8 @@ public class BulletWorld implements BaseModel {
         mCollisionWorld.addRigidBody(levelBody);
 
         addGrenade();
+
+        addSpheres();
     }
 
     public void addGrenade() {
@@ -109,9 +111,9 @@ public class BulletWorld implements BaseModel {
 
     public void addSpheres() {
 
-        final Model sphereModel = mModelBuilder.createSphere(1f, 1f, 1f, 10, 10,
+        final Model sphereModel = Resources.INSTANCE.grenadeModel; /*mModelBuilder.createSphere(1f, 1f, 1f, 10, 10,
                 new Material(ColorAttribute.createDiffuse(Color.RED), ColorAttribute.createSpecular(Color.WHITE), FloatAttribute.createShininess(64f)),
-                VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal);
+                VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal);*/
         mModels.add(sphereModel);
 
         btCollisionShape sphereShape = new btSphereShape(0.5f);
@@ -122,7 +124,7 @@ public class BulletWorld implements BaseModel {
 
         // Create the spheres
         for(float x = -5f; x <= 5f; x += 2f) {
-            for(float y = 10f; y <= 16f; y += 2f) {
+            for(float y = 0f; y <= 16f; y += 2f) {
                 for(float z = -5f; z <= 5f; z+= 2f) {
 
                     ModelInstance sphere = new ModelInstance(sphereModel);

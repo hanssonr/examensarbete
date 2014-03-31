@@ -74,7 +74,7 @@ public class Player extends DamageAbleEntity {
             // Update shooting for unnecessary drawing / spam shooting
             if(mHasShot) {
                 mDeltaShoot += delta;
-                if(mDeltaShoot > 0.3f) {
+                if(mDeltaShoot > 1f) {
                     mHasShot = false;
                     mDeltaShoot = 0f;
                 }

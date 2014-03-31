@@ -1,5 +1,6 @@
 package se.rhel.view;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.ParticleEffect;
 import com.badlogic.gdx.graphics.g2d.ParticleEffectPool;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -33,7 +34,7 @@ public class ParticleRenderer extends A2DView {
         super(model, batch);
         mCamera = cam;
 
-        //mBloodEffect.load(Gdx.files.internal("tex/particle/blood.p"), Gdx.files.internal("tex/particle"));
+        mBloodEffect.load(Gdx.files.internal("tex/particle/test.p"), Gdx.files.internal("tex/particle"));
         mBloodEffectPool = new ParticleEffectPool(mBloodEffect, 1, 20);
 
         addEffect(new Vector3(0f, 2f, 0f));
