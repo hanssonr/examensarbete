@@ -80,40 +80,13 @@ public class BulletWorld implements BaseModel {
         levelBody.setMotionState(levelMotionState);
         mBodies.add(levelBody);
         mCollisionWorld.addRigidBody(levelBody);
-
-        addGrenade();
-
-        addSpheres();
-    }
-
-    public void addGrenade() {
-        final Model grenadeModel = Resources.INSTANCE.grenadeModel;
-        mModels.add(grenadeModel);
-
-        btCollisionShape grenadeCollision = new btSphereShape(0.2f);
-        mShapes.add(grenadeCollision);
-        grenadeCollision.calculateLocalInertia(1f, mTempVector);
-        btRigidBodyConstructionInfo grenadeInfo = new btRigidBodyConstructionInfo(1f, null, grenadeCollision, mTempVector);
-        mBodyInfos.add(grenadeInfo);
-
-        ModelInstance grenade = new ModelInstance(grenadeModel);
-        instances.add(grenade);
-
-        btDefaultMotionState grenadeMotionState = new btDefaultMotionState();
-        mMotionStates.add(grenadeMotionState);
-
-        btRigidBody grenadeBody = new btRigidBody(grenadeInfo);
-        grenadeBody.setMotionState(grenadeMotionState);
-
-        mBodies.add(grenadeBody);
-        mCollisionWorld.addRigidBody(grenadeBody);
     }
 
     public void addSpheres() {
 
-        final Model sphereModel = Resources.INSTANCE.grenadeModel; /*mModelBuilder.createSphere(1f, 1f, 1f, 10, 10,
+        final Model sphereModel = mModelBuilder.createSphere(1f, 1f, 1f, 10, 10,
                 new Material(ColorAttribute.createDiffuse(Color.RED), ColorAttribute.createSpecular(Color.WHITE), FloatAttribute.createShininess(64f)),
-                VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal);*/
+                VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal);
         mModels.add(sphereModel);
 
         btCollisionShape sphereShape = new btSphereShape(0.5f);
@@ -124,7 +97,7 @@ public class BulletWorld implements BaseModel {
 
         // Create the spheres
         for(float x = -5f; x <= 5f; x += 2f) {
-            for(float y = 0f; y <= 16f; y += 2f) {
+            for(float y = 10f; y <= 16f; y += 2f) {
                 for(float z = -5f; z <= 5f; z+= 2f) {
 
                     ModelInstance sphere = new ModelInstance(sphereModel);
@@ -143,11 +116,6 @@ public class BulletWorld implements BaseModel {
                 }
             }
         }
-    }
-
-    public void addToWorld(btCollisionShape shape, btRigidBodyConstructionInfo info, btDefaultMotionState motionState, ModelInstance instance, btRigidBody body) {
-        instances.add(instance);
-        this.addToWorld(shape, info, motionState, body);
     }
 
     public void addToWorld(btCollisionShape shape, btRigidBodyConstructionInfo info, btDefaultMotionState motionState, btRigidBody body) {

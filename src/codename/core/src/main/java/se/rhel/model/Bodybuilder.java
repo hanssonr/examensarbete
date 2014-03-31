@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.VertexAttributes;
 import com.badlogic.gdx.graphics.g3d.Material;
 import com.badlogic.gdx.graphics.g3d.Model;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
+import com.badlogic.gdx.graphics.g3d.attributes.FloatAttribute;
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.bullet.collision.btCollisionShape;
@@ -49,6 +50,11 @@ public enum Bodybuilder {
 
     public Model createCapsule(float radius, float height) {
         return mBuilder.createCapsule(radius, height, 16, createMaterial(Color.MAGENTA), VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal);
+    }
+
+    public Model createSphere(float radius) {
+        return mBuilder.createSphere(radius, radius, radius, 10, 10,
+                createMaterial(Color.BLACK), VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal);
     }
 
     private Material createMaterial(Color color) {

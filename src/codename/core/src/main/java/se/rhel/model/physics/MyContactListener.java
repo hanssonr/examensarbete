@@ -1,15 +1,14 @@
 package se.rhel.model.physics;
 
 import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.physics.bullet.collision.ClosestRayResultCallback;
-import com.badlogic.gdx.physics.bullet.collision.ContactListener;
-import com.badlogic.gdx.physics.bullet.collision.btCollisionObject;
-import com.badlogic.gdx.physics.bullet.collision.btCollisionWorld;
+import com.badlogic.gdx.physics.bullet.collision.*;
 import com.badlogic.gdx.physics.bullet.linearmath.btVector3;
 import se.rhel.model.Player;
 import se.rhel.model.entity.DamageAbleEntity;
 import se.rhel.network.model.ExternalPlayer;
 import se.rhel.view.BulletHoleRenderer;
+
+import java.util.ArrayList;
 
 /**
  * Group Logic
@@ -84,6 +83,37 @@ public class MyContactListener extends ContactListener {
             return returnVal;
         }
         return null;
+    }
+
+
+    public static void checkExplosionCollision(btCollisionWorld world, Vector3 centerPosition, float explosionRadius) {
+        btCollisionObjectArray objs = world.getCollisionObjectArray();
+
+        ArrayList<DamageAbleEntity> entities = new ArrayList<>();
+
+        float cx = centerPosition.x;
+        float cy = centerPosition.y;
+        float cz = centerPosition.z;
+
+        for (int i = 0; i < objs.size(); i++) {
+            btCollisionObject obj = objs.at(i);
+
+            if(obj.userData instanceof DamageAbleEntity) {
+                entities.add((DamageAbleEntity) obj.userData);
+
+                DamageAbleEntity de = (DamageAbleEntity) obj.userData;
+
+                float dx = de.getPosition().x;
+                float dy = de.getPosition().y;
+                float dz = de.getPosition().z;
+
+                double dist = Math.sqrt( (dx-cx)*(dx-cx) + (dy-cy)*(dy-cy) + (dz-cz)*(dz-cz) );
+
+                if(dist < explosionRadius) {
+                    de.damageEntity(100);
+                }
+            }
+        }
     }
 
     @Override
