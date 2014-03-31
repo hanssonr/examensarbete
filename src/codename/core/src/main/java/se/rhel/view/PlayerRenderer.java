@@ -1,11 +1,12 @@
 package se.rhel.view;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.g3d.Environment;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector3;
-import se.rhel.model.FPSCamera;
 import se.rhel.model.Player;
 import se.rhel.res.Resources;
 
@@ -53,7 +54,10 @@ public class PlayerRenderer {
     }
 
     public void render(ModelBatch batch, Environment env) {
-        batch.render(mLaserWeapon, env);
+        batch.begin(mCamera);
+            Gdx.gl.glClear(GL10.GL_DEPTH_BUFFER_BIT);
+            batch.render(mLaserWeapon, env);
+        batch.end();
     }
 
     private void updateWeapon() {
@@ -79,7 +83,7 @@ public class PlayerRenderer {
 
         //bobbing
         if(mState == PLAYERSTATE.running) {
-            Vector3 dir = mCamera.getRight().cpy();
+            Vector3 dir = mCamera.getRight();
             dir.y = 1f;
             float x = (float)Math.sin(mBobTimer * 10) * 0.05f;
             float y = (float)Math.cos(mBobTimer * 20) * 0.03f;

@@ -2,13 +2,10 @@ package se.rhel.view;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.*;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.graphics.g3d.decals.Decal;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.math.collision.Ray;
 import com.badlogic.gdx.utils.GdxRuntimeException;
-import se.rhel.model.FPSCamera;
 import se.rhel.res.Resources;
 
 /**
@@ -169,6 +166,9 @@ public class LaserMeshRenderer {
         mesh.render(shader, GL20.GL_TRIANGLE_STRIP, 0, 4);
 
         shader.end();
+
+        Gdx.gl.glDisable(GL20.GL_BLEND);
+        Gdx.gl.glDisable(GL20.GL_TEXTURE);
 
 
         //reset index to zero

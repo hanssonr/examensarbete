@@ -6,29 +6,22 @@ import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g3d.Environment;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
+import com.badlogic.gdx.graphics.g3d.Shader;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight;
-import com.badlogic.gdx.graphics.g3d.utils.AnimationController;
+import com.badlogic.gdx.graphics.g3d.shaders.DefaultShader;
+import com.badlogic.gdx.graphics.g3d.utils.DefaultShaderProvider;
+import com.badlogic.gdx.graphics.g3d.utils.ShaderProvider;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.bullet.linearmath.btIDebugDraw;
-import com.badlogic.gdx.physics.bullet.linearmath.btVector3;
-import com.badlogic.gdx.utils.Array;
 import se.rhel.Client;
-import se.rhel.graphics.FrontFaceDepthShaderProvider;
-import se.rhel.model.BaseWorldModel;
 import se.rhel.model.IWorldModel;
-import se.rhel.model.client.ClientWorldModel;
 import se.rhel.model.entity.DamageAbleEntity;
-import se.rhel.model.entity.DummyEntity;
-import se.rhel.model.entity.IEntity;
 import se.rhel.model.physics.BulletWorld;
-import se.rhel.model.FPSCamera;
-import se.rhel.model.WorldModel;
-import se.rhel.network.model.ExternalPlayer;
 import se.rhel.res.Resources;
 import se.rhel.view.input.PlayerInput;
 import se.rhel.view.sfx.SoundManager;
@@ -63,17 +56,13 @@ public class WorldView {
 
     private DebugDrawer mAimDebugDrawer;
 
-    private AnimationController mAnimationController;
-
     private FrameBuffer buffer1 = new FrameBuffer(Pixmap.Format.RGBA8888, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), true);
-    private FrameBuffer depthFrameBuffer = new FrameBuffer(Pixmap.Format.RGBA8888, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), true);
+    private FrameBuffer buffer2 = new FrameBuffer(Pixmap.Format.RGBA8888, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), true);
 
-    private ShaderProgram outLineShader = new ShaderProgram(Gdx.files.internal("shader/outline.vertex.glsl"), Gdx.files.internal("shader/outline.fragment.glsl"));
     private ShaderProgram toonShader = new ShaderProgram(Gdx.files.internal("shader/celshading.vertex.glsl"), Gdx.files.internal("shader/celshading.fragment.glsl"));
+    private ShaderProgram defaultShader = new ShaderProgram(Gdx.files.internal("shader/celshading.vertex.glsl"), Gdx.files.internal("shader/default.fragment.glsl"));
 
     private Mesh fullscreenQuad = createFullScreenQuad();
-    private FrontFaceDepthShaderProvider depthShaderProvider = new FrontFaceDepthShaderProvider();
-    private ModelBatch depthModelBatch = new ModelBatch(depthShaderProvider);
 
     private ParticleRenderer particleRenderer;
     private int mPreviousHealth = 100;
@@ -83,17 +72,19 @@ public class WorldView {
     private PlayerRenderer mPlayerRenderer;
     private ExternalPlayerRenderer mExtPlayerRenderer;
 
+    private ModelBatch toonBatch;
+
     public WorldView(IWorldModel worldModel) {
         mWorldModel = worldModel;
         mSpriteBatch = new SpriteBatch();
         mModelBatch = new ModelBatch();
+        toonBatch = new ModelBatch(toonShader.getVertexShaderSource(), toonShader.getFragmentShaderSource());
 
         mPlayerRenderer = new PlayerRenderer(mCamera, mWorldModel.getPlayer());
         mExtPlayerRenderer = new ExternalPlayerRenderer(mWorldModel.getExternalPlayers());
 
         mCrosshairRenderer = new ShapeRenderer();
         mBulletHoleRenderer = new BulletHoleRenderer(mCamera);
-        mEntitySystem = new EntitySystemRenderer();
         mDecalRenderer = new DecalRenderer(mCamera);
 
         mAimDebugDrawer = new DebugDrawer();
@@ -126,29 +117,76 @@ public class WorldView {
     }
 
     public void render(float delta) {
+        Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
         if(PlayerInput.DRAW_MESH) {
             // Cel-shading
             buffer1.begin();
-                Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-                Gdx.gl.glClearColor(0, 1, 1, 1);
+                Gdx.gl.glClearColor(0, 0, 0, 1f);
                 Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
 
                 mModelBatch.begin(mCamera);
                     mModelBatch.render(mWorldModel.getBulletWorld().levelInstance, mEnvironment);
-                    //mModelBatch.render(Resources.INSTANCE.modelInstanceArray);
-                    mModelBatch.render(mWorldModel.getBulletWorld().instances, mEnvironment);
-                    mExtPlayerRenderer.render(mModelBatch, mEnvironment);
+                mModelBatch.end();
+
+                mModelBatch.begin(mCamera);
+                mExtPlayerRenderer.render(mModelBatch, mEnvironment);
                 mModelBatch.end();
 
                 mBulletHoleRenderer.draw(delta);
 
+                // External stuff
+                for (int i = 0; i < mWorldModel.getExternalPlayers().size; i++) {
+                    DamageAbleEntity de = (DamageAbleEntity)mWorldModel.getExternalPlayers().get(i);
+
+                    mDecalRenderer.draw(delta, de.getPosition());
+
+                    if(de.getHealth() < mPreviousHealth) {
+                        particleRenderer.addEffect(de.getPosition());
+                        mPreviousHealth = de.getHealth();
+                    }
+                    particleRenderer.draw(delta);
+                }
             buffer1.end();
 
+//            buffer2.begin();
+//                Gdx.gl.glClearColor(0, 0, 0, 0);
+//                Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
+//
+//                mModelBatch.begin(mCamera);
+//                    mExtPlayerRenderer.render(mModelBatch, mEnvironment);
+//                mModelBatch.end();
+//
+//                mBulletHoleRenderer.draw(delta);
+//
+//                // External stuff
+//                for (int i = 0; i < mWorldModel.getExternalPlayers().size; i++) {
+//                    DamageAbleEntity de = (DamageAbleEntity)mWorldModel.getExternalPlayers().get(i);
+//
+//                    mDecalRenderer.draw(delta, de.getPosition());
+//
+//                    if(de.getHealth() < mPreviousHealth) {
+//                        particleRenderer.addEffect(de.getPosition());
+//                        mPreviousHealth = de.getHealth();
+//                    }
+//                    particleRenderer.draw(delta);
+//                }
+//            buffer2.end();
+
             buffer1.getColorBufferTexture().bind();
-            toonShader.begin();
-                fullscreenQuad.render(toonShader, GL20.GL_TRIANGLE_STRIP, 0, 4);
-            toonShader.end();
+                toonShader.begin();
+                    fullscreenQuad.render(toonShader, GL20.GL_TRIANGLE_STRIP, 0, 4);
+                toonShader.end();
+
+
+//            Gdx.gl20.glEnable(GL20.GL_BLEND);
+//            Gdx.gl20.glBlendFunc(GL20.GL_BLEND_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
+//            buffer2.getColorBufferTexture().bind();
+//                defaultShader.begin();
+//                    fullscreenQuad.render(defaultShader, GL20.GL_TRIANGLE_STRIP, 0, 4);
+//                defaultShader.end();
+//            Gdx.gl20.glDisable(GL20.GL_BLEND);
+
 
         } else {
             Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
@@ -156,9 +194,9 @@ public class WorldView {
             Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
 
             mModelBatch.begin(mCamera);
-            mModelBatch.render(Resources.INSTANCE.modelInstanceArray);
-            mModelBatch.render(mWorldModel.getBulletWorld().instances, mEnvironment);
-            mModelBatch.render(mWorldModel.getBulletWorld().levelInstance, mEnvironment);
+                mModelBatch.render(Resources.INSTANCE.modelInstanceArray);
+                mModelBatch.render(mWorldModel.getBulletWorld().instances, mEnvironment);
+                mModelBatch.render(mWorldModel.getBulletWorld().levelInstance, mEnvironment);
             mModelBatch.end();
         }
 
@@ -186,67 +224,15 @@ public class WorldView {
             mDebugDrawer.end();
         }
 
-        // Ray
-        if(PlayerInput.DRAW_SHOOT_DEBUG) {
-            if(mWorldModel.getPlayer().mHasShot) {
-                /*
-                btVector3 from = new btVector3(mWorldModel.getPlayer().from.x, mWorldModel.getPlayer().from.y, mWorldModel.getPlayer().from.z);
-                btVector3 to = new btVector3(mWorldModel.getPlayer().to.x, mWorldModel.getPlayer().to.y, mWorldModel.getPlayer().to.z);
-                btVector3 c = new btVector3(1f, 1f, 1f);
-                mAimDebugDrawer.lineRenderer.setProjectionMatrix(mCamera.combined);
-                mAimDebugDrawer.begin();
-                mAimDebugDrawer.drawLine(from, to, c);
-                mAimDebugDrawer.end();
-
-                from.dispose();
-                to.dispose();
-                c.dispose();
-                */
-            }
-        }
-
         mLaserView.render(delta);
-
-        // mLaserRenderer.draw(delta);
 
         // "Crosshair"
         mCrosshairRenderer.begin(ShapeRenderer.ShapeType.Line);
-        mCrosshairRenderer.setColor(Color.RED);
-        mCrosshairRenderer.circle(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2, 5f);
+            mCrosshairRenderer.setColor(Color.RED);
+            mCrosshairRenderer.circle(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2, 5f);
         mCrosshairRenderer.end();
 
-        mModelBatch.begin(mCamera);
-        Gdx.gl.glClear(GL10.GL_DEPTH_BUFFER_BIT);
-            mPlayerRenderer.render(mModelBatch, mEnvironment);
-        mModelBatch.end();
-
-        // External stuff
-        for (int i = 0; i < mWorldModel.getExternalPlayers().size; i++) {
-            DamageAbleEntity de = (DamageAbleEntity)mWorldModel.getExternalPlayers().get(i);
-
-            mDecalRenderer.draw(delta, de.getPosition());
-
-            if(de.getHealth() < mPreviousHealth) {
-                particleRenderer.addEffect(de.getPosition());
-                mPreviousHealth = de.getHealth();
-            }
-            particleRenderer.draw(delta);
-        }
-
-//        if(mWorldModel instanceof ClientWorldModel) {
-//            for(int i = 0; i < ((ClientWorldModel)mWorldModel).getExternalPlayers().size; i++) {
-//                ExternalPlayer ep = (ExternalPlayer)((ClientWorldModel)mWorldModel).getExternalPlayers().get(i);
-//
-//                mDecalRenderer.draw(delta, ep.getPosition());
-//
-//                if(ep.getHealth() < mPreviousHealth) {
-//                    particleRenderer.addEffect(ep.getPosition());
-//                    mPreviousHealth = ep.getHealth();
-//                }
-//            }
-//            particleRenderer.draw(delta);
-//        }
-
+        mPlayerRenderer.render(mModelBatch, mEnvironment);
     }
 
     public void shoot(Vector3[] verts) {
