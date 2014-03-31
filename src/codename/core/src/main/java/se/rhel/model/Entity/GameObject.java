@@ -33,8 +33,6 @@ public abstract class GameObject {
         mPhysicsworld.addToWorld(shape, info, motionstate, mBody);
     }
 
-    protected abstract void destroy();
-
     protected btRigidBody getBody() {
         if(mBody == null) try {
             throw new Exception("Need to call createPhysicsBody before using it");
@@ -63,5 +61,9 @@ public abstract class GameObject {
         m.setTranslation(position);
 
         getBody().setCenterOfMassTransform(m);
+    }
+
+    public void destroy() {
+        getWorld().getCollisionWorld().removeCollisionObject(getBody());
     }
 }
