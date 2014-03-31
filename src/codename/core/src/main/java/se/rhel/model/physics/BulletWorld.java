@@ -80,31 +80,6 @@ public class BulletWorld implements BaseModel {
         levelBody.setMotionState(levelMotionState);
         mBodies.add(levelBody);
         mCollisionWorld.addRigidBody(levelBody);
-
-        addGrenade();
-    }
-
-    public void addGrenade() {
-        final Model grenadeModel = Resources.INSTANCE.grenadeModel;
-        mModels.add(grenadeModel);
-
-        btCollisionShape grenadeCollision = new btSphereShape(0.2f);
-        mShapes.add(grenadeCollision);
-        grenadeCollision.calculateLocalInertia(1f, mTempVector);
-        btRigidBodyConstructionInfo grenadeInfo = new btRigidBodyConstructionInfo(1f, null, grenadeCollision, mTempVector);
-        mBodyInfos.add(grenadeInfo);
-
-        ModelInstance grenade = new ModelInstance(grenadeModel);
-        instances.add(grenade);
-
-        btDefaultMotionState grenadeMotionState = new btDefaultMotionState();
-        mMotionStates.add(grenadeMotionState);
-
-        btRigidBody grenadeBody = new btRigidBody(grenadeInfo);
-        grenadeBody.setMotionState(grenadeMotionState);
-
-        mBodies.add(grenadeBody);
-        mCollisionWorld.addRigidBody(grenadeBody);
     }
 
     public void addSpheres() {
@@ -141,11 +116,6 @@ public class BulletWorld implements BaseModel {
                 }
             }
         }
-    }
-
-    public void addToWorld(btCollisionShape shape, btRigidBodyConstructionInfo info, btDefaultMotionState motionState, ModelInstance instance, btRigidBody body) {
-        instances.add(instance);
-        this.addToWorld(shape, info, motionState, body);
     }
 
     public void addToWorld(btCollisionShape shape, btRigidBodyConstructionInfo info, btDefaultMotionState motionState, btRigidBody body) {

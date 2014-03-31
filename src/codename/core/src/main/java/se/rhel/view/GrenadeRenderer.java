@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import se.rhel.model.Bodybuilder;
 import se.rhel.model.weapon.Grenade;
+import se.rhel.res.Resources;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -35,8 +36,6 @@ public class GrenadeRenderer {
     }
 
     public void update(float delta) {
-        System.out.println(mGrenades.size());
-
         Iterator it = mGrenades.entrySet().iterator();
 
         while(it.hasNext()) {
@@ -45,7 +44,7 @@ public class GrenadeRenderer {
             Grenade g = pairs.getKey();
             ModelInstance i = pairs.getValue();
 
-            i.transform.setToTranslation(g.getPosition());
+            i.transform.set(g.getTransformation());
 
             if(!g.isAlive())
                 it.remove();
@@ -53,7 +52,7 @@ public class GrenadeRenderer {
     }
 
     public void addGrenade(Grenade grenade) {
-        mGrenades.put(grenade, new ModelInstance(Bodybuilder.INSTANCE.createSphere(0.5f)));
+        mGrenades.put(grenade, new ModelInstance(Resources.INSTANCE.grenadeModel));
     }
 
 

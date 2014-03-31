@@ -7,10 +7,13 @@ import com.badlogic.gdx.math.collision.Ray;
 import se.rhel.CodeName;
 import se.rhel.event.*;
 import se.rhel.model.WorldModel;
+import se.rhel.model.entity.DamageAbleEntity;
 import se.rhel.model.physics.MyContactListener;
+import se.rhel.model.weapon.Grenade;
 import se.rhel.network.packet.ShootPacket;
 import se.rhel.screen.Controller;
 import se.rhel.view.BulletHoleRenderer;
+import se.rhel.view.ParticleRenderer;
 import se.rhel.view.input.PlayerInput;
 import se.rhel.model.client.ClientWorldModel;
 import se.rhel.screen.BaseScreen;
@@ -130,6 +133,13 @@ public class GameScreen extends Controller {
                 // The rendering & sound
                 mWorldView.shoot(visual);
                 break;
+            case EXPLOSION:
+                MyContactListener.checkExplosionCollision(mWorldModel.getBulletWorld().getCollisionWorld(), ((Grenade)objs[0]).getPosition(), 10f);
+                mWorldView.getParticleRenderer().addEffect(((Grenade)objs[0]).getPosition(), ParticleRenderer.Particle.EXPLOSION);
+                break;
+            case DAMAGE:
+                System.out.println("DAMAGE EVENT");
+                mWorldView.getParticleRenderer().addEffect(((DamageAbleEntity)objs[0]).getPosition(), ParticleRenderer.Particle.BLOOD);
             default:
                 break;
         }
