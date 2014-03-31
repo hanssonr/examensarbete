@@ -108,6 +108,11 @@ public class GameScreen extends BaseScreen implements ViewListener, ModelListene
                     }
                     break;
                 }
+                break;
+            case GRENADE:
+                mWorldModel.addGrenade(mWorldModel.getPlayer().getPosition(), mWorldModel.getPlayer().getDirection());
+                mWorldView.getGrenadeRenderer().addGrenade(mWorldModel.getGrenades().get(mWorldModel.getGrenades().size()-1));
+                break;
         }
 
     }

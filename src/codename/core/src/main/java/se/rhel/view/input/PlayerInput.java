@@ -159,6 +159,10 @@ public class PlayerInput implements InputProcessor {
             case Keys.F5:
                 DRAW_SHOOT_DEBUG = !DRAW_SHOOT_DEBUG;
                 break;
+            case Keys.F:
+                System.out.println("f down");
+                EventHandler.events.notify(new ViewEvent(EventType.GRENADE));
+                break;
         }
         return true;
     }

@@ -1,6 +1,5 @@
 package se.rhel.model;
 
-import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.math.*;
 import com.badlogic.gdx.physics.bullet.collision.*;
 import com.badlogic.gdx.physics.bullet.collision.ClosestRayResultCallback;
@@ -13,7 +12,6 @@ import se.rhel.event.EventType;
 import se.rhel.event.ModelEvent;
 import se.rhel.model.entity.DamageAbleEntity;
 import se.rhel.model.physics.BulletWorld;
-import se.rhel.res.Resources;
 
 /**
  * Group: Logic
@@ -22,7 +20,10 @@ public class Player extends DamageAbleEntity {
 
     //Rotation
     private float mRotation = 0f;
+    private float mUp = 0f;
     private Vector3 mForward = new Vector3(0, 0, -1);
+    private Vector3 up = new Vector3(0,1,0);
+    private Vector3 mDirection = new Vector3(0,0,-1);
 
     //Finals
     private final float JUMP_HEIGHT = 7f;
@@ -95,6 +96,7 @@ public class Player extends DamageAbleEntity {
         }
     }
 
+
     private void checkOnGround() {
         mOnGround = false;
         fromGround.set(getPosition());
@@ -157,7 +159,15 @@ public class Player extends DamageAbleEntity {
         if(mRotation > 360) mRotation -= 360;
         if(mRotation < 0) mRotation += 360;
 
+        mUp += rotation.y;
+        if(mUp > 60) mUp = 60;
+        if(mUp < -60) mUp = -60;
+
         mForward.rotate(Vector3.Y, rotation.x);
+        up.rotate(Vector3.X, rotation.y);
+
+        mDirection.rotate(Vector3.Y, rotation.x);
+        mDirection.rotate(mForward.cpy().crs(Vector3.Y), rotation.y);
     }
 
     public float getRotation() {
@@ -172,5 +182,7 @@ public class Player extends DamageAbleEntity {
         return mForward.cpy();
     }
 
-
+    public Vector3 getDirection() {
+        return mDirection.cpy().nor();
+    }
 }

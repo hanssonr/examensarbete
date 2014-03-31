@@ -71,6 +71,7 @@ public class WorldView {
 
     private PlayerRenderer mPlayerRenderer;
     private ExternalPlayerRenderer mExtPlayerRenderer;
+    private GrenadeRenderer mGrenadeRenderer;
 
     private ModelBatch toonBatch;
 
@@ -82,6 +83,7 @@ public class WorldView {
 
         mPlayerRenderer = new PlayerRenderer(mCamera, mWorldModel.getPlayer());
         mExtPlayerRenderer = new ExternalPlayerRenderer(mWorldModel.getExternalPlayers());
+        mGrenadeRenderer = new GrenadeRenderer();
 
         mCrosshairRenderer = new ShapeRenderer();
         mBulletHoleRenderer = new BulletHoleRenderer(mCamera);
@@ -114,6 +116,7 @@ public class WorldView {
     public void update(float delta) {
         mPlayerRenderer.update(delta);
         mExtPlayerRenderer.update(delta);
+        mGrenadeRenderer.update(delta);
     }
 
     public void render(float delta) {
@@ -122,15 +125,13 @@ public class WorldView {
         if(PlayerInput.DRAW_MESH) {
             // Cel-shading
             buffer1.begin();
-                Gdx.gl.glClearColor(0, 0, 0, 1f);
+                Gdx.gl.glClearColor(0, 1, 1, 1f);
                 Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
 
                 mModelBatch.begin(mCamera);
                     mModelBatch.render(mWorldModel.getBulletWorld().levelInstance, mEnvironment);
-                mModelBatch.end();
-
-                mModelBatch.begin(mCamera);
-                mExtPlayerRenderer.render(mModelBatch, mEnvironment);
+                    mExtPlayerRenderer.render(mModelBatch, mEnvironment);
+                    mGrenadeRenderer.render(mModelBatch, mEnvironment);
                 mModelBatch.end();
 
                 mBulletHoleRenderer.draw(delta);
@@ -301,4 +302,5 @@ public class WorldView {
     public ExternalPlayerRenderer getExternalPlayerRenderer() {
         return mExtPlayerRenderer;
     }
+    public GrenadeRenderer getGrenadeRenderer() { return mGrenadeRenderer; }
 }
