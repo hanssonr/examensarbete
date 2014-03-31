@@ -60,7 +60,7 @@ public class WorldView {
     private FrameBuffer buffer2 = new FrameBuffer(Pixmap.Format.RGBA8888, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), true);
 
     private ShaderProgram toonShader = new ShaderProgram(Gdx.files.internal("shader/celshading.vertex.glsl"), Gdx.files.internal("shader/celshading.fragment.glsl"));
-    private ShaderProgram defaultShader = new ShaderProgram(Gdx.files.internal("shader/celshading.vertex.glsl"), Gdx.files.internal("shader/default.fragment.glsl"));
+    // private ShaderProgram defaultShader = new ShaderProgram(Gdx.files.internal("shader/celshading.vertex.glsl"), Gdx.files.internal("shader/default.fragment.glsl"));
 
     private Mesh fullscreenQuad = createFullScreenQuad();
 
@@ -127,6 +127,7 @@ public class WorldView {
 
                 mModelBatch.begin(mCamera);
                     mModelBatch.render(mWorldModel.getBulletWorld().levelInstance, mEnvironment);
+                    mModelBatch.render(mWorldModel.getBulletWorld().instances, mEnvironment);
                 mModelBatch.end();
 
                 mModelBatch.begin(mCamera);
