@@ -132,6 +132,7 @@ public class WorldView {
                     mModelBatch.render(mWorldModel.getBulletWorld().levelInstance, mEnvironment);
                     mExtPlayerRenderer.render(mModelBatch, mEnvironment);
                     mGrenadeRenderer.render(mModelBatch, mEnvironment);
+                    mModelBatch.render(mWorldModel.getBulletWorld().instances, mEnvironment);
                 mModelBatch.end();
 
                 mBulletHoleRenderer.draw(delta);

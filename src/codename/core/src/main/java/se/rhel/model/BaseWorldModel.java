@@ -2,6 +2,10 @@ package se.rhel.model;
 
 import com.badlogic.gdx.math.Vector3;
 import se.rhel.model.entity.GameObject;
+import se.rhel.event.EventHandler;
+import se.rhel.event.EventType;
+import se.rhel.event.ModelEvent;
+import se.rhel.model.entity.DamageAbleEntity;
 import se.rhel.model.physics.BulletWorld;
 import se.rhel.model.physics.MyContactListener;
 import se.rhel.model.weapon.Grenade;
@@ -53,7 +57,7 @@ public class BaseWorldModel {
         // If we have hit the world, just draw a bullethole (it doesn't matter if the server says otherwise)
         if(co != null && co.type == MyContactListener.CollisionObject.CollisionType.WORLD) {
             // Draw bullethole
-            BulletHoleRenderer.addBullethole(co.hitPoint, co.hitNormal);
+            EventHandler.events.notify(new ModelEvent(EventType.BULLET_HOLE, co.hitPoint, co.hitNormal));
         }
     }
 
