@@ -6,13 +6,15 @@ package se.rhel.event;
 public class ModelEvent implements GameEvent<ModelListener> {
 
     EventType type;
+    Object[] objs;
 
-    public ModelEvent(EventType type) {
+    public ModelEvent(EventType type, Object... objs) {
         this.type = type;
+        this.objs = objs;
     }
 
     @Override
     public void notify(ModelListener listener) {
-        listener.playerEvent(this.type);
+        listener.modelEvent(this.type, this.objs);
     }
 }

@@ -15,6 +15,7 @@ import se.rhel.network.packet.ShootPacket;
 import se.rhel.packet.Packet;
 import se.rhel.screen.BaseScreen;
 import se.rhel.Server;
+import se.rhel.screen.Controller;
 import se.rhel.view.BulletHoleRenderer;
 import se.rhel.view.input.PlayerInput;
 import se.rhel.model.client.ClientWorldModel;
@@ -26,7 +27,7 @@ import java.lang.reflect.Array;
 /**
  * Group: Mixed
  */
-public class NetworkGameScreen extends BaseScreen implements ViewListener, ModelListener, NetworkListener {
+public class NetworkGameScreen extends Controller implements NetworkListener {
 
     private PlayerInput mPlayerInput;
     private WorldView mWorldView;
@@ -125,7 +126,7 @@ public class NetworkGameScreen extends BaseScreen implements ViewListener, Model
     }
 
     @Override
-    public void playerEvent(EventType type) {
+    public void modelEvent(EventType type, Object... obj) {
         switch (type) {
             case SHOOT:
                 Vector3[] collide = mWorldView.getCamera().getShootRay();
@@ -139,6 +140,9 @@ public class NetworkGameScreen extends BaseScreen implements ViewListener, Model
 
                 // The network, notify the server that we have shot
                 mClient.sendTcp(new ShootPacket(mClient.getId(), collide[0], collide[1], visual[0], visual[1], visual[2], visual[3]));
+                break;
+            case BULLET_HOLE:
+                BulletHoleRenderer.addBullethole((Vector3) obj[0], (Vector3) obj[1]);
                 break;
             default:
                 break;

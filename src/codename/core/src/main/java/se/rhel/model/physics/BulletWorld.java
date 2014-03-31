@@ -81,7 +81,30 @@ public class BulletWorld implements BaseModel {
         mBodies.add(levelBody);
         mCollisionWorld.addRigidBody(levelBody);
 
-        //ddSpheres();
+        addGrenade();
+    }
+
+    public void addGrenade() {
+        final Model grenadeModel = Resources.INSTANCE.grenadeModel;
+        mModels.add(grenadeModel);
+
+        btCollisionShape grenadeCollision = new btSphereShape(0.2f);
+        mShapes.add(grenadeCollision);
+        grenadeCollision.calculateLocalInertia(1f, mTempVector);
+        btRigidBodyConstructionInfo grenadeInfo = new btRigidBodyConstructionInfo(1f, null, grenadeCollision, mTempVector);
+        mBodyInfos.add(grenadeInfo);
+
+        ModelInstance grenade = new ModelInstance(grenadeModel);
+        instances.add(grenade);
+
+        btDefaultMotionState grenadeMotionState = new btDefaultMotionState();
+        mMotionStates.add(grenadeMotionState);
+
+        btRigidBody grenadeBody = new btRigidBody(grenadeInfo);
+        grenadeBody.setMotionState(grenadeMotionState);
+
+        mBodies.add(grenadeBody);
+        mCollisionWorld.addRigidBody(grenadeBody);
     }
 
     public void addSpheres() {

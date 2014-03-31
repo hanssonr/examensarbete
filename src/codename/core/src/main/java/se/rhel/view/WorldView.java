@@ -137,7 +137,7 @@ public class WorldView {
                 mModelBatch.begin(mCamera);
                     mModelBatch.render(mWorldModel.getBulletWorld().levelInstance, mEnvironment);
                     //mModelBatch.render(Resources.INSTANCE.modelInstanceArray);
-                    //mModelBatch.render(mWorldModel.getBulletWorld().instances, mEnvironment);
+                    mModelBatch.render(mWorldModel.getBulletWorld().instances, mEnvironment);
                     mExtPlayerRenderer.render(mModelBatch, mEnvironment);
                 mModelBatch.end();
 

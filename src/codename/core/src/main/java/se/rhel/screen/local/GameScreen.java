@@ -9,6 +9,7 @@ import se.rhel.event.*;
 import se.rhel.model.WorldModel;
 import se.rhel.model.physics.MyContactListener;
 import se.rhel.network.packet.ShootPacket;
+import se.rhel.screen.Controller;
 import se.rhel.view.BulletHoleRenderer;
 import se.rhel.view.input.PlayerInput;
 import se.rhel.model.client.ClientWorldModel;
@@ -21,9 +22,7 @@ import se.rhel.view.WorldView;
  * Created by Emil on 2014-03-10.
  * assigned to libgdx-gradle-template in se.rhel.screen.local
  */
-public class GameScreen extends BaseScreen implements ViewListener, ModelListener {
-
-    private final Events mEvents = new Events();
+public class GameScreen extends Controller {
 
     private PlayerInput mPlayerInput;
     private WorldView mWorldView;
@@ -113,7 +112,7 @@ public class GameScreen extends BaseScreen implements ViewListener, ModelListene
     }
 
     @Override
-    public void playerEvent(EventType type) {
+    public void modelEvent(EventType type, Object... objs) {
 
         switch(type) {
             case SHOOT:
