@@ -59,6 +59,7 @@ public class Player extends DamageAbleEntity {
     private void createPyshicsBody() {
         btCollisionShape shape = new btCapsuleShape(mPlayersize.x, mPlayersize.y);
         btRigidBodyConstructionInfo info = new btRigidBodyConstructionInfo(5f, null, shape, Vector3.Zero);
+        info.setFriction(0f);
         btDefaultMotionState motionstate = new btDefaultMotionState(getTransformation());
 
         super.createPhysicBody(shape, info, motionstate, this);
