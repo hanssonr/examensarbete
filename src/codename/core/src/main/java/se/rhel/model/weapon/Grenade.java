@@ -18,7 +18,7 @@ public class Grenade extends GameObject  {
 
     private int damage = 50;
     private float size = 0.2f;
-    private float explosionTime = 4f;
+    private float explosionTime = 3f;
     private boolean isAlive = true;
 
     //postition
@@ -34,14 +34,17 @@ public class Grenade extends GameObject  {
         getTransformation().setTranslation(position.add(Vector3.Y).add(direction));
         createPhysicBody();
 
-        getBody().applyCentralImpulse(direction.scl(10f));
+        getBody().applyImpulse(direction.scl(20f), new Vector3(0.1f, 0.05f, 0.1f).scl(0.1f));
     }
 
     public void createPhysicBody() {
-        btCollisionShape shape = new btSphereShape(size);
-        btRigidBodyConstructionInfo info = new btRigidBodyConstructionInfo(.5f, null, shape, Vector3.Zero);
-        info.setFriction(100f);
+        Vector3 inertia = new Vector3();
+        btCollisionShape shape = new btCapsuleShape(size, size);
+        shape.calculateLocalInertia(1f, inertia);
         btDefaultMotionState motionstate = new btDefaultMotionState(getTransformation());
+        btRigidBodyConstructionInfo info = new btRigidBodyConstructionInfo(1f, motionstate, shape, inertia);
+        info.setFriction(100f);
+        info.setRestitution(0.01f);
 
         super.createPhysicBody(shape, info, motionstate, this);
     }
