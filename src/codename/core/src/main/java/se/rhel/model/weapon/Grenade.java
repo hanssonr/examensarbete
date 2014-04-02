@@ -32,12 +32,15 @@ public class Grenade extends GameObject  {
         mDirection = direction;
 
         getTransformation().setTranslation(position.add(Vector3.Y).add(direction));
-        createPhysicBody();
+    }
 
-        getBody().applyImpulse(direction.scl(20f), new Vector3(0.1f, 0.05f, 0.1f).scl(0.1f));
+    private void throwMe() {
+        getBody().applyImpulse(mDirection.scl(20f), new Vector3(0.1f, 0.05f, 0.1f).scl(0.1f));
+        EventHandler.events.notify(new ModelEvent(EventType.GRENADE_CREATED, this));
     }
 
     public void createPhysicBody() {
+        System.out.println("        > fffCREATING MF GRENADE!");
         Vector3 inertia = new Vector3();
         btCollisionShape shape = new btCapsuleShape(size, size);
         shape.calculateLocalInertia(1f, inertia);
@@ -47,9 +50,12 @@ public class Grenade extends GameObject  {
         info.setRestitution(0.01f);
 
         super.createPhysicBody(shape, info, motionstate, this);
+
+        throwMe();
     }
 
     public void update(float delta) {
+
         if(isAlive) {
             explosionTime -= delta;
 

@@ -51,6 +51,8 @@ public class BulletWorld implements BaseModel {
     private Vector3 mGravity = new Vector3(0, -9.18f, 0);
     private Vector3 mTempVector = new Vector3();
 
+    public volatile boolean isStepping = true;
+
     public BulletWorld() {
         create();
         new MyContactListener();
@@ -132,12 +134,13 @@ public class BulletWorld implements BaseModel {
 
     @Override
     public void update(float delta) {
-
+        isStepping = true;
         PERFORMANCE_COUNTER.tick();
         PERFORMANCE_COUNTER.start();
                 ((btDynamicsWorld) mCollisionWorld).stepSimulation(delta, 5);
         PERFORMANCE_COUNTER.stop();
         PERFORMANCE = "Bullet: " + (int)(PERFORMANCE_COUNTER.load.value*100f) + " %";
+        isStepping = false;
     }
 
     @Override

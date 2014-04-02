@@ -140,5 +140,11 @@ public class ClientWorldModel extends BaseWorldModel implements ClientListener, 
             }
 
         }
+        else if (obj instanceof GrenadeCreatePacket) {
+            Log.debug("ClientWorldModel", "Received GrenadeCreatePacket");
+            GrenadeCreatePacket gcp = (GrenadeCreatePacket) obj;
+            // Notify networklistener
+            EventHandler.events.notify(new NetworkEvent(gcp));
+        }
     }
 }

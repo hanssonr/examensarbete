@@ -1,7 +1,7 @@
 # Beslut och vägskäl
 
 ## Java
-Java valdes över andra språk eftersom det först och främst är det språk som vi känner oss tryggast i. Dessutom fungerar Java väl när det kommer till mätning av kod och
+Java valdes över andra språk eftersom det först och främst är det språk som vi känner oss tryggast i. Dessutom fungerar Java väl när det kommer till mätning av kod och snabb och säker refactoring.
 
 ## LibGDX
 
@@ -115,3 +115,42 @@ PacketManager.getInstance().registerPacket(TestPacket.class);
 
 ### Förbättringar
 Några små förbättringar har sedan gjorts till just paket-hanteringen, bland annat behöver inte användaren längre specifiera hur stort ett paket ska vara utan det räcker med super(KlassNamn.class); samt super.putInt(1); och super.ready();.
+
+## ID på GameObject-klasser för nätverkssynkronisering
+En smärre tankenöt som egentligen, rent spontant, inte har något bra svar eller lösning. Åtminstone inte från vår sida. Egentligen är själva huvudproblemet av en mer filosofisk karaktär än ett mer praktiskt sådant.
+
+När en spelare vill, i det här fallet, kasta en granat på klienten i en multiplayer-miljö så får controllen reda på det. Redan här vill vi egentligen skicka ett meddelande till servern som kollar mot reglerna.
+```java
+public void inputEvent(EventType type) {
+...
+    case GRENADE:
+        // Check against the rules on server
+        mClient.sendTcp(new GrenadeCreatePacket(mClient.getId(), pos, dir));
+        break;
+    }
+}
+```
+
+På servern i sin tur kollas reglerna och en granat kastas vilket meddelas på klienterna
+```java
+// A player wants to throw a grenade!
+ExternalPlayer ep = getPlayer(gp.clientId);
+ep.grenadeThrow();
+mServer.sendToAllTCPExcept(new GrenadeCreatePacket(0, gcp.position, gcp.direction), con);
+```
+
+Som ritar ut granaten och vill få uppdateringarn från servern kontinuerligt om granatens position och riktning
+```java
+GrenadeCreatePacket gcp = (GrenadeCreatePacket) packet;
+mClientWorldModel.addGrenade(gcp.position, gcp.direction);
+mWorldView.getGrenadeRenderer().addGrenade(mClientWorldModel.getGrenades().get(mClientWorldModel.getGrenades().size()-1));
+```
+
+(Allt representeras inte i koden just nu utan det är mer pseudo) men själva problemet kommer vid fallet när klienten hela tiden vill få uppdateringar om granaten. Detta blir lite problematiskt i och med att en
+granat representeras som en Model-klass som är helt ovetandes om något nätverk över huvudtaget och synkroniseringen av en sådan när en klient får uppdatering från servern blir, om inte omöjlig, näst intill utan ett ID
+i klassen som representerar en granat. Och lägger vi till ett id på en model-klass så blir den helt plötsligt en mixad klass, vilka vi eftersträvar att minska på. En paradox som blir svårhanterad i dess teoretiska anda,
+eftersom det egentligen inte rör sig om ett praktiskt problem.
+
+Lösningen? Efter mycket huvudbry så måste vi nog ändå lägga till idn på GameObject-klasser vilket i sin tur kommer leda till att många klasser går från ha en concern till att ha två, det vill säga mixade, som i
+sin tur kommer strula till det med mätningarna.
+

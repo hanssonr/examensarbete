@@ -10,26 +10,20 @@ import com.badlogic.gdx.physics.bullet.linearmath.btDefaultMotionState;
 import se.rhel.event.EventHandler;
 import se.rhel.event.EventType;
 import se.rhel.event.ModelEvent;
+import se.rhel.model.entity.ActionEntity;
 import se.rhel.model.entity.DamageAbleEntity;
 import se.rhel.model.physics.BulletWorld;
 
 /**
  * Group: Logic
  */
-public class Player extends DamageAbleEntity {
-
-    //Rotation
-    private float mRotation = 0f;
-    private float mUp = 0f;
-    private Vector3 mForward = new Vector3(0, 0, -1);
-    private Vector3 up = new Vector3(0,1,0);
-    private Vector3 mDirection = new Vector3(0,0,-1);
+public class Player extends ActionEntity {
 
     //Finals
     private final float JUMP_HEIGHT = 7f;
     private final float GRAVITY_POWER = 15f;
 
-    private float mDeltaShoot;
+
     private float mRespawnTimer;
     private float mGravity = 0f;
 
@@ -39,7 +33,6 @@ public class Player extends DamageAbleEntity {
 
     //RayCasts
     private ClosestRayResultCallback rayTestCB;
-    public boolean mHasShot = false;
     private Vector3 fromGround = new Vector3();
     private Vector3 toGround = new Vector3();
 
@@ -66,6 +59,7 @@ public class Player extends DamageAbleEntity {
     }
 
     public void update(float delta) {
+        super.update(delta);
         if(isAlive()) {
             getBody().setGravity(Vector3.Zero);
             mTransformation.set(getBody().getCenterOfMassTransform());
@@ -73,14 +67,6 @@ public class Player extends DamageAbleEntity {
             checkOnGround();
             calculateGravity(delta);
 
-            // Update shooting for unnecessary drawing / spam shooting
-            if(mHasShot) {
-                mDeltaShoot += delta;
-                if(mDeltaShoot > 1f) {
-                    mHasShot = false;
-                    mDeltaShoot = 0f;
-                }
-            }
         } else {
             mRespawnTimer += delta;
             if(mRespawnTimer > 5f) {
@@ -88,15 +74,6 @@ public class Player extends DamageAbleEntity {
             }
         }
     }
-
-    public void shoot() {
-        // If can shoot
-        if(!mHasShot) {
-            mHasShot = true;
-            EventHandler.events.notify(new ModelEvent(EventType.SHOOT));
-        }
-    }
-
 
     private void checkOnGround() {
         mOnGround = false;
@@ -155,35 +132,8 @@ public class Player extends DamageAbleEntity {
         return mVelocity;
     }
 
-    public void rotate(Vector2 rotation) {
-        mRotation += rotation.x;
-        if(mRotation > 360) mRotation -= 360;
-        if(mRotation < 0) mRotation += 360;
-
-        mUp += rotation.y;
-        if(mUp > 60) mUp = 60;
-        if(mUp < -60) mUp = -60;
-
-        mForward.rotate(Vector3.Y, rotation.x);
-        up.rotate(Vector3.X, rotation.y);
-
-        mDirection.rotate(Vector3.Y, rotation.x);
-        mDirection.rotate(mForward.cpy().crs(Vector3.Y), rotation.y);
-    }
-
-    public float getRotation() {
-        return mRotation;
-    }
-
     public boolean isGrounded() {
         return mOnGround;
     }
 
-    private Vector3 getForward() {
-        return mForward.cpy();
-    }
-
-    public Vector3 getDirection() {
-        return mDirection.cpy().nor();
-    }
 }

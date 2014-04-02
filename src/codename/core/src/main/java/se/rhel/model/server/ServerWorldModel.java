@@ -172,5 +172,18 @@ public class ServerWorldModel extends BaseWorldModel implements ServerListener {
             ShootPacket sendP = new ShootPacket(sp.clientId, sp.mFrom, sp.mTo, from.add(dir), to.add(dir), from2.add(dir), to2.add(dir));
             mServer.sendToAllUDPExcept(sendP, con);
         }
+        else if (obj instanceof GrenadeCreatePacket) {
+            Log.debug("ServerWorldModel", "GrenadeCreatePacket received on server");
+            GrenadeCreatePacket gcp = (GrenadeCreatePacket) obj;
+
+            // A player wants to throw a grenade!
+            ExternalPlayer ep = getPlayer(gcp.clientId);
+            if(ep != null) {
+                ep.grenadeThrow();
+            }
+
+
+            // mServer.sendToAllTCPExcept(new GrenadeCreatePacket(0, gcp.position, gcp.direction), con);
+        }
     }
 }

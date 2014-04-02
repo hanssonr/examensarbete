@@ -10,9 +10,14 @@ import se.rhel.model.physics.BulletWorld;
 
 
 /**
- * Group: Logic
+ * Group: Mixed
  */
 public abstract class GameObject {
+
+    private int ID;
+    public int getId() { return ID; }
+    public void setId(int id) { ID = id; }
+
     protected Matrix4 mTransformation = new Matrix4().idt();
     private btRigidBody mBody;
     protected BulletWorld mPhysicsworld;

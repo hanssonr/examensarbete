@@ -17,7 +17,7 @@ import se.rhel.res.Resources;
  *
  * Created by rkh on 2014-03-24.
  */
-public class DummyEntity extends DamageAbleEntity implements IEntity {
+public class DummyEntity extends ActionEntity implements IEntity {
 
     private Vector2 mSize;
 

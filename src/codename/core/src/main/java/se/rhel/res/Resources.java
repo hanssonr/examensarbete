@@ -60,7 +60,7 @@ public enum Resources {
         //mManager.load("obj/player/mcplayer.g3db", Model.class);
         //mManager.load("obj/beretta/beretta.obj", Model.class);
         mManager.load("obj/skybox/spacesphere.obj", Model.class);
-        mManager.load("obj/wep/grenade.g3db", Model.class);
+        mManager.load("obj/wep/Grenade.g3db", Model.class);
 
         mManager.load("tex/laser/laser_middle_b.png", Texture.class);
         mManager.load("tex/laser/laser_middle_o.png", Texture.class);
@@ -118,7 +118,7 @@ public enum Resources {
 
         levelModelPhysics = mManager.get("obj/level/level_xlarge.g3db", Model.class);
         levelModelVisual = mManager.get("obj/level/level_xlarge_vis.g3db", Model.class);
-        grenadeModel = mManager.get("obj/wep/grenade.g3db", Model.class);
+        grenadeModel = mManager.get("obj/wep/Grenade.g3db", Model.class);
 
         fpsWeaponModel = mManager.get("obj/player/wep/FPSWeapon.g3db", Model.class);
 

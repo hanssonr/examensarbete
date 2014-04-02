@@ -123,6 +123,7 @@ public class GameScreen extends Controller {
     public void modelEvent(EventType type, Object... objs) {
 
         switch(type) {
+
             case SHOOT:
                 Vector3[] collide = mWorldView.getCamera().getShootRay();
                 Vector3[] visual = mWorldView.getCamera().getVisualRepresentationShoot();
@@ -133,13 +134,20 @@ public class GameScreen extends Controller {
                 // The rendering & sound
                 mWorldView.shoot(visual);
                 break;
+
             case EXPLOSION:
                 MyContactListener.checkExplosionCollision(mWorldModel.getBulletWorld().getCollisionWorld(), ((Grenade)objs[0]).getPosition(), 10f);
                 mWorldView.getParticleRenderer().addEffect(((Grenade)objs[0]).getPosition(), ParticleRenderer.Particle.EXPLOSION);
                 break;
+
             case DAMAGE:
                 System.out.println("DAMAGE EVENT");
                 mWorldView.getParticleRenderer().addEffect(((DamageAbleEntity)objs[0]).getPosition(), ParticleRenderer.Particle.BLOOD);
+                break;
+
+            case GRENADE:
+                break;
+
             default:
                 break;
         }

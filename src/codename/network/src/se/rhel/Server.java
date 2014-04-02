@@ -212,6 +212,7 @@ public class Server implements EndPoint {
     public void sendToAllTCPExcept(Packet packet, Connection except) {
         for(Connection con : mConnections) {
             if(!con.equals(except)) {
+                Log.debug("Server", "Sending tcp to " + con.getId());
                 sendTCP(packet, con);
             }
         }

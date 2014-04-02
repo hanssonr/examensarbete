@@ -1,8 +1,7 @@
-package se.rhel.util;
+package se.rhel.model.util;
 
 /**
- * Created by Emil on 2014-03-04.
- * assigned to libgdx-gradle-template in se.rhel
+ * Created by Emil on 2014-04-02.
  */
 public class Utils {
 

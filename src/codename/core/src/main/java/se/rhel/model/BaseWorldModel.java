@@ -8,6 +8,7 @@ import se.rhel.event.ModelEvent;
 import se.rhel.model.entity.DamageAbleEntity;
 import se.rhel.model.physics.BulletWorld;
 import se.rhel.model.physics.MyContactListener;
+import se.rhel.model.util.Utils;
 import se.rhel.model.weapon.Grenade;
 import se.rhel.view.BulletHoleRenderer;
 
@@ -19,9 +20,10 @@ import java.util.ArrayList;
 public class BaseWorldModel {
 
     private BulletWorld mBulletWorld;
+
     protected ArrayList<GameObject> mDestroy = new ArrayList<>();
     protected ArrayList<Grenade> mGrenades = new ArrayList<>();
-
+    private volatile ArrayList<Grenade> mToAdd = new ArrayList<>();
 
     public BaseWorldModel() {
         mBulletWorld = new BulletWorld();
@@ -33,6 +35,15 @@ public class BaseWorldModel {
 
     public void update(float delta) {
         mBulletWorld.update(delta);
+
+        if(mToAdd.size() > 0) {
+            System.out.println("    >ToAdd is > 0, size: " + mToAdd.size());
+            for(Grenade g : mToAdd) {
+                g.createPhysicBody();
+                mGrenades.add(g);
+            }
+            mToAdd.clear();
+        }
 
         for (int i = 0; i < mGrenades.size(); i++) {
             Grenade g = mGrenades.get(i);
@@ -61,8 +72,11 @@ public class BaseWorldModel {
         }
     }
 
-    public void addGrenade(Vector3 position, Vector3 direction) {
-        mGrenades.add(new Grenade(getBulletWorld(), position, direction));
+    public Grenade addGrenade(Vector3 position, Vector3 direction) {
+        Grenade g = new Grenade(getBulletWorld(), position, direction);
+        g.setId(Utils.getInstance().generateUniqueId());
+        mToAdd.add(g);
+        return g;
     }
 
     public ArrayList<Grenade> getGrenades() {
