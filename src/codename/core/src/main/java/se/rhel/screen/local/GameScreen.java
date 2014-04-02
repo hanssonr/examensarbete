@@ -112,8 +112,10 @@ public class GameScreen extends Controller {
                 }
                 break;
             case GRENADE:
-                mWorldModel.addGrenade(mWorldModel.getPlayer().getPosition(), mWorldModel.getPlayer().getDirection());
-                mWorldView.getGrenadeRenderer().addGrenade(mWorldModel.getGrenades().get(mWorldModel.getGrenades().size()-1));
+                Grenade g = new Grenade(mWorldModel.getBulletWorld(), mWorldModel.getPlayer().getPosition(), mWorldModel.getPlayer().getDirection());
+                g.createPhysicBody();
+                mWorldModel.addGrenade(g);
+                mWorldView.getGrenadeRenderer().addGrenade(g);
                 break;
         }
 
@@ -141,7 +143,6 @@ public class GameScreen extends Controller {
                 break;
 
             case DAMAGE:
-                System.out.println("DAMAGE EVENT");
                 mWorldView.getParticleRenderer().addEffect(((DamageAbleEntity)objs[0]).getPosition(), ParticleRenderer.Particle.BLOOD);
                 break;
 

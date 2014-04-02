@@ -4,14 +4,19 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import se.rhel.Client;
 import se.rhel.event.EventHandler;
+import se.rhel.event.EventType;
+import se.rhel.event.ModelEvent;
 import se.rhel.event.NetworkEvent;
 import se.rhel.model.*;
 import se.rhel.model.entity.IEntity;
+import se.rhel.model.weapon.Grenade;
 import se.rhel.network.packet.*;
 import se.rhel.network.model.ExternalPlayer;
 import se.rhel.observer.ClientListener;
 import se.rhel.packet.TestPacket;
 import se.rhel.util.Log;
+
+import java.util.ArrayList;
 
 
 /**
@@ -22,6 +27,8 @@ public class ClientWorldModel extends BaseWorldModel implements ClientListener, 
     private Client mClient;
     private Player mPlayer;
     private Array<IEntity> mPlayers;
+
+    private ArrayList<Grenade> mToCreate = new ArrayList<>();
 
     public ClientWorldModel(Client client) {
         super();
@@ -39,6 +46,16 @@ public class ClientWorldModel extends BaseWorldModel implements ClientListener, 
 
         for (int i = 0; i < mPlayers.size; i++) {
             mPlayers.get(i).update(delta);
+        }
+
+        if(mToCreate.size() > 0) {
+            for(Grenade g : mToCreate) {
+                g.createPhysicBody();
+                super.addGrenade(g);
+                EventHandler.events.notify(new ModelEvent(EventType.GRENADE_CREATED, g));
+            }
+
+            mToCreate.clear();
         }
     }
 
@@ -143,8 +160,14 @@ public class ClientWorldModel extends BaseWorldModel implements ClientListener, 
         else if (obj instanceof GrenadeCreatePacket) {
             Log.debug("ClientWorldModel", "Received GrenadeCreatePacket");
             GrenadeCreatePacket gcp = (GrenadeCreatePacket) obj;
+
+            Grenade g = new Grenade(getBulletWorld(), gcp.position, gcp.direction);
+            g.setId(gcp.clientId);
+            mToCreate.add(g);
+
             // Notify networklistener
-            EventHandler.events.notify(new NetworkEvent(gcp));
+            //EventHandler.events.notify(new NetworkEvent(gcp));
+            //EventHandler.events.notify(new ModelEvent(EventType.GRENADE_CREATED, g));
         }
     }
 }
