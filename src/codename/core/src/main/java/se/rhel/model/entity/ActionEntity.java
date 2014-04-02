@@ -3,7 +3,6 @@ package se.rhel.model.entity;
 import se.rhel.event.EventHandler;
 import se.rhel.event.EventType;
 import se.rhel.event.ModelEvent;
-import se.rhel.event.ServerModelEvent;
 import se.rhel.model.physics.BulletWorld;
 
 /**
@@ -45,7 +44,6 @@ public class ActionEntity extends DamageAbleEntity {
     public void grenadeThrow() {
         if(currentGrenades <= MAX_GRENADES) {
             currentGrenades++;
-            EventHandler.events.notify(new ServerModelEvent(EventType.GRENADE, getPosition(), getDirection()));
             EventHandler.events.notify(new ModelEvent(EventType.GRENADE, getPosition(), getDirection()));
         }
     }

@@ -84,7 +84,7 @@ public class WorldView {
 
         mPlayerRenderer = new PlayerRenderer(mCamera, mWorldModel.getPlayer());
         mExtPlayerRenderer = new ExternalPlayerRenderer(mWorldModel.getExternalPlayers());
-        mGrenadeRenderer = new GrenadeRenderer(mWorldModel.getGrenades());
+        mGrenadeRenderer = new GrenadeRenderer();
 
         mCrosshairRenderer = new ShapeRenderer();
         mBulletHoleRenderer = new BulletHoleRenderer(mCamera);

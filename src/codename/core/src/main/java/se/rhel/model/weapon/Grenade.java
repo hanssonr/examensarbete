@@ -40,7 +40,6 @@ public class Grenade extends GameObject  {
     }
 
     public void createPhysicBody() {
-        System.out.println("        > fffCREATING MF GRENADE!");
         Vector3 inertia = new Vector3();
         btCollisionShape shape = new btCapsuleShape(size, size);
         shape.calculateLocalInertia(1f, inertia);
