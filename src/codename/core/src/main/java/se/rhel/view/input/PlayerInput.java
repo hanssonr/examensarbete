@@ -72,6 +72,7 @@ public class PlayerInput implements InputProcessor {
             mRotation.x = -Gdx.input.getDeltaX() * MOUSE_SPEED * delta;
             mRotation.y = -Gdx.input.getDeltaY() * MOUSE_SPEED * delta;
 
+            /*
             currentRot += mRotation.y;
 
             //prevent deadlock
@@ -80,6 +81,7 @@ public class PlayerInput implements InputProcessor {
             }
 
             currentRot = MathUtils.clamp(currentRot, MIN_YROT, MAX_YROT);
+            */
 
 
             // MOVEMENT

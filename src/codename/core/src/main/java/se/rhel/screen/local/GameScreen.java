@@ -58,8 +58,6 @@ public class GameScreen extends Controller {
         mWorldModel.getPlayer().move(mPlayerInput.getDirection());
         mWorldModel.getPlayer().rotate(mPlayerInput.getRotation());
 
-        mWorldView.getCamera().rotate(mPlayerInput.getRotation());
-
         mWorldModel.update(delta);
         mWorldView.update(delta);
     }

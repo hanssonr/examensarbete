@@ -3,6 +3,7 @@ package se.rhel.view;
 import com.badlogic.gdx.graphics.g3d.Environment;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
+import com.badlogic.gdx.graphics.g3d.model.Animation;
 import com.badlogic.gdx.graphics.g3d.utils.AnimationController;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.math.collision.BoundingBox;
@@ -24,12 +25,17 @@ public class ExternalPlayerRenderer {
 
     //Instance
     private ModelInstance mExternalPlayer = new ModelInstance(Resources.INSTANCE.playerModelAnimated);
+    private ModelInstance mLaser = new ModelInstance(Resources.INSTANCE.laserWeaponModel);
+
+    private Vector3 mArmOffset = new Vector3(0.45f, 0.4f, -0.2f);
     private Vector3 mGroundOffset = new Vector3();
     private BoundingBox mBox = new BoundingBox();
     private Array<IEntity> mPlayers;
 
     //Animation
     private HashMap<IEntity, AnimationController> mAnimations = new HashMap<>();
+    private HashMap<IEntity, ModelInstance> mWeaponArms = new HashMap<>();
+    private HashMap<IEntity, Boolean> mAnimationStop = new HashMap<>();
     private Vector3 newPos = new Vector3();
     private Vector3 oldPos = new Vector3();
 
@@ -43,11 +49,15 @@ public class ExternalPlayerRenderer {
         }
     }
 
-    public void addPlayerAnimation(IEntity entity) {
+    public synchronized void addPlayerAnimation(IEntity entity) {
         AnimationController ac = new AnimationController(new ModelInstance(Resources.INSTANCE.playerModelAnimated));
         ac.setAnimation(ANIMATION_IDLE);
 
         mAnimations.put(entity, ac);
+
+        //should check what weapon entity have
+        mWeaponArms.put(entity, mLaser.copy());
+        mAnimationStop.put(entity, true);
     }
 
     public void render(ModelBatch batch, Environment env) {
@@ -55,7 +65,13 @@ public class ExternalPlayerRenderer {
             IEntity entity = mPlayers.get(i);
 
             if(entity.isAlive()) {
-                batch.render(mAnimations.get(entity).target, env);
+                AnimationController playerAnimation = mAnimations.get(entity);
+                ModelInstance playerWeapon = mWeaponArms.get(entity);
+
+                if(playerAnimation != null && playerWeapon != null) {
+                    batch.render(playerAnimation.target, env);
+                    batch.render(playerWeapon, env);
+                }
             }
         }
     }
@@ -76,17 +92,26 @@ public class ExternalPlayerRenderer {
 
             ac.target.transform.getTranslation(newPos);
 
-            if (oldPos.dst(newPos) > 0.05f) {
+            if (newPos.dst(oldPos) > 0) {
+                mAnimationStop.put(entity, false);
                 if(!ac.current.animation.id.equals(ANIMATION_WALK)) {
                     ac.setAnimation(ANIMATION_WALK, -1, 2f, null);
                 }
             } else {
-                if(ANIMATION_WALK.equals(ac.current.animation.id)) {
-                    ac.setAnimation(ANIMATION_IDLE, -1);
+                if(mAnimationStop.get(entity)) {
+                    if(ANIMATION_WALK.equals(ac.current.animation.id)) {
+                        ac.setAnimation(ANIMATION_IDLE, -1);
+                    }
+                } else {
+                    mAnimationStop.put(entity, true);
                 }
             }
 
             ac.update(delta);
+
+            mWeaponArms.get(entity).transform.set(entity.getTransformation());
+            mWeaponArms.get(entity).transform.translate(mArmOffset);
+            mWeaponArms.get(entity).transform.rotate(Vector3.X.cpy(), entity.getRotation().y);
         }
     }
 }

@@ -1,5 +1,6 @@
 package se.rhel.model.server;
 
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import se.rhel.Connection;
@@ -137,11 +138,12 @@ public class ServerWorldModel extends BaseWorldModel implements ServerListener {
             ExternalPlayer p = getPlayer(pmp.clientId);
             if(p == null) return;
 
-            p.setPosition(pmp.mPosition);
+            p.setPositionAndRotation(pmp.mPosition, new Vector2(pmp.mRotX, pmp.mRotY));
+            //p.setPosition(pmp.mPosition);
 
             // Notify the other clients, if any
-            Vector3 tmp = p.getPosition();
-            mServer.sendToAllUDPExcept(new PlayerMovePacket(pmp.clientId, pmp.mPosition, pmp.mRotX), con);
+            //Vector3 tmp = p.getPosition();
+            mServer.sendToAllUDPExcept(new PlayerMovePacket(pmp.clientId, pmp.mPosition, pmp.mRotX, pmp.mRotY), con);
         }
         else if (obj instanceof ShootPacket) {
             Log.debug("ServerWorldModel", "ShotPacket received on server");
@@ -205,7 +207,7 @@ public class ServerWorldModel extends BaseWorldModel implements ServerListener {
                 ep.grenadeThrow();
             }
 
-            mServer.sendToAllTCP(new GrenadeCreatePacket(g.getId(), ep.getPosition(), gcp.direction));
+            mServer.sendToAllTCP(new GrenadeCreatePacket(g.getId(), ep.getPosition(), ep.getDirection()));
         }
     }
 }

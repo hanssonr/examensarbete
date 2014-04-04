@@ -36,6 +36,14 @@ public class ExternalPlayer extends DummyEntity implements IEntity {
         super.update(delta);
     }
 
+    public void setPositionAndRotation(Vector3 pos, Vector2 rotation) {
+        getRotation().set(rotation);
+        setPosition(pos);
+        calculateDirection();
+
+        super.setPositionAndRotation(pos, rotation.x);
+    }
+
     public int getClientId() {
         return mClientId;
     }

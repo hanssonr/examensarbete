@@ -1,6 +1,5 @@
 package se.rhel.res;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
@@ -36,6 +35,8 @@ public enum Resources {
     public Model fpsWeaponModel;
     public Model grenadeModel;
 
+    public Model laserWeaponModel;
+
     public ModelInstance playerModelInstanceAnimated;
 
     public Texture bulletHole;
@@ -54,6 +55,7 @@ public enum Resources {
         mManager.load("obj/level/level_xlarge.g3db", Model.class);
         mManager.load("obj/level/level_xlarge_vis.g3db", Model.class);
         mManager.load("obj/player/wep/FirstPersonWeapon.g3db", Model.class);
+        mManager.load("obj/player/wep/LaserWeapon.g3db", Model.class);
         mManager.load("obj/player/animated/MyMinecraftPlayer_animated_idle.g3db", Model.class);
         mManager.load("obj/skybox/spacesphere.obj", Model.class);
         mManager.load("obj/wep/Grenade.g3db", Model.class);
@@ -114,6 +116,7 @@ public enum Resources {
         grenadeModel = mManager.get("obj/wep/Grenade.g3db", Model.class);
 
         fpsWeaponModel = mManager.get("obj/player/wep/FPSWeapon.g3db", Model.class);
+        laserWeaponModel = mManager.get("obj/player/wep/LaserWeapon.g3db", Model.class);
 
         mBloodEffect = mManager.get("tex/particle/blood.p", ParticleEffect.class);
         mExplosionEffect = mManager.get("tex/particle/ptest.p", ParticleEffect.class);

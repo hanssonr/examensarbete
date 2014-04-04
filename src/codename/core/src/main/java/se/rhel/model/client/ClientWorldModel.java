@@ -1,5 +1,6 @@
 package se.rhel.model.client;
 
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import se.rhel.Client;
@@ -111,7 +112,7 @@ public class ClientWorldModel extends BaseWorldModel implements ClientListener, 
                 }
 
                 // Set the position & rotation
-                ep.setPositionAndRotation(pmp.mPosition, pmp.mRotX);
+                ep.setPositionAndRotation(pmp.mPosition, new Vector2(pmp.mRotX, pmp.mRotY));
             }
         }
         else if (obj instanceof DamagePacket) {

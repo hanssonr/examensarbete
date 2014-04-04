@@ -62,13 +62,15 @@ public class ClientController implements ViewListener, ModelListener, NetworkLis
             // Send move packet
 
             if(mClientWorldModel.getPlayer().getPosition().dst(mLastKnownPosition) > 0.01f ||
-                    mClientWorldModel.getPlayer().getRotation() != mLastKnownRotation)  {
+                    mClientWorldModel.getPlayer().getRotation().x != mLastKnownRotation)  {
                 mLastKnownPosition = mClientWorldModel.getPlayer().getPosition().cpy();
-                mLastKnownRotation = mClientWorldModel.getPlayer().getRotation();
+                mLastKnownRotation = mClientWorldModel.getPlayer().getRotation().x;
 
                 mClient.sendUdp(
                         new PlayerMovePacket(mClient.getId(),
-                                mClientWorldModel.getPlayer().getPosition(), mClientWorldModel.getPlayer().getRotation()));
+                                mClientWorldModel.getPlayer().getPosition(),
+                                mClientWorldModel.getPlayer().getRotation().x,
+                                mClientWorldModel.getPlayer().getRotation().y));
             }
         }
 
@@ -115,7 +117,6 @@ public class ClientController implements ViewListener, ModelListener, NetworkLis
                 break;
 
             case DAMAGE:
-                System.out.println("DAMAGE EVENT");
                 mWorldView.getParticleRenderer().addEffect(((DamageAbleEntity)objs[0]).getPosition(), ParticleRenderer.Particle.BLOOD);
                 break;
 
