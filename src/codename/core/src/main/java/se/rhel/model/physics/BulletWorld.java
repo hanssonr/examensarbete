@@ -72,8 +72,8 @@ public class BulletWorld implements BaseModel {
         btBvhTriangleMeshShape levelShape = new btBvhTriangleMeshShape(Resources.INSTANCE.levelModelPhysics.meshParts);
         mShapes.add(levelShape);
         btRigidBodyConstructionInfo levelInfo = new btRigidBodyConstructionInfo(0f, null, levelShape, Vector3.Zero);
-        levelInfo.setRestitution(0.1f);
-        levelInfo.setFriction(100f);
+        levelInfo.setRestitution(5f);
+        levelInfo.setFriction(5f);
         mBodyInfos.add(levelInfo);
         ModelInstance level = new ModelInstance(Resources.INSTANCE.levelModelVisual);
         levelInstance.add(level);
@@ -137,7 +137,7 @@ public class BulletWorld implements BaseModel {
         isStepping = true;
         PERFORMANCE_COUNTER.tick();
         PERFORMANCE_COUNTER.start();
-                ((btDynamicsWorld) mCollisionWorld).stepSimulation(delta, 5);
+                ((btDynamicsWorld) mCollisionWorld).stepSimulation(delta, 8);
         PERFORMANCE_COUNTER.stop();
         PERFORMANCE = "Bullet: " + (int)(PERFORMANCE_COUNTER.load.value*100f) + " %";
         isStepping = false;

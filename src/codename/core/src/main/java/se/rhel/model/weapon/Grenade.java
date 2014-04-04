@@ -44,8 +44,8 @@ public class Grenade extends GameObject  {
         shape.calculateLocalInertia(1f, inertia);
         btDefaultMotionState motionstate = new btDefaultMotionState(getTransformation());
         btRigidBodyConstructionInfo info = new btRigidBodyConstructionInfo(1f, motionstate, shape, inertia);
-        info.setFriction(100f);
-        info.setRestitution(0.01f);
+        info.setFriction(5f);
+        info.setRestitution(0.1f);
 
         super.createPhysicBody(shape, info, motionstate, this);
 
@@ -64,6 +64,7 @@ public class Grenade extends GameObject  {
             }
         }
 
+        getBody().applyDamping(10f);
         mTransformation.set(getBody().getCenterOfMassTransform());
     }
 

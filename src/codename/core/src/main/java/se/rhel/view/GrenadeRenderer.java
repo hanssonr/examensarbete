@@ -3,6 +3,8 @@ package se.rhel.view;
 import com.badlogic.gdx.graphics.g3d.Environment;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
+import com.badlogic.gdx.math.Quaternion;
+import com.badlogic.gdx.math.Vector3;
 import se.rhel.model.Bodybuilder;
 import se.rhel.model.weapon.Grenade;
 import se.rhel.res.Resources;
@@ -17,7 +19,7 @@ import java.util.Map;
  */
 public class GrenadeRenderer {
 
-    HashMap<Grenade, ModelInstance> mGrenades = new HashMap<>();
+    volatile HashMap<Grenade, ModelInstance> mGrenades = new HashMap<>();
 
     public GrenadeRenderer() {
     }

@@ -7,6 +7,8 @@ import se.rhel.model.BaseWorldModel;
 import se.rhel.event.Events;
 import se.rhel.model.WorldModel;
 import se.rhel.model.physics.MyContactListener;
+import se.rhel.model.util.Utils;
+import se.rhel.model.weapon.Grenade;
 import se.rhel.network.model.ExternalPlayer;
 import se.rhel.network.packet.*;
 import se.rhel.Server;
@@ -14,6 +16,7 @@ import se.rhel.model.Player;
 import se.rhel.observer.ServerListener;
 import se.rhel.util.Log;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -26,6 +29,8 @@ public class ServerWorldModel extends BaseWorldModel implements ServerListener {
     // Linkin ID's and Players
     private HashMap<Integer, ExternalPlayer> mPlayers;
     private Server mServer;
+
+    private ArrayList<Grenade> mToCreate = new ArrayList<>();
 
     public ServerWorldModel(Server server) {
         super();
@@ -43,6 +48,14 @@ public class ServerWorldModel extends BaseWorldModel implements ServerListener {
             p.update(delta);
         }
 
+        if(mToCreate.size() > 0) {
+            for(Grenade g : mToCreate) {
+                g.createPhysicBody();
+                super.addGrenade(g);
+            }
+
+            mToCreate.clear();
+        }
     }
 
     private void addPlayer(Integer id, ExternalPlayer player) {
@@ -64,6 +77,10 @@ public class ServerWorldModel extends BaseWorldModel implements ServerListener {
         }
 
         throw new IllegalArgumentException("Player could not be found");
+    }
+
+    public void addGrenade(Grenade g) {
+        mToCreate.add(g);
     }
 
     /**
@@ -177,14 +194,18 @@ public class ServerWorldModel extends BaseWorldModel implements ServerListener {
             Log.debug("ServerWorldModel", "GrenadeCreatePacket received on server");
             GrenadeCreatePacket gcp = (GrenadeCreatePacket) obj;
 
+            //Add info to create grenade
+            Grenade g = new Grenade(getBulletWorld(), gcp.position, gcp.direction);
+            g.setId(Utils.getInstance().generateUniqueId());
+            mToCreate.add(g);
+
             // A player wants to throw a grenade!
             ExternalPlayer ep = getPlayer(gcp.clientId);
             if(ep != null) {
                 ep.grenadeThrow();
             }
 
-
-            // mServer.sendToAllTCPExcept(new GrenadeCreatePacket(0, gcp.position, gcp.direction), con);
+            mServer.sendToAllTCP(new GrenadeCreatePacket(g.getId(), ep.getPosition(), gcp.direction));
         }
     }
 }

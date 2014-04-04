@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
+ * Group: Logic
  * Created by Emil on 2014-03-28.
  */
 public final class Events {

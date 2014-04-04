@@ -8,6 +8,7 @@ import se.rhel.model.weapon.Grenade;
 import java.util.ArrayList;
 
 /**
+ * Group: Logic
  * Created by rkh on 2014-03-28.
  */
 public interface IWorldModel {

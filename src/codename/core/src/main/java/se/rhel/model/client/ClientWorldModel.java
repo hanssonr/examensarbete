@@ -9,11 +9,14 @@ import se.rhel.event.ModelEvent;
 import se.rhel.event.NetworkEvent;
 import se.rhel.model.*;
 import se.rhel.model.entity.IEntity;
+import se.rhel.model.weapon.Grenade;
 import se.rhel.network.packet.*;
 import se.rhel.network.model.ExternalPlayer;
 import se.rhel.observer.ClientListener;
 import se.rhel.packet.TestPacket;
 import se.rhel.util.Log;
+
+import java.util.ArrayList;
 
 
 /**
@@ -25,7 +28,7 @@ public class ClientWorldModel extends BaseWorldModel implements ClientListener, 
     private Player mPlayer;
     private Array<IEntity> mPlayers;
 
-    private int lastKnownGrenadeSize = 0;
+    private ArrayList<Grenade> mToCreate = new ArrayList<>();
 
     public ClientWorldModel(Client client) {
         super();
@@ -45,10 +48,14 @@ public class ClientWorldModel extends BaseWorldModel implements ClientListener, 
             mPlayers.get(i).update(delta);
         }
 
-        // Notify listener
-        if(mGrenades.size() > lastKnownGrenadeSize) {
-            lastKnownGrenadeSize = mGrenades.size();
-            EventHandler.events.notify(new ModelEvent(EventType.GRENADE_CREATED, mGrenades.get(mGrenades.size()-1)));
+        if(mToCreate.size() > 0) {
+            for(Grenade g : mToCreate) {
+                g.createPhysicBody();
+                super.addGrenade(g);
+                EventHandler.events.notify(new ModelEvent(EventType.GRENADE_CREATED, g));
+            }
+
+            mToCreate.clear();
         }
     }
 
@@ -153,8 +160,14 @@ public class ClientWorldModel extends BaseWorldModel implements ClientListener, 
         else if (obj instanceof GrenadeCreatePacket) {
             Log.debug("ClientWorldModel", "Received GrenadeCreatePacket");
             GrenadeCreatePacket gcp = (GrenadeCreatePacket) obj;
+
+            Grenade g = new Grenade(getBulletWorld(), gcp.position, gcp.direction);
+            g.setId(gcp.clientId);
+            mToCreate.add(g);
+
             // Notify networklistener
-            EventHandler.events.notify(new NetworkEvent(gcp));
+            //EventHandler.events.notify(new NetworkEvent(gcp));
+            //EventHandler.events.notify(new ModelEvent(EventType.GRENADE_CREATED, g));
         }
     }
 }

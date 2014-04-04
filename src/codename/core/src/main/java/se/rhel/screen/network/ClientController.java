@@ -18,6 +18,7 @@ import se.rhel.view.WorldView;
 import se.rhel.view.input.PlayerInput;
 
 /**
+ * Group: Mixed
  * Created by Emil on 2014-04-02.
  */
 public class ClientController implements ViewListener, ModelListener, NetworkListener {
@@ -33,7 +34,7 @@ public class ClientController implements ViewListener, ModelListener, NetworkLis
     public ClientController() {
         mClient = Snaek.newClient(4455, 5544, "localhost");
         mClientWorldModel = new ClientWorldModel(mClient);
-
+        mWorldView = new WorldView(mClientWorldModel);
         mPlayerInput = new PlayerInput();
 
         // Listen to network events
@@ -42,8 +43,6 @@ public class ClientController implements ViewListener, ModelListener, NetworkLis
         EventHandler.events.listen(ViewEvent.class, this);
         // Listen to model events
         EventHandler.events.listen(ModelEvent.class, this);
-
-        mWorldView = new WorldView(mClientWorldModel);
 
         Gdx.input.setInputProcessor(mPlayerInput);
     }
@@ -139,7 +138,9 @@ public class ClientController implements ViewListener, ModelListener, NetworkLis
                 // Check against the rules in the model
                 // mClientWorldModel.getPlayer().grenadeThrow();
                 // Send to server
-                mClient.sendTcp(new GrenadeCreatePacket(mClient.getId(), new Vector3(), new Vector3()));
+                mClient.sendTcp(new GrenadeCreatePacket(mClient.getId(),
+                        mClientWorldModel.getPlayer().getPosition(),
+                        mClientWorldModel.getPlayer().getDirection()));
                 break;
         }
     }
@@ -161,13 +162,6 @@ public class ClientController implements ViewListener, ModelListener, NetworkLis
         else if(packet instanceof PlayerPacket) {
             PlayerPacket pp = (PlayerPacket)packet;
             mWorldView.getExternalPlayerRenderer().addPlayerAnimation(mClientWorldModel.getExternalPlayer(pp.clientId));
-        }
-        else if(packet instanceof GrenadeCreatePacket) {
-            GrenadeCreatePacket gcp = (GrenadeCreatePacket) packet;
-            System.out.println("GotGrenade? id: " + gcp.clientId);
-            // Should create a grenade on the client
-            Grenade g = mClientWorldModel.addGrenade(gcp.position, gcp.direction);
-            g.setId(gcp.clientId);
         }
     }
 }
