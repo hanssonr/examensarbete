@@ -36,7 +36,6 @@ public class Grenade extends GameObject  {
 
     private void throwMe() {
         getBody().applyImpulse(mDirection.scl(20f), new Vector3(0.1f, 0.05f, 0.1f).scl(0.1f));
-        EventHandler.events.notify(new ModelEvent(EventType.GRENADE_CREATED, this));
     }
 
     public void createPhysicBody() {

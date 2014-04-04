@@ -42,6 +42,7 @@ public class ServerWorldModel extends BaseWorldModel implements ServerListener {
         for(ExternalPlayer p : mPlayers.values()) {
             p.update(delta);
         }
+
     }
 
     private void addPlayer(Integer id, ExternalPlayer player) {

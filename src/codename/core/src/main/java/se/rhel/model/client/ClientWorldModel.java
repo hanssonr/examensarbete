@@ -4,6 +4,8 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import se.rhel.Client;
 import se.rhel.event.EventHandler;
+import se.rhel.event.EventType;
+import se.rhel.event.ModelEvent;
 import se.rhel.event.NetworkEvent;
 import se.rhel.model.*;
 import se.rhel.model.entity.IEntity;
@@ -23,6 +25,8 @@ public class ClientWorldModel extends BaseWorldModel implements ClientListener, 
     private Player mPlayer;
     private Array<IEntity> mPlayers;
 
+    private int lastKnownGrenadeSize = 0;
+
     public ClientWorldModel(Client client) {
         super();
 
@@ -39,6 +43,12 @@ public class ClientWorldModel extends BaseWorldModel implements ClientListener, 
 
         for (int i = 0; i < mPlayers.size; i++) {
             mPlayers.get(i).update(delta);
+        }
+
+        // Notify listener
+        if(mGrenades.size() > lastKnownGrenadeSize) {
+            lastKnownGrenadeSize = mGrenades.size();
+            EventHandler.events.notify(new ModelEvent(EventType.GRENADE_CREATED, mGrenades.get(mGrenades.size()-1)));
         }
     }
 
