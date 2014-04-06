@@ -14,9 +14,10 @@ import se.rhel.model.physics.BulletWorld;
 /**
  * Created by rkh on 2014-03-31.
  */
-public class Grenade extends GameObject  {
+public class Grenade extends GameObject implements IExplodable {
 
-    private int damage = 50;
+    private int mDamage = 50;
+    private float mExplosionRadius = 10f;
     private float size = 0.2f;
     private float explosionTime = 3f;
     private boolean isAlive = true;
@@ -32,9 +33,9 @@ public class Grenade extends GameObject  {
         mDirection = direction;
 
         getTransformation().setTranslation(position.add(Vector3.Y).add(direction));
-    }
 
-    private void throwMe() {
+        createPhysicBody();
+
         getBody().applyImpulse(mDirection.scl(20f), new Vector3(0.1f, 0.05f, 0.1f).scl(0.1f));
     }
 
@@ -48,8 +49,6 @@ public class Grenade extends GameObject  {
         info.setRestitution(0.1f);
 
         super.createPhysicBody(shape, info, motionstate, this);
-
-        throwMe();
     }
 
     public void update(float delta) {
@@ -59,8 +58,6 @@ public class Grenade extends GameObject  {
 
             if (explosionTime <= 0) {
                 isAlive = false;
-
-                EventHandler.events.notify(new ModelEvent(EventType.EXPLOSION, this));
             }
         }
 
@@ -70,5 +67,15 @@ public class Grenade extends GameObject  {
 
     public boolean isAlive() {
         return isAlive;
+    }
+
+    @Override
+    public float getExplosionRadius() {
+        return mExplosionRadius;
+    }
+
+    @Override
+    public int getExplosionDamage() {
+        return mDamage;
     }
 }

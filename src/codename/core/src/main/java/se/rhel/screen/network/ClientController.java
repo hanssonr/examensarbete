@@ -1,16 +1,16 @@
 package se.rhel.screen.network;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.math.Vector3;
 import se.rhel.Client;
 import se.rhel.Snaek;
 import se.rhel.event.*;
 import se.rhel.model.client.ClientWorldModel;
 import se.rhel.model.entity.DamageAbleEntity;
-import se.rhel.model.physics.MyContactListener;
 import se.rhel.model.weapon.Grenade;
+import se.rhel.network.model.ClientSynchronizedUpdate;
 import se.rhel.network.packet.*;
+import se.rhel.observer.ClientListener;
 import se.rhel.packet.Packet;
 import se.rhel.view.BulletHoleRenderer;
 import se.rhel.view.ParticleRenderer;
@@ -31,9 +31,16 @@ public class ClientController implements ViewListener, ModelListener, NetworkLis
     private Vector3 mLastKnownPosition = Vector3.Zero;
     private float mLastKnownRotation = 0f;
 
+    private ClientSynchronizedUpdate mSyncedUpdate;
+
     public ClientController() {
         mClient = Snaek.newClient(4455, 5544, "localhost");
         mClientWorldModel = new ClientWorldModel(mClient);
+        mSyncedUpdate = new ClientSynchronizedUpdate(mClientWorldModel);
+        mClient.addListener(mSyncedUpdate);
+
+        mClient.sendTcp(new RequestInitialStatePacket(mClient.getId()));
+
         mWorldView = new WorldView(mClientWorldModel);
         mPlayerInput = new PlayerInput();
 
@@ -48,12 +55,11 @@ public class ClientController implements ViewListener, ModelListener, NetworkLis
     }
 
     public void update(float delta) {
+        mSyncedUpdate.update();
         mPlayerInput.processCurrentInput(delta);
 
         mClientWorldModel.getPlayer().move(mPlayerInput.getDirection());
         mClientWorldModel.getPlayer().rotate(mPlayerInput.getRotation());
-
-        mWorldView.getCamera().rotate(mPlayerInput.getRotation());
 
         mClientWorldModel.update(delta);
 
@@ -66,11 +72,9 @@ public class ClientController implements ViewListener, ModelListener, NetworkLis
                 mLastKnownPosition = mClientWorldModel.getPlayer().getPosition().cpy();
                 mLastKnownRotation = mClientWorldModel.getPlayer().getRotation().x;
 
-                mClient.sendUdp(
-                        new PlayerMovePacket(mClient.getId(),
+                mClient.sendUdp(new PlayerMovePacket(mClient.getId(),
                                 mClientWorldModel.getPlayer().getPosition(),
-                                mClientWorldModel.getPlayer().getRotation().x,
-                                mClientWorldModel.getPlayer().getRotation().y));
+                                mClientWorldModel.getPlayer().getRotation()));
             }
         }
 
@@ -112,14 +116,12 @@ public class ClientController implements ViewListener, ModelListener, NetworkLis
                 break;
 
             case EXPLOSION:
-                MyContactListener.checkExplosionCollision(mClientWorldModel.getBulletWorld().getCollisionWorld(), ((Grenade) objs[0]).getPosition(), 10f);
                 mWorldView.getParticleRenderer().addEffect(((Grenade)objs[0]).getPosition(), ParticleRenderer.Particle.EXPLOSION);
                 break;
 
             case DAMAGE:
                 mWorldView.getParticleRenderer().addEffect(((DamageAbleEntity)objs[0]).getPosition(), ParticleRenderer.Particle.BLOOD);
                 break;
-
             default:
                 break;
         }

@@ -31,11 +31,6 @@ public class PlayerInput implements InputProcessor {
 
     //Finals
     final float MOUSE_SPEED = 5f;
-    final float MAX_YROT = 60f;
-    final float MIN_YROT = -60f;
-
-    //Rotation
-    float currentRot = 0;
 
     public enum MapKeys {
         LEFT, RIGHT, FORWARD, BACK, JUMP, SHOOT
@@ -72,18 +67,6 @@ public class PlayerInput implements InputProcessor {
             mRotation.x = -Gdx.input.getDeltaX() * MOUSE_SPEED * delta;
             mRotation.y = -Gdx.input.getDeltaY() * MOUSE_SPEED * delta;
 
-            /*
-            currentRot += mRotation.y;
-
-            //prevent deadlock
-            if (currentRot < MIN_YROT || currentRot > MAX_YROT) {
-                mRotation.y = 0;
-            }
-
-            currentRot = MathUtils.clamp(currentRot, MIN_YROT, MAX_YROT);
-            */
-
-
             // MOVEMENT
             mDirection.set(0,0,0);
 
@@ -115,7 +98,6 @@ public class PlayerInput implements InputProcessor {
                 mKeys.put(MapKeys.SHOOT, false);
                 EventHandler.events.notify(new ViewEvent(EventType.SHOOT));
             }
-
         }
     }
 
@@ -162,7 +144,6 @@ public class PlayerInput implements InputProcessor {
                 DRAW_SHOOT_DEBUG = !DRAW_SHOOT_DEBUG;
                 break;
             case Keys.F:
-                System.out.println("f down");
                 EventHandler.events.notify(new ViewEvent(EventType.GRENADE));
                 break;
         }

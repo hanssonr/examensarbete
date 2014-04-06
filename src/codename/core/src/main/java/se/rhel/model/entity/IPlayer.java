@@ -6,7 +6,7 @@ import com.badlogic.gdx.math.Vector2;
 /**
  * Created by rkh on 2014-03-28.
  */
-public interface IEntity {
+public interface IPlayer {
 
     public Matrix4 getTransformation();
     public Vector2 getRotation();
