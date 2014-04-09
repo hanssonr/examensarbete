@@ -5,12 +5,10 @@ import se.rhel.model.entity.GameObject;
 import se.rhel.event.EventHandler;
 import se.rhel.event.EventType;
 import se.rhel.event.ModelEvent;
-import se.rhel.model.entity.DamageAbleEntity;
 import se.rhel.model.physics.BulletWorld;
 import se.rhel.model.physics.MyContactListener;
-import se.rhel.model.util.Utils;
 import se.rhel.model.weapon.Grenade;
-import se.rhel.view.BulletHoleRenderer;
+import se.rhel.model.weapon.IExplodable;
 
 import java.util.ArrayList;
 
@@ -21,6 +19,7 @@ import java.util.ArrayList;
 public class BaseWorldModel {
 
     private BulletWorld mBulletWorld;
+    private MyContactListener mContactListener = new MyContactListener();
 
     protected ArrayList<GameObject> mDestroy = new ArrayList<>();
     protected ArrayList<Grenade> mGrenades = new ArrayList<>();
@@ -32,6 +31,7 @@ public class BaseWorldModel {
     public BulletWorld getBulletWorld() {
         return mBulletWorld;
     }
+    public MyContactListener getContactListener() { return mContactListener; }
 
     public void update(float delta) {
         mBulletWorld.update(delta);
@@ -42,6 +42,8 @@ public class BaseWorldModel {
             g.update(delta);
 
             if(!g.isAlive()) {
+                EventHandler.events.notify(new ModelEvent(EventType.EXPLOSION, g));
+                handleExplosion(g);
                 mDestroy.add(g);
                 mGrenades.remove(i);
             }
@@ -55,12 +57,16 @@ public class BaseWorldModel {
 
     public void checkShootCollision(Vector3[] rays) {
         // Check shoot collision local
-        MyContactListener.CollisionObject co = MyContactListener.checkShootCollision(getBulletWorld().getCollisionWorld(), rays);
+        MyContactListener.CollisionObject co = mContactListener.checkShootCollision(getBulletWorld().getCollisionWorld(), rays);
         // If we have hit the world, just draw a bullethole (it doesn't matter if the server says otherwise)
         if(co != null && co.type == MyContactListener.CollisionObject.CollisionType.WORLD) {
             // Draw bullethole
             EventHandler.events.notify(new ModelEvent(EventType.BULLET_HOLE, co.hitPoint, co.hitNormal));
         }
+    }
+
+    public void handleExplosion(IExplodable explosion) {
+        mContactListener.checkExplosionCollision(getBulletWorld().getCollisionWorld(), explosion);
     }
 
     public void addGrenade(Grenade g) {

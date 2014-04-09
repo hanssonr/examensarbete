@@ -1,6 +1,8 @@
 package se.rhel.model.entity;
 
 
+import com.badlogic.gdx.math.Matrix4;
+import com.badlogic.gdx.math.Quaternion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import se.rhel.model.physics.BulletWorld;
@@ -11,11 +13,8 @@ import se.rhel.model.physics.BulletWorld;
 public abstract class DynamicEntity extends GameObject {
 
     //Rotation
-    private float mRotation = 0f;
-    private float mUp = 0f;
-    private Vector3 mForward = new Vector3(0, 0, -1);
-    private Vector3 up = new Vector3(0,1,0);
-    private Vector3 mDirection = new Vector3(0,0,-1);
+    protected Vector2 mRotation = new Vector2();
+    protected Vector3 mDirection = new Vector3(0,0,-1);
 
     protected float mMovespeed = 0;
 
@@ -29,27 +28,35 @@ public abstract class DynamicEntity extends GameObject {
     }
 
     public void rotate(Vector2 rotation) {
-        mRotation += rotation.x;
-        if(mRotation > 360) mRotation -= 360;
-        if(mRotation < 0) mRotation += 360;
+        mRotation.x += rotation.x;
+        if(mRotation.x > 360) mRotation.x -= 360;
+        if(mRotation.x < 0) mRotation.x += 360;
 
-        mUp += rotation.y;
-        if(mUp > 60) mUp = 60;
-        if(mUp < -60) mUp = -60;
+        mRotation.y += rotation.y;
+        if(mRotation.y > 60) mRotation.y = 60;
+        if(mRotation.y < -60) mRotation.y = -60;
 
+        /*
         mForward.rotate(Vector3.Y, rotation.x);
-        up.rotate(Vector3.X, rotation.y);
 
         mDirection.rotate(Vector3.Y, rotation.x);
-        mDirection.rotate(mForward.cpy().crs(Vector3.Y), rotation.y);
+        mDirection.rotate(mForward.cpy().crs(Vector3.Y), rotation.y);*/
+        calculateDirection();
     }
 
-    public float getRotation() {
+    public void calculateDirection() {
+        Quaternion q = new Quaternion().idt();
+        q.setEulerAngles(getRotation().x, getRotation().y, 0);
+
+        mDirection.set(q.transform(new Vector3(0,0,-1)));
+    }
+
+    public Vector2 getRotation() {
         return mRotation;
     }
 
     protected Vector3 getForward() {
-        return mForward.cpy();
+        return new Vector3(mDirection.x, 0, mDirection.z).nor();
     }
 
     public Vector3 getDirection() {

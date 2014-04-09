@@ -5,6 +5,7 @@ import com.badlogic.gdx.physics.bullet.collision.*;
 import com.badlogic.gdx.physics.bullet.linearmath.btVector3;
 import se.rhel.model.Player;
 import se.rhel.model.entity.DamageAbleEntity;
+import se.rhel.model.weapon.IExplodable;
 import se.rhel.network.model.ExternalPlayer;
 import se.rhel.view.BulletHoleRenderer;
 
@@ -53,7 +54,7 @@ public class MyContactListener extends ContactListener {
      * @param fromTo array of Vector3 from and Vector3 to
      * @return CollisionObject of type DamageAbleEntity or a world hit point
      */
-    public static CollisionObject checkShootCollision(btCollisionWorld world, Vector3[] fromTo) {
+    public CollisionObject checkShootCollision(btCollisionWorld world, Vector3[] fromTo) {
         Vector3 from = fromTo[0];
         Vector3 to = fromTo[1];
 
@@ -86,20 +87,17 @@ public class MyContactListener extends ContactListener {
     }
 
 
-    public static void checkExplosionCollision(btCollisionWorld world, Vector3 centerPosition, float explosionRadius) {
+    public void checkExplosionCollision(btCollisionWorld world, IExplodable explosion) {
         btCollisionObjectArray objs = world.getCollisionObjectArray();
 
-        ArrayList<DamageAbleEntity> entities = new ArrayList<>();
-
-        float cx = centerPosition.x;
-        float cy = centerPosition.y;
-        float cz = centerPosition.z;
+        float cx = explosion.getPosition().x;
+        float cy = explosion.getPosition().y;
+        float cz = explosion.getPosition().z;
 
         for (int i = 0; i < objs.size(); i++) {
             btCollisionObject obj = objs.at(i);
 
             if(obj.userData instanceof DamageAbleEntity) {
-                entities.add((DamageAbleEntity) obj.userData);
 
                 DamageAbleEntity de = (DamageAbleEntity) obj.userData;
 
@@ -107,10 +105,10 @@ public class MyContactListener extends ContactListener {
                 float dy = de.getPosition().y;
                 float dz = de.getPosition().z;
 
-                double dist = Math.sqrt( (dx-cx)*(dx-cx) + (dy-cy)*(dy-cy) + (dz-cz)*(dz-cz) );
+                double dist = Math.sqrt((dx-cx)*(dx-cx) + (dy-cy)*(dy-cy) + (dz-cz)*(dz-cz));
 
-                if(dist < explosionRadius) {
-                    de.damageEntity(100);
+                if(dist < explosion.getExplosionRadius()) {
+                    de.damageEntity(explosion.getExplosionDamage());
                 }
             }
         }

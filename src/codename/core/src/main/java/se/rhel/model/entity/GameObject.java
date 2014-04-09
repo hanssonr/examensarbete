@@ -57,15 +57,14 @@ public abstract class GameObject {
     public void setPosition(Vector3 val) {
         getBody().translate(val);
         Matrix4 m = new Matrix4(val, getBody().getOrientation(), new Vector3(1f, 1f, 1f));
-        getBody().setCenterOfMassTransform(m);
+        getBody().proceedToTransform(m);
     }
 
     public void setPositionAndRotation(Vector3 position, float rotX) {
         Matrix4 m = new Matrix4();
         m.rotate(Vector3.Y, rotX);
         m.setTranslation(position);
-
-        getBody().setCenterOfMassTransform(m);
+        getBody().proceedToTransform(m);
     }
 
     public void destroy() {

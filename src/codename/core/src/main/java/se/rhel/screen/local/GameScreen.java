@@ -8,8 +8,10 @@ import se.rhel.CodeName;
 import se.rhel.event.*;
 import se.rhel.model.WorldModel;
 import se.rhel.model.entity.DamageAbleEntity;
+import se.rhel.model.entity.DummyEntity;
 import se.rhel.model.physics.MyContactListener;
 import se.rhel.model.weapon.Grenade;
+import se.rhel.network.model.ExternalPlayer;
 import se.rhel.network.packet.ShootPacket;
 import se.rhel.screen.Controller;
 import se.rhel.view.BulletHoleRenderer;
@@ -58,8 +60,6 @@ public class GameScreen extends Controller {
         mWorldModel.getPlayer().move(mPlayerInput.getDirection());
         mWorldModel.getPlayer().rotate(mPlayerInput.getRotation());
 
-        mWorldView.getCamera().rotate(mPlayerInput.getRotation());
-
         mWorldModel.update(delta);
         mWorldView.update(delta);
     }
@@ -98,7 +98,7 @@ public class GameScreen extends Controller {
                 Vector3[] rays = new Vector3[2];
                 rays[0] = from;
                 rays[1] = to;
-                MyContactListener.CollisionObject co = MyContactListener.checkShootCollision(mWorldModel.getBulletWorld().getCollisionWorld(), rays);
+                MyContactListener.CollisionObject co = mWorldModel.getContactListener().checkShootCollision(mWorldModel.getBulletWorld().getCollisionWorld(), rays);
 
                 if (co != null) {
                     if(co.type == MyContactListener.CollisionObject.CollisionType.WORLD) {
@@ -138,7 +138,6 @@ public class GameScreen extends Controller {
                 break;
 
             case EXPLOSION:
-                MyContactListener.checkExplosionCollision(mWorldModel.getBulletWorld().getCollisionWorld(), ((Grenade)objs[0]).getPosition(), 10f);
                 mWorldView.getParticleRenderer().addEffect(((Grenade)objs[0]).getPosition(), ParticleRenderer.Particle.EXPLOSION);
                 break;
 

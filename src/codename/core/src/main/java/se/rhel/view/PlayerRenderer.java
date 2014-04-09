@@ -23,10 +23,9 @@ public class PlayerRenderer {
     private FPSCamera mCamera;
 
     //Instance
-    ModelInstance mLaserWeapon = new ModelInstance(Resources.INSTANCE.fpsWeaponModel);
+    ModelInstance mLaserWeapon = new ModelInstance(Resources.INSTANCE.laserWeaponModel);
 
     //Weapon
-    private Matrix4 mWeaponWorld = new Matrix4().idt();
     private Vector3 mWeaponOffset = new Vector3();
 
     //Bobbing
@@ -61,18 +60,14 @@ public class PlayerRenderer {
     }
 
     private void updateWeapon() {
-        mWeaponWorld.set(mCamera.view.cpy().inv());
-        mWeaponWorld.getTranslation(mWeaponOffset);
-        mWeaponOffset.sub(mCamera.up.cpy().scl(0.7f));
-        mWeaponOffset.add(mCamera.direction);
-        mWeaponOffset.add(mCamera.getRight());
+        mLaserWeapon.transform.set(mCamera.view.cpy().inv());
 
+        mWeaponOffset.set(0.8f, -0.45f, -0.4f);
         if(mState == PLAYERSTATE.running) {
             mWeaponOffset.add(mBobVector.cpy().scl(mBobPower));
         }
 
-        mWeaponWorld.setTranslation(mWeaponOffset);
-        mLaserWeapon.transform.set(mWeaponWorld);
+        mLaserWeapon.transform.translate(mWeaponOffset);
     }
 
     private void updateCamera(float delta) {
@@ -92,6 +87,8 @@ public class PlayerRenderer {
             mCamera.position.add(mBobVector.scl(dir)).cpy().scl(mBobPower);
         }
 
+        mCamera.direction.set(mPlayer.getDirection());
+        mCamera.up.set(mCamera.getRight().crs(mCamera.direction));
         mCamera.update();
     }
 }

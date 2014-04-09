@@ -3,9 +3,8 @@ package se.rhel.model;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import se.rhel.model.entity.DummyEntity;
-import se.rhel.model.entity.IEntity;
+import se.rhel.model.entity.IPlayer;
 import se.rhel.model.entity.DamageAbleEntity;
-import se.rhel.network.model.ExternalPlayer;
 
 import java.util.ArrayList;
 
@@ -18,7 +17,7 @@ public class WorldModel extends BaseWorldModel implements BaseModel, IWorldModel
 
     private Player mPlayer;
     protected ArrayList<DamageAbleEntity> mDestroy = new ArrayList<>();
-    private Array<IEntity> mPlayers = new Array<>();
+    private Array<IPlayer> mPlayers = new Array<>();
 
     public WorldModel() {
         super();
@@ -55,7 +54,7 @@ public class WorldModel extends BaseWorldModel implements BaseModel, IWorldModel
         return mPlayer;
     }
 
-    public Array<IEntity> getExternalPlayers() {
+    public Array<IPlayer> getExternalPlayers() {
         return mPlayers;
     }
 

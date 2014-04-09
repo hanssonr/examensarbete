@@ -1,23 +1,19 @@
 package se.rhel.model.entity;
 
-import com.badlogic.gdx.graphics.g3d.ModelInstance;
-import com.badlogic.gdx.graphics.g3d.utils.AnimationController;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.math.collision.BoundingBox;
 import com.badlogic.gdx.physics.bullet.collision.btCapsuleShape;
 import com.badlogic.gdx.physics.bullet.collision.btCollisionShape;
 import com.badlogic.gdx.physics.bullet.dynamics.btRigidBodyConstructionInfo;
 import com.badlogic.gdx.physics.bullet.linearmath.btDefaultMotionState;
 import se.rhel.model.physics.BulletWorld;
-import se.rhel.res.Resources;
 
 /**
  * Group: Logic
  *
  * Created by rkh on 2014-03-24.
  */
-public class DummyEntity extends ActionEntity implements IEntity {
+public class DummyEntity extends ActionEntity implements IPlayer {
 
     private Vector2 mSize;
 

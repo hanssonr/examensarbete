@@ -1,0 +1,106 @@
+package se.rhel.network.model;
+
+import se.rhel.event.EventHandler;
+import se.rhel.event.EventType;
+import se.rhel.event.ModelEvent;
+import se.rhel.event.NetworkEvent;
+import se.rhel.model.client.ClientWorldModel;
+import se.rhel.model.weapon.Grenade;
+import se.rhel.network.packet.*;
+import se.rhel.observer.ClientListener;
+import se.rhel.util.Log;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+
+/**
+ * Group: ?
+ * Created by rkh on 2014-04-04.
+ */
+public class ClientSynchronizedUpdate implements ClientListener {
+
+    private ArrayList<Object> mUnsyncedObjects = new ArrayList<>();
+    private ClientWorldModel mWorld;
+
+    public ClientSynchronizedUpdate(ClientWorldModel world) {
+        mWorld = world;
+    }
+
+    public synchronized void update() {
+        for (Iterator<Object> it = mUnsyncedObjects.iterator(); it.hasNext();) {
+            Object obj = it.next();
+
+            if (obj instanceof PlayerPacket) {
+                Log.debug("ClientSynchronizedUpdate", "Player_Join packet - Player can be viewed on client!!");
+                PlayerPacket pp = (PlayerPacket)obj;
+                ExternalPlayer ep = new ExternalPlayer(pp.clientId, pp.mPosition, mWorld.getBulletWorld());
+                mWorld.addPlayer(pp.clientId, ep);
+
+                EventHandler.events.notify(new NetworkEvent(pp));
+            }
+            else if(obj instanceof PlayerMovePacket) {
+                // An external player have moved and should be updated, accordingly
+                PlayerMovePacket pmp = (PlayerMovePacket)obj;
+
+                ExternalPlayer ep;
+                synchronized (ep = mWorld.getExternalPlayer(pmp.clientId)) {
+                    if(ep == null) {
+                        return;
+                    }
+
+                    // Set the position & rotation
+                    ep.setPositionAndRotation(pmp.mPosition, pmp.mRotation);
+                }
+            }
+            else if (obj instanceof DamagePacket) {
+                // A player has been damaged
+                DamagePacket dp = (DamagePacket)obj;
+
+                mWorld.damageEntity(dp.clientId, dp.amount);
+                Log.debug("ClientSynchronizedUpdate", "Received DamagePacket, Playerid: " + dp.clientId + " got shot with amount: " + dp.amount);
+            }
+            else if (obj instanceof ShootPacket) {
+                // Visual representation of shoot
+                Log.debug("ClientSynchronizedUpdate", "ShotPacket received on client");
+                ShootPacket sp = (ShootPacket)obj;
+
+                // Notify listeners about that an external player has shot
+                EventHandler.events.notify(new NetworkEvent(sp));
+            }
+            else if (obj instanceof BulletHolePacket) {
+                Log.debug("ClientSynchronizedUpdate", "BulletHolePacket received on client");
+                // Someone else has shot, and missed, thus bullethole at this position
+                BulletHolePacket bhp = (BulletHolePacket)obj;
+
+                EventHandler.events.notify(new NetworkEvent(bhp));
+            }
+            else if (obj instanceof DeadEntityPacket) {
+                DeadEntityPacket dep = (DeadEntityPacket)obj;
+
+                mWorld.killEntity(dep.clientId);
+            }
+            else if (obj instanceof GrenadeCreatePacket) {
+                Log.debug("ClientWorldModel", "Received GrenadeCreatePacket");
+                GrenadeCreatePacket gcp = (GrenadeCreatePacket) obj;
+
+                Grenade g = new Grenade(mWorld.getBulletWorld(), gcp.position, gcp.direction);
+                g.setId(gcp.clientId);
+                mWorld.addGrenade(g);
+                EventHandler.events.notify(new ModelEvent(EventType.GRENADE_CREATED, g));
+            }
+
+            it.remove();
+        }
+    }
+
+    @Override
+    public void connected() {}
+
+    @Override
+    public void disconnected() {}
+
+    @Override
+    public synchronized void received(Object obj) {
+        mUnsyncedObjects.add(obj);
+    }
+}

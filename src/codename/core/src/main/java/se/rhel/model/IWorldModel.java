@@ -1,7 +1,7 @@
 package se.rhel.model;
 
 import com.badlogic.gdx.utils.Array;
-import se.rhel.model.entity.IEntity;
+import se.rhel.model.entity.IPlayer;
 import se.rhel.model.physics.BulletWorld;
 import se.rhel.model.weapon.Grenade;
 
@@ -15,7 +15,7 @@ public interface IWorldModel {
 
     public Player getPlayer();
     public BulletWorld getBulletWorld();
-    public Array<IEntity> getExternalPlayers();
+    public Array<IPlayer> getExternalPlayers();
 
     ArrayList<Grenade> getGrenades();
 }
