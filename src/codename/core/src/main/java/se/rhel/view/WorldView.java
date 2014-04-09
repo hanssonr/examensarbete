@@ -6,13 +6,8 @@ import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g3d.Environment;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
-import com.badlogic.gdx.graphics.g3d.Shader;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
-import com.badlogic.gdx.graphics.g3d.decals.CameraGroupStrategy;
 import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight;
-import com.badlogic.gdx.graphics.g3d.shaders.DefaultShader;
-import com.badlogic.gdx.graphics.g3d.utils.DefaultShaderProvider;
-import com.badlogic.gdx.graphics.g3d.utils.ShaderProvider;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
@@ -21,10 +16,8 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.bullet.linearmath.btIDebugDraw;
 import se.rhel.Client;
 import se.rhel.model.IWorldModel;
-import se.rhel.model.entity.DamageAbleEntity;
 import se.rhel.model.entity.DummyEntity;
 import se.rhel.model.physics.BulletWorld;
-import se.rhel.res.Resources;
 import se.rhel.view.input.PlayerInput;
 import se.rhel.view.sfx.SoundManager;
 
@@ -35,70 +28,58 @@ import java.math.BigDecimal;
  */
 public class WorldView {
 
-    private TextRenderer mFPSRenderer;
-    private TextRenderer mBulletLoadRenderer;
-    private TextRenderer mPlayerPosRenderer;
-    private LaserView mLaserView;
-
-    // Networking stats
-    private TextRenderer mLatencyRenderer;
-
+    private FPSCamera mCamera = new FPSCamera(75, 0.1f, 1000f);
     private SpriteBatch mSpriteBatch;
     private ModelBatch mModelBatch;
-    private ShapeRenderer mCrosshairRenderer;
-    private BulletHoleRenderer mBulletHoleRenderer;
-    private EntitySystemRenderer mEntitySystem;
-    private DecalRenderer mDecalRenderer;
 
     private IWorldModel mWorldModel;
-
     private Environment mEnvironment;
-
     private DebugDrawer mDebugDrawer;
 
-    private DebugDrawer mAimDebugDrawer;
-
     private FrameBuffer buffer1 = new FrameBuffer(Pixmap.Format.RGBA8888, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), true);
-    private FrameBuffer buffer2 = new FrameBuffer(Pixmap.Format.RGBA8888, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), true);
-
     private ShaderProgram toonShader = new ShaderProgram(Gdx.files.internal("shader/celshading.vertex.glsl"), Gdx.files.internal("shader/celshading.fragment.glsl"));
-    private ShaderProgram defaultShader = new ShaderProgram(Gdx.files.internal("shader/celshading.vertex.glsl"), Gdx.files.internal("shader/default.fragment.glsl"));
-
     private Mesh fullscreenQuad = createFullScreenQuad();
 
-    private ParticleRenderer particleRenderer;
-
-    private FPSCamera mCamera = new FPSCamera(75, 0.1f, 1000f);
-
+    //Renderers
     private PlayerRenderer mPlayerRenderer;
     private ExternalPlayerRenderer mExtPlayerRenderer;
     private GrenadeRenderer mGrenadeRenderer;
+    private LevelRenderer mLevelRenderer;
+    private ParticleRenderer particleRenderer;
+    private LaserView mLaserView;
+    private ShapeRenderer mCrosshairRenderer;
+    private BulletHoleRenderer mBulletHoleRenderer;
+    private DecalRenderer mDecalRenderer;
+    private TextRenderer mFPSRenderer;
+    private TextRenderer mBulletLoadRenderer;
+    private TextRenderer mPlayerPosRenderer;
 
-    private ModelBatch toonBatch;
+    // Networking stats
+    private TextRenderer mLatencyRenderer;
 
     public WorldView(IWorldModel worldModel) {
         mWorldModel = worldModel;
         mSpriteBatch = new SpriteBatch();
         mModelBatch = new ModelBatch();
-        toonBatch = new ModelBatch(toonShader.getVertexShaderSource(), toonShader.getFragmentShaderSource());
 
         mPlayerRenderer = new PlayerRenderer(mCamera, mWorldModel.getPlayer());
         mExtPlayerRenderer = new ExternalPlayerRenderer(mWorldModel.getExternalPlayers());
         mGrenadeRenderer = new GrenadeRenderer();
-
+        mLevelRenderer = new LevelRenderer();
         mCrosshairRenderer = new ShapeRenderer();
         mBulletHoleRenderer = new BulletHoleRenderer(mCamera);
         mDecalRenderer = new DecalRenderer(mCamera);
-
-        mAimDebugDrawer = new DebugDrawer();
-        mDebugDrawer = new DebugDrawer();
-        mWorldModel.getBulletWorld().getCollisionWorld().setDebugDrawer(mDebugDrawer);
-        mDebugDrawer.setDebugMode(btIDebugDraw.DebugDrawModes.DBG_DrawWireframe);
-
         mFPSRenderer = TextRenderer.FPS(mWorldModel, mSpriteBatch);
         mBulletLoadRenderer = new TextRenderer("Bullet init", new Vector2(10, Gdx.graphics.getHeight() - 30), mWorldModel, mSpriteBatch);
         mPlayerPosRenderer = new TextRenderer("Player init", new Vector2(10, Gdx.graphics.getHeight() - 60), mWorldModel, mSpriteBatch);
         mLatencyRenderer = new TextRenderer("Latency init", new Vector2(Gdx.graphics.getWidth() - 60, Gdx.graphics.getHeight() - 10), mWorldModel, mSpriteBatch);
+        mDecalRenderer = new DecalRenderer(mCamera);
+        particleRenderer = new ParticleRenderer(mWorldModel, mSpriteBatch, mCamera);
+        mLaserView = new LaserView(worldModel, mCamera);
+
+        mDebugDrawer = new DebugDrawer();
+        mWorldModel.getBulletWorld().getCollisionWorld().setDebugDrawer(mDebugDrawer);
+        mDebugDrawer.setDebugMode(btIDebugDraw.DebugDrawModes.DBG_DrawWireframe);
 
         mEnvironment = new Environment();
         mEnvironment.set(new ColorAttribute(ColorAttribute.AmbientLight, 0.3f, 0.3f, 0.3f, 1.0f));
@@ -107,11 +88,7 @@ public class WorldView {
                 new DirectionalLight().set(0.8f, 0.8f, 0.8f, -1f, -0.8f, -0.2f)
         );
 
-        mLaserView = new LaserView(worldModel, mCamera);
         SoundManager.INSTANCE.playMusic(true, .2f);
-        mDecalRenderer = new DecalRenderer(mCamera);
-
-        particleRenderer = new ParticleRenderer(mWorldModel, mSpriteBatch, mCamera);
     }
 
     public void update(float delta) {
@@ -130,61 +107,24 @@ public class WorldView {
                 Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
 
                 mModelBatch.begin(mCamera);
-                    mModelBatch.render(mWorldModel.getBulletWorld().levelInstance, mEnvironment);
+                    mLevelRenderer.render(mModelBatch, mEnvironment);
                     mExtPlayerRenderer.render(mModelBatch, mEnvironment);
                     mGrenadeRenderer.render(mModelBatch, mEnvironment);
-                    mModelBatch.render(mWorldModel.getBulletWorld().instances, mEnvironment);
+                    particleRenderer.draw(delta);
+                    mBulletHoleRenderer.draw(delta);
                 mModelBatch.end();
-
-                particleRenderer.draw(delta);
-                mBulletHoleRenderer.draw(delta);
 
                 // External stuff
                 for (int i = 0; i < mWorldModel.getExternalPlayers().size; i++) {
                     DummyEntity de = (DummyEntity)mWorldModel.getExternalPlayers().get(i);
-
                     mDecalRenderer.draw(delta, de.getPosition());
                 }
-
             buffer1.end();
-
-//            buffer2.begin();
-//                Gdx.gl.glClearColor(0, 0, 0, 0);
-//                Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
-//
-//                Gdx.gl20.glEnable(GL20.GL_DEPTH_TEST);
-//
-//                mModelBatch.begin(mCamera);
-//                    mExtPlayerRenderer.render(mModelBatch, mEnvironment);
-//                mModelBatch.end();
-//
-//                mBulletHoleRenderer.draw(delta);
-//
-////                // External stuff
-////                for (int i = 0; i < mWorldModel.getExternalPlayers().size; i++) {
-////                    DamageAbleEntity de = (DamageAbleEntity)mWorldModel.getExternalPlayers().get(i);
-////
-////                    mDecalRenderer.draw(delta, de.getPosition());
-////
-////                    if(de.getHealth() < mPreviousHealth) {
-////                        particleRenderer.addEffect(de.getPosition());
-////                        mPreviousHealth = de.getHealth();
-////                    }
-////                    particleRenderer.draw(delta);
-////                }
-//
-//            buffer2.end();
 
             buffer1.getColorBufferTexture().bind();
                 toonShader.begin();
                     fullscreenQuad.render(toonShader, GL20.GL_TRIANGLE_STRIP, 0, 4);
                 toonShader.end();
-
-//            buffer2.getColorBufferTexture().bind();
-//                defaultShader.begin();
-//                    fullscreenQuad.render(defaultShader, GL20.GL_TRIANGLE_STRIP, 0, 4);
-//                defaultShader.end();
-
 
         } else {
             Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
@@ -192,9 +132,9 @@ public class WorldView {
             Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
 
             mModelBatch.begin(mCamera);
-                mModelBatch.render(Resources.INSTANCE.modelInstanceArray);
-                mModelBatch.render(mWorldModel.getBulletWorld().instances, mEnvironment);
-                mModelBatch.render(mWorldModel.getBulletWorld().levelInstance, mEnvironment);
+                mLevelRenderer.render(mModelBatch, mEnvironment);
+                mPlayerRenderer.render(mModelBatch, mEnvironment);
+                mExtPlayerRenderer.render(mModelBatch, mEnvironment);
             mModelBatch.end();
         }
 

@@ -1,14 +1,5 @@
 package se.rhel.model.physics;
 
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.VertexAttributes;
-import com.badlogic.gdx.graphics.g3d.Material;
-import com.badlogic.gdx.graphics.g3d.Model;
-import com.badlogic.gdx.graphics.g3d.ModelInstance;
-import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
-import com.badlogic.gdx.graphics.g3d.attributes.FloatAttribute;
-import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
-import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.bullet.collision.*;
 import com.badlogic.gdx.physics.bullet.dynamics.*;
@@ -26,12 +17,8 @@ import se.rhel.res.Resources;
  */
 public class BulletWorld implements BaseModel {
 
-    private final float FIXED_TIMESTEP = 1f/60f;
-
     private static PerformanceCounter PERFORMANCE_COUNTER = new PerformanceCounter("BulletWorld");
     public static String PERFORMANCE;
-
-    private ModelBuilder mModelBuilder = new ModelBuilder();
 
     private btCollisionConfiguration mCollisionConfig;
     private btCollisionDispatcher mDispatcher;
@@ -39,19 +26,12 @@ public class BulletWorld implements BaseModel {
     private btConstraintSolver mSolver;
     private btDynamicsWorld mCollisionWorld;
 
-    private Array<Model> mModels = new Array<>();
-    public Array<ModelInstance> instances = new Array<ModelInstance>();
-    public Array<ModelInstance> levelInstance = new Array<>();
-    public ModelInstance fpsModel;
     private Array<btCollisionShape> mShapes = new Array<>();
     private Array<btRigidBodyConstructionInfo> mBodyInfos = new Array<>();
     private Array<btRigidBody> mBodies = new Array<>();
     private Array<btDefaultMotionState> mMotionStates = new Array<>();
 
     private Vector3 mGravity = new Vector3(0, -9.18f, 0);
-    private Vector3 mTempVector = new Vector3();
-
-    public volatile boolean isStepping = true;
 
     public BulletWorld() {
         create();
@@ -74,10 +54,7 @@ public class BulletWorld implements BaseModel {
         levelInfo.setRestitution(5f);
         levelInfo.setFriction(5f);
         mBodyInfos.add(levelInfo);
-        ModelInstance level = new ModelInstance(Resources.INSTANCE.levelModelVisual);
-        levelInstance.add(level);
         btDefaultMotionState levelMotionState = new btDefaultMotionState();
-        levelMotionState.setWorldTransform(level.transform);
         mMotionStates.add(levelMotionState);
         btRigidBody levelBody = new btRigidBody(levelInfo);
         levelBody.setMotionState(levelMotionState);
@@ -85,61 +62,21 @@ public class BulletWorld implements BaseModel {
         mCollisionWorld.addRigidBody(levelBody);
     }
 
-    public void addSpheres() {
-
-        final Model sphereModel = mModelBuilder.createSphere(1f, 1f, 1f, 10, 10,
-                new Material(ColorAttribute.createDiffuse(Color.RED), ColorAttribute.createSpecular(Color.WHITE), FloatAttribute.createShininess(64f)),
-                VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal);
-        mModels.add(sphereModel);
-
-        btCollisionShape sphereShape = new btSphereShape(0.5f);
-        mShapes.add(sphereShape);
-        sphereShape.calculateLocalInertia(1f, mTempVector);
-        btRigidBodyConstructionInfo sphereInfo = new btRigidBodyConstructionInfo(1f, null, sphereShape, mTempVector);
-        mBodyInfos.add(sphereInfo);
-
-        // Create the spheres
-        for(float x = -5f; x <= 5f; x += 2f) {
-            for(float y = 10f; y <= 16f; y += 2f) {
-                for(float z = -5f; z <= 5f; z+= 2f) {
-
-                    ModelInstance sphere = new ModelInstance(sphereModel);
-                    sphere.materials.get(0).set(ColorAttribute.createDiffuse(x+0.5f* MathUtils.random(), y+0.5f*MathUtils.random(), z+0.5f*MathUtils.random(), 1));
-                    instances.add(sphere);
-                    sphere.transform.trn(x+0.1f* MathUtils.random(), y+0.1f*MathUtils.random(), z+0.1f*MathUtils.random());
-                    btDefaultMotionState sphereMotionState = new btDefaultMotionState();
-                    sphereMotionState.setWorldTransform(sphere.transform);
-                    mMotionStates.add(sphereMotionState);
-                    btRigidBody sphereBody = new btRigidBody(sphereInfo);
-                    sphereBody.userData = 99;
-                    sphereBody.setMotionState(sphereMotionState);
-                    mBodies.add(sphereBody);
-                    mCollisionWorld.addRigidBody(sphereBody);
-
-                }
-            }
-        }
-    }
-
     public void addToWorld(btCollisionShape shape, btRigidBodyConstructionInfo info, btDefaultMotionState motionState, btRigidBody body) {
         mShapes.add(shape);
         mBodyInfos.add(info);
-
         mMotionStates.add(motionState);
-
         mBodies.add(body);
         mCollisionWorld.addRigidBody(body);
     }
 
     @Override
     public void update(float delta) {
-        isStepping = true;
         PERFORMANCE_COUNTER.tick();
         PERFORMANCE_COUNTER.start();
                 ((btDynamicsWorld) mCollisionWorld).stepSimulation(delta, 8);
         PERFORMANCE_COUNTER.stop();
         PERFORMANCE = "Bullet: " + (int)(PERFORMANCE_COUNTER.load.value*100f) + " %";
-        isStepping = false;
     }
 
     @Override

@@ -113,7 +113,6 @@ public class GameScreen extends Controller {
                 break;
             case GRENADE:
                 Grenade g = new Grenade(mWorldModel.getBulletWorld(), mWorldModel.getPlayer().getPosition(), mWorldModel.getPlayer().getDirection());
-                g.createPhysicBody();
                 mWorldModel.addGrenade(g);
                 mWorldView.getGrenadeRenderer().addGrenade(g);
                 break;

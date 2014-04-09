@@ -73,20 +73,6 @@ public class ExternalPlayerRenderer {
                 }
             }
         }
-
-        /*for(int i = 0; i < mPlayers.size; i++) {
-            IPlayer entity = mPlayers.get(i);
-
-            if(entity.isAlive()) {
-                AnimationController playerAnimation = mAnimations.get(entity);
-                ModelInstance playerWeapon = mWeaponArms.get(entity);
-
-                if(playerAnimation != null && playerWeapon != null) {
-                    batch.render(playerAnimation.target, env);
-                    batch.render(playerWeapon, env);
-                }
-            }
-        }*/
     }
 
     public void update(float delta) {
