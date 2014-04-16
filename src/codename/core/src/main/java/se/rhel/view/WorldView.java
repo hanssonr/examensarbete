@@ -110,10 +110,10 @@ public class WorldView {
                     mLevelRenderer.render(mModelBatch, mEnvironment);
                     mExtPlayerRenderer.render(mModelBatch, mEnvironment);
                     mGrenadeRenderer.render(mModelBatch, mEnvironment);
-                    particleRenderer.draw(delta);
+
                     mBulletHoleRenderer.draw(delta);
                 mModelBatch.end();
-
+            particleRenderer.draw(delta);
                 // External stuff
                 for (int i = 0; i < mWorldModel.getExternalPlayers().size; i++) {
                     DummyEntity de = (DummyEntity)mWorldModel.getExternalPlayers().get(i);
