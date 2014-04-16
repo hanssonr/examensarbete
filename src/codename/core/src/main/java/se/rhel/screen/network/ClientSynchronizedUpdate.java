@@ -1,4 +1,4 @@
-package se.rhel.network.model;
+package se.rhel.screen.network;
 
 import se.rhel.event.EventHandler;
 import se.rhel.event.EventType;
@@ -6,6 +6,7 @@ import se.rhel.event.ModelEvent;
 import se.rhel.event.NetworkEvent;
 import se.rhel.model.client.ClientWorldModel;
 import se.rhel.model.weapon.Grenade;
+import se.rhel.network.model.ExternalPlayer;
 import se.rhel.network.packet.*;
 import se.rhel.observer.ClientListener;
 import se.rhel.util.Log;
@@ -14,7 +15,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 /**
- * Group: ?
+ * Group: Mixed
  * Created by rkh on 2014-04-04.
  */
 public class ClientSynchronizedUpdate implements ClientListener {

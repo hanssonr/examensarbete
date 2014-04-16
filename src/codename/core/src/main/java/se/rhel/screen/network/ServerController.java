@@ -6,7 +6,6 @@ import se.rhel.event.EventType;
 import se.rhel.event.ModelEvent;
 import se.rhel.event.ModelListener;
 import se.rhel.model.server.ServerWorldModel;
-import se.rhel.network.model.ServerSynchronizedUpdate;
 
 /**
  * Group: Mixed
