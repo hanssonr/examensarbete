@@ -5,6 +5,7 @@ import com.badlogic.gdx.utils.Array;
 import se.rhel.Client;
 import se.rhel.model.*;
 import se.rhel.model.entity.IPlayer;
+import se.rhel.model.weapon.Grenade;
 import se.rhel.network.model.ExternalPlayer;
 import se.rhel.util.Log;
 

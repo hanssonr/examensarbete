@@ -8,6 +8,7 @@ import com.badlogic.gdx.math.Vector3;
 import se.rhel.model.Bodybuilder;
 import se.rhel.model.weapon.Grenade;
 import se.rhel.res.Resources;
+import se.rhel.view.sfx.SoundManager;
 
 import java.util.ArrayList;
 import java.util.HashMap;

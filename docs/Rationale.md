@@ -154,3 +154,10 @@ eftersom det egentligen inte rör sig om ett praktiskt problem.
 Lösningen? Efter mycket huvudbry så måste vi nog ändå lägga till idn på GameObject-klasser vilket i sin tur kommer leda till att många klasser går från ha en concern till att ha två, det vill säga mixade, som i
 sin tur kommer strula till det med mätningarna.
 
+### Fortsatta problem i samma område
+Det vi stötte på i samma veva som ovanstående var dels att EventSystemet skickar event både till Client och Server eftersom de båda lyssnar på model-event, här är väl lösningen något slags mellanting då den koden
+fick flyttas runt lite tills en slags symfoni hittades. Det andra problemet blev med trådar och fysikmotorer, med C++-kraschar i Java-miljö och annat trevligt. Som tur är har vi varit med om det i ett tidigare
+projekt och kunde därför relativt snabbt lösa det (när kroppas skapas från olika trådar och fysik-världen är inne i sin step-funktion).
+
+Det som slutligen kan sägas om implementationen av kroppar som rör sig och har regler är att det inte är helt enkelt att få till en synkronisering tillsammans med seperation.
+

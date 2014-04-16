@@ -13,7 +13,7 @@ public enum SoundManager {
     INSTANCE;
 
     public enum SoundType {
-        LASER;
+        LASER, GRENADE;
     }
 
     private Music theme = Resources.INSTANCE.theme;
@@ -22,6 +22,7 @@ public enum SoundManager {
     private static HashMap<SoundType, Sound> sounds = new HashMap<>();
     static {
         sounds.put(SoundType.LASER, Resources.INSTANCE.laserShot);
+        sounds.put(SoundType.GRENADE, Resources.INSTANCE.feuer);
     }
 
     public void playMusic(boolean looping, float volume) {
