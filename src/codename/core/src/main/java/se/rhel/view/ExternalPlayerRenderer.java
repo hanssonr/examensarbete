@@ -3,6 +3,7 @@ package se.rhel.view;
 import com.badlogic.gdx.graphics.g3d.Environment;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
+import com.badlogic.gdx.graphics.g3d.Renderable;
 import com.badlogic.gdx.graphics.g3d.utils.AnimationController;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.math.collision.BoundingBox;
@@ -69,7 +70,7 @@ public class ExternalPlayerRenderer {
 
                 if(playerAnimation != null && playerWeapon != null) {
                     batch.render(playerAnimation.target, env);
-                    batch.render(playerWeapon, env);
+                    batch.render(playerWeapon);
                 }
             }
         }
