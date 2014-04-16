@@ -39,9 +39,6 @@ public class GameScreen extends Controller {
         Gdx.app.setLogLevel(Application.LOG_NONE);
 
         mWorldModel = new WorldModel();
-        //mWorldModel.create();
-
-        mPlayerInput = new PlayerInput();
         mWorldView = new WorldView(mWorldModel);
 
         // Listen to view events
@@ -49,6 +46,7 @@ public class GameScreen extends Controller {
         // Listen to model events
         EventHandler.events.listen(ModelEvent.class, this);
 
+        mPlayerInput = new PlayerInput();
         Gdx.input.setInputProcessor(mPlayerInput);
     }
 

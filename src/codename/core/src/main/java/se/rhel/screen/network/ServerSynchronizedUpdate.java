@@ -1,4 +1,4 @@
-package se.rhel.network.model;
+package se.rhel.screen.network;
 
 import com.badlogic.gdx.math.Vector3;
 import se.rhel.Connection;
@@ -7,6 +7,7 @@ import se.rhel.model.physics.MyContactListener;
 import se.rhel.model.server.ServerWorldModel;
 import se.rhel.model.util.Utils;
 import se.rhel.model.weapon.Grenade;
+import se.rhel.network.model.ExternalPlayer;
 import se.rhel.network.packet.*;
 import se.rhel.observer.ServerListener;
 import se.rhel.util.Log;
@@ -16,6 +17,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 /**
+ * Group: Mixed
  * Created by rkh on 2014-04-05.
  */
 public class ServerSynchronizedUpdate implements ServerListener {

@@ -1,6 +1,7 @@
 package se.rhel.model;
 
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.utils.Array;
 import se.rhel.model.entity.GameObject;
 import se.rhel.event.EventHandler;
 import se.rhel.event.EventType;
@@ -18,11 +19,13 @@ import java.util.ArrayList;
  */
 public class BaseWorldModel {
 
+    private final int MAX_GRENADES = 25;
+
     private BulletWorld mBulletWorld;
     private MyContactListener mContactListener = new MyContactListener();
 
     protected ArrayList<GameObject> mDestroy = new ArrayList<>();
-    protected ArrayList<Grenade> mGrenades = new ArrayList<>();
+    protected Array<Grenade> mGrenades = new Array<Grenade>(true, MAX_GRENADES);
 
     public BaseWorldModel() {
         mBulletWorld = new BulletWorld();
@@ -36,7 +39,7 @@ public class BaseWorldModel {
     public void update(float delta) {
         mBulletWorld.update(delta);
 
-        for (int i = 0; i < mGrenades.size(); i++) {
+        for (int i = 0; i < mGrenades.size; i++) {
             Grenade g = mGrenades.get(i);
 
             g.update(delta);
@@ -44,8 +47,8 @@ public class BaseWorldModel {
             if(!g.isAlive()) {
                 EventHandler.events.notify(new ModelEvent(EventType.EXPLOSION, g));
                 handleExplosion(g);
-                mDestroy.add(g);
-                mGrenades.remove(i);
+                g.destroy();
+                mGrenades.removeIndex(i);
             }
         }
 
@@ -73,7 +76,7 @@ public class BaseWorldModel {
         mGrenades.add(g);
     }
 
-    public ArrayList<Grenade> getGrenades() {
+    public Array<Grenade> getGrenades() {
         return mGrenades;
     }
 }

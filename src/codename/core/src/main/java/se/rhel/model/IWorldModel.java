@@ -17,5 +17,5 @@ public interface IWorldModel {
     public BulletWorld getBulletWorld();
     public Array<IPlayer> getExternalPlayers();
 
-    ArrayList<Grenade> getGrenades();
+    Array<Grenade> getGrenades();
 }

@@ -51,6 +51,14 @@ public abstract class DynamicEntity extends GameObject {
         mDirection.set(q.transform(new Vector3(0,0,-1)));
     }
 
+    public void setPositionAndRotation(Vector3 pos, Vector2 rotation) {
+        getRotation().set(rotation);
+        setPosition(pos);
+        calculateDirection();
+
+        super.setPositionAndRotation(pos, rotation.x);
+    }
+
     public Vector2 getRotation() {
         return mRotation;
     }
