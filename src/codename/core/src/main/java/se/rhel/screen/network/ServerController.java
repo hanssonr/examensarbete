@@ -11,34 +11,34 @@ import se.rhel.model.server.ServerWorldModel;
  * Group: Mixed
  * Created by Emil on 2014-04-02.
  */
-public class ServerController implements ModelListener {
+public class ServerController implements ModelListener {                // Network
 
-    private Server mServer;
-    private ServerWorldModel mServerWorldModel;
-    private ServerSynchronizedUpdate mSyncedUpdate;
+    private Server mServer; // Network
+    private ServerWorldModel mServerWorldModel; // Logik
+    private ServerSynchronizedUpdate mSyncedUpdate; // Logik
 
-    public ServerController(Server server) {
-        mServer = server;
-        mServerWorldModel = new ServerWorldModel(server);
-        mSyncedUpdate = new ServerSynchronizedUpdate(mServerWorldModel, mServer);
-        mServer.addListener(mSyncedUpdate);
+    public ServerController(Server server) { // Network
+        mServer = server; // Network
+        mServerWorldModel = new ServerWorldModel(server); // Logik
+        mSyncedUpdate = new ServerSynchronizedUpdate(mServerWorldModel, mServer); // Logik
+        mServer.addListener(mSyncedUpdate); // Logik
 
         // Listen to pure ServerModelEvents
-        EventHandler.events.listen(ModelEvent.class, this);
-    }
+        EventHandler.events.listen(ModelEvent.class, this); // Logik
+    } // Network
 
-    public void update(float delta) {
-        mSyncedUpdate.update();
-        mServerWorldModel.update(delta);
-    }
+    public void update(float delta) { // Logik
+        mSyncedUpdate.update(); // Logik
+        mServerWorldModel.update(delta); // Logik
+    } // Logik
 
-    @Override
-    public void modelEvent(EventType type, Object... objs) {
-        switch (type) {
-            default:
-                break;
-        }
-    }
+    @Override // Logik
+    public void modelEvent(EventType type, Object... objs) { // Logik
+        switch (type) { // Logik
+            default: // Logik
+                break; // Logik
+        } // Logik
+    } // Logik
 /*
     @Override
     public void connected(Connection con) {

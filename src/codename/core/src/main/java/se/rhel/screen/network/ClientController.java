@@ -19,90 +19,89 @@ import se.rhel.view.input.PlayerInput;
  * Group: Mixed
  * Created by Emil on 2014-04-02.
  */
-public class ClientController implements ViewListener, ModelListener, NetworkListener {
+public class ClientController implements ViewListener, ModelListener, NetworkListener { // L
 
-    private PlayerInput mPlayerInput;
-    private WorldView mWorldView;
+    private PlayerInput mPlayerInput; // L
+    private WorldView mWorldView; // L
 
-    private Client mClient;
-    private ClientWorldModel mClientWorldModel;
-    private Vector3 mLastKnownPosition = Vector3.Zero;
-    private float mLastKnownRotation = 0f;
+    private Client mClient;                                                                                             // N
+    private ClientWorldModel mClientWorldModel;                                                                         // N
+    private Vector3 mLastKnownPosition = Vector3.Zero; // L
+    private float mLastKnownRotation = 0f; // L
 
-    private ClientSynchronizedUpdate mSyncedUpdate;
+    private ClientSynchronizedUpdate mSyncedUpdate;                                                                     // N
 
-    public ClientController() {
-        mClient = Snaek.newClient(4455, 5544, "localhost");
-        mClientWorldModel = new ClientWorldModel(mClient);
-        mSyncedUpdate = new ClientSynchronizedUpdate(mClientWorldModel);
-        mClient.addListener(mSyncedUpdate);
+    public ClientController() { // L
+        mClient = Snaek.newClient(4455, 5544, "localhost");                                                             // N
+        mClientWorldModel = new ClientWorldModel(mClient);                                                              // N
+        mSyncedUpdate = new ClientSynchronizedUpdate(mClientWorldModel);                                                // N
+        mClient.addListener(mSyncedUpdate);                                                                             // N
 
-        mClient.sendTcp(new RequestInitialStatePacket(mClient.getId()));
+        mClient.sendTcp(new RequestInitialStatePacket(mClient.getId()));                                                // N
 
-        mWorldView = new WorldView(mClientWorldModel);
-        mPlayerInput = new PlayerInput();
+        mWorldView = new WorldView(mClientWorldModel);                                                                  // N
+        mPlayerInput = new PlayerInput(); // L
 
         // Listen to network events
-        EventHandler.events.listen(NetworkEvent.class, this);
+        EventHandler.events.listen(NetworkEvent.class, this);                                                           // N?
         // Listen to view events
-        EventHandler.events.listen(ViewEvent.class, this);
+        EventHandler.events.listen(ViewEvent.class, this); // L
         // Listen to model events
-        EventHandler.events.listen(ModelEvent.class, this);
+        EventHandler.events.listen(ModelEvent.class, this); // L
 
-        Gdx.input.setInputProcessor(mPlayerInput);
-    }
+        Gdx.input.setInputProcessor(mPlayerInput); // L
+    } // L
 
-    public void update(float delta) {
-        mSyncedUpdate.update();
-        mPlayerInput.processCurrentInput(delta);
+    public void update(float delta) { // L
+        mSyncedUpdate.update(); // L
+        mPlayerInput.processCurrentInput(delta); // L
 
-        mClientWorldModel.getPlayer().move(mPlayerInput.getDirection());
-        mClientWorldModel.getPlayer().rotate(mPlayerInput.getRotation());
+        mClientWorldModel.getPlayer().move(mPlayerInput.getDirection()); // L
+        mClientWorldModel.getPlayer().rotate(mPlayerInput.getRotation()); // L
 
-        mClientWorldModel.update(delta);
+        mClientWorldModel.update(delta); // L
 
         // Network stuff
-        if(mClient.getId() != -1) {
+        if(mClient.getId() != -1) {                                                                                     // N
             // Send move packet
 
-            if(mClientWorldModel.getPlayer().getPosition().dst(mLastKnownPosition) > 0.01f ||
-                    mClientWorldModel.getPlayer().getRotation().x != mLastKnownRotation)  {
-                mLastKnownPosition = mClientWorldModel.getPlayer().getPosition().cpy();
-                mLastKnownRotation = mClientWorldModel.getPlayer().getRotation().x;
+            if(mClientWorldModel.getPlayer().getPosition().dst(mLastKnownPosition) > 0.01f || // L
+                    mClientWorldModel.getPlayer().getRotation().x != mLastKnownRotation)  { //L
+                mLastKnownPosition = mClientWorldModel.getPlayer().getPosition().cpy(); // L
+                mLastKnownRotation = mClientWorldModel.getPlayer().getRotation().x; // L
 
-                mClient.sendUdp(new PlayerMovePacket(mClient.getId(),
-                                mClientWorldModel.getPlayer().getPosition(),
-                                mClientWorldModel.getPlayer().getRotation()));
-            }
-        }
+                mClient.sendUdp(new PlayerMovePacket(mClient.getId(),                                                   // N
+                                mClientWorldModel.getPlayer().getPosition(),                                            // N
+                                mClientWorldModel.getPlayer().getRotation()));                                          // N
+            } // L
+        }                                                                                                               // N
 
-        mWorldView.update(delta);
-    }
+        mWorldView.update(delta); // L
+    } // L
 
-    public void draw(float delta) {
-        mWorldView.render(delta);
-    }
+    public void draw(float delta) { // L
+        mWorldView.render(delta); // L
+    } // L
 
-    public void dispose() {
-        mWorldView.dispose();
-    }
+    public void dispose() { // L
+        mWorldView.dispose(); // L
+    } // L
 
-    @Override
-    public void modelEvent(EventType type, Object... objs) {
-        switch (type) {
-
-            case SHOOT:
-                Vector3[] collide = mWorldView.getCamera().getShootRay();
-                Vector3[] visual = mWorldView.getCamera().getVisualRepresentationShoot();
+    @Override // L
+    public void modelEvent(EventType type, Object... objs) { // L
+        switch (type) { // L
+            case SHOOT: // L
+                Vector3[] collide = mWorldView.getCamera().getShootRay(); // L
+                Vector3[] visual = mWorldView.getCamera().getVisualRepresentationShoot(); // L
 
                 // The collision
-                mClientWorldModel.checkShootCollision(collide);
+                mClientWorldModel.checkShootCollision(collide); // L
 
                 // The rendering & sound
-                mWorldView.shoot(visual);
+                mWorldView.shoot(visual); // L
 
                 // The network, notify the server that we have shot
-                mClient.sendTcp(new ShootPacket(mClient.getId(), collide[0], collide[1], visual[0], visual[1], visual[2], visual[3]));
+                mClient.sendTcp(new ShootPacket(mClient.getId(), collide[0], collide[1], visual[0], visual[1], visual[2], visual[3])); // N
                 break;
 
             case BULLET_HOLE:
@@ -123,7 +122,7 @@ public class ClientController implements ViewListener, ModelListener, NetworkLis
             default:
                 break;
         }
-    }
+    } // L
 
     @Override
     public void inputEvent(EventType type) {
@@ -139,30 +138,30 @@ public class ClientController implements ViewListener, ModelListener, NetworkLis
                 // Check against the rules in the model
                 // mClientWorldModel.getPlayer().grenadeThrow();
                 // Send to server
-                mClient.sendTcp(new GrenadeCreatePacket(mClient.getId(),
-                        mClientWorldModel.getPlayer().getPosition(),
-                        mClientWorldModel.getPlayer().getDirection()));
+                mClient.sendTcp(new GrenadeCreatePacket(mClient.getId(),                                                        // N
+                        mClientWorldModel.getPlayer().getPosition(),                                                            // N
+                        mClientWorldModel.getPlayer().getDirection()));                                                         // N
                 break;
         }
     }
 
-    @Override
-    public void networkEvent(Packet packet) {
+    @Override                                                                                                                   // N
+    public void networkEvent(Packet packet) {                                                                                   // N
 
-        if(packet instanceof ShootPacket) {
-            ShootPacket sp = (ShootPacket) packet;
+        if(packet instanceof ShootPacket) {                                                                                     // N
+            ShootPacket sp = (ShootPacket) packet;                                                                              // N
 
             // The rendering and sound
-            mWorldView.shoot(new Vector3[]{sp.vFrom, sp.vTo, sp.vFrom2, sp.vTo2});
-        }
-        else if(packet instanceof BulletHolePacket) {
-            BulletHolePacket bhp = (BulletHolePacket) packet;
+            mWorldView.shoot(new Vector3[]{sp.vFrom, sp.vTo, sp.vFrom2, sp.vTo2}); // L
+        }                                                                                                                       // N
+        else if(packet instanceof BulletHolePacket) {                                                                           // N
+            BulletHolePacket bhp = (BulletHolePacket) packet;                                                                   // N
             // Draw bullethole
-            BulletHoleRenderer.addBullethole(bhp.hitWorld, bhp.hitNormal);
-        }
-        else if(packet instanceof PlayerPacket) {
-            PlayerPacket pp = (PlayerPacket)packet;
-            mWorldView.getExternalPlayerRenderer().addPlayerAnimation(mClientWorldModel.getExternalPlayer(pp.clientId));
-        }
-    }
-}
+            BulletHoleRenderer.addBullethole(bhp.hitWorld, bhp.hitNormal); // L
+        }                                                                                                                       // N
+        else if(packet instanceof PlayerPacket) {                                                                               // N
+            PlayerPacket pp = (PlayerPacket)packet;                                                                             // N
+            mWorldView.getExternalPlayerRenderer().addPlayerAnimation(mClientWorldModel.getExternalPlayer(pp.clientId)); // L
+        }                                                                                                                       // N
+    }                                                                                                                           // N
+} // L

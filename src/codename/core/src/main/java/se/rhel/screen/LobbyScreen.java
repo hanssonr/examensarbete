@@ -21,64 +21,64 @@ import se.rhel.Server;
  * Created by Emil on 2014-03-05.
  * assigned to libgdx-gradle-template in se.rhel.screen.scene
  */
-public class LobbyScreen extends BaseScreen {
+public class LobbyScreen extends BaseScreen { // N
 
-    private boolean mIsHost;
-    private Stage mStage;
-    private Table mTable;
+    private boolean mIsHost; // N
+    private Stage mStage; // L
+    private Table mTable; // L
 
-    private CodeName mGame;
-    private Server mServer;
+    private CodeName mGame; // L
+    private Server mServer; // N
 
-    public LobbyScreen(CodeName game, boolean isHost) {
-        super(game);
+    public LobbyScreen(CodeName game, boolean isHost) { // N
+        super(game); // L
 
-        mIsHost = isHost;
-        mStage = new Stage();
-        mGame = game;
+        mIsHost = isHost; // N
+        mStage = new Stage(); // L
+        mGame = game; // L
 
-        MyPacketRegisterInitializer.register();
+        MyPacketRegisterInitializer.register(); // N
 
         //Start the server if host
-        if(isHost) {
-            mServer = Snaek.newServer(4455, 5544);
-        }
-    }
+        if(isHost) { // N
+            mServer = Snaek.newServer(4455, 5544); // N
+        } // N
+    } // N
 
-    private void initStage() {
+    private void initStage() { // L
 
-        mTable.clear();
-        final TextButton startButton = UIComponents.getDefaultTextButton("Start game", 200f, 20f);
+        mTable.clear(); // L
+        final TextButton startButton = UIComponents.getDefaultTextButton("Start game", 200f, 20f); // L
 
-        startButton.addListener(new ChangeListener() {
-            @Override
-            public void changed(ChangeEvent event, Actor actor) {
-                mGame.setScreen(new NetworkGameScreen(mGame, mServer));
-            }
-        });
+        startButton.addListener(new ChangeListener() { // L
+            @Override // L
+            public void changed(ChangeEvent event, Actor actor) { // L
+                mGame.setScreen(new NetworkGameScreen(mGame, mServer)); // L
+            } // L
+        }); // L
 
-        mTable.row().padTop(10);
-        mTable.add(startButton);
-        mTable.row().padTop(10);
+        mTable.row().padTop(10); // L
+        mTable.add(startButton); // L
+        mTable.row().padTop(10); // L
 
 
-        mStage.addActor(mTable);
+        mStage.addActor(mTable); // L
 
-    }
+    } // L
 
-    @Override
-    public void show() {
-        mTable = new Table();
-        mTable.setFillParent(true);
+    @Override // L
+    public void show() { // L
+        mTable = new Table(); // L
+        mTable.setFillParent(true); // L
 
-        Gdx.input.setInputProcessor(mStage);
-        Gdx.input.setCatchBackKey(true);
-    }
+        Gdx.input.setInputProcessor(mStage); // L
+        Gdx.input.setCatchBackKey(true); // L
+    } // L
 
-    @Override
-    public void update(float delta) {
-        mStage.act(delta);
-    }
+    @Override // L
+    public void update(float delta) { // L
+        mStage.act(delta); // L
+    } // L
 
     @Override
     public void draw(float delta) {
@@ -102,4 +102,4 @@ public class LobbyScreen extends BaseScreen {
         Gdx.input.setInputProcessor(null);
         mStage.dispose();
     }
-}
+} // N

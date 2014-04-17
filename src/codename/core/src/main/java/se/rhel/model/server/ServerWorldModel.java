@@ -9,18 +9,18 @@ import java.util.HashMap;
 /**
  * Group: Mixed
  */
-public class ServerWorldModel extends BaseWorldModel {
+public class ServerWorldModel extends BaseWorldModel {                                  // N
 
     // Linkin ID's and Players
     private HashMap<Integer, ExternalPlayer> mPlayers;
-    private Server mServer;
+    private Server mServer;                                                             // N
 
-    public ServerWorldModel(Server server) {
+    public ServerWorldModel(Server server) {                                            // N
         super();
 
-        mServer = server;
+        mServer = server;                                                               // N
         mPlayers = new HashMap<>();
-    }
+    }                                                                                   // N
 
     @Override
     public void update(float delta) {
@@ -42,4 +42,4 @@ public class ServerWorldModel extends BaseWorldModel {
     public ExternalPlayer getExternalPlayer(int id) {
         return mPlayers.get(id);
     }
-}
+}                                                                                       // N
