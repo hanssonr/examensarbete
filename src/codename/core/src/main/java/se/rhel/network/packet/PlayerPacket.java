@@ -4,7 +4,7 @@ import com.badlogic.gdx.math.Vector3;
 import se.rhel.packet.AClientPacket;
 
 /**
- * Group: Network
+ * Group: Multiplayer
  *
  * 0    = (byte) packet id
  * 1-4  = (float) x position

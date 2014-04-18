@@ -11,7 +11,7 @@ import se.rhel.CodeName;
 import se.rhel.Snaek;
 import se.rhel.network.packet.MyPacketRegisterInitializer;
 import se.rhel.screen.scene.UIComponents;
-import se.rhel.screen.network.NetworkGameScreen;
+import se.rhel.network.controller.NetworkGameScreen;
 import se.rhel.Server;
 
 
@@ -21,7 +21,7 @@ import se.rhel.Server;
  * Created by Emil on 2014-03-05.
  * assigned to libgdx-gradle-template in se.rhel.screen.scene
  */
-public class LobbyScreen extends BaseScreen {
+public class LobbyScreen extends AbstactController {
 
     private boolean mIsHost;
     private Stage mStage;

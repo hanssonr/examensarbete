@@ -1,12 +1,14 @@
-package se.rhel.screen.network;
+package se.rhel.network.controller;
 
 import se.rhel.event.EventHandler;
 import se.rhel.event.EventType;
 import se.rhel.event.ModelEvent;
-import se.rhel.event.NetworkEvent;
-import se.rhel.model.client.ClientWorldModel;
+import se.rhel.model.IWorldModel;
+import se.rhel.network.event.NetworkEvent;
+import se.rhel.network.model.ClientWorldModel;
 import se.rhel.model.weapon.Grenade;
 import se.rhel.network.model.ExternalPlayer;
+import se.rhel.network.model.INetworkWorldModel;
 import se.rhel.network.packet.*;
 import se.rhel.observer.ClientListener;
 import se.rhel.util.Log;
@@ -15,16 +17,16 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 /**
- * Group: Mixed
+ * Group: Multiplayer
  * Created by rkh on 2014-04-04.
  */
 public class ClientSynchronizedUpdate implements ClientListener {
 
     private ArrayList<Object> mUnsyncedObjects = new ArrayList<>();
-    private ClientWorldModel mWorld;
+    private INetworkWorldModel mWorld;
 
-    public ClientSynchronizedUpdate(ClientWorldModel world) {
-        mWorld = world;
+    public ClientSynchronizedUpdate(IWorldModel world) {
+        mWorld = (INetworkWorldModel)world;
     }
 
     public synchronized void update() {
@@ -43,12 +45,8 @@ public class ClientSynchronizedUpdate implements ClientListener {
                 // An external player have moved and should be updated, accordingly
                 PlayerMovePacket pmp = (PlayerMovePacket)obj;
 
-                ExternalPlayer ep;
-                synchronized (ep = mWorld.getExternalPlayer(pmp.clientId)) {
-                    if(ep == null) {
-                        return;
-                    }
-
+                ExternalPlayer ep = mWorld.getExternalPlayer(pmp.clientId);
+                if(ep != null) {
                     // Set the position & rotation
                     ep.setPositionAndRotation(pmp.mPosition, pmp.mRotation);
                 }
@@ -86,7 +84,7 @@ public class ClientSynchronizedUpdate implements ClientListener {
 
                 Grenade g = new Grenade(mWorld.getBulletWorld(), gcp.position, gcp.direction);
                 g.setId(gcp.clientId);
-                mWorld.addGrenade(g);
+                //mWorld.addGrenade(g);
                 EventHandler.events.notify(new ModelEvent(EventType.GRENADE_CREATED, g));
             }
 

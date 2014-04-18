@@ -4,6 +4,7 @@ import com.badlogic.gdx.math.Vector3;
 import se.rhel.packet.AClientPacket;
 
 /**
+ * Group: Multiplayer
  * Created by Emil on 2014-04-01.
  */
 public class GrenadeCreatePacket extends AClientPacket {

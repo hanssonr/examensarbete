@@ -8,7 +8,7 @@ import se.rhel.event.ViewListener;
  * Group: Logic
  * Created by Emil on 2014-03-30.
  */
-public abstract class Controller extends BaseScreen implements ViewListener, ModelListener {
+public abstract class Controller extends AbstactController implements ViewListener, ModelListener {
 
     public Controller(CodeName game) {
         super(game);

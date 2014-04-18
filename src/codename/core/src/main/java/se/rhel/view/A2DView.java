@@ -4,8 +4,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Matrix4;
 import se.rhel.model.IWorldModel;
-import se.rhel.model.WorldModel;
-import se.rhel.model.client.ClientWorldModel;
 
 /**
  * Group: Logic

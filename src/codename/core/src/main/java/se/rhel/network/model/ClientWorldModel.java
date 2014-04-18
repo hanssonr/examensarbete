@@ -1,20 +1,25 @@
-package se.rhel.model.client;
+package se.rhel.network.model;
 
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import se.rhel.Client;
+import se.rhel.event.EventHandler;
+import se.rhel.event.EventType;
+import se.rhel.event.ModelEvent;
 import se.rhel.model.*;
+import se.rhel.model.entity.DamageAbleEntity;
 import se.rhel.model.entity.IPlayer;
-import se.rhel.network.model.ExternalPlayer;
+import se.rhel.model.physics.MyContactListener;
+import se.rhel.model.physics.RayVector;
 import se.rhel.util.Log;
 
 import java.util.HashMap;
 
 
 /**
- * Group: Mixed
+ * Group: Multiplayer
  */
-public class ClientWorldModel extends BaseWorldModel implements IWorldModel {
+public class ClientWorldModel extends BaseWorldModel implements INetworkWorldModel {
 
     private Client mClient;
     private Player mPlayer;
@@ -28,6 +33,7 @@ public class ClientWorldModel extends BaseWorldModel implements IWorldModel {
         mClient = client;
     }
 
+    @Override
     public void update(float delta) {
         super.update(delta);
         mPlayer.update(delta);
@@ -37,15 +43,29 @@ public class ClientWorldModel extends BaseWorldModel implements IWorldModel {
         }
     }
 
-    public ExternalPlayer getExternalPlayer(int id) {
-       for (IPlayer entity : mPlayers.values()) {
-            ExternalPlayer ep = (ExternalPlayer)entity;
-            if(ep.getClientId() == id) {
-                return ep;
+    @Override
+    public void checkShootCollision(RayVector ray) {
+        MyContactListener.CollisionObject co = super.getShootCollision(ray);
+
+        if(co != null) {
+            if(co.type == MyContactListener.CollisionObject.CollisionType.WORLD) {
+                EventHandler.events.notify(new ModelEvent(EventType.BULLET_HOLE, co.hitPoint, co.hitNormal));
             }
         }
+    }
 
-        return null;
+    public ExternalPlayer getExternalPlayer(int id) {
+        try {
+            for (IPlayer entity : mPlayers.values()) {
+                ExternalPlayer ep = (ExternalPlayer)entity;
+                if(ep.getClientId() == id) {
+                    return ep;
+                }
+            }
+            throw new IllegalArgumentException("No player with id " + id);
+        } catch(Exception e) {
+            return null;
+        }
     }
 
     public void addPlayer(int id, ExternalPlayer player) {
@@ -66,14 +86,8 @@ public class ClientWorldModel extends BaseWorldModel implements IWorldModel {
     }
 
     public void damageEntity(int id, int amount) {
-        // Well, darn, it was me
-        if(id == mClient.getId()) {
-            mPlayer.damageEntity(amount);
-        } else {
-            // Phew, it was somebody else
-            ExternalPlayer ep = getExternalPlayer(id);
-            ep.damageEntity(amount);
-        }
+        DamageAbleEntity dae = mClient.getId() == id ? mPlayer : getExternalPlayer(id);
+        super.damageEntity(dae, amount);
     }
 
     public void killEntity(int id) {
@@ -82,8 +96,6 @@ public class ClientWorldModel extends BaseWorldModel implements IWorldModel {
             if(mPlayer.getHealth() != 0) {
                 mPlayer.damageEntity(100);
             }
-        } else {
-            Log.debug("ClientWorldModel", "Someone else is DEAD with id: " + id);
         }
     }
 }

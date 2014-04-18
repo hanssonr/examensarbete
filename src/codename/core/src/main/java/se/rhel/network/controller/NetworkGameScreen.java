@@ -1,15 +1,15 @@
-package se.rhel.screen.network;
+package se.rhel.network.controller;
 
 import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Gdx;
 import se.rhel.CodeName;
-import se.rhel.screen.BaseScreen;
+import se.rhel.screen.AbstactController;
 import se.rhel.Server;
 
 /**
- * Group: Mixed
+ * Group: Multiplayer
  */
-public class NetworkGameScreen extends BaseScreen {
+public class NetworkGameScreen extends AbstactController {
 
     private ClientController mClientController;
     private ServerController mServerController;

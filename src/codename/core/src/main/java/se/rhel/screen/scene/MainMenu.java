@@ -8,9 +8,9 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import se.rhel.CodeName;
-import se.rhel.screen.BaseScreen;
+import se.rhel.screen.AbstactController;
+import se.rhel.screen.GameController;
 import se.rhel.screen.LobbyScreen;
-import se.rhel.screen.local.GameScreen;
 import se.rhel.view.sfx.SoundManager;
 
 /**
@@ -19,7 +19,7 @@ import se.rhel.view.sfx.SoundManager;
  * Created by Emil on 2014-02-18.
  * assigned to libgdx-gradle-template in se.rhel.screen.scene
  */
-public class MainMenu extends BaseScreen {
+public class MainMenu extends AbstactController {
 
     private Stage mStage;
     private Table mTable;
@@ -58,7 +58,7 @@ public class MainMenu extends BaseScreen {
             public void changed(ChangeEvent event, Actor actor) {
                 Gdx.app.log("Button", "Game");
                 // mGame.setScreenWithTransition(new NetworkGameScreen(mGame));
-                mGame.setScreen(new GameScreen(mGame));
+                mGame.setScreen(new GameController(mGame));
             }
         });
 

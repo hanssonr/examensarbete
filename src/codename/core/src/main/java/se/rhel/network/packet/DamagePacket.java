@@ -3,6 +3,7 @@ package se.rhel.network.packet;
 import se.rhel.packet.AClientPacket;
 
 /**
+ * Group: Multiplayer
  * Created by rkh on 2014-03-21.
  */
 public class DamagePacket extends AClientPacket {

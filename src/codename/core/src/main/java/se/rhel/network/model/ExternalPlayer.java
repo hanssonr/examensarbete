@@ -7,7 +7,7 @@ import se.rhel.model.entity.IPlayer;
 import se.rhel.model.physics.BulletWorld;
 
 /**
- * Group: Network
+ * Group: Multiplayer
  *
  * Created by Emil on 2014-03-06.
  * assigned to libgdx-gradle-template in se.rhel.model

@@ -7,11 +7,11 @@ import se.rhel.CodeName;
 /**
  * Group: Logic
  */
-public abstract class BaseScreen implements Screen {
+public abstract class AbstactController implements Screen {
 
     private CodeName mGame;
 
-    public BaseScreen(CodeName game) {
+    public AbstactController(CodeName game) {
         if(game instanceof CodeName) {
             mGame = (CodeName) game;
         } else {
@@ -19,12 +19,16 @@ public abstract class BaseScreen implements Screen {
         }
     }
 
+    public AbstactController() {
+
+    }
+
     public CodeName getGame() { return mGame; }
 
     @Override
     public void render(float delta) {
 
-        // TODO: Should we add prio for update? ATM this works fine for seperation
+        // TODO: Should we add prio for update? ATM this works fine for separation
         update(delta);
         draw(delta);
 
