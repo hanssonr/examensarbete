@@ -1,9 +1,11 @@
 package se.rhel.network.controller;
 
+import com.badlogic.gdx.math.Vector3;
 import se.rhel.event.EventHandler;
 import se.rhel.event.EventType;
 import se.rhel.event.ModelEvent;
 import se.rhel.model.IWorldModel;
+import se.rhel.model.entity.IPlayer;
 import se.rhel.network.event.NetworkEvent;
 import se.rhel.network.model.ClientWorldModel;
 import se.rhel.model.weapon.Grenade;
@@ -77,6 +79,7 @@ public class ClientSynchronizedUpdate implements ClientListener {
                 DeadEntityPacket dep = (DeadEntityPacket)obj;
 
                 mWorld.killEntity(dep.clientId);
+                EventHandler.events.notify(new ModelEvent(EventType.EXPLOSION, mWorld.getPlayerEntity(dep.clientId).getPosition()));
             }
             else if (obj instanceof GrenadeCreatePacket) {
                 Log.debug("ClientWorldModel", "Received GrenadeCreatePacket");
@@ -84,7 +87,7 @@ public class ClientSynchronizedUpdate implements ClientListener {
 
                 Grenade g = new Grenade(mWorld.getBulletWorld(), gcp.position, gcp.direction);
                 g.setId(gcp.clientId);
-                //mWorld.addGrenade(g);
+                mWorld.addGrenade(g);
                 EventHandler.events.notify(new ModelEvent(EventType.GRENADE_CREATED, g));
             }
 

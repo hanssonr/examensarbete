@@ -11,6 +11,7 @@ import se.rhel.model.entity.DamageAbleEntity;
 import se.rhel.model.physics.MyContactListener;
 import se.rhel.model.physics.RayVector;
 import se.rhel.Server;
+import se.rhel.model.weapon.Explosion;
 import se.rhel.network.controller.ServerSynchronizedUpdate;
 
 import java.util.HashMap;
@@ -55,11 +56,6 @@ public class ServerWorldModel extends BaseWorldModel {
         if(co.type == MyContactListener.CollisionObject.CollisionType.ENTITY) {
             if(co.entity instanceof DamageAbleEntity) {
                 damageEntity(co.entity, 25);
-                EventHandler.events.notify(new ModelEvent(EventType.SERVER_DAMAGED_ENTITY, co.entity));
-
-                if(!co.entity.isAlive()) {
-                    EventHandler.events.notify(new ModelEvent(EventType.SERVER_DEAD_ENTITY, co.entity));
-                }
             }
         }
         else if(co.type == MyContactListener.CollisionObject.CollisionType.WORLD) {
@@ -67,8 +63,20 @@ public class ServerWorldModel extends BaseWorldModel {
         }
     }
 
+    public void checkEntityStatus(DamageAbleEntity entity) {
+        if(entity.isAlive() && entity.getHealth() <= 0) {
+            entity.setAlive(false);
+
+            Explosion exp = new Explosion(entity.getPosition(), 15, 250);
+            handleExplosion(exp);
+            EventHandler.events.notify(new ModelEvent(EventType.SERVER_DEAD_ENTITY, entity));
+        }
+    }
+
     public void damageEntity(DamageAbleEntity entity, int amount) {
         entity.damageEntity(amount);
+
+        EventHandler.events.notify(new ModelEvent(EventType.SERVER_DAMAGED_ENTITY, entity));
     }
 
     public HashMap<Integer, ExternalPlayer> getPlayers() {

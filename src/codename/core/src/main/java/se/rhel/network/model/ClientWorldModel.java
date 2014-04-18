@@ -106,6 +106,10 @@ public class ClientWorldModel extends BaseWorldModel implements INetworkWorldMod
         return ret;
     }
 
+    public IPlayer getPlayerEntity(int id) {
+        return id == mClient.getId() ? (IPlayer)mPlayer : getExternalPlayer(id);
+    }
+
     public void damageEntity(int id, int amount) {
         DamageAbleEntity dae = mClient.getId() == id ? mPlayer : getExternalPlayer(id);
         super.damageEntity(dae, amount);
@@ -114,9 +118,10 @@ public class ClientWorldModel extends BaseWorldModel implements INetworkWorldMod
     public void killEntity(int id) {
         if(id == mClient.getId()) {
             Log.debug("ClientWorldModel", "I AM DEAD");
-            if(mPlayer.getHealth() != 0) {
-                mPlayer.damageEntity(100);
-            }
+            mPlayer.setAlive(false);
+        } else {
+            ExternalPlayer ep = getExternalPlayer(id);
+            ep.setAlive(false);
         }
     }
 }

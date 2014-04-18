@@ -47,7 +47,7 @@ public class BaseWorldModel {
             g.update(delta);
 
             if(!g.isAlive()) {
-                EventHandler.events.notify(new ModelEvent(EventType.EXPLOSION, g));
+                EventHandler.events.notify(new ModelEvent(EventType.EXPLOSION, g.getPosition()));
                 handleExplosion(g);
                 g.destroy();
                 mGrenades.removeIndex(i);

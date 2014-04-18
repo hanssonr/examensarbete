@@ -1,6 +1,7 @@
 package se.rhel.screen;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.math.Vector3;
 import se.rhel.event.*;
 import se.rhel.model.IWorldModel;
 import se.rhel.model.entity.DamageAbleEntity;
@@ -43,7 +44,7 @@ public class BaseGameController extends AbstactController implements ViewListene
     public void modelEvent(EventType type, Object... objs) {
         switch(type) {
             case EXPLOSION:
-                mWorldView.addParticleEffect(((IExplodable)objs[0]).getPosition(), ParticleRenderer.Particle.EXPLOSION);
+                mWorldView.addParticleEffect(((Vector3)objs[0]), ParticleRenderer.Particle.EXPLOSION);
                 break;
 
             case DAMAGE:

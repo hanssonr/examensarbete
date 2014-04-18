@@ -72,6 +72,7 @@ public class GameController extends BaseGameController {
                 mWorldModel.checkShootCollision(ray);
                 mWorldView.shoot(visual);
             break;
+
             case BULLET_HOLE:
                 BulletHoleRenderer.addBullethole((Vector3) objs[0], (Vector3) objs[1]);
                 break;

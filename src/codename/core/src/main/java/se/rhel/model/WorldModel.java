@@ -29,7 +29,10 @@ public class WorldModel extends BaseWorldModel implements IWorldModel {
         super();
         mPlayer = new Player(new Vector3(0, 20, 0), getBulletWorld());
 
+        mPlayers.add(new DummyEntity(getBulletWorld(), 0.7f, 1.6f, 100, 7f, new Vector3(10, 5, 0)));
         mPlayers.add(new DummyEntity(getBulletWorld(), 0.7f, 1.6f, 100, 7f, new Vector3(0, 5, 0)));
+        mPlayers.add(new DummyEntity(getBulletWorld(), 0.7f, 1.6f, 100, 7f, new Vector3(10, 5, 10)));
+        mPlayers.add(new DummyEntity(getBulletWorld(), 0.7f, 1.6f, 100, 7f, new Vector3(0, 5, 10)));
     }
 
     @Override
@@ -58,11 +61,11 @@ public class WorldModel extends BaseWorldModel implements IWorldModel {
     }
 
     public void checkEntityStatus(DamageAbleEntity entity) {
-        if(entity.isAlive() && entity.getHealth() < 0) {
+        if(entity.isAlive() && entity.getHealth() <= 0) {
             entity.setAlive(false);
 
-            Explosion exp = new Explosion(entity.getPosition(), 15, 25);
-            EventHandler.events.notify(new ModelEvent(EventType.EXPLOSION, exp));
+            Explosion exp = new Explosion(entity.getPosition(), 15, 250);
+            EventHandler.events.notify(new ModelEvent(EventType.EXPLOSION, exp.getPosition()));
             handleExplosion(exp);
         }
     }
