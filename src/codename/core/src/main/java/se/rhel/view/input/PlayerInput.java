@@ -19,7 +19,7 @@ import java.util.Map;
 /**
  * Group: Logic
  */
-public class PlayerInput implements InputProcessor {
+public class PlayerInput implements IInput {
 
     public static boolean DRAW_DEBUG = false;
     public static boolean DRAW_MESH = true;

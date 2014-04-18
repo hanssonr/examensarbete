@@ -3,7 +3,7 @@ package se.rhel.network.packet;
 import se.rhel.packet.AClientPacket;
 
 /**
- * Group: Network
+ * Group: Multiplayer
  *
  * Created by Emil on 2014-03-06.
  * assigned to libgdx-gradle-template in se.rhel.packet

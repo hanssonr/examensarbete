@@ -11,13 +11,16 @@ import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.bullet.linearmath.btIDebugDraw;
 import se.rhel.Client;
 import se.rhel.model.IWorldModel;
 import se.rhel.model.entity.DummyEntity;
+import se.rhel.model.entity.IPlayer;
 import se.rhel.model.physics.BulletWorld;
+import se.rhel.model.weapon.Grenade;
 import se.rhel.view.input.PlayerInput;
 import se.rhel.view.sfx.SoundManager;
 
@@ -26,7 +29,7 @@ import java.math.BigDecimal;
 /**
  * Group: Logic
  */
-public class WorldView {
+public class WorldView implements IWorldView {
 
     private FPSCamera mCamera = new FPSCamera(75, 0.1f, 1000f);
     private SpriteBatch mSpriteBatch;
@@ -143,9 +146,9 @@ public class WorldView {
             mFPSRenderer.draw(delta);
             mBulletLoadRenderer.setText(BulletWorld.PERFORMANCE + "\n test");
             mBulletLoadRenderer.draw(delta);
-            float x = round(mWorldModel.getPlayer().getPosition().x, 3);
-            float y = round(mWorldModel.getPlayer().getPosition().y, 3);
-            float z = round(mWorldModel.getPlayer().getPosition().z, 3);
+            float x = MathUtils.round(mWorldModel.getPlayer().getPosition().x);
+            float y = MathUtils.round(mWorldModel.getPlayer().getPosition().y);
+            float z = MathUtils.round(mWorldModel.getPlayer().getPosition().z);
             mPlayerPosRenderer.setText("X: " + x + ", Y: " + y + ", Z: " + z);
             mPlayerPosRenderer.draw(delta);
 
@@ -179,18 +182,30 @@ public class WorldView {
         SoundManager.INSTANCE.playSound(SoundManager.SoundType.LASER);
     }
 
-    /**
-     * Round to certain number of decimals
-     *
-     * @param d
-     * @param decimalPlace
-     * @return
-     */
-    public static float round(float d, int decimalPlace) {
-        BigDecimal bd = new BigDecimal(Float.toString(d));
-        bd = bd.setScale(decimalPlace, BigDecimal.ROUND_HALF_UP);
-        return bd.floatValue();
+    public void addGrenade(Grenade grenade) {
+        mGrenadeRenderer.addGrenade(grenade);
     }
+
+    public void addPlayer(IPlayer player) {
+        mExtPlayerRenderer.addPlayerAnimation(player);
+    }
+
+    public void addParticleEffect(Vector3 position, ParticleRenderer.Particle type) {
+        particleRenderer.addEffect(position, type);
+    }
+
+//    /**
+//     * Round to certain number of decimals
+//     *
+//     * @param d
+//     * @param decimalPlace
+//     * @return
+//     */
+//    public static float round(float d, int decimalPlace) {
+//        BigDecimal bd = new BigDecimal(Float.toString(d));
+//        bd = bd.setScale(decimalPlace, BigDecimal.ROUND_HALF_UP);
+//        return bd.floatValue();
+//    }
 
     public Mesh createFullScreenQuad() {
         float[] verts = new float[20];
@@ -236,10 +251,4 @@ public class WorldView {
     public FPSCamera getCamera() {
         return mCamera;
     }
-
-    public ExternalPlayerRenderer getExternalPlayerRenderer() {
-        return mExtPlayerRenderer;
-    }
-    public GrenadeRenderer getGrenadeRenderer() { return mGrenadeRenderer; }
-    public ParticleRenderer getParticleRenderer() { return particleRenderer; }
 }

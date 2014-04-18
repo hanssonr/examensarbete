@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.math.collision.Ray;
+import se.rhel.model.physics.RayVector;
 
 
 /**
@@ -51,23 +52,25 @@ public class FPSCamera extends PerspectiveCamera {
         rotate(FPSCamera.UP, amount.x);
     }
 
-    public Vector3[] getShootRay() {
-        Vector3 from = new Vector3();
-        Vector3 to = new Vector3();
+    public RayVector getShootRay() {
+//        Vector3 from = new Vector3();
+//        Vector3 to = new Vector3();
 
         // We want a ray from middle of screen as basis of hit detection
         Ray ray = getPickRay(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2);
         ray = ray.cpy();
 
         // For debugging purposes
-        from.set(ray.origin);
-        to.set(ray.direction).scl(75f).add(from);
+//        from.set(ray.origin);
+//        to.set(ray.direction).scl(75f).add(from);
 
-        Vector3[] rays = new Vector3[2];
-        rays[0] = ray.origin;
-        rays[1] = ray.direction.cpy().scl(75f).add(from);
+        RayVector rv = new RayVector(ray.origin, ray.direction.cpy().scl(75f).add(ray.origin));
 
-        return rays;
+//        Vector3[] rays = new Vector3[2];
+//        rays[0] = ray.origin;
+//        rays[1] = ray.direction.cpy().scl(75f).add(from);
+
+        return rv;
     }
 
     public Vector3[] getVisualRepresentationShoot() {

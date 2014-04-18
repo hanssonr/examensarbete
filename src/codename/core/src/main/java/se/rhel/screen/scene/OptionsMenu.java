@@ -1,7 +1,6 @@
 package se.rhel.screen.scene;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -10,7 +9,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import se.rhel.CodeName;
-import se.rhel.screen.BaseScreen;
+import se.rhel.screen.AbstactController;
 import se.rhel.utils.Options;
 
 /**
@@ -19,7 +18,7 @@ import se.rhel.utils.Options;
  * Created by Emil on 2014-02-19.
  * assigned to libgdx-gradle-template in se.rhel.screen.scene
  */
-public class OptionsMenu extends BaseScreen {
+public class OptionsMenu extends AbstactController {
 
     private Stage mStage;
     private Table mTable;

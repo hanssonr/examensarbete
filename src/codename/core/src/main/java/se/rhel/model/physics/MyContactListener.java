@@ -51,18 +51,15 @@ public class MyContactListener extends ContactListener {
     /**
      * Does a ray-test against collision world
      * @param world the bullet collision world
-     * @param fromTo array of Vector3 from and Vector3 to
+     * @param ray RayVector obj containing from and to vector3
      * @return CollisionObject of type DamageAbleEntity or a world hit point
      */
-    public CollisionObject checkShootCollision(btCollisionWorld world, Vector3[] fromTo) {
-        Vector3 from = fromTo[0];
-        Vector3 to = fromTo[1];
-
+    public CollisionObject checkShootCollision(btCollisionWorld world, RayVector ray) {
         //Create ray
-        ClosestRayResultCallback res = new ClosestRayResultCallback(from, to);
+        ClosestRayResultCallback res = new ClosestRayResultCallback(ray.getFrom(), ray.getTo());
 
         //Check if it collides with anything that could loose health
-        world.rayTest(from, to, res);
+        world.rayTest(ray.getFrom(), ray.getTo(), res);
 
         if(res.hasHit()) {
             CollisionObject returnVal = null;
@@ -90,23 +87,13 @@ public class MyContactListener extends ContactListener {
     public void checkExplosionCollision(btCollisionWorld world, IExplodable explosion) {
         btCollisionObjectArray objs = world.getCollisionObjectArray();
 
-        float cx = explosion.getPosition().x;
-        float cy = explosion.getPosition().y;
-        float cz = explosion.getPosition().z;
-
         for (int i = 0; i < objs.size(); i++) {
             btCollisionObject obj = objs.at(i);
 
             if(obj.userData instanceof DamageAbleEntity) {
-
                 DamageAbleEntity de = (DamageAbleEntity) obj.userData;
 
-                float dx = de.getPosition().x;
-                float dy = de.getPosition().y;
-                float dz = de.getPosition().z;
-
-                double dist = Math.sqrt((dx-cx)*(dx-cx) + (dy-cy)*(dy-cy) + (dz-cz)*(dz-cz));
-
+                double dist = RayVector.getDistance(de.getPosition(), explosion.getPosition());
                 if(dist < explosion.getExplosionRadius()) {
                     de.damageEntity(explosion.getExplosionDamage());
                 }

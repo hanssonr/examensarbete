@@ -5,8 +5,7 @@ import com.badlogic.gdx.math.Vector3;
 import se.rhel.packet.AClientPacket;
 
 /**
- * Group: Network
- *
+ * Group: Multiplayer
  * Created by Emil on 2014-03-17.
  */
 public class PlayerMovePacket extends AClientPacket {

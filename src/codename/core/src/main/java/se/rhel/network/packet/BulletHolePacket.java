@@ -5,6 +5,7 @@ import com.badlogic.gdx.physics.bullet.Bullet;
 import se.rhel.packet.Packet;
 
 /**
+ * Group: Multiplayer
  * Created by Emil on 2014-03-25.
  */
 public class BulletHolePacket extends Packet {

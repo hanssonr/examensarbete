@@ -51,7 +51,7 @@ public abstract class GameObject {
     }
 
     public Vector3 getPosition() {
-        return getBody().getCenterOfMassPosition();
+        return getBody().getCenterOfMassPosition().cpy();
     }
 
     public void setPosition(Vector3 val) {

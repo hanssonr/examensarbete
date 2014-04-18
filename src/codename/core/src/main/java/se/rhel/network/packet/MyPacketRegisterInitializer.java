@@ -5,8 +5,7 @@ import se.rhel.packet.TestMaxPacket;
 import se.rhel.packet.TestPacket;
 
 /**
- * Group: Network
- *
+ * Group: Multiplayer
  * Created by rkh on 2014-03-12.
  */
 public class MyPacketRegisterInitializer {

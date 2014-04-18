@@ -2,9 +2,14 @@ package se.rhel.model;
 
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
+import se.rhel.event.EventHandler;
+import se.rhel.event.EventType;
+import se.rhel.event.ModelEvent;
 import se.rhel.model.entity.DummyEntity;
 import se.rhel.model.entity.IPlayer;
 import se.rhel.model.entity.DamageAbleEntity;
+import se.rhel.model.physics.MyContactListener;
+import se.rhel.model.physics.RayVector;
 
 import java.util.ArrayList;
 
@@ -13,10 +18,9 @@ import java.util.ArrayList;
  *
  * Created by rkh on 2014-03-21.
  */
-public class WorldModel extends BaseWorldModel implements BaseModel, IWorldModel {
+public class WorldModel extends BaseWorldModel implements IWorldModel {
 
     private Player mPlayer;
-    protected ArrayList<DamageAbleEntity> mDestroy = new ArrayList<>();
     private Array<IPlayer> mPlayers = new Array<>();
 
     public WorldModel() {
@@ -31,15 +35,6 @@ public class WorldModel extends BaseWorldModel implements BaseModel, IWorldModel
     }
 
     @Override
-    public void create() {
-    }
-
-    @Override
-    public void dispose() {
-
-    }
-
-    @Override
     public void update(float delta) {
         super.update(delta);
         mPlayer.update(delta);
@@ -47,6 +42,20 @@ public class WorldModel extends BaseWorldModel implements BaseModel, IWorldModel
         for(int i = 0; i < mPlayers.size; i++) {
             DummyEntity de = (DummyEntity)mPlayers.get(i);
             de.update(delta);
+        }
+    }
+
+    @Override
+    public void checkShootCollision(RayVector ray) {
+        MyContactListener.CollisionObject co = super.getShootCollision(ray);
+
+        if(co != null) {
+            if(co.type == MyContactListener.CollisionObject.CollisionType.WORLD) {
+                EventHandler.events.notify(new ModelEvent(EventType.BULLET_HOLE, co.hitPoint, co.hitNormal));
+            }
+            else if(co.type == MyContactListener.CollisionObject.CollisionType.ENTITY) {
+                damageEntity(co.entity, 25);
+            }
         }
     }
 
