@@ -87,23 +87,13 @@ public class MyContactListener extends ContactListener {
     public void checkExplosionCollision(btCollisionWorld world, IExplodable explosion) {
         btCollisionObjectArray objs = world.getCollisionObjectArray();
 
-        float cx = explosion.getPosition().x;
-        float cy = explosion.getPosition().y;
-        float cz = explosion.getPosition().z;
-
         for (int i = 0; i < objs.size(); i++) {
             btCollisionObject obj = objs.at(i);
 
             if(obj.userData instanceof DamageAbleEntity) {
-
                 DamageAbleEntity de = (DamageAbleEntity) obj.userData;
 
-                float dx = de.getPosition().x;
-                float dy = de.getPosition().y;
-                float dz = de.getPosition().z;
-
-                double dist = Math.sqrt((dx-cx)*(dx-cx) + (dy-cy)*(dy-cy) + (dz-cz)*(dz-cz));
-
+                double dist = RayVector.getDistance(de.getPosition(), explosion.getPosition());
                 if(dist < explosion.getExplosionRadius()) {
                     de.damageEntity(explosion.getExplosionDamage());
                 }

@@ -22,4 +22,10 @@ public class RayVector {
     public Vector3 getTo() {
         return mTo;
     }
+
+    public static double getDistance(Vector3 from, Vector3 to) {
+        return Math.abs(Math.sqrt((from.x-to.x)*(from.x-to.x) +
+                         (from.y-to.y)*(from.y-to.y) +
+                         (from.z-to.z)*(from.z-to.z)));
+    }
 }

@@ -3,14 +3,9 @@ package se.rhel.view;
 import com.badlogic.gdx.graphics.g3d.Environment;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
-import com.badlogic.gdx.math.Quaternion;
-import com.badlogic.gdx.math.Vector3;
-import se.rhel.model.Bodybuilder;
 import se.rhel.model.weapon.Grenade;
 import se.rhel.res.Resources;
-import se.rhel.view.sfx.SoundManager;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;

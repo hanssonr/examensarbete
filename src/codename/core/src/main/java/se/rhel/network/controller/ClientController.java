@@ -28,10 +28,6 @@ public class ClientController extends BaseGameController implements NetworkListe
 
     private Client mClient;
 
-    //TODO: these two should maybe be switched out for some check in the model?
-    private Vector3 mLastKnownPosition = Vector3.Zero;
-    private float mLastKnownRotation = 0f;
-
     private ClientSynchronizedUpdate mSyncedUpdate;
 
     public ClientController() {
@@ -52,20 +48,6 @@ public class ClientController extends BaseGameController implements NetworkListe
 
         // Network stuff
         mSyncedUpdate.update();
-
-        if(mClient.getId() != -1) {
-            // Send move packet
-
-            if(mWorldModel.getPlayer().getPosition().dst(mLastKnownPosition) > 0.01f ||
-                    mWorldModel.getPlayer().getRotation().x != mLastKnownRotation)  {
-                mLastKnownPosition = mWorldModel.getPlayer().getPosition().cpy();
-                mLastKnownRotation = mWorldModel.getPlayer().getRotation().x;
-
-                mClient.sendUdp(new PlayerMovePacket(mClient.getId(),
-                        mWorldModel.getPlayer().getPosition(),
-                        mWorldModel.getPlayer().getRotation()));
-            }
-        }
     }
 
     public void draw(float delta) {
@@ -111,6 +93,12 @@ public class ClientController extends BaseGameController implements NetworkListe
 
             case GRENADE_CREATED:
                 mWorldView.addGrenade((Grenade) objs[0]);
+                break;
+
+            case PLAYER_MOVE:
+                mClient.sendUdp(new PlayerMovePacket(mClient.getId(),
+                        mWorldModel.getPlayer().getPosition(),
+                        mWorldModel.getPlayer().getRotation()));
                 break;
             default:
                 break;

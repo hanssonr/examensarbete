@@ -26,7 +26,7 @@ public class ActionEntity extends DamageAbleEntity {
         // Update shooting for unnecessary drawing / spam shooting
         if(mHasShot) {
             mDeltaShoot += delta;
-            if(mDeltaShoot > 1f) {
+            if(mDeltaShoot > 0.75f) {
                 mHasShot = false;
                 mDeltaShoot = 0f;
             }

@@ -11,6 +11,7 @@ import se.rhel.model.entity.DamageAbleEntity;
 import se.rhel.model.entity.IPlayer;
 import se.rhel.model.physics.MyContactListener;
 import se.rhel.model.physics.RayVector;
+import se.rhel.model.util.Utils;
 import se.rhel.util.Log;
 
 import java.util.HashMap;
@@ -20,6 +21,9 @@ import java.util.HashMap;
  * Group: Multiplayer
  */
 public class ClientWorldModel extends BaseWorldModel implements INetworkWorldModel {
+
+    private Vector3 mLastKnownPosition = Vector3.Zero;
+    private float mLastKnownRotation = 0f;
 
     private Client mClient;
     private Player mPlayer;
@@ -36,11 +40,24 @@ public class ClientWorldModel extends BaseWorldModel implements INetworkWorldMod
     @Override
     public void update(float delta) {
         super.update(delta);
+
         mPlayer.update(delta);
+
+        if(hasPlayerMoved()) {
+            mLastKnownPosition = mPlayer.getPosition();
+            mLastKnownRotation = mPlayer.getRotation().x;
+
+            EventHandler.events.notify(new ModelEvent(EventType.PLAYER_MOVE));
+        }
 
         for(IPlayer p : mPlayers.values()) {
             p.update(delta);
         }
+    }
+
+    private boolean hasPlayerMoved() {
+        return (mLastKnownRotation != mPlayer.getRotation().x ||
+                RayVector.getDistance(mLastKnownPosition.cpy(), mPlayer.getPosition()) > 0.2f);
     }
 
     @Override
