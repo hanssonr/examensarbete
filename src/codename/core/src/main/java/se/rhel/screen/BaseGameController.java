@@ -5,6 +5,7 @@ import se.rhel.event.*;
 import se.rhel.model.IWorldModel;
 import se.rhel.model.entity.DamageAbleEntity;
 import se.rhel.model.weapon.Grenade;
+import se.rhel.model.weapon.IExplodable;
 import se.rhel.view.IWorldView;
 import se.rhel.view.ParticleRenderer;
 import se.rhel.view.input.IInput;
@@ -42,11 +43,12 @@ public class BaseGameController extends AbstactController implements ViewListene
     public void modelEvent(EventType type, Object... objs) {
         switch(type) {
             case EXPLOSION:
-                mWorldView.addParticleEffect(((Grenade)objs[0]).getPosition(), ParticleRenderer.Particle.EXPLOSION);
+                mWorldView.addParticleEffect(((IExplodable)objs[0]).getPosition(), ParticleRenderer.Particle.EXPLOSION);
                 break;
 
             case DAMAGE:
-                mWorldView.addParticleEffect(((DamageAbleEntity)objs[0]).getPosition(), ParticleRenderer.Particle.BLOOD);
+                mWorldModel.checkEntityStatus(((DamageAbleEntity) objs[0]));
+                mWorldView.addParticleEffect(((DamageAbleEntity) objs[0]).getPosition(), ParticleRenderer.Particle.BLOOD);
                 break;
         }
     }

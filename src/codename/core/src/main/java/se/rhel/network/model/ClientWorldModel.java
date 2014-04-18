@@ -11,7 +11,6 @@ import se.rhel.model.entity.DamageAbleEntity;
 import se.rhel.model.entity.IPlayer;
 import se.rhel.model.physics.MyContactListener;
 import se.rhel.model.physics.RayVector;
-import se.rhel.model.util.Utils;
 import se.rhel.util.Log;
 
 import java.util.HashMap;
@@ -69,6 +68,11 @@ public class ClientWorldModel extends BaseWorldModel implements INetworkWorldMod
                 EventHandler.events.notify(new ModelEvent(EventType.BULLET_HOLE, co.hitPoint, co.hitNormal));
             }
         }
+    }
+
+    @Override
+    public void checkEntityStatus(DamageAbleEntity entity) {
+
     }
 
     public ExternalPlayer getExternalPlayer(int id) {
