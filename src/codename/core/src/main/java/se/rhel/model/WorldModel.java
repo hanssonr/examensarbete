@@ -10,6 +10,8 @@ import se.rhel.model.entity.IPlayer;
 import se.rhel.model.entity.DamageAbleEntity;
 import se.rhel.model.physics.MyContactListener;
 import se.rhel.model.physics.RayVector;
+import se.rhel.model.weapon.Explosion;
+import se.rhel.model.weapon.Grenade;
 
 import java.util.ArrayList;
 
@@ -27,11 +29,10 @@ public class WorldModel extends BaseWorldModel implements IWorldModel {
         super();
         mPlayer = new Player(new Vector3(0, 20, 0), getBulletWorld());
 
-        mPlayers.add(new DummyEntity(getBulletWorld(), 0.7f, 1.6f, 100, 7f, new Vector3(5, 20, 10)));
-        mPlayers.add(new DummyEntity(getBulletWorld(), 0.7f, 1.6f, 100, 7f, new Vector3(20, 10, -10)));
-        mPlayers.add(new DummyEntity(getBulletWorld(), 0.7f, 1.6f, 100, 7f, new Vector3(-10, 50, -10)));
-        mPlayers.add(new DummyEntity(getBulletWorld(), 0.7f, 1.6f, 100, 7f, new Vector3(-15, 5, 15)));
-        mPlayers.add(new DummyEntity(getBulletWorld(), 0.7f, 1.6f, 100, 7f, new Vector3(0, 100, -5)));
+        mPlayers.add(new DummyEntity(getBulletWorld(), 0.7f, 1.6f, 100, 7f, new Vector3(10, 5, 0)));
+        mPlayers.add(new DummyEntity(getBulletWorld(), 0.7f, 1.6f, 100, 7f, new Vector3(0, 5, 0)));
+        mPlayers.add(new DummyEntity(getBulletWorld(), 0.7f, 1.6f, 100, 7f, new Vector3(10, 5, 10)));
+        mPlayers.add(new DummyEntity(getBulletWorld(), 0.7f, 1.6f, 100, 7f, new Vector3(0, 5, 10)));
     }
 
     @Override
@@ -56,6 +57,16 @@ public class WorldModel extends BaseWorldModel implements IWorldModel {
             else if(co.type == MyContactListener.CollisionObject.CollisionType.ENTITY) {
                 damageEntity(co.entity, 25);
             }
+        }
+    }
+
+    public void checkEntityStatus(DamageAbleEntity entity) {
+        if(entity.isAlive() && entity.getHealth() <= 0) {
+            entity.setAlive(false);
+
+            Explosion exp = new Explosion(entity.getPosition(), 15, 250);
+            EventHandler.events.notify(new ModelEvent(EventType.EXPLOSION, exp.getPosition()));
+            handleExplosion(exp);
         }
     }
 

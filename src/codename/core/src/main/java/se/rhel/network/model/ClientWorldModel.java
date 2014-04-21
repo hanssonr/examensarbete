@@ -11,7 +11,6 @@ import se.rhel.model.entity.DamageAbleEntity;
 import se.rhel.model.entity.IPlayer;
 import se.rhel.model.physics.MyContactListener;
 import se.rhel.model.physics.RayVector;
-import se.rhel.model.util.Utils;
 import se.rhel.util.Log;
 
 import java.util.HashMap;
@@ -71,6 +70,11 @@ public class ClientWorldModel extends BaseWorldModel implements INetworkWorldMod
         }
     }
 
+    @Override
+    public void checkEntityStatus(DamageAbleEntity entity) {
+
+    }
+
     public ExternalPlayer getExternalPlayer(int id) {
         try {
             for (IPlayer entity : mPlayers.values()) {
@@ -102,6 +106,10 @@ public class ClientWorldModel extends BaseWorldModel implements INetworkWorldMod
         return ret;
     }
 
+    public IPlayer getPlayerEntity(int id) {
+        return id == mClient.getId() ? (IPlayer)mPlayer : getExternalPlayer(id);
+    }
+
     public void damageEntity(int id, int amount) {
         DamageAbleEntity dae = mClient.getId() == id ? mPlayer : getExternalPlayer(id);
         super.damageEntity(dae, amount);
@@ -110,9 +118,10 @@ public class ClientWorldModel extends BaseWorldModel implements INetworkWorldMod
     public void killEntity(int id) {
         if(id == mClient.getId()) {
             Log.debug("ClientWorldModel", "I AM DEAD");
-            if(mPlayer.getHealth() != 0) {
-                mPlayer.damageEntity(100);
-            }
+            mPlayer.setAlive(false);
+        } else {
+            ExternalPlayer ep = getExternalPlayer(id);
+            ep.setAlive(false);
         }
     }
 }

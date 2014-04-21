@@ -8,12 +8,13 @@ import com.badlogic.gdx.physics.bullet.collision.btCollisionShape;
 import com.badlogic.gdx.physics.bullet.dynamics.btRigidBodyConstructionInfo;
 import com.badlogic.gdx.physics.bullet.linearmath.btDefaultMotionState;
 import se.rhel.model.entity.ActionEntity;
+import se.rhel.model.entity.IPlayer;
 import se.rhel.model.physics.BulletWorld;
 
 /**
  * Group: Logic
  */
-public class Player extends ActionEntity {
+public class Player extends ActionEntity implements IPlayer {
 
     //Finals
     private final float JUMP_HEIGHT = 7f;
