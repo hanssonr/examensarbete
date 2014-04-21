@@ -12,8 +12,11 @@ import se.rhel.model.physics.MyContactListener;
 import se.rhel.model.physics.RayVector;
 import se.rhel.Server;
 import se.rhel.model.weapon.Explosion;
+import se.rhel.model.weapon.Grenade;
+import se.rhel.model.weapon.IExplodable;
 import se.rhel.network.controller.ServerSynchronizedUpdate;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
@@ -43,6 +46,19 @@ public class ServerWorldModel extends BaseWorldModel {
         }
 
         mUnsolvedCollisions.clear();
+
+        for (int i = 0; i < mGrenades.size; i++) {
+            Grenade g = mGrenades.get(i);
+
+            g.update(delta);
+
+            if(!g.isAlive()) {
+                handleExplosion(getAffectedByExplosion(g), g);
+
+                g.destroy();
+                mGrenades.removeIndex(i);
+            }
+        }
     }
 
     public void checkShootCollision(RayVector ray, Connection con) {
@@ -56,6 +72,8 @@ public class ServerWorldModel extends BaseWorldModel {
         if(co.type == MyContactListener.CollisionObject.CollisionType.ENTITY) {
             if(co.entity instanceof DamageAbleEntity) {
                 damageEntity(co.entity, 25);
+
+                EventHandler.events.notify(new ModelEvent(EventType.SERVER_DAMAGED_ENTITY, co.entity));
             }
         }
         else if(co.type == MyContactListener.CollisionObject.CollisionType.WORLD) {
@@ -68,8 +86,15 @@ public class ServerWorldModel extends BaseWorldModel {
             entity.setAlive(false);
 
             Explosion exp = new Explosion(entity.getPosition(), 15, 250);
-            handleExplosion(exp);
             EventHandler.events.notify(new ModelEvent(EventType.SERVER_DEAD_ENTITY, entity));
+            handleExplosion(getAffectedByExplosion(exp), exp);
+        }
+    }
+
+    public void handleExplosion(ArrayList<DamageAbleEntity> hurt, IExplodable explosion) {
+        for(DamageAbleEntity de : hurt) {
+            damageEntity(de, explosion.getExplosionDamage());
+            EventHandler.events.notify(new ModelEvent(EventType.SERVER_DAMAGED_ENTITY, de));
         }
     }
 

@@ -55,7 +55,8 @@ public class PlayerRenderer {
     public void render(ModelBatch batch, Environment env) {
         batch.begin(mCamera);
             Gdx.gl.glClear(GL10.GL_DEPTH_BUFFER_BIT);
-            batch.render(mLaserWeapon, env);
+            if(mPlayer.isAlive())
+                batch.render(mLaserWeapon, env);
         batch.end();
     }
 

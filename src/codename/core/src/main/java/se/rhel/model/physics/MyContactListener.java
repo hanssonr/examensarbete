@@ -84,7 +84,25 @@ public class MyContactListener extends ContactListener {
     }
 
 
-    public void checkExplosionCollision(btCollisionWorld world, IExplodable explosion) {
+//    public void checkExplosionCollision(btCollisionWorld world, IExplodable explosion) {
+//        btCollisionObjectArray objs = world.getCollisionObjectArray();
+//
+//        for (int i = 0; i < objs.size(); i++) {
+//            btCollisionObject obj = objs.at(i);
+//
+//            if(obj.userData instanceof DamageAbleEntity) {
+//                DamageAbleEntity de = (DamageAbleEntity) obj.userData;
+//
+//                double dist = RayVector.getDistance(de.getPosition(), explosion.getPosition());
+//                if(dist < explosion.getExplosionRadius()) {
+//                    de.damageEntity(explosion.getExplosionDamage());
+//                }
+//            }
+//        }
+//    }
+
+    public ArrayList<DamageAbleEntity> checkExplosionCollisionEntity(btCollisionWorld world, IExplodable explosion) {
+        ArrayList<DamageAbleEntity> ret = new ArrayList<>();
         btCollisionObjectArray objs = world.getCollisionObjectArray();
 
         for (int i = 0; i < objs.size(); i++) {
@@ -95,10 +113,12 @@ public class MyContactListener extends ContactListener {
 
                 double dist = RayVector.getDistance(de.getPosition(), explosion.getPosition());
                 if(dist < explosion.getExplosionRadius()) {
-                    de.damageEntity(explosion.getExplosionDamage());
+                    ret.add(de);
                 }
             }
         }
+
+        return ret;
     }
 
     @Override

@@ -48,17 +48,16 @@ public class ServerController implements ModelListener {
                 Connection con = ((Connection)objs[2]);
                 mServer.sendToAllUDPExcept(new BulletHolePacket(hitPoint, hitNormal), con);
                 break;
+
             case SERVER_DAMAGED_ENTITY:
                 mServerWorldModel.checkEntityStatus((ExternalPlayer)objs[0]);
                 mServer.sendToAllTCP(new DamagePacket(((ExternalPlayer)objs[0]).getClientId(), 25));
                 break;
+
             case SERVER_DEAD_ENTITY:
                 mServer.sendToAllTCP(new DeadEntityPacket(((ExternalPlayer)objs[0]).getClientId()));
                 break;
-            //This event also happen on client :'(  bad?
-            case DAMAGE:
-                mServerWorldModel.checkEntityStatus((DamageAbleEntity)objs[0]);
-                break;
+
             default:
                 break;
         }

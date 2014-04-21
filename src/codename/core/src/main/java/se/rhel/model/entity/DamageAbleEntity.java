@@ -33,7 +33,7 @@ public class DamageAbleEntity extends DynamicEntity {
     public void damageEntity(int amount) {
         mHealth -= amount;
 
-        EventHandler.events.notify(new ModelEvent(EventType.DAMAGE, this));
+        //EventHandler.events.notify(new ModelEvent(EventType.DAMAGE, this));
     }
 
     public void setAlive(boolean b) {

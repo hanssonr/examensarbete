@@ -12,6 +12,7 @@ import se.rhel.model.physics.MyContactListener;
 import se.rhel.model.physics.RayVector;
 import se.rhel.model.weapon.Explosion;
 import se.rhel.model.weapon.Grenade;
+import se.rhel.model.weapon.IExplodable;
 
 import java.util.ArrayList;
 
@@ -44,6 +45,18 @@ public class WorldModel extends BaseWorldModel implements IWorldModel {
             DummyEntity de = (DummyEntity)mPlayers.get(i);
             de.update(delta);
         }
+
+        for (int i = 0; i < mGrenades.size; i++) {
+            Grenade g = mGrenades.get(i);
+
+            g.update(delta);
+
+            if(!g.isAlive()) {
+                handleExplosion(getAffectedByExplosion(g), g);
+                g.destroy();
+                mGrenades.removeIndex(i);
+            }
+        }
     }
 
     @Override
@@ -56,6 +69,7 @@ public class WorldModel extends BaseWorldModel implements IWorldModel {
             }
             else if(co.type == MyContactListener.CollisionObject.CollisionType.ENTITY) {
                 damageEntity(co.entity, 25);
+                EventHandler.events.notify(new ModelEvent(EventType.DAMAGE, co.entity));
             }
         }
     }
@@ -63,11 +77,18 @@ public class WorldModel extends BaseWorldModel implements IWorldModel {
     public void checkEntityStatus(DamageAbleEntity entity) {
         if(entity.isAlive() && entity.getHealth() <= 0) {
             entity.setAlive(false);
-
             Explosion exp = new Explosion(entity.getPosition(), 15, 250);
-            EventHandler.events.notify(new ModelEvent(EventType.EXPLOSION, exp.getPosition()));
-            handleExplosion(exp);
+            handleExplosion(getAffectedByExplosion(exp), exp);
         }
+    }
+
+    public void handleExplosion(ArrayList<DamageAbleEntity> hurt, IExplodable explosion) {
+        for(DamageAbleEntity de : hurt) {
+            damageEntity(de, explosion.getExplosionDamage());
+            EventHandler.events.notify(new ModelEvent(EventType.DAMAGE, de));
+        }
+
+        EventHandler.events.notify(new ModelEvent(EventType.EXPLOSION, explosion.getPosition()));
     }
 
     public Player getPlayer() {

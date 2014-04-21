@@ -5,9 +5,7 @@ import se.rhel.event.EventHandler;
 import se.rhel.event.EventType;
 import se.rhel.event.ModelEvent;
 import se.rhel.model.IWorldModel;
-import se.rhel.model.entity.IPlayer;
 import se.rhel.network.event.NetworkEvent;
-import se.rhel.network.model.ClientWorldModel;
 import se.rhel.model.weapon.Grenade;
 import se.rhel.network.model.ExternalPlayer;
 import se.rhel.network.model.INetworkWorldModel;
@@ -56,9 +54,7 @@ public class ClientSynchronizedUpdate implements ClientListener {
             else if (obj instanceof DamagePacket) {
                 // A player has been damaged
                 DamagePacket dp = (DamagePacket)obj;
-
                 mWorld.damageEntity(dp.clientId, dp.amount);
-                Log.debug("ClientSynchronizedUpdate", "Received DamagePacket, Playerid: " + dp.clientId + " got shot with amount: " + dp.amount);
             }
             else if (obj instanceof ShootPacket) {
                 // Visual representation of shoot
@@ -77,9 +73,7 @@ public class ClientSynchronizedUpdate implements ClientListener {
             }
             else if (obj instanceof DeadEntityPacket) {
                 DeadEntityPacket dep = (DeadEntityPacket)obj;
-
                 mWorld.killEntity(dep.clientId);
-                EventHandler.events.notify(new ModelEvent(EventType.EXPLOSION, mWorld.getPlayerEntity(dep.clientId).getPosition()));
             }
             else if (obj instanceof GrenadeCreatePacket) {
                 Log.debug("ClientWorldModel", "Received GrenadeCreatePacket");
