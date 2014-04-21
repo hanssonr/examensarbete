@@ -1,11 +1,13 @@
 package se.rhel.network.model;
 
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.physics.bullet.softbody.btSoftBodySolverOutput;
 import com.badlogic.gdx.utils.Array;
 import se.rhel.Connection;
 import se.rhel.event.EventHandler;
 import se.rhel.event.EventType;
 import se.rhel.event.ModelEvent;
+import se.rhel.event.ServerModelEvent;
 import se.rhel.model.BaseWorldModel;
 import se.rhel.model.entity.DamageAbleEntity;
 import se.rhel.model.physics.MyContactListener;
@@ -59,7 +61,7 @@ public class ServerWorldModel extends BaseWorldModel {
             }
         }
         else if(co.type == MyContactListener.CollisionObject.CollisionType.WORLD) {
-            EventHandler.events.notify(new ModelEvent(EventType.SERVER_WORLD_COLLISION, co.hitPoint, co.hitNormal, con));
+            EventHandler.events.notify(new ServerModelEvent(EventType.SERVER_WORLD_COLLISION, co.hitPoint, co.hitNormal, con));
         }
     }
 
@@ -69,14 +71,14 @@ public class ServerWorldModel extends BaseWorldModel {
 
             Explosion exp = new Explosion(entity.getPosition(), 15, 250);
             handleExplosion(exp);
-            EventHandler.events.notify(new ModelEvent(EventType.SERVER_DEAD_ENTITY, entity));
+            EventHandler.events.notify(new ServerModelEvent(EventType.SERVER_DEAD_ENTITY, entity));
         }
     }
 
     public void damageEntity(DamageAbleEntity entity, int amount) {
         entity.damageEntity(amount);
 
-        EventHandler.events.notify(new ModelEvent(EventType.SERVER_DAMAGED_ENTITY, entity));
+        EventHandler.events.notify(new ServerModelEvent(EventType.DAMAGE, entity));
     }
 
     public HashMap<Integer, ExternalPlayer> getPlayers() {
