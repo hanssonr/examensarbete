@@ -21,7 +21,7 @@ public interface IWorldModel {
     public Array<IPlayer> getExternalPlayers();
 
     public void update(float delta);
-    public Vector3 checkShootCollision(RayVector ray);
+    public void checkShootCollision(RayVector ray);
     public void addGrenade(Grenade g);
     public void checkEntityStatus(DamageAbleEntity entity);
 

@@ -58,8 +58,6 @@ public class ExternalPlayerRenderer {
         //should check what weapon entity have
         mWeaponArms.put(entity, mLaser.copy());
         mAnimationStop.put(entity, true);
-
-        System.out.println("ExternalPlayerRenderer : " + mAnimations.size());
     }
 
     public void render(ModelBatch batch, Environment env) {

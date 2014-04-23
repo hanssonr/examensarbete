@@ -32,7 +32,7 @@ public class BulletHoleRenderer {
 
     private void createBulletholes() {
         for (int i = 0; i < MAX_BULLET_DECALS; i++) {
-            Decal toAdd = Decal.newDecal(0.4f, 0.4f, new TextureRegion(Resources.INSTANCE.hole), true);
+            Decal toAdd = Decal.newDecal(0.4f, 0.4f, new TextureRegion(Resources.INSTANCE.bulletHole), true);
             toAdd.setPosition(0,-9999,0);
             mBulletholes.add(toAdd);
         }

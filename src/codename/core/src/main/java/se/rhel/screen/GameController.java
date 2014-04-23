@@ -67,9 +67,7 @@ public class GameController extends BaseGameController {
         switch(type) {
             case SHOOT:
                 RayVector ray = mWorldView.getCamera().getShootRay();
-                Vector3 hitPos = mWorldModel.checkShootCollision(ray);
-                //Vector3[] visual = mWorldView.getCamera().getVisualRepresentationShoot();
-                ray.setTo(hitPos);
+                mWorldModel.checkShootCollision(ray);
                 RayVector visualray = mWorldView.getCamera().convertToVisualRay(ray);
                 mWorldView.shoot(visualray);
             break;

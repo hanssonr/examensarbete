@@ -26,23 +26,19 @@ public enum Resources {
     static { mManager = new AssetManager(); }
 
     public BitmapFont hudFont;
-    public Array<ModelInstance> modelInstanceArray;
 
     public Model levelModelPhysics;
     public Model levelModelVisual;
 
     public Model playerModelAnimated;
-    public Model fpsWeaponModel;
     public Model grenadeModel;
 
     public Model laserWeaponModel;
-
-    public ModelInstance playerModelInstanceAnimated;
+    public Model space;
 
     public Texture bulletHole;
-    public Texture hole;
     public Texture teamtag_oc, teamtag_m;
-    public Texture laser, laser_o, laser_a, laserStart, lasterStart_o;
+    public Texture laser, laser_o;
 
     public ParticleEffect mBloodEffect;
     public ParticleEffect mExplosionEffect;
@@ -54,24 +50,16 @@ public enum Resources {
         mManager.load("data/fonts/hud.fnt", BitmapFont.class);
         mManager.load("obj/level/level_xlarge.g3db", Model.class);
         mManager.load("obj/level/level_xlarge_vis.g3db", Model.class);
-        mManager.load("obj/player/wep/FirstPersonWeapon.g3db", Model.class);
         mManager.load("obj/player/wep/LaserWeapon.g3db", Model.class);
-        mManager.load("obj/player/animated/MyMinecraftPlayer_animated_idle.g3db", Model.class);
+        mManager.load("obj/player/animated/player_animated.g3db", Model.class);
+        mManager.load("obj/player/wep/Grenade.g3db", Model.class);
         mManager.load("obj/skybox/spacesphere.obj", Model.class);
-        mManager.load("obj/wep/Grenade.g3db", Model.class);
 
         mManager.load("tex/laser/laser_middle_b.png", Texture.class);
-        mManager.load("tex/laser/laser_middle_o.png", Texture.class);
-        mManager.load("tex/laser/laser_animation_noise.png", Texture.class);
-        mManager.load("tex/laser/laser_start_b.png", Texture.class);
-        mManager.load("tex/laser/laser_start_o.png", Texture.class);
         mManager.load("tex/bullethole.png", Texture.class);
-        mManager.load("tex/hole.png", Texture.class);
 
         mManager.load("tex/teamtag_oc.png", Texture.class);
         mManager.load("tex/teamtag_m.png", Texture.class);
-
-        mManager.load("obj/player/wep/FPSWeapon.g3db", Model.class);
 
         mManager.load("sfx/sound/lasershot.wav", Sound.class);
         mManager.load("sfx/music/menutheme.mp3", Music.class);
@@ -84,44 +72,37 @@ public enum Resources {
     }
 
     public void setInstances() {
-        modelInstanceArray = new Array<>();
         Array<Model> toSetup = new Array<>();
 
         hudFont = mManager.get("data/fonts/hud.fnt", BitmapFont.class);
-        bulletHole = mManager.get("tex/bullethole.png", Texture.class);
-        hole = mManager.get("tex/hole.png", Texture.class);
-        laser = mManager.get("tex/laser/laser_middle_b.png", Texture.class);
-        laser_o = mManager.get("tex/laser/laser_middle_o.png", Texture.class);
-        laser_a = mManager.get("tex/laser/laser_animation_noise.png", Texture.class);
-        laserStart = mManager.get("tex/laser/laser_start_b.png", Texture.class);
-        lasterStart_o = mManager.get("tex/laser/laser_start_o.png", Texture.class);
 
+        //Decals
         teamtag_oc = mManager.get("tex/teamtag_oc.png", Texture.class);
         teamtag_m = mManager.get("tex/teamtag_m.png", Texture.class);
+        bulletHole = mManager.get("tex/bullethole.png", Texture.class);
+        laser = mManager.get("tex/laser/laser_middle_b.png", Texture.class);
 
+        //Sound & Audio
         menutheme = mManager.get("sfx/music/menutheme.mp3", Music.class);
         theme = mManager.get("sfx/music/theme.mp3", Music.class);
         laserShot = mManager.get("sfx/sound/lasershot.wav", Sound.class);
 
-        Model space = mManager.get("obj/skybox/spacesphere.obj", Model.class);
-        //instance = new ModelInstance(space);
-        //modelInstanceArray.add(instance);
+        //Player
+        playerModelAnimated = mManager.get("obj/player/animated/player_animated.g3db", Model.class);
 
-        playerModelAnimated = mManager.get("obj/player/animated/MyMinecraftPlayer_animated_idle.g3db", Model.class);
-        setupMaterial(playerModelAnimated);
-        playerModelInstanceAnimated = new ModelInstance(playerModelAnimated, 10f, 0.1f, -15f);
-
+        //Level
         levelModelPhysics = mManager.get("obj/level/level_xlarge.g3db", Model.class);
         levelModelVisual = mManager.get("obj/level/level_xlarge_vis.g3db", Model.class);
-        grenadeModel = mManager.get("obj/wep/Grenade.g3db", Model.class);
+        space = mManager.get("obj/skybox/spacesphere.obj", Model.class);
 
-        fpsWeaponModel = mManager.get("obj/player/wep/FPSWeapon.g3db", Model.class);
+        //Weapon
+        grenadeModel = mManager.get("obj/player/wep/Grenade.g3db", Model.class);
         laserWeaponModel = mManager.get("obj/player/wep/LaserWeapon.g3db", Model.class);
 
+        //Particleeffects
         mBloodEffect = mManager.get("tex/particle/blood.p", ParticleEffect.class);
         mExplosionEffect = mManager.get("tex/particle/ptest.p", ParticleEffect.class);
 
-        toSetup.add(fpsWeaponModel);
         toSetup.add(playerModelAnimated);
 
         for(Model m : toSetup)

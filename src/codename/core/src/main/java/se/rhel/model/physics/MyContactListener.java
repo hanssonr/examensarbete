@@ -28,8 +28,9 @@ public class MyContactListener extends ContactListener {
         public DamageAbleEntity entity;
         public Vector3 hitPoint, hitNormal;
 
-        private CollisionObject(DamageAbleEntity dae) {
+        private CollisionObject(DamageAbleEntity dae, Vector3 hit) {
             entity = dae;
+            hitPoint = hit;
             type = CollisionType.ENTITY;
         }
 
@@ -39,8 +40,8 @@ public class MyContactListener extends ContactListener {
             type = CollisionType.WORLD;
         }
 
-        public static CollisionObject construct(DamageAbleEntity dae) {
-            return new CollisionObject(dae);
+        public static CollisionObject construct(DamageAbleEntity dae, Vector3 hitPoint) {
+            return new CollisionObject(dae, hitPoint);
         }
 
         public static CollisionObject construct(Vector3 hitPoint, Vector3 hitNormal) {
@@ -75,7 +76,8 @@ public class MyContactListener extends ContactListener {
 
             Object hit = obj.userData;
             if(hit instanceof DamageAbleEntity) {
-                returnVal = CollisionObject.construct((DamageAbleEntity)hit);
+                btVector3 hitpoint = res.getHitPointWorld();
+                returnVal = CollisionObject.construct((DamageAbleEntity)hit, new Vector3(hitpoint.getX(), hitpoint.getY(), hitpoint.getZ()));
             }
 
             return returnVal;

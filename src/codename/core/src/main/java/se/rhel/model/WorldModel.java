@@ -62,22 +62,20 @@ public class WorldModel extends BaseWorldModel implements IWorldModel {
     }
 
     @Override
-    public Vector3 checkShootCollision(RayVector ray) {
-        Vector3 hitpos = ray.getTo();
+    public void checkShootCollision(RayVector ray) {
         MyContactListener.CollisionObject co = super.getShootCollision(ray);
 
         if(co != null) {
             if(co.type == MyContactListener.CollisionObject.CollisionType.WORLD) {
                 EventHandler.events.notify(new ModelEvent(EventType.BULLET_HOLE, co.hitPoint, co.hitNormal));
-                hitpos.set(co.hitPoint);
             }
             else if(co.type == MyContactListener.CollisionObject.CollisionType.ENTITY) {
                 damageEntity(co.entity, 25);
-                hitpos.set(co.entity.getPosition());
+                EventHandler.events.notify(new ModelEvent(EventType.DAMAGE, co.entity));
             }
-        }
 
-        return hitpos;
+            ray.setTo(co.hitPoint);
+        }
     }
 
     public void handleExplosion(ArrayList<DamageAbleEntity> hit, IExplodable exp) {
