@@ -56,6 +56,7 @@ public class ServerSynchronizedUpdate implements ServerListener {
                     }
                 }
             }
+
             else if(obj instanceof PlayerMovePacket) {
                 PlayerMovePacket pmp = (PlayerMovePacket)obj;
 
@@ -67,61 +68,18 @@ public class ServerSynchronizedUpdate implements ServerListener {
 
                 mServer.sendToAllUDPExcept(new PlayerMovePacket(pmp.clientId, pmp.mPosition, pmp.mRotation), con);
             }
+
             else if (obj instanceof ShootPacket) {
                 Log.debug("ServerSynchronizedUpdate", "ShotPacket received on server");
                 ShootPacket sp = (ShootPacket)obj;
-                Vector3 dir = sp.vTo.cpy().sub(sp.vFrom.cpy()).nor();
 
-                mWorld.checkShootCollision(new RayVector(sp.mFrom, sp.mTo), con);
+                RayVector ray = mWorld.checkShootCollision(new RayVector(sp.mFrom, sp.mTo), con);
 
                 // Resend to other clients that a player has shot for visual feedback
-                ShootPacket sendP = new ShootPacket(sp.clientId, sp.mFrom, sp.mTo, sp.vFrom.cpy().add(dir), sp.vTo.cpy().add(dir), sp.vFrom2.cpy().add(dir), sp.vTo2.cpy().add(dir));
+                ShootPacket sendP = new ShootPacket(sp.clientId, ray.getFrom(), ray.getTo());
                 mServer.sendToAllUDPExcept(sendP, con);
-
-//
-//                Vector3 to = sp.vTo.cpy();
-//                Vector3 to2 = sp.vTo2.cpy();
-//                Vector3 from = sp.vFrom.cpy();
-//                Vector3 from2 = sp.vFrom2.cpy();
-//                Vector3 dir = to.cpy().sub(from.cpy()).nor();
-//
-//                // But what should we do on the server, eh?
-//                MyContactListener.CollisionObject co = mWorld.getContactListener().checkShootCollision(mWorld.getBulletWorld().getCollisionWorld(), new RayVector(to, from));
-//
-//                if (co != null) {
-//
-//                    if(co.type == MyContactListener.CollisionObject.CollisionType.WORLD) {
-//                        // World hit
-//                        to = co.hitPoint.cpy();
-//                        to2 = to.cpy();
-//                        mServer.sendToAllTCPExcept(new BulletHolePacket(co.hitPoint, co.hitNormal), con);
-//                    } else {
-//                        // Entity hit
-//                        if(co.entity instanceof  ExternalPlayer) {
-//                            ExternalPlayer ep = (ExternalPlayer) co.entity;
-//                            // Damage player on server
-//                            ep.damageEntity(25);
-//                            Log.debug("ServerWorldModel", "ServerHit: " + co.entity.getHealth());
-//
-//                            // Notify clients
-//                            mServer.sendToAllTCP(new DamagePacket(ep.getClientId(), 25));
-//
-//                            // If the entity died
-//                            if(!co.entity.isAlive()) {
-//                                co.entity.destroy();
-//                                //mDestroy.add(co.entity);
-//
-//                                // .. also notify clients
-//                                mServer.sendToAllTCP(new DeadEntityPacket(ep.getClientId()));
-//                            }
-//                        }
-//                    }
-//                }
-//
-//                // Resend to other clients that a player has shot for visual feedback
-//                ShootPacket sendP = new ShootPacket(sp.clientId, sp.mFrom, sp.mTo, from.add(dir), to.add(dir), from2.add(dir), to2.add(dir));
-//                mServer.sendToAllUDPExcept(sendP, con);
             }
+
             else if (obj instanceof GrenadeCreatePacket) {
                 Log.debug("ServerSynchronizedUpdate", "GrenadeCreatePacket received on server");
                 GrenadeCreatePacket gcp = (GrenadeCreatePacket) obj;

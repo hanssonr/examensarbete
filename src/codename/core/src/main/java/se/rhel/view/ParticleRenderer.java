@@ -10,7 +10,6 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import se.rhel.model.IWorldModel;
 import se.rhel.res.Resources;
-import se.rhel.view.sfx.SoundManager;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -34,9 +33,6 @@ public class ParticleRenderer extends A2DView {
     }
 
     public void addEffect(Vector3 atPos, Particle type) {
-        if(type == Particle.EXPLOSION)
-            SoundManager.INSTANCE.playSound(SoundManager.SoundType.GRENADE);
-
         ParticleEffectPool.PooledEffect effect = mEffectMap.get(type).obtain();
         mEffects.add(new MyPooledEffect(atPos, effect, type));
     }

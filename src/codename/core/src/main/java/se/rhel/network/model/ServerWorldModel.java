@@ -1,6 +1,7 @@
 package se.rhel.network.model;
 
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.math.collision.Ray;
 import com.badlogic.gdx.physics.bullet.softbody.btSoftBodySolverOutput;
 import com.badlogic.gdx.utils.Array;
 import se.rhel.Connection;
@@ -14,8 +15,11 @@ import se.rhel.model.physics.MyContactListener;
 import se.rhel.model.physics.RayVector;
 import se.rhel.Server;
 import se.rhel.model.weapon.Explosion;
+import se.rhel.model.weapon.Grenade;
+import se.rhel.model.weapon.IExplodable;
 import se.rhel.network.controller.ServerSynchronizedUpdate;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
@@ -25,7 +29,6 @@ public class ServerWorldModel extends BaseWorldModel {
 
     // Linkin ID's and Players
     private HashMap<Integer, ExternalPlayer> mPlayers;
-    private Array<ConnectionWrappedObject> mUnsolvedCollisions = new Array<>();
 
     public ServerWorldModel() {
         super();
@@ -40,28 +43,44 @@ public class ServerWorldModel extends BaseWorldModel {
             p.update(delta);
         }
 
-        for(ConnectionWrappedObject co : mUnsolvedCollisions) {
-            handleCollision((MyContactListener.CollisionObject)co.getObject(), co.getConnection());
-        }
+        //Update grenades
+        for (int i = 0; i < mGrenades.size; i++) {
+            Grenade g = mGrenades.get(i);
 
-        mUnsolvedCollisions.clear();
-    }
+            g.update(delta);
 
-    public void checkShootCollision(RayVector ray, Connection con) {
-        MyContactListener.CollisionObject co = super.getShootCollision(ray);
-        mUnsolvedCollisions.add(new ConnectionWrappedObject(con, co));
-    }
-
-    public void handleCollision(MyContactListener.CollisionObject co, Connection con) {
-        if(co == null) return;
-
-        if(co.type == MyContactListener.CollisionObject.CollisionType.ENTITY) {
-            if(co.entity instanceof DamageAbleEntity) {
-                damageEntity(co.entity, 25);
+            if(!g.isAlive()) {
+                handleExplosion(getAffectedByExplosion(g), g);
+                g.destroy();
+                mGrenades.removeIndex(i);
             }
         }
-        else if(co.type == MyContactListener.CollisionObject.CollisionType.WORLD) {
-            EventHandler.events.notify(new ServerModelEvent(EventType.SERVER_WORLD_COLLISION, co.hitPoint, co.hitNormal, con));
+    }
+
+    public RayVector checkShootCollision(RayVector ray, Connection con) {
+        MyContactListener.CollisionObject co = super.getShootCollision(ray);
+        RayVector ret = new RayVector(ray.getFrom(), ray.getTo());
+
+        if(co != null) {
+            if(co.type == MyContactListener.CollisionObject.CollisionType.ENTITY) {
+                if(co.entity instanceof DamageAbleEntity) {
+                    damageEntity(co.entity, 25);
+                    ret.setTo(co.entity.getPosition());
+                }
+            }
+            else if(co.type == MyContactListener.CollisionObject.CollisionType.WORLD) {
+                ret.setTo(co.hitPoint);
+                EventHandler.events.notify(new ServerModelEvent(EventType.SERVER_WORLD_COLLISION, co.hitPoint, co.hitNormal, con));
+            }
+        }
+
+        return ret;
+    }
+
+    public void handleExplosion(ArrayList<DamageAbleEntity> hit, IExplodable exp) {
+        for(DamageAbleEntity entity : hit) {
+            entity.damageEntity(exp.getExplosionDamage());
+            EventHandler.events.notify(new ServerModelEvent(EventType.DAMAGE, entity));
         }
     }
 
@@ -70,7 +89,7 @@ public class ServerWorldModel extends BaseWorldModel {
             entity.setAlive(false);
 
             Explosion exp = new Explosion(entity.getPosition(), 15, 250);
-            handleExplosion(exp);
+            handleExplosion(getAffectedByExplosion(exp), exp);
             EventHandler.events.notify(new ServerModelEvent(EventType.SERVER_DEAD_ENTITY, entity));
         }
     }

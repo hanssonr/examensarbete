@@ -84,7 +84,9 @@ public class MyContactListener extends ContactListener {
     }
 
 
-    public void checkExplosionCollision(btCollisionWorld world, IExplodable explosion) {
+
+    public ArrayList<DamageAbleEntity> checkExplosionCollision(btCollisionWorld world, IExplodable explosion) {
+        ArrayList<DamageAbleEntity> ret = new ArrayList<>();
         btCollisionObjectArray objs = world.getCollisionObjectArray();
 
         for (int i = 0; i < objs.size(); i++) {
@@ -95,10 +97,12 @@ public class MyContactListener extends ContactListener {
 
                 double dist = RayVector.getDistance(de.getPosition(), explosion.getPosition());
                 if(dist < explosion.getExplosionRadius()) {
-                    de.damageEntity(explosion.getExplosionDamage());
+                    ret.add(de);
                 }
             }
         }
+
+        return ret;
     }
 
     @Override

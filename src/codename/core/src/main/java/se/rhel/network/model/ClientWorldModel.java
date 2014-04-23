@@ -11,6 +11,7 @@ import se.rhel.model.entity.DamageAbleEntity;
 import se.rhel.model.entity.IPlayer;
 import se.rhel.model.physics.MyContactListener;
 import se.rhel.model.physics.RayVector;
+import se.rhel.model.weapon.Grenade;
 import se.rhel.util.Log;
 
 import java.util.HashMap;
@@ -52,6 +53,18 @@ public class ClientWorldModel extends BaseWorldModel implements INetworkWorldMod
         for(IPlayer p : mPlayers.values()) {
             p.update(delta);
         }
+
+        for (int i = 0; i < mGrenades.size; i++) {
+            Grenade g = mGrenades.get(i);
+
+            g.update(delta);
+
+            if(!g.isAlive()) {
+                EventHandler.events.notify(new ModelEvent(EventType.EXPLOSION, g.getPosition()));
+                g.destroy();
+                mGrenades.removeIndex(i);
+            }
+        }
     }
 
     private boolean hasPlayerMoved() {
@@ -60,14 +73,18 @@ public class ClientWorldModel extends BaseWorldModel implements INetworkWorldMod
     }
 
     @Override
-    public void checkShootCollision(RayVector ray) {
+    public Vector3 checkShootCollision(RayVector ray) {
+        Vector3 hitPos = ray.getTo();
         MyContactListener.CollisionObject co = super.getShootCollision(ray);
 
         if(co != null) {
             if(co.type == MyContactListener.CollisionObject.CollisionType.WORLD) {
                 EventHandler.events.notify(new ModelEvent(EventType.BULLET_HOLE, co.hitPoint, co.hitNormal));
+                hitPos.set(co.hitPoint);
             }
         }
+
+        return hitPos;
     }
 
     @Override

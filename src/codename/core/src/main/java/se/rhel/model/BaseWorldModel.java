@@ -1,12 +1,8 @@
 package se.rhel.model;
 
-import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import se.rhel.model.entity.DamageAbleEntity;
 import se.rhel.model.entity.GameObject;
-import se.rhel.event.EventHandler;
-import se.rhel.event.EventType;
-import se.rhel.event.ModelEvent;
 import se.rhel.model.physics.BulletWorld;
 import se.rhel.model.physics.MyContactListener;
 import se.rhel.model.physics.RayVector;
@@ -41,47 +37,18 @@ public class BaseWorldModel {
     public void update(float delta) {
         mBulletWorld.update(delta);
 
-        for (int i = 0; i < mGrenades.size; i++) {
-            Grenade g = mGrenades.get(i);
-
-            g.update(delta);
-
-            if(!g.isAlive()) {
-                EventHandler.events.notify(new ModelEvent(EventType.EXPLOSION, g.getPosition()));
-                handleExplosion(g);
-                g.destroy();
-                mGrenades.removeIndex(i);
-            }
-        }
-
         for (int i = 0; i < mDestroy.size(); i++) {
             mDestroy.get(i).destroy();
             mDestroy.remove(i);
         }
     }
 
-//    public void checkShootCollision(RayVector ray) {
-//        MyContactListener.CollisionObject co = mContactListener.checkShootCollision(getBulletWorld().getCollisionWorld(), ray);
-//
-//        //this could hit nothing e.g the sky
-//        if (co != null) {
-//            if(co.type == MyContactListener.CollisionObject.CollisionType.WORLD) {
-//                // Draw bullethole
-//                EventHandler.events.notify(new ModelEvent(EventType.BULLET_HOLE, co.hitPoint, co.hitNormal));
-//            }
-//            else if (co.type == MyContactListener.CollisionObject.CollisionType.ENTITY) {
-//                co.entity.damageEntity(25);
-//                EventHandler.events.notify(new ModelEvent(EventType.DAMAGE, co.entity));
-//            }
-//        }
-//    }
-
     public MyContactListener.CollisionObject getShootCollision(RayVector ray) {
         return mContactListener.checkShootCollision(getBulletWorld().getCollisionWorld(), ray);
     }
 
-    public void handleExplosion(IExplodable explosion) {
-        mContactListener.checkExplosionCollision(getBulletWorld().getCollisionWorld(), explosion);
+    public ArrayList<DamageAbleEntity> getAffectedByExplosion(IExplodable explosion) {
+        return mContactListener.checkExplosionCollision(getBulletWorld().getCollisionWorld(), explosion);
     }
 
     public void addGrenade(Grenade g) {
@@ -90,6 +57,10 @@ public class BaseWorldModel {
 
     public void damageEntity(DamageAbleEntity entity, int amount) {
         entity.damageEntity(amount);
+    }
+
+    public void destroyGameObject(GameObject obj) {
+        mDestroy.add(obj);
     }
 
     public Array<Grenade> getGrenades() {

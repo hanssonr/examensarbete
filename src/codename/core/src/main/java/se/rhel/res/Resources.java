@@ -48,7 +48,7 @@ public enum Resources {
     public ParticleEffect mExplosionEffect;
 
     public Music theme, menutheme;
-    public Sound laserShot, feuer;
+    public Sound laserShot;
 
     public void load() {
         mManager.load("data/fonts/hud.fnt", BitmapFont.class);
@@ -56,7 +56,7 @@ public enum Resources {
         mManager.load("obj/level/level_xlarge_vis.g3db", Model.class);
         mManager.load("obj/player/wep/FirstPersonWeapon.g3db", Model.class);
         mManager.load("obj/player/wep/LaserWeapon.g3db", Model.class);
-        mManager.load("obj/player/animated/player_animated.g3db", Model.class);
+        mManager.load("obj/player/animated/MyMinecraftPlayer_animated_idle.g3db", Model.class);
         mManager.load("obj/skybox/spacesphere.obj", Model.class);
         mManager.load("obj/wep/Grenade.g3db", Model.class);
 
@@ -74,7 +74,6 @@ public enum Resources {
         mManager.load("obj/player/wep/FPSWeapon.g3db", Model.class);
 
         mManager.load("sfx/sound/lasershot.wav", Sound.class);
-        mManager.load("sfx/sound/feuer.ogg", Sound.class);
         mManager.load("sfx/music/menutheme.mp3", Music.class);
         mManager.load("sfx/music/theme.mp3", Music.class);
 
@@ -103,13 +102,12 @@ public enum Resources {
         menutheme = mManager.get("sfx/music/menutheme.mp3", Music.class);
         theme = mManager.get("sfx/music/theme.mp3", Music.class);
         laserShot = mManager.get("sfx/sound/lasershot.wav", Sound.class);
-        feuer = mManager.get("sfx/sound/feuer.ogg", Sound.class);
 
         Model space = mManager.get("obj/skybox/spacesphere.obj", Model.class);
         //instance = new ModelInstance(space);
         //modelInstanceArray.add(instance);
 
-        playerModelAnimated = mManager.get("obj/player/animated/player_animated.g3db", Model.class);
+        playerModelAnimated = mManager.get("obj/player/animated/MyMinecraftPlayer_animated_idle.g3db", Model.class);
         setupMaterial(playerModelAnimated);
         playerModelInstanceAnimated = new ModelInstance(playerModelAnimated, 10f, 0.1f, -15f);
 

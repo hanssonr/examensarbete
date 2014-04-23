@@ -12,8 +12,8 @@ public class DesktopLauncher {
 
         config.title = "CodeName";
         config.useGL20 = true;
-        config.width = 1280;
-        config.height = 720;
+        config.width = 640;
+        config.height = 320;
         config.vSyncEnabled = true;
         config.resizable = false;
 
