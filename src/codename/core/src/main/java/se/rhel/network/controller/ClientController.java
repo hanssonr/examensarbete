@@ -79,12 +79,14 @@ public class ClientController extends BaseGameController implements NetworkListe
         switch (type) {
             case SHOOT:
                 RayVector ray = mWorldView.getCamera().getShootRay();
-                Vector3[] visual = mWorldView.getCamera().getVisualRepresentationShoot();
+                Vector3 hitpos = mWorldModel.checkShootCollision(ray);
+                ray.setTo(hitpos);
+                //Vector3[] visual = mWorldView.getCamera().getVisualRepresentationShoot();
 
-                mWorldModel.checkShootCollision(ray);
-                mWorldView.shoot(visual);
+                mWorldView.getCamera().convertToVisualRay(ray);
+                mWorldView.shoot(ray);
                 // The network, notify the server that we have shot
-                mClient.sendTcp(new ShootPacket(mClient.getId(), ray.getFrom(), ray.getTo(), visual[0], visual[1], visual[2], visual[3]));
+                mClient.sendTcp(new ShootPacket(mClient.getId(), ray.getFrom(), ray.getTo()));
                 break;
 
             case BULLET_HOLE:
@@ -112,7 +114,7 @@ public class ClientController extends BaseGameController implements NetworkListe
             ShootPacket sp = (ShootPacket) packet;
 
             // The rendering and sound
-            mWorldView.shoot(new Vector3[]{sp.vFrom, sp.vTo, sp.vFrom2, sp.vTo2});
+            mWorldView.shoot(new RayVector(sp.mFrom, sp.mTo));
         }
         else if(packet instanceof BulletHolePacket) {
             BulletHolePacket bhp = (BulletHolePacket) packet;

@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.math.collision.Ray;
 import com.badlogic.gdx.utils.GdxRuntimeException;
+import se.rhel.model.physics.RayVector;
 import se.rhel.res.Resources;
 
 /**
@@ -24,10 +25,10 @@ public class LaserMeshRenderer {
     private Vector3 from2 = new Vector3();
     private Vector3 to = new Vector3();
     private Vector3 to2 = new Vector3();
+    private RayVector mRay = new RayVector();
 
     protected static ShaderProgram createMeshShader() {
         ShaderProgram.pedantic = false;
-        // ShaderProgram shader = new ShaderProgram(VERT_SHADER, FRAG_SHADER);
         ShaderProgram shader = new ShaderProgram(Gdx.files.internal("shader/laser.vertex.glsl"), Gdx.files.internal("shader/laser.fragment.glsl"));
         String log = shader.getLog();
         if (!shader.isCompiled())
@@ -68,18 +69,6 @@ public class LaserMeshRenderer {
     //The index position
     private int idx = 0;
 
-    public LaserMeshRenderer(FPSCamera cam) {
-        mesh = new Mesh(false, 6, 6,
-                new VertexAttribute(VertexAttributes.Usage.Position, POSITION_COMPONENTS, "a_position"),
-                new VertexAttribute(VertexAttributes.Usage.Color, COLOR_COMPONENTS, "a_color"),
-                new VertexAttribute(VertexAttributes.Usage.TextureCoordinates, 2, ShaderProgram.TEXCOORD_ATTRIBUTE+"0" ));
-        mesh.setIndices(new short[]{0, 1, 2, 2, 3, 0});
-        shader = createMeshShader();
-        this.cam = cam;
-
-        createMeshVertices();
-    }
-
     public LaserMeshRenderer(FPSCamera cam, Vector3[] verts) {
         mesh = new Mesh(false, 6, 6,
                 new VertexAttribute(VertexAttributes.Usage.Position, POSITION_COMPONENTS, "a_position"),
@@ -96,31 +85,16 @@ public class LaserMeshRenderer {
 
     }
 
-    private void createMeshVertices() {
-        // Visual representation of the starting point bottom right
-        Ray vis = cam.getPickRay(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        vis = vis.cpy();
+    public LaserMeshRenderer(FPSCamera cam, RayVector ray) {
+        mesh = new Mesh(false, 6, 6,
+                new VertexAttribute(VertexAttributes.Usage.Position, POSITION_COMPONENTS, "a_position"),
+                new VertexAttribute(VertexAttributes.Usage.Color, COLOR_COMPONENTS, "a_color"),
+                new VertexAttribute(VertexAttributes.Usage.TextureCoordinates, 2, ShaderProgram.TEXCOORD_ATTRIBUTE+"0" ));
+        mesh.setIndices(new short[]{0, 1, 2, 2, 3, 0});
+        shader = createMeshShader();
+        this.cam = cam;
 
-        // bottom right + 20%
-        Ray vis2 = cam.getPickRay(Gdx.graphics.getWidth(), Gdx.graphics.getHeight() * 0.8f);
-        vis2 = vis2.cpy();
-
-        // Middle + 20%
-        Ray vis3 = cam.getPickRay(Gdx.graphics.getWidth() / 2, (Gdx.graphics.getHeight() / 2));
-        vis3 = vis3.cpy();
-
-        // Middle
-        Ray vis4 = cam.getPickRay(Gdx.graphics.getWidth() / 2, (Gdx.graphics.getHeight() / 2) * 0.9f);
-        vis4 = vis4.cpy();
-
-        from.set(vis.origin);
-        from2.set(vis2.origin);
-        to.set(vis4.direction).scl(50f).add(from);
-        to2.set(vis3.direction).scl(50f).add(from2);
-
-        from.add(cam.direction.cpy().scl(0.2f));
-        from2.add(cam.direction.cpy().scl(0.2f));
-        mFirst = false;
+        mRay = ray;
     }
 
     public boolean render(float delta) {
@@ -130,11 +104,13 @@ public class LaserMeshRenderer {
         c1.a = alpha;
 
         //this will push the triangles into the batch
-        drawTriangle(c1);
+        //drawTriangle(c1);
+        drawRay(c1);
         //this will render the triangles to GL
         flush(Resources.INSTANCE.laser);
 
-        drawTriangle(c);
+        //drawTriangle(c);
+        drawRay(c);
         flush(Resources.INSTANCE.laser_o);
 
         return alpha > 0f ? true : false;
@@ -173,6 +149,54 @@ public class LaserMeshRenderer {
 
         //reset index to zero
         idx = 0;
+    }
+
+    void drawRay(Color color) {
+        // 4
+        verts[idx++] = mRay.getTo().x; //to2
+        verts[idx++] = mRay.getTo().y;
+        verts[idx++] = mRay.getTo().z;
+        verts[idx++] = color.r;
+        verts[idx++] = color.g;
+        verts[idx++] = color.b;
+        verts[idx++] = color.a;
+        verts[idx++] = 1;
+        verts[idx++] = 1;
+
+        // 2
+        Vector3 test = mRay.getFrom().cpy();
+        test.add(cam.getRight());
+        verts[idx++] = test.x; //From
+        verts[idx++] = test.y;
+        verts[idx++] = test.z;
+        verts[idx++] = color.r;
+        verts[idx++] = color.g;
+        verts[idx++] = color.b;
+        verts[idx++] = color.a;
+        verts[idx++] = 1;
+        verts[idx++] = 0;
+
+        // 3
+        verts[idx++] = test.x; //from2
+        verts[idx++] = test.y+0.2f;
+        verts[idx++] = test.z;
+        verts[idx++] = color.r;
+        verts[idx++] = color.g;
+        verts[idx++] = color.b;
+        verts[idx++] = color.a;
+        verts[idx++] = 0;
+        verts[idx++] = 0;
+
+        //1
+        verts[idx++] = mRay.getTo().x; //to
+        verts[idx++] = mRay.getTo().y;
+        verts[idx++] = mRay.getTo().z;
+        verts[idx++] = color.r;
+        verts[idx++] = color.g;
+        verts[idx++] = color.b;
+        verts[idx++] = color.a;
+        verts[idx++] = 0;
+        verts[idx++] = 1;
     }
 
     void drawTriangle(Color color) {

@@ -15,7 +15,7 @@ import se.rhel.network.packet.DeadEntityPacket;
  * Group: Multiplayer
  * Created by Emil on 2014-04-02.
  */
-public class ServerController implements ModelListener, ServerModelListener {
+public class ServerController implements ServerModelListener {
 
     private ServerWorldModel mServerWorldModel;
     private ServerSynchronizedUpdate mSyncedUpdate;
@@ -27,8 +27,6 @@ public class ServerController implements ModelListener, ServerModelListener {
         mSyncedUpdate = new ServerSynchronizedUpdate(mServerWorldModel, server);
         server.addListener(mSyncedUpdate);
 
-        // Listen to ModelEvents
-        EventHandler.events.listen(ModelEvent.class, this);
         // Listen to pure ServerModelEvents
         EventHandler.events.listen(ServerModelEvent.class, this);
     }
@@ -36,18 +34,6 @@ public class ServerController implements ModelListener, ServerModelListener {
     public void update(float delta) {
         mSyncedUpdate.update();
         mServerWorldModel.update(delta);
-    }
-
-    @Override
-    public void modelEvent(EventType type, Object... objs) {
-        switch (type) {
-            //This event also happen on client :'(  bad?
-            case DAMAGE:
-                // mServerWorldModel.checkEntityStatus((DamageAbleEntity)objs[0]);
-                break;
-            default:
-                break;
-        }
     }
 
     @Override

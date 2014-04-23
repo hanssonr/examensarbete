@@ -20,6 +20,7 @@ import se.rhel.model.IWorldModel;
 import se.rhel.model.entity.DummyEntity;
 import se.rhel.model.entity.IPlayer;
 import se.rhel.model.physics.BulletWorld;
+import se.rhel.model.physics.RayVector;
 import se.rhel.model.weapon.Grenade;
 import se.rhel.view.input.PlayerInput;
 import se.rhel.view.sfx.SoundManager;
@@ -78,7 +79,7 @@ public class WorldView implements IWorldView {
         mLatencyRenderer = new TextRenderer("Latency init", new Vector2(Gdx.graphics.getWidth() - 60, Gdx.graphics.getHeight() - 10), mWorldModel, mSpriteBatch);
         mDecalRenderer = new DecalRenderer(mCamera);
         particleRenderer = new ParticleRenderer(mWorldModel, mSpriteBatch, mCamera);
-        mLaserView = new LaserView(worldModel, mCamera);
+        mLaserView = new LaserView(mCamera);
 
         mDebugDrawer = new DebugDrawer();
         mWorldModel.getBulletWorld().getCollisionWorld().setDebugDrawer(mDebugDrawer);
@@ -117,6 +118,7 @@ public class WorldView implements IWorldView {
 
                 particleRenderer.draw(delta);
                 mBulletHoleRenderer.draw(delta);
+                mLaserView.render(delta);
 
                 // External stuff
                 for (int i = 0; i < mWorldModel.getExternalPlayers().size; i++) {
@@ -166,8 +168,6 @@ public class WorldView implements IWorldView {
             mDebugDrawer.end();
         }
 
-        mLaserView.render(delta);
-
         // "Crosshair"
         mCrosshairRenderer.begin(ShapeRenderer.ShapeType.Line);
             mCrosshairRenderer.setColor(Color.RED);
@@ -177,6 +177,10 @@ public class WorldView implements IWorldView {
         mPlayerRenderer.render(mModelBatch, mEnvironment);
     }
 
+    public void shoot(RayVector ray) {
+        mLaserView.add(ray);
+        SoundManager.INSTANCE.playSound(SoundManager.SoundType.LASER);
+    }
     public void shoot(Vector3[] verts) {
         mLaserView.add(verts);
         SoundManager.INSTANCE.playSound(SoundManager.SoundType.LASER);

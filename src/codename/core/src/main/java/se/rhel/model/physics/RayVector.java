@@ -7,20 +7,37 @@ import com.badlogic.gdx.math.Vector3;
  */
 public class RayVector {
 
-    private Vector3 mFrom;
-    private Vector3 mTo;
+    private Vector3 mFrom = new Vector3();
+    private Vector3 mTo = new Vector3();
 
     public RayVector(Vector3 from, Vector3 to) {
-        mFrom = from;
-        mTo = to;
+        mFrom.set(from);
+        mTo.set(to);
+    }
+
+    public RayVector() {
+        mFrom = new Vector3();
+        mTo = new Vector3();
+    }
+
+    public void setFrom(Vector3 from) {
+        mFrom.set(from);
+    }
+
+    public void setTo(Vector3 to) {
+        mTo.set(to);
+    }
+
+    public Vector3 getDirection() {
+        return getTo().sub(getFrom()).nor();
     }
 
     public Vector3 getFrom() {
-        return mFrom;
+        return mFrom.cpy();
     }
 
     public Vector3 getTo() {
-        return mTo;
+        return mTo.cpy();
     }
 
     public static double getDistance(Vector3 from, Vector3 to) {
