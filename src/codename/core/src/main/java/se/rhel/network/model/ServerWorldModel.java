@@ -57,24 +57,21 @@ public class ServerWorldModel extends BaseWorldModel {
         }
     }
 
-    public RayVector checkShootCollision(RayVector ray, Connection con) {
+    public void checkShootCollision(RayVector ray, Connection con) {
         MyContactListener.CollisionObject co = super.getShootCollision(ray);
-        RayVector ret = new RayVector(ray.getFrom(), ray.getTo());
 
         if(co != null) {
             if(co.type == MyContactListener.CollisionObject.CollisionType.ENTITY) {
                 if(co.entity instanceof DamageAbleEntity) {
                     damageEntity(co.entity, 25);
-                    ret.setTo(co.entity.getPosition());
                 }
             }
             else if(co.type == MyContactListener.CollisionObject.CollisionType.WORLD) {
-                ret.setTo(co.hitPoint);
                 EventHandler.events.notify(new ServerModelEvent(EventType.SERVER_WORLD_COLLISION, co.hitPoint, co.hitNormal, con));
             }
-        }
 
-        return ret;
+            ray.setTo(co.hitPoint);
+        }
     }
 
     public void handleExplosion(ArrayList<DamageAbleEntity> hit, IExplodable exp) {

@@ -73,7 +73,8 @@ public class ServerSynchronizedUpdate implements ServerListener {
                 Log.debug("ServerSynchronizedUpdate", "ShotPacket received on server");
                 ShootPacket sp = (ShootPacket)obj;
 
-                RayVector ray = mWorld.checkShootCollision(new RayVector(sp.mFrom, sp.mTo), con);
+                RayVector ray = new RayVector(sp.mFrom, sp.mTo);
+                mWorld.checkShootCollision(ray, con);
 
                 // Resend to other clients that a player has shot for visual feedback
                 ShootPacket sendP = new ShootPacket(sp.clientId, ray.getFrom(), ray.getTo());

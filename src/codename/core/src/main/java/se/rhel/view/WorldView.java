@@ -32,7 +32,7 @@ import java.math.BigDecimal;
  */
 public class WorldView implements IWorldView {
 
-    private FPSCamera mCamera = new FPSCamera(75, 0.1f, 1000f);
+    private FPSCamera mCamera = new FPSCamera(70, 0.1f, 1000f);
     private SpriteBatch mSpriteBatch;
     private ModelBatch mModelBatch;
 
@@ -148,9 +148,9 @@ public class WorldView implements IWorldView {
             mFPSRenderer.draw(delta);
             mBulletLoadRenderer.setText(BulletWorld.PERFORMANCE + "\n test");
             mBulletLoadRenderer.draw(delta);
-            float x = MathUtils.round(mWorldModel.getPlayer().getPosition().x);
-            float y = MathUtils.round(mWorldModel.getPlayer().getPosition().y);
-            float z = MathUtils.round(mWorldModel.getPlayer().getPosition().z);
+            float x = round(mWorldModel.getPlayer().getPosition().x, 3);
+            float y = round(mWorldModel.getPlayer().getPosition().y, 3);
+            float z = round(mWorldModel.getPlayer().getPosition().z, 3);
             mPlayerPosRenderer.setText("X: " + x + ", Y: " + y + ", Z: " + z);
             mPlayerPosRenderer.draw(delta);
 
@@ -181,10 +181,6 @@ public class WorldView implements IWorldView {
         mLaserView.add(ray);
         SoundManager.INSTANCE.playSound(SoundManager.SoundType.LASER);
     }
-    public void shoot(Vector3[] verts) {
-        mLaserView.add(verts);
-        SoundManager.INSTANCE.playSound(SoundManager.SoundType.LASER);
-    }
 
     public void addGrenade(Grenade grenade) {
         mGrenadeRenderer.addGrenade(grenade);
@@ -198,18 +194,18 @@ public class WorldView implements IWorldView {
         particleRenderer.addEffect(position, type);
     }
 
-//    /**
-//     * Round to certain number of decimals
-//     *
-//     * @param d
-//     * @param decimalPlace
-//     * @return
-//     */
-//    public static float round(float d, int decimalPlace) {
-//        BigDecimal bd = new BigDecimal(Float.toString(d));
-//        bd = bd.setScale(decimalPlace, BigDecimal.ROUND_HALF_UP);
-//        return bd.floatValue();
-//    }
+    /**
+     * Round to certain number of decimals
+     *
+     * @param d
+     * @param decimalPlace
+     * @return
+     */
+    public static float round(float d, int decimalPlace) {
+        BigDecimal bd = new BigDecimal(Float.toString(d));
+        bd = bd.setScale(decimalPlace, BigDecimal.ROUND_HALF_UP);
+        return bd.floatValue();
+    }
 
     public Mesh createFullScreenQuad() {
         float[] verts = new float[20];

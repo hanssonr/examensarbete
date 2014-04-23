@@ -16,7 +16,6 @@ public interface IWorldView {
     public void addGrenade(Grenade grenade);
     public void addPlayer(IPlayer player);
     public void addParticleEffect(Vector3 position, ParticleRenderer.Particle type);
-    public void shoot(Vector3[] rays);
     public void shoot(RayVector ray);
     public void update(float delta);
     public void render(float delta);

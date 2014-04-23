@@ -79,10 +79,7 @@ public class ClientController extends BaseGameController implements NetworkListe
         switch (type) {
             case SHOOT:
                 RayVector ray = mWorldView.getCamera().getShootRay();
-                Vector3 hitpos = mWorldModel.checkShootCollision(ray);
-                ray.setTo(hitpos);
-                //Vector3[] visual = mWorldView.getCamera().getVisualRepresentationShoot();
-
+                mWorldModel.checkShootCollision(ray);
                 mWorldView.getCamera().convertToVisualRay(ray);
                 mWorldView.shoot(ray);
                 // The network, notify the server that we have shot

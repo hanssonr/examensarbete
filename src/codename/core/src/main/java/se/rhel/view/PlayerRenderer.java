@@ -63,7 +63,7 @@ public class PlayerRenderer {
     private void updateWeapon() {
         mLaserWeapon.transform.set(mCamera.view.cpy().inv());
 
-        mWeaponOffset.set(0.8f, -0.45f, -0.4f);
+        mWeaponOffset.set(0.8f, -0.45f, -0.5f);
         if(mState == PLAYERSTATE.running) {
             mWeaponOffset.add(mBobVector.cpy().scl(mBobPower));
         }
