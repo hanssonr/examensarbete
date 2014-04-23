@@ -56,6 +56,7 @@ public class ServerSynchronizedUpdate implements ServerListener {
                     }
                 }
             }
+
             else if(obj instanceof PlayerMovePacket) {
                 PlayerMovePacket pmp = (PlayerMovePacket)obj;
 
@@ -67,17 +68,18 @@ public class ServerSynchronizedUpdate implements ServerListener {
 
                 mServer.sendToAllUDPExcept(new PlayerMovePacket(pmp.clientId, pmp.mPosition, pmp.mRotation), con);
             }
+
             else if (obj instanceof ShootPacket) {
                 Log.debug("ServerSynchronizedUpdate", "ShotPacket received on server");
                 ShootPacket sp = (ShootPacket)obj;
-                Vector3 dir = sp.vTo.cpy().sub(sp.vFrom.cpy()).nor();
 
-                mWorld.checkShootCollision(new RayVector(sp.mFrom, sp.mTo), con);
+                RayVector ray = mWorld.checkShootCollision(new RayVector(sp.mFrom, sp.mTo), con);
 
                 // Resend to other clients that a player has shot for visual feedback
-                ShootPacket sendP = new ShootPacket(sp.clientId, sp.mFrom, sp.mTo, sp.vFrom.cpy().add(dir), sp.vTo.cpy().add(dir), sp.vFrom2.cpy().add(dir), sp.vTo2.cpy().add(dir));
+                ShootPacket sendP = new ShootPacket(sp.clientId, ray.getFrom(), ray.getTo());
                 mServer.sendToAllUDPExcept(sendP, con);
             }
+
             else if (obj instanceof GrenadeCreatePacket) {
                 Log.debug("ServerSynchronizedUpdate", "GrenadeCreatePacket received on server");
                 GrenadeCreatePacket gcp = (GrenadeCreatePacket) obj;

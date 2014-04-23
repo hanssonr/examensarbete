@@ -12,6 +12,7 @@ import se.rhel.model.entity.IPlayer;
 import se.rhel.model.physics.MyContactListener;
 import se.rhel.model.physics.RayVector;
 import se.rhel.model.weapon.Grenade;
+import se.rhel.util.Log;
 
 import java.util.HashMap;
 
@@ -72,18 +73,24 @@ public class ClientWorldModel extends BaseWorldModel implements INetworkWorldMod
     }
 
     @Override
-    public void checkShootCollision(RayVector ray) {
+    public Vector3 checkShootCollision(RayVector ray) {
+        Vector3 hitPos = ray.getTo();
         MyContactListener.CollisionObject co = super.getShootCollision(ray);
 
         if(co != null) {
             if(co.type == MyContactListener.CollisionObject.CollisionType.WORLD) {
                 EventHandler.events.notify(new ModelEvent(EventType.BULLET_HOLE, co.hitPoint, co.hitNormal));
+                hitPos.set(co.hitPoint);
             }
         }
+
+        return hitPos;
     }
 
     @Override
-    public void checkEntityStatus(DamageAbleEntity entity) {}
+    public void checkEntityStatus(DamageAbleEntity entity) {
+
+    }
 
     public ExternalPlayer getExternalPlayer(int id) {
         try {
@@ -123,12 +130,15 @@ public class ClientWorldModel extends BaseWorldModel implements INetworkWorldMod
     public void damageEntity(int id, int amount) {
         DamageAbleEntity dae = mClient.getId() == id ? mPlayer : getExternalPlayer(id);
         super.damageEntity(dae, amount);
-        EventHandler.events.notify(new ModelEvent(EventType.DAMAGE, dae));
     }
 
     public void killEntity(int id) {
-        DamageAbleEntity dae = mClient.getId() == id ? mPlayer : getExternalPlayer(id);
-        dae.setAlive(false);
-        EventHandler.events.notify(new ModelEvent(EventType.EXPLOSION, dae.getPosition()));
+        if(id == mClient.getId()) {
+            Log.debug("ClientWorldModel", "I AM DEAD");
+            mPlayer.setAlive(false);
+        } else {
+            ExternalPlayer ep = getExternalPlayer(id);
+            ep.setAlive(false);
+        }
     }
 }

@@ -32,9 +32,7 @@ public class BulletWorld implements BaseModel {
     private Array<btDefaultMotionState> mMotionStates = new Array<>();
 
     private Vector3 mGravity = new Vector3(0, -9.18f, 0);
-
-    private final float TIME_STEP = 1f / 60f;
-    private float mPhysicsTimeBuffer = 0f;
+    private final float FIXED_TIMESTEP = 1f/60f;
 
     public BulletWorld() {
         create();
@@ -77,14 +75,7 @@ public class BulletWorld implements BaseModel {
     public void update(float delta) {
         PERFORMANCE_COUNTER.tick();
         PERFORMANCE_COUNTER.start();
-
-        mPhysicsTimeBuffer += delta;
-
-        while(mPhysicsTimeBuffer >= TIME_STEP) {
-            mPhysicsTimeBuffer -= TIME_STEP;
-            mCollisionWorld.stepSimulation(TIME_STEP, 8);
-        }
-
+        mCollisionWorld.stepSimulation(delta, 8, FIXED_TIMESTEP);
         PERFORMANCE_COUNTER.stop();
         PERFORMANCE = "Bullet: " + (int)(PERFORMANCE_COUNTER.load.value*100f) + " %";
     }

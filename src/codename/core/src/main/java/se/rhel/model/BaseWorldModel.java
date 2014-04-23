@@ -1,12 +1,8 @@
 package se.rhel.model;
 
-import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import se.rhel.model.entity.DamageAbleEntity;
 import se.rhel.model.entity.GameObject;
-import se.rhel.event.EventHandler;
-import se.rhel.event.EventType;
-import se.rhel.event.ModelEvent;
 import se.rhel.model.physics.BulletWorld;
 import se.rhel.model.physics.MyContactListener;
 import se.rhel.model.physics.RayVector;
@@ -51,12 +47,8 @@ public class BaseWorldModel {
         return mContactListener.checkShootCollision(getBulletWorld().getCollisionWorld(), ray);
     }
 
-//    public void handleExplosion(IExplodable explosion) {
-//        mContactListener.checkExplosionCollision(getBulletWorld().getCollisionWorld(), explosion);
-//    }
-
     public ArrayList<DamageAbleEntity> getAffectedByExplosion(IExplodable explosion) {
-        return mContactListener.checkExplosionCollisionEntity(getBulletWorld().getCollisionWorld(), explosion);
+        return mContactListener.checkExplosionCollision(getBulletWorld().getCollisionWorld(), explosion);
     }
 
     public void addGrenade(Grenade g) {
@@ -65,6 +57,10 @@ public class BaseWorldModel {
 
     public void damageEntity(DamageAbleEntity entity, int amount) {
         entity.damageEntity(amount);
+    }
+
+    public void destroyGameObject(GameObject obj) {
+        mDestroy.add(obj);
     }
 
     public Array<Grenade> getGrenades() {

@@ -41,6 +41,7 @@ public class ClientSynchronizedUpdate implements ClientListener {
 
                 EventHandler.events.notify(new NetworkEvent(pp));
             }
+
             else if(obj instanceof PlayerMovePacket) {
                 // An external player have moved and should be updated, accordingly
                 PlayerMovePacket pmp = (PlayerMovePacket)obj;
@@ -51,11 +52,13 @@ public class ClientSynchronizedUpdate implements ClientListener {
                     ep.setPositionAndRotation(pmp.mPosition, pmp.mRotation);
                 }
             }
+
             else if (obj instanceof DamagePacket) {
                 // A player has been damaged
                 DamagePacket dp = (DamagePacket)obj;
                 mWorld.damageEntity(dp.clientId, dp.amount);
             }
+
             else if (obj instanceof ShootPacket) {
                 // Visual representation of shoot
                 Log.debug("ClientSynchronizedUpdate", "ShotPacket received on client");
@@ -64,6 +67,7 @@ public class ClientSynchronizedUpdate implements ClientListener {
                 // Notify listeners about that an external player has shot
                 EventHandler.events.notify(new NetworkEvent(sp));
             }
+
             else if (obj instanceof BulletHolePacket) {
                 Log.debug("ClientSynchronizedUpdate", "BulletHolePacket received on client");
                 // Someone else has shot, and missed, thus bullethole at this position
@@ -71,10 +75,12 @@ public class ClientSynchronizedUpdate implements ClientListener {
 
                 EventHandler.events.notify(new NetworkEvent(bhp));
             }
+
             else if (obj instanceof DeadEntityPacket) {
                 DeadEntityPacket dep = (DeadEntityPacket)obj;
                 mWorld.killEntity(dep.clientId);
             }
+
             else if (obj instanceof GrenadeCreatePacket) {
                 Log.debug("ClientWorldModel", "Received GrenadeCreatePacket");
                 GrenadeCreatePacket gcp = (GrenadeCreatePacket) obj;
