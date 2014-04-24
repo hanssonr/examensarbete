@@ -10,6 +10,7 @@ import se.rhel.model.weapon.IExplodable;
 import se.rhel.view.IWorldView;
 import se.rhel.view.ParticleRenderer;
 import se.rhel.view.input.IInput;
+import se.rhel.view.input.PlayerInput;
 
 
 public class BaseGameController extends AbstactController implements ViewListener, ModelListener {
@@ -17,13 +18,17 @@ public class BaseGameController extends AbstactController implements ViewListene
     protected IInput mPlayerInput;
     protected IWorldView mWorldView;
     protected IWorldModel mWorldModel;
+    protected Events mEvents;
 
-    public BaseGameController(IInput input) {
-        mPlayerInput = input;
-        Gdx.input.setInputProcessor(input);
 
-        EventHandler.events.listen(ViewEvent.class, this);
-        EventHandler.events.listen(ModelEvent.class, this);
+    public BaseGameController() {
+        mEvents = new Events();
+
+        mPlayerInput = new PlayerInput(mEvents);
+        Gdx.input.setInputProcessor(mPlayerInput);
+
+        mEvents.listen(ViewEvent.class, this);
+        mEvents.listen(ModelEvent.class, this);
     }
 
     @Override
@@ -61,7 +66,7 @@ public class BaseGameController extends AbstactController implements ViewListene
                 mWorldModel.getPlayer().jump();
                 break;
             case SHOOT:
-                mWorldModel.getPlayer().shoot();
+                mWorldModel.shoot();
                 break;
         }
     }

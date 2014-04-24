@@ -22,7 +22,9 @@ public class ActionEntity extends DamageAbleEntity {
         super(world, maxHealth, movespeed);
     }
 
+    @Override
     public void update(float delta) {
+        super.update(delta);
         // Update shooting for unnecessary drawing / spam shooting
         if(mHasShot) {
             mDeltaShoot += delta;
@@ -33,18 +35,19 @@ public class ActionEntity extends DamageAbleEntity {
         }
     }
 
-    public void shoot() {
+    public boolean canShoot() {
         // If can shoot
         if(!mHasShot) {
             mHasShot = true;
-            EventHandler.events.notify(new ModelEvent(EventType.SHOOT));
         }
+        return mHasShot;
     }
 
-    public void grenadeThrow() {
+    public boolean canThrowGrenade() {
         if(currentGrenades <= MAX_GRENADES) {
             currentGrenades++;
-            EventHandler.events.notify(new ModelEvent(EventType.GRENADE, getPosition(), getDirection()));
+            return true;
         }
+        return false;
     }
 }

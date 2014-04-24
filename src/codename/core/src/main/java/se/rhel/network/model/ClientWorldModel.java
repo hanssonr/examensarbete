@@ -5,6 +5,7 @@ import com.badlogic.gdx.utils.Array;
 import se.rhel.Client;
 import se.rhel.event.EventHandler;
 import se.rhel.event.EventType;
+import se.rhel.event.Events;
 import se.rhel.event.ModelEvent;
 import se.rhel.model.*;
 import se.rhel.model.entity.DamageAbleEntity;
@@ -30,8 +31,8 @@ public class ClientWorldModel extends BaseWorldModel implements INetworkWorldMod
 
     private HashMap<Integer, IPlayer> mPlayers = new HashMap<>();
 
-    public ClientWorldModel(Client client) {
-        super();
+    public ClientWorldModel(Client client, Events events) {
+        super(events);
 
         mPlayer = new Player(new Vector3(0, 10, 0), getBulletWorld());
         mClient = client;
@@ -47,7 +48,7 @@ public class ClientWorldModel extends BaseWorldModel implements INetworkWorldMod
             mLastKnownPosition = mPlayer.getPosition();
             mLastKnownRotation = mPlayer.getRotation().x;
 
-            EventHandler.events.notify(new ModelEvent(EventType.PLAYER_MOVE));
+            mEvents.notify(new ModelEvent(EventType.PLAYER_MOVE));
         }
 
         for(IPlayer p : mPlayers.values()) {
@@ -60,7 +61,7 @@ public class ClientWorldModel extends BaseWorldModel implements INetworkWorldMod
             g.update(delta);
 
             if(!g.isAlive()) {
-                EventHandler.events.notify(new ModelEvent(EventType.EXPLOSION, g.getPosition()));
+                mEvents.notify(new ModelEvent(EventType.EXPLOSION, g.getPosition()));
                 g.destroy();
                 mGrenades.removeIndex(i);
             }
@@ -78,7 +79,7 @@ public class ClientWorldModel extends BaseWorldModel implements INetworkWorldMod
 
         if(co != null) {
             if(co.type == MyContactListener.CollisionObject.CollisionType.WORLD) {
-                EventHandler.events.notify(new ModelEvent(EventType.BULLET_HOLE, co.hitPoint, co.hitNormal));
+                mEvents.notify(new ModelEvent(EventType.BULLET_HOLE, co.hitPoint, co.hitNormal));
             }
         }
     }
@@ -126,12 +127,18 @@ public class ClientWorldModel extends BaseWorldModel implements INetworkWorldMod
     public void damageEntity(int id, int amount) {
         DamageAbleEntity dae = mClient.getId() == id ? mPlayer : getExternalPlayer(id);
         super.damageEntity(dae, amount);
-        EventHandler.events.notify(new ModelEvent(EventType.DAMAGE, dae));
+        mEvents.notify(new ModelEvent(EventType.DAMAGE, dae));
     }
 
     public void killEntity(int id) {
         DamageAbleEntity dae = mClient.getId() == id ? mPlayer : getExternalPlayer(id);
         dae.setAlive(false);
-        EventHandler.events.notify(new ModelEvent(EventType.EXPLOSION, dae.getPosition()));
+        mEvents.notify(new ModelEvent(EventType.EXPLOSION, dae.getPosition()));
+    }
+
+    public void shoot() {
+        if(getPlayer().canShoot()) {
+            mEvents.notify(new ModelEvent(EventType.SHOOT));
+        }
     }
 }

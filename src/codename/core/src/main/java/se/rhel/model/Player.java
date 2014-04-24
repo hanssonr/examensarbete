@@ -57,6 +57,7 @@ public class Player extends ActionEntity implements IPlayer {
 
     public void update(float delta) {
         super.update(delta);
+
         if(isAlive()) {
             getBody().setGravity(Vector3.Zero);
             mTransformation.set(getBody().getCenterOfMassTransform());
@@ -70,6 +71,7 @@ public class Player extends ActionEntity implements IPlayer {
 
             }
         }
+
     }
 
     private void checkOnGround() {

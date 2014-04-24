@@ -1,9 +1,13 @@
 package se.rhel.network.controller;
 
 import com.badlogic.gdx.math.Vector3;
+import com.sun.swing.internal.plaf.metal.resources.metal;
 import se.rhel.Connection;
 import se.rhel.Server;
 import se.rhel.event.EventHandler;
+import se.rhel.event.EventType;
+import se.rhel.event.Events;
+import se.rhel.event.ModelEvent;
 import se.rhel.model.entity.DamageAbleEntity;
 import se.rhel.model.physics.MyContactListener;
 import se.rhel.model.physics.RayVector;
@@ -28,12 +32,14 @@ public class ServerSynchronizedUpdate implements ServerListener {
 
     private ServerWorldModel mWorld;
     private Server mServer;
+    private Events mEvents;
 
     private ArrayList<ConnectionWrappedObject> mUnsyncedObjects = new ArrayList<>();
 
-    public ServerSynchronizedUpdate(ServerWorldModel world, Server server) {
+    public ServerSynchronizedUpdate(ServerWorldModel world, Server server, Events events) {
         mWorld = world;
         mServer = server;
+        mEvents = events;
     }
 
     public synchronized void update() {
@@ -93,7 +99,9 @@ public class ServerSynchronizedUpdate implements ServerListener {
                 // A player wants to throw a grenade!
                 ExternalPlayer ep = mWorld.getExternalPlayer(gcp.clientId);
                 if(ep != null) {
-                    ep.grenadeThrow();
+                    if(ep.canThrowGrenade()) {
+                        mEvents.notify(new ModelEvent(EventType.GRENADE, ep.getPosition(), ep.getDirection()));
+                    }
                 }
 
                 mServer.sendToAllTCP(new GrenadeCreatePacket(g.getId(), ep.getPosition(), ep.getDirection()));

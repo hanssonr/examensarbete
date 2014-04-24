@@ -3,6 +3,7 @@ package se.rhel.network.controller;
 import com.badlogic.gdx.math.Vector3;
 import se.rhel.event.EventHandler;
 import se.rhel.event.EventType;
+import se.rhel.event.Events;
 import se.rhel.event.ModelEvent;
 import se.rhel.model.IWorldModel;
 import se.rhel.network.event.NetworkEvent;
@@ -24,9 +25,11 @@ public class ClientSynchronizedUpdate implements ClientListener {
 
     private ArrayList<Object> mUnsyncedObjects = new ArrayList<>();
     private INetworkWorldModel mWorld;
+    private Events mEvents;
 
-    public ClientSynchronizedUpdate(IWorldModel world) {
+    public ClientSynchronizedUpdate(IWorldModel world, Events events) {
         mWorld = (INetworkWorldModel)world;
+        mEvents = events;
     }
 
     public synchronized void update() {
@@ -39,7 +42,7 @@ public class ClientSynchronizedUpdate implements ClientListener {
                 ExternalPlayer ep = new ExternalPlayer(pp.clientId, pp.mPosition, mWorld.getBulletWorld());
                 mWorld.addPlayer(pp.clientId, ep);
 
-                EventHandler.events.notify(new NetworkEvent(pp));
+                mEvents.notify(new NetworkEvent(pp));
             }
 
             else if(obj instanceof PlayerMovePacket) {
@@ -65,7 +68,7 @@ public class ClientSynchronizedUpdate implements ClientListener {
                 ShootPacket sp = (ShootPacket)obj;
 
                 // Notify listeners about that an external player has shot
-                EventHandler.events.notify(new NetworkEvent(sp));
+                mEvents.notify(new NetworkEvent(sp));
             }
 
             else if (obj instanceof BulletHolePacket) {
@@ -73,7 +76,7 @@ public class ClientSynchronizedUpdate implements ClientListener {
                 // Someone else has shot, and missed, thus bullethole at this position
                 BulletHolePacket bhp = (BulletHolePacket)obj;
 
-                EventHandler.events.notify(new NetworkEvent(bhp));
+                mEvents.notify(new NetworkEvent(bhp));
             }
 
             else if (obj instanceof DeadEntityPacket) {
@@ -88,7 +91,7 @@ public class ClientSynchronizedUpdate implements ClientListener {
                 Grenade g = new Grenade(mWorld.getBulletWorld(), gcp.position, gcp.direction);
                 g.setId(gcp.clientId);
                 mWorld.addGrenade(g);
-                EventHandler.events.notify(new ModelEvent(EventType.GRENADE_CREATED, g));
+                mEvents.notify(new ModelEvent(EventType.GRENADE_CREATED, g));
             }
 
             it.remove();

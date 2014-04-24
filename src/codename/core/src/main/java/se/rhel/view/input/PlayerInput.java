@@ -29,6 +29,8 @@ public class PlayerInput implements IInput {
     private Vector2 mRotation = Vector2.Zero;
     private Vector3 mDirection = Vector3.Zero;
 
+    private Events mEvents;
+
     //Finals
     final float MOUSE_SPEED = 5f;
 
@@ -46,8 +48,9 @@ public class PlayerInput implements IInput {
         mKeys.put(MapKeys.SHOOT, false);
     }
 
-    public PlayerInput() {
+    public PlayerInput(Events events) {
         Gdx.input.setCursorCatched(true);
+        mEvents = events;
     }
 
     public Vector2 getRotation() {
@@ -90,13 +93,13 @@ public class PlayerInput implements IInput {
             // JUMP
             if(mKeys.get(MapKeys.JUMP)) {
                 // TODO: Borde bara skickas en gång
-                EventHandler.events.notify(new ViewEvent(EventType.JUMP));
+                mEvents.notify(new ViewEvent(EventType.JUMP));
             }
 
             // SHOOT
             if(mKeys.get(MapKeys.SHOOT)) {
                 mKeys.put(MapKeys.SHOOT, false);
-                EventHandler.events.notify(new ViewEvent(EventType.SHOOT));
+                mEvents.notify(new ViewEvent(EventType.SHOOT));
             }
         }
     }
@@ -144,7 +147,7 @@ public class PlayerInput implements IInput {
                 DRAW_SHOOT_DEBUG = !DRAW_SHOOT_DEBUG;
                 break;
             case Keys.F:
-                EventHandler.events.notify(new ViewEvent(EventType.GRENADE));
+                mEvents.notify(new ViewEvent(EventType.GRENADE));
                 break;
         }
         return true;

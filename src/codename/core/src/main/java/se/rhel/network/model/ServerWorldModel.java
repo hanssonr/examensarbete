@@ -5,10 +5,7 @@ import com.badlogic.gdx.math.collision.Ray;
 import com.badlogic.gdx.physics.bullet.softbody.btSoftBodySolverOutput;
 import com.badlogic.gdx.utils.Array;
 import se.rhel.Connection;
-import se.rhel.event.EventHandler;
-import se.rhel.event.EventType;
-import se.rhel.event.ModelEvent;
-import se.rhel.event.ServerModelEvent;
+import se.rhel.event.*;
 import se.rhel.model.BaseWorldModel;
 import se.rhel.model.entity.DamageAbleEntity;
 import se.rhel.model.physics.MyContactListener;
@@ -30,8 +27,8 @@ public class ServerWorldModel extends BaseWorldModel {
     // Linkin ID's and Players
     private HashMap<Integer, ExternalPlayer> mPlayers;
 
-    public ServerWorldModel() {
-        super();
+    public ServerWorldModel(Events events) {
+        super(events);
         mPlayers = new HashMap<>();
     }
 
@@ -67,7 +64,7 @@ public class ServerWorldModel extends BaseWorldModel {
                 }
             }
             else if(co.type == MyContactListener.CollisionObject.CollisionType.WORLD) {
-                EventHandler.events.notify(new ServerModelEvent(EventType.SERVER_WORLD_COLLISION, co.hitPoint, co.hitNormal, con));
+                mEvents.notify(new ServerModelEvent(EventType.SERVER_WORLD_COLLISION, co.hitPoint, co.hitNormal, con));
             }
 
             ray.setTo(co.hitPoint);
@@ -77,7 +74,7 @@ public class ServerWorldModel extends BaseWorldModel {
     public void handleExplosion(ArrayList<DamageAbleEntity> hit, IExplodable exp) {
         for(DamageAbleEntity entity : hit) {
             entity.damageEntity(exp.getExplosionDamage());
-            EventHandler.events.notify(new ServerModelEvent(EventType.DAMAGE, entity));
+            mEvents.notify(new ServerModelEvent(EventType.DAMAGE, entity));
         }
     }
 
@@ -87,14 +84,14 @@ public class ServerWorldModel extends BaseWorldModel {
 
             Explosion exp = new Explosion(entity.getPosition(), 15, 250);
             handleExplosion(getAffectedByExplosion(exp), exp);
-            EventHandler.events.notify(new ServerModelEvent(EventType.SERVER_DEAD_ENTITY, entity));
+            mEvents.notify(new ServerModelEvent(EventType.SERVER_DEAD_ENTITY, entity));
         }
     }
 
     public void damageEntity(DamageAbleEntity entity, int amount) {
         entity.damageEntity(amount);
 
-        EventHandler.events.notify(new ServerModelEvent(EventType.DAMAGE, entity));
+        mEvents.notify(new ServerModelEvent(EventType.DAMAGE, entity));
     }
 
     public HashMap<Integer, ExternalPlayer> getPlayers() {

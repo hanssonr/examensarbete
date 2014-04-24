@@ -27,20 +27,19 @@ import se.rhel.view.input.PlayerInput;
 public class ClientController extends BaseGameController implements NetworkListener {
 
     private Client mClient;
-
     private ClientSynchronizedUpdate mSyncedUpdate;
 
     public ClientController() {
-        super(new PlayerInput());
+        super();
         mClient = Snaek.newClient(4455, 5544, "localhost");
-        mWorldModel = new ClientWorldModel(mClient);
-        mSyncedUpdate = new ClientSynchronizedUpdate(mWorldModel);
+        mWorldModel = new ClientWorldModel(mClient, mEvents);
+        mSyncedUpdate = new ClientSynchronizedUpdate(mWorldModel, mEvents);
         mClient.addListener(mSyncedUpdate);
 
         mClient.sendTcp(new RequestInitialStatePacket(mClient.getId()));
         mWorldView = new WorldView(mWorldModel);
 
-        EventHandler.events.listen(NetworkEvent.class, this);
+        mEvents.listen(NetworkEvent.class, this);
     }
 
     public void update(float delta) {

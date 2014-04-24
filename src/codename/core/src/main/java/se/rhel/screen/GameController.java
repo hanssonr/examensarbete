@@ -24,11 +24,11 @@ import se.rhel.view.WorldView;
 public class GameController extends BaseGameController {
 
     public GameController(CodeName game) {
-        super(new PlayerInput());
+        super();
         //super(game);
         Gdx.app.setLogLevel(Application.LOG_NONE);
 
-        mWorldModel = new WorldModel();
+        mWorldModel = new WorldModel(mEvents);
         mWorldView = new WorldView(mWorldModel);
     }
 
@@ -49,7 +49,7 @@ public class GameController extends BaseGameController {
         super.inputEvent(type);
         switch (type) {
             case SHOOT:
-                mWorldModel.getPlayer().shoot();
+                mWorldModel.shoot();
                 break;
             case GRENADE:
                 Grenade g = new Grenade(mWorldModel.getBulletWorld(), mWorldModel.getPlayer().getPosition(), mWorldModel.getPlayer().getDirection());

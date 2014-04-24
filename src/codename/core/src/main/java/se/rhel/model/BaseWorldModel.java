@@ -1,6 +1,7 @@
 package se.rhel.model;
 
 import com.badlogic.gdx.utils.Array;
+import se.rhel.event.Events;
 import se.rhel.model.entity.DamageAbleEntity;
 import se.rhel.model.entity.GameObject;
 import se.rhel.model.physics.BulletWorld;
@@ -24,9 +25,11 @@ public class BaseWorldModel {
 
     protected ArrayList<GameObject> mDestroy = new ArrayList<>();
     protected Array<Grenade> mGrenades = new Array<Grenade>(true, MAX_GRENADES);
+    protected Events mEvents;
 
-    public BaseWorldModel() {
+    public BaseWorldModel(Events events) {
         mBulletWorld = new BulletWorld();
+        mEvents = events;
     }
 
     public BulletWorld getBulletWorld() {

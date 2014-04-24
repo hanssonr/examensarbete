@@ -20,15 +20,17 @@ public class ServerController implements ServerModelListener {
     private ServerWorldModel mServerWorldModel;
     private ServerSynchronizedUpdate mSyncedUpdate;
     private Server mServer;
+    private Events mEvents;
 
     public ServerController(Server server) {
         mServer = server;
-        mServerWorldModel = new ServerWorldModel();
-        mSyncedUpdate = new ServerSynchronizedUpdate(mServerWorldModel, server);
+        mEvents = new Events();
+        mServerWorldModel = new ServerWorldModel(mEvents);
+        mSyncedUpdate = new ServerSynchronizedUpdate(mServerWorldModel, server, mEvents);
         server.addListener(mSyncedUpdate);
 
         // Listen to pure ServerModelEvents
-        EventHandler.events.listen(ServerModelEvent.class, this);
+        mEvents.listen(ServerModelEvent.class, this);
     }
 
     public void update(float delta) {

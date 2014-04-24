@@ -25,5 +25,8 @@ public interface IWorldModel {
     public void addGrenade(Grenade g);
     public void checkEntityStatus(DamageAbleEntity entity);
 
+    // Actions
+    public void shoot();
+
     Array<Grenade> getGrenades();
 }
