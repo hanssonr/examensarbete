@@ -1,5 +1,7 @@
 package se.rhel.network.model;
 
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 import se.rhel.model.IWorldModel;
 import se.rhel.model.entity.IPlayer;
 
@@ -13,4 +15,5 @@ public interface INetworkWorldModel extends IWorldModel {
     public IPlayer getPlayerEntity(int id);
     public void damageEntity(int id, int amount);
     public void killEntity(int id);
+    public void transformEntity(int clientId, Vector3 position, Vector2 rotation);
 }

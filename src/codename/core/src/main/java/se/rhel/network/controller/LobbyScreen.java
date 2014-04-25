@@ -1,4 +1,4 @@
-package se.rhel.screen;
+package se.rhel.network.controller;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL10;
@@ -10,6 +10,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import se.rhel.CodeName;
 import se.rhel.Snaek;
 import se.rhel.network.packet.MyPacketRegisterInitializer;
+import se.rhel.screen.AbstactController;
 import se.rhel.screen.scene.UIComponents;
 import se.rhel.network.controller.NetworkGameScreen;
 import se.rhel.Server;

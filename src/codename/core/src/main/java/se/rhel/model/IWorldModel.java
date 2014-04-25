@@ -1,14 +1,13 @@
 package se.rhel.model;
 
-import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
-import se.rhel.model.entity.DamageAbleEntity;
+import se.rhel.model.component.DamageComponent;
+import se.rhel.model.component.GameObject;
 import se.rhel.model.entity.IPlayer;
+import se.rhel.model.entity.Player;
 import se.rhel.model.physics.BulletWorld;
 import se.rhel.model.physics.RayVector;
 import se.rhel.model.weapon.Grenade;
-
-import java.util.ArrayList;
 
 /**
  * Group: Logic
@@ -23,10 +22,7 @@ public interface IWorldModel {
     public void update(float delta);
     public void checkShootCollision(RayVector ray);
     public void addGrenade(Grenade g);
-    public void checkEntityStatus(DamageAbleEntity entity);
-
-    // Actions
-    public void shoot();
+    public void checkEntityStatus(GameObject entity);
 
     Array<Grenade> getGrenades();
 }

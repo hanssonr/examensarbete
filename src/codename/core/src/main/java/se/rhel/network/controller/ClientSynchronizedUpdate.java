@@ -6,6 +6,8 @@ import se.rhel.event.EventType;
 import se.rhel.event.Events;
 import se.rhel.event.ModelEvent;
 import se.rhel.model.IWorldModel;
+import se.rhel.model.component.IMovable;
+import se.rhel.model.component.MoveComponent;
 import se.rhel.network.event.NetworkEvent;
 import se.rhel.model.weapon.Grenade;
 import se.rhel.network.model.ExternalPlayer;
@@ -48,12 +50,7 @@ public class ClientSynchronizedUpdate implements ClientListener {
             else if(obj instanceof PlayerMovePacket) {
                 // An external player have moved and should be updated, accordingly
                 PlayerMovePacket pmp = (PlayerMovePacket)obj;
-
-                ExternalPlayer ep = mWorld.getExternalPlayer(pmp.clientId);
-                if(ep != null) {
-                    // Set the position & rotation
-                    ep.setPositionAndRotation(pmp.mPosition, pmp.mRotation);
-                }
+                mWorld.transformEntity(pmp.clientId, pmp.mPosition, pmp.mRotation);
             }
 
             else if (obj instanceof DamagePacket) {

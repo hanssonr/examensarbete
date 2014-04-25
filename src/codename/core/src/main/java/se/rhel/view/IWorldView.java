@@ -20,4 +20,6 @@ public interface IWorldView {
     public void update(float delta);
     public void render(float delta);
     public void dispose();
+
+    public void addBullethole(Vector3 position, Vector3 normal);
 }

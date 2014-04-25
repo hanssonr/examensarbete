@@ -12,7 +12,7 @@ public interface IPlayer {
     public Matrix4 getTransformation();
     public Vector2 getRotation();
     public Vector3 getPosition();
+    public Vector3 getDirection();
     public boolean isAlive();
     public void update(float delta);
-
 }

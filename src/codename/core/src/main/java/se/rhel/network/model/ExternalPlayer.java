@@ -2,8 +2,8 @@ package se.rhel.network.model;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
+import se.rhel.model.component.*;
 import se.rhel.model.entity.DummyEntity;
-import se.rhel.model.entity.IPlayer;
 import se.rhel.model.physics.BulletWorld;
 
 /**
@@ -12,19 +12,25 @@ import se.rhel.model.physics.BulletWorld;
  * Created by Emil on 2014-03-06.
  * assigned to libgdx-gradle-template in se.rhel.model
  */
-public class ExternalPlayer extends DummyEntity implements IPlayer {
+public class ExternalPlayer extends DummyEntity {
 
-    private static Vector2 mPlayersize = new Vector2(0.6f, 1.5f);
+    private static Vector2 PLAYERSIZE = new Vector2(0.6f, 1.5f);
     private static int MAX_HEALTH = 100;
-    private int mClientId;
+
+    private INetwork mNetworkComponent;
 
     public ExternalPlayer(int clientId, Vector3 position, BulletWorld world) {
-        super(world, mPlayersize.x, mPlayersize.y, MAX_HEALTH, 7, position);
-        mClientId = clientId;
+        super(world, PLAYERSIZE.x, PLAYERSIZE.y, MAX_HEALTH, 7f, position);
+
+        mNetworkComponent = createNetworkComponent(clientId);
         getTransformation().setTranslation(position);
     }
 
-    public int getClientId() {
-        return mClientId;
+    public int getNetworkID() {
+        return mNetworkComponent.getID();
+    }
+
+    public void update(float delta) {
+        //mPhysicsComponent.getBody().setCenterOfMassTransform(getTransformation());
     }
 }

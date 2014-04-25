@@ -1,14 +1,11 @@
 package se.rhel.model.weapon;
 
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.bullet.collision.*;
-import com.badlogic.gdx.physics.bullet.dynamics.btRigidBody;
 import com.badlogic.gdx.physics.bullet.dynamics.btRigidBodyConstructionInfo;
 import com.badlogic.gdx.physics.bullet.linearmath.btDefaultMotionState;
-import se.rhel.event.EventHandler;
-import se.rhel.event.EventType;
-import se.rhel.event.ModelEvent;
-import se.rhel.model.entity.GameObject;
+import se.rhel.model.component.*;
 import se.rhel.model.physics.BulletWorld;
 
 /**
@@ -22,33 +19,28 @@ public class Grenade extends GameObject implements IExplodable {
     private float explosionTime = 3f;
     private boolean isAlive = true;
 
-    //postition
-    private Vector3 mPosition = new Vector3();
-    private Vector3 mDirection = new Vector3();
+    private IPhysics mPhysicsComponent;
 
     public Grenade(BulletWorld world, Vector3 position, Vector3 direction) {
-        super(world);
+        super();
 
-        mPosition = position;
-        mDirection = direction;
-
-        getTransformation().setTranslation(position.add(Vector3.Y).add(direction));
+        mPhysicsComponent = createPhysicsComponent(world);
+        mTransform.getTransformation().setTranslation(position.add(Vector3.Y).add(direction.cpy().scl(0.5f)));
 
         createPhysicBody();
-
-        getBody().applyImpulse(mDirection.scl(20f), new Vector3(0.1f, 0.05f, 0.1f).scl(0.1f));
+        mPhysicsComponent.getBody().applyImpulse(direction.cpy().scl(20f), new Vector3(0.1f, 0.05f, 0.1f).scl(0.1f));
     }
 
     public void createPhysicBody() {
         Vector3 inertia = new Vector3();
         btCollisionShape shape = new btCapsuleShape(size, size);
         shape.calculateLocalInertia(1f, inertia);
-        btDefaultMotionState motionstate = new btDefaultMotionState(getTransformation());
+        btDefaultMotionState motionstate = new btDefaultMotionState(mTransform.getTransformation());
         btRigidBodyConstructionInfo info = new btRigidBodyConstructionInfo(1f, motionstate, shape, inertia);
         info.setFriction(5f);
         info.setRestitution(0.1f);
 
-        super.createPhysicBody(shape, info, motionstate, this);
+        mPhysicsComponent.createPhysicsBody(shape, info, motionstate, this);
     }
 
     public void update(float delta) {
@@ -61,8 +53,8 @@ public class Grenade extends GameObject implements IExplodable {
             }
         }
 
-        getBody().applyDamping(10f);
-        mTransformation.set(getBody().getCenterOfMassTransform());
+        mPhysicsComponent.getBody().applyDamping(10f);
+        mTransform.getTransformation().set(mPhysicsComponent.getBody().getCenterOfMassTransform());
     }
 
     public boolean isAlive() {

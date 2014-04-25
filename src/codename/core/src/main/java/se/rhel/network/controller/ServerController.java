@@ -4,7 +4,6 @@ import com.badlogic.gdx.math.Vector3;
 import se.rhel.Connection;
 import se.rhel.Server;
 import se.rhel.event.*;
-import se.rhel.model.entity.DamageAbleEntity;
 import se.rhel.network.model.ExternalPlayer;
 import se.rhel.network.model.ServerWorldModel;
 import se.rhel.network.packet.BulletHolePacket;
@@ -48,11 +47,11 @@ public class ServerController implements ServerModelListener {
                 mServer.sendToAllUDPExcept(new BulletHolePacket(hitPoint, hitNormal), con);
                 break;
             case DAMAGE:
-                mServerWorldModel.checkEntityStatus((ExternalPlayer)objs[0]);
-                mServer.sendToAllTCP(new DamagePacket(((ExternalPlayer)objs[0]).getClientId(), 25));
+                //mServerWorldModel.checkEntityStatus((ExternalPlayer)objs[0]);
+                mServer.sendToAllTCP(new DamagePacket(((ExternalPlayer)objs[0]).getNetworkID(), 25));
                 break;
             case SERVER_DEAD_ENTITY:
-                mServer.sendToAllTCP(new DeadEntityPacket(((ExternalPlayer)objs[0]).getClientId()));
+                mServer.sendToAllTCP(new DeadEntityPacket(((ExternalPlayer)objs[0]).getNetworkID()));
                 break;
             default:
                 break;

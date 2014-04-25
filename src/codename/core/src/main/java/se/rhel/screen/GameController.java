@@ -6,13 +6,8 @@ import com.badlogic.gdx.math.Vector3;
 import se.rhel.CodeName;
 import se.rhel.event.*;
 import se.rhel.model.WorldModel;
-import se.rhel.model.entity.DamageAbleEntity;
 import se.rhel.model.physics.RayVector;
 import se.rhel.model.weapon.Grenade;
-import se.rhel.model.weapon.IExplodable;
-import se.rhel.view.BulletHoleRenderer;
-import se.rhel.view.ParticleRenderer;
-import se.rhel.view.input.PlayerInput;
 import se.rhel.view.WorldView;
 
 /**
@@ -25,7 +20,6 @@ public class GameController extends BaseGameController {
 
     public GameController(CodeName game) {
         super();
-        //super(game);
         Gdx.app.setLogLevel(Application.LOG_NONE);
 
         mWorldModel = new WorldModel(mEvents);
@@ -49,7 +43,7 @@ public class GameController extends BaseGameController {
         super.inputEvent(type);
         switch (type) {
             case SHOOT:
-                mWorldModel.shoot();
+                mWorldModel.getPlayer().shoot();
                 break;
             case GRENADE:
                 Grenade g = new Grenade(mWorldModel.getBulletWorld(), mWorldModel.getPlayer().getPosition(), mWorldModel.getPlayer().getDirection());
@@ -68,12 +62,12 @@ public class GameController extends BaseGameController {
             case SHOOT:
                 RayVector ray = mWorldView.getCamera().getShootRay();
                 mWorldModel.checkShootCollision(ray);
-                RayVector visualray = mWorldView.getCamera().convertToVisualRay(ray);
-                mWorldView.shoot(visualray);
+                mWorldView.getCamera().convertToVisualRay(ray);
+                mWorldView.shoot(ray);
             break;
 
             case BULLET_HOLE:
-                BulletHoleRenderer.addBullethole((Vector3) objs[0], (Vector3) objs[1]);
+                mWorldView.addBullethole((Vector3)objs[0], (Vector3)objs[1]);
                 break;
 
             default:

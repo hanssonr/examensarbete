@@ -1,19 +1,21 @@
 package se.rhel.network.model;
 
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import se.rhel.Client;
-import se.rhel.event.EventHandler;
 import se.rhel.event.EventType;
 import se.rhel.event.Events;
 import se.rhel.event.ModelEvent;
 import se.rhel.model.*;
-import se.rhel.model.entity.DamageAbleEntity;
+import se.rhel.model.component.DamageComponent;
+import se.rhel.model.component.GameObject;
+import se.rhel.model.component.MoveComponent;
 import se.rhel.model.entity.IPlayer;
+import se.rhel.model.entity.Player;
 import se.rhel.model.physics.MyContactListener;
 import se.rhel.model.physics.RayVector;
 import se.rhel.model.weapon.Grenade;
-import se.rhel.util.Log;
 
 import java.util.HashMap;
 
@@ -41,15 +43,7 @@ public class ClientWorldModel extends BaseWorldModel implements INetworkWorldMod
     @Override
     public void update(float delta) {
         super.update(delta);
-
-        mPlayer.update(delta);
-
-        if(hasPlayerMoved()) {
-            mLastKnownPosition = mPlayer.getPosition();
-            mLastKnownRotation = mPlayer.getRotation().x;
-
-            mEvents.notify(new ModelEvent(EventType.PLAYER_MOVE));
-        }
+        updatePlayer(delta);
 
         for(IPlayer p : mPlayers.values()) {
             p.update(delta);
@@ -65,6 +59,21 @@ public class ClientWorldModel extends BaseWorldModel implements INetworkWorldMod
                 g.destroy();
                 mGrenades.removeIndex(i);
             }
+        }
+    }
+
+    private void updatePlayer(float delta) {
+        mPlayer.update(delta);
+
+        if(hasPlayerMoved()) {
+            mLastKnownPosition = mPlayer.getPosition();
+            mLastKnownRotation = mPlayer.getRotation().x;
+
+            mEvents.notify(new ModelEvent(EventType.PLAYER_MOVE));
+        }
+
+        if(mPlayer.wantToShoot()) {
+            mEvents.notify(new ModelEvent(EventType.SHOOT));
         }
     }
 
@@ -85,7 +94,7 @@ public class ClientWorldModel extends BaseWorldModel implements INetworkWorldMod
     }
 
     @Override
-    public void checkEntityStatus(DamageAbleEntity entity) {
+    public void checkEntityStatus(GameObject entity) {
 
     }
 
@@ -93,7 +102,8 @@ public class ClientWorldModel extends BaseWorldModel implements INetworkWorldMod
         try {
             for (IPlayer entity : mPlayers.values()) {
                 ExternalPlayer ep = (ExternalPlayer)entity;
-                if(ep.getClientId() == id) {
+
+                if(ep.getNetworkID() == id) {
                     return ep;
                 }
             }
@@ -125,20 +135,19 @@ public class ClientWorldModel extends BaseWorldModel implements INetworkWorldMod
     }
 
     public void damageEntity(int id, int amount) {
-        DamageAbleEntity dae = mClient.getId() == id ? mPlayer : getExternalPlayer(id);
-        super.damageEntity(dae, amount);
-        mEvents.notify(new ModelEvent(EventType.DAMAGE, dae));
+        GameObject obj = (GameObject)(mClient.getId() == id ? mPlayer : getExternalPlayer(id));
+        super.damageEntity(obj, amount);
+        mEvents.notify(new ModelEvent(EventType.DAMAGE, obj));
     }
 
     public void killEntity(int id) {
-        DamageAbleEntity dae = mClient.getId() == id ? mPlayer : getExternalPlayer(id);
-        dae.setAlive(false);
-        mEvents.notify(new ModelEvent(EventType.EXPLOSION, dae.getPosition()));
+        GameObject obj = (GameObject)(mClient.getId() == id ? mPlayer : getExternalPlayer(id));
+        super.killEntity(obj);
+        mEvents.notify(new ModelEvent(EventType.EXPLOSION, obj.getPosition()));
     }
 
-    public void shoot() {
-        if(getPlayer().canShoot()) {
-            mEvents.notify(new ModelEvent(EventType.SHOOT));
-        }
+    public void transformEntity(int clientId, Vector3 position, Vector2 rotation) {
+        GameObject obj = getExternalPlayer(clientId);
+        obj.rotateAndTranslate(rotation, position);
     }
 }

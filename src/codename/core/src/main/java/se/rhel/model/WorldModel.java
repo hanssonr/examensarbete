@@ -3,9 +3,10 @@ package se.rhel.model;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import se.rhel.event.*;
+import se.rhel.model.component.*;
 import se.rhel.model.entity.DummyEntity;
 import se.rhel.model.entity.IPlayer;
-import se.rhel.model.entity.DamageAbleEntity;
+import se.rhel.model.entity.Player;
 import se.rhel.model.physics.MyContactListener;
 import se.rhel.model.physics.RayVector;
 import se.rhel.model.weapon.Explosion;
@@ -37,11 +38,16 @@ public class WorldModel extends BaseWorldModel implements IWorldModel {
     @Override
     public void update(float delta) {
         super.update(delta);
-        mPlayer.update(delta);
+        updatePlayer(delta);
 
         for(int i = 0; i < mPlayers.size; i++) {
             DummyEntity de = (DummyEntity)mPlayers.get(i);
             de.update(delta);
+
+            IActionable ac = (IActionable) de.getComponent(ActionComponent.class);
+            if(ac.hasShoot()) {
+                mEvents.notify(new ModelEvent(EventType.SHOOT, de));
+            }
         }
 
         for (int i = 0; i < mGrenades.size; i++) {
@@ -58,6 +64,14 @@ public class WorldModel extends BaseWorldModel implements IWorldModel {
         }
     }
 
+    private void updatePlayer(float delta) {
+        mPlayer.update(delta);
+
+        if(mPlayer.wantToShoot()) {
+            mEvents.notify(new ModelEvent(EventType.SHOOT));
+        }
+    }
+
     @Override
     public void checkShootCollision(RayVector ray) {
         MyContactListener.CollisionObject co = super.getShootCollision(ray);
@@ -67,35 +81,35 @@ public class WorldModel extends BaseWorldModel implements IWorldModel {
                 mEvents.notify(new ModelEvent(EventType.BULLET_HOLE, co.hitPoint, co.hitNormal));
             }
             else if(co.type == MyContactListener.CollisionObject.CollisionType.ENTITY) {
-                damageEntity(co.entity, 25);
-                mEvents.notify(new ModelEvent(EventType.DAMAGE, co.entity));
+                if(co.entity.equals(mPlayer)) {
+                    System.out.println("SHOT SELF LOL");
+                    return;
+                } else {
+                    damageEntity(co.entity, 25);
+                    mEvents.notify(new ModelEvent(EventType.DAMAGE, co.entity));
+                }
             }
 
             ray.setTo(co.hitPoint);
         }
     }
 
-    public void handleExplosion(ArrayList<DamageAbleEntity> hit, IExplodable exp) {
-        for(DamageAbleEntity entity : hit) {
+    public void handleExplosion(ArrayList<GameObject> hit, IExplodable exp) {
+        for(GameObject obj : hit) {
+            IDamageable entity = (IDamageable) obj.getComponent(DamageComponent.class);
             entity.damageEntity(exp.getExplosionDamage());
-            mEvents.notify(new ModelEvent(EventType.DAMAGE, entity));
+            mEvents.notify(new ModelEvent(EventType.DAMAGE, obj));
         }
     }
 
-    public void checkEntityStatus(DamageAbleEntity entity) {
-        if(entity.isAlive() && entity.getHealth() <= 0) {
-            Vector3 tmp = entity.getPosition().cpy();
-            entity.setAlive(false);
+    public void checkEntityStatus(GameObject entity) {
+        IDamageable da = (IDamageable) entity.getComponent(DamageComponent.class);
+        if(da.isAlive() && da.getHealth() <= 0) {
+            da.setAlive(false);
 
-            Explosion exp = new Explosion(tmp, 15, 250);
+            Explosion exp = new Explosion(entity.getPosition(), 15, 250);
             mEvents.notify(new ModelEvent(EventType.EXPLOSION, exp.getPosition()));
             handleExplosion(getAffectedByExplosion(exp), exp);
-        }
-    }
-
-    public void shoot() {
-        if(getPlayer().canShoot()) {
-            mEvents.notify(new ModelEvent(EventType.SHOOT));
         }
     }
 

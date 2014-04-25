@@ -2,8 +2,9 @@ package se.rhel.model;
 
 import com.badlogic.gdx.utils.Array;
 import se.rhel.event.Events;
-import se.rhel.model.entity.DamageAbleEntity;
-import se.rhel.model.entity.GameObject;
+import se.rhel.model.component.DamageComponent;
+import se.rhel.model.component.GameObject;
+import se.rhel.model.component.IDamageable;
 import se.rhel.model.physics.BulletWorld;
 import se.rhel.model.physics.MyContactListener;
 import se.rhel.model.physics.RayVector;
@@ -50,7 +51,7 @@ public class BaseWorldModel {
         return mContactListener.checkShootCollision(getBulletWorld().getCollisionWorld(), ray);
     }
 
-    public ArrayList<DamageAbleEntity> getAffectedByExplosion(IExplodable explosion) {
+    public ArrayList<GameObject> getAffectedByExplosion(IExplodable explosion) {
         return mContactListener.checkExplosionCollision(getBulletWorld().getCollisionWorld(), explosion);
     }
 
@@ -58,8 +59,18 @@ public class BaseWorldModel {
         mGrenades.add(g);
     }
 
-    public void damageEntity(DamageAbleEntity entity, int amount) {
-        entity.damageEntity(amount);
+    public void damageEntity(GameObject obj, int amount) {
+        if(obj.hasComponent(DamageComponent.class)) {
+            IDamageable dae = (IDamageable)obj.getComponent(DamageComponent.class);
+            dae.damageEntity(amount);
+        }
+    }
+
+    public void killEntity(GameObject obj) {
+        if(obj.hasComponent(DamageComponent.class)) {
+            IDamageable dae = (IDamageable)obj.getComponent(DamageComponent.class);
+            dae.setAlive(false);
+        }
     }
 
     public void destroyGameObject(GameObject obj) {

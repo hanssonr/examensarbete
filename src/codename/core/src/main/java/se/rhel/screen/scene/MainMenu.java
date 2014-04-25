@@ -10,7 +10,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import se.rhel.CodeName;
 import se.rhel.screen.AbstactController;
 import se.rhel.screen.GameController;
-import se.rhel.screen.LobbyScreen;
+import se.rhel.network.controller.LobbyScreen;
 import se.rhel.view.sfx.SoundManager;
 
 /**

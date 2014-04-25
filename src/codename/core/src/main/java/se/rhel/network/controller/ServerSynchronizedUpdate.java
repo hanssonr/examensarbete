@@ -1,15 +1,12 @@
 package se.rhel.network.controller;
 
 import com.badlogic.gdx.math.Vector3;
-import com.sun.swing.internal.plaf.metal.resources.metal;
 import se.rhel.Connection;
 import se.rhel.Server;
-import se.rhel.event.EventHandler;
 import se.rhel.event.EventType;
 import se.rhel.event.Events;
 import se.rhel.event.ModelEvent;
-import se.rhel.model.entity.DamageAbleEntity;
-import se.rhel.model.physics.MyContactListener;
+import se.rhel.model.component.*;
 import se.rhel.model.physics.RayVector;
 import se.rhel.network.model.ConnectionWrappedObject;
 import se.rhel.network.model.ServerWorldModel;
@@ -66,12 +63,7 @@ public class ServerSynchronizedUpdate implements ServerListener {
             else if(obj instanceof PlayerMovePacket) {
                 PlayerMovePacket pmp = (PlayerMovePacket)obj;
 
-                // Set the position
-                ExternalPlayer p = mWorld.getExternalPlayer(pmp.clientId);
-                if(p == null) return;
-
-                p.setPositionAndRotation(pmp.mPosition, pmp.mRotation);
-
+                mWorld.transformEntity(pmp.clientId, pmp.mPosition, pmp.mRotation);
                 mServer.sendToAllUDPExcept(new PlayerMovePacket(pmp.clientId, pmp.mPosition, pmp.mRotation), con);
             }
 
@@ -97,14 +89,14 @@ public class ServerSynchronizedUpdate implements ServerListener {
                 mWorld.addGrenade(g);
 
                 // A player wants to throw a grenade!
-                ExternalPlayer ep = mWorld.getExternalPlayer(gcp.clientId);
-                if(ep != null) {
-                    if(ep.canThrowGrenade()) {
-                        mEvents.notify(new ModelEvent(EventType.GRENADE, ep.getPosition(), ep.getDirection()));
-                    }
+                GameObject go = mWorld.getExternalPlayer(gcp.clientId);
+                IActionable ac = (IActionable) go.getComponent(ActionComponent.class);
+
+                if(ac.canThrowGrenade()) {
+                    mEvents.notify(new ModelEvent(EventType.GRENADE, go.getPosition(), go.getDirection()));
                 }
 
-                mServer.sendToAllTCP(new GrenadeCreatePacket(g.getId(), ep.getPosition(), ep.getDirection()));
+                mServer.sendToAllTCP(new GrenadeCreatePacket(g.getId(), go.getPosition(), go.getDirection()));
             }
 
             it.remove();

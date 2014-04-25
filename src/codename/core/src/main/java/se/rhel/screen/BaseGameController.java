@@ -4,9 +4,8 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector3;
 import se.rhel.event.*;
 import se.rhel.model.IWorldModel;
-import se.rhel.model.entity.DamageAbleEntity;
-import se.rhel.model.weapon.Grenade;
-import se.rhel.model.weapon.IExplodable;
+import se.rhel.model.component.DamageComponent;
+import se.rhel.model.component.GameObject;
 import se.rhel.view.IWorldView;
 import se.rhel.view.ParticleRenderer;
 import se.rhel.view.input.IInput;
@@ -53,8 +52,8 @@ public class BaseGameController extends AbstactController implements ViewListene
                 break;
 
             case DAMAGE:
-                mWorldModel.checkEntityStatus(((DamageAbleEntity) objs[0]));
-                mWorldView.addParticleEffect(((DamageAbleEntity) objs[0]).getPosition(), ParticleRenderer.Particle.BLOOD);
+                mWorldModel.checkEntityStatus(((GameObject) objs[0]));
+                mWorldView.addParticleEffect(((GameObject) objs[0]).getPosition(), ParticleRenderer.Particle.BLOOD);
                 break;
         }
     }
@@ -66,7 +65,7 @@ public class BaseGameController extends AbstactController implements ViewListene
                 mWorldModel.getPlayer().jump();
                 break;
             case SHOOT:
-                mWorldModel.shoot();
+                mWorldModel.getPlayer().shoot();
                 break;
         }
     }

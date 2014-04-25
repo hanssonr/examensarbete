@@ -51,7 +51,7 @@ public class GrenadeRenderer {
     }
 
     public void addGrenade(Grenade grenade) {
-        mGrenades.put(grenade, new ModelInstance(Resources.INSTANCE.grenadeModel));
+        mGrenades.put(grenade, new ModelInstance(Resources.INSTANCE.grenadeModel, grenade.getTransformation()));
     }
 
 

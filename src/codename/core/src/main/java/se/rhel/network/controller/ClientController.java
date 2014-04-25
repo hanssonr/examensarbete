@@ -1,6 +1,5 @@
 package se.rhel.network.controller;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector3;
 import se.rhel.Client;
 import se.rhel.Snaek;
@@ -9,14 +8,11 @@ import se.rhel.model.physics.RayVector;
 import se.rhel.network.event.NetworkEvent;
 import se.rhel.network.event.NetworkListener;
 import se.rhel.network.model.ClientWorldModel;
-import se.rhel.model.entity.DamageAbleEntity;
 import se.rhel.model.weapon.Grenade;
 import se.rhel.network.model.INetworkWorldModel;
 import se.rhel.network.packet.*;
 import se.rhel.packet.Packet;
 import se.rhel.screen.BaseGameController;
-import se.rhel.view.BulletHoleRenderer;
-import se.rhel.view.ParticleRenderer;
 import se.rhel.view.WorldView;
 import se.rhel.view.input.PlayerInput;
 
@@ -80,13 +76,15 @@ public class ClientController extends BaseGameController implements NetworkListe
                 RayVector ray = mWorldView.getCamera().getShootRay();
                 mWorldModel.checkShootCollision(ray);
                 mWorldView.getCamera().convertToVisualRay(ray);
-                mWorldView.shoot(ray);
+
                 // The network, notify the server that we have shot
                 mClient.sendTcp(new ShootPacket(mClient.getId(), ray.getFrom(), ray.getTo()));
+
+                mWorldView.shoot(ray);
                 break;
 
             case BULLET_HOLE:
-                BulletHoleRenderer.addBullethole((Vector3) objs[0], (Vector3) objs[1]);
+                mWorldView.addBullethole((Vector3)objs[0], (Vector3)objs[1]);
                 break;
 
             case GRENADE_CREATED:
@@ -115,7 +113,7 @@ public class ClientController extends BaseGameController implements NetworkListe
         else if(packet instanceof BulletHolePacket) {
             BulletHolePacket bhp = (BulletHolePacket) packet;
             // Draw bullethole
-            BulletHoleRenderer.addBullethole(bhp.hitWorld, bhp.hitNormal);
+            mWorldView.addBullethole(bhp.hitWorld, bhp.hitNormal);
         }
         else if(packet instanceof PlayerPacket) {
             PlayerPacket pp = (PlayerPacket)packet;

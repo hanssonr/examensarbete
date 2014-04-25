@@ -6,6 +6,7 @@ import com.badlogic.gdx.physics.bullet.collision.btCapsuleShape;
 import com.badlogic.gdx.physics.bullet.collision.btCollisionShape;
 import com.badlogic.gdx.physics.bullet.dynamics.btRigidBodyConstructionInfo;
 import com.badlogic.gdx.physics.bullet.linearmath.btDefaultMotionState;
+import se.rhel.model.component.*;
 import se.rhel.model.physics.BulletWorld;
 
 /**
@@ -13,13 +14,23 @@ import se.rhel.model.physics.BulletWorld;
  *
  * Created by rkh on 2014-03-24.
  */
-public class DummyEntity extends ActionEntity implements IPlayer {
+public class DummyEntity extends GameObject implements IPlayer {
 
     private Vector2 mSize;
+    float yRot = 0;
+    float shootTimer = 0;
+
+    protected IPhysics mPhysicsComponent;
+    protected IDamageable mDamageComponent;
+    protected IActionable mActionComponent;
 
     public DummyEntity(BulletWorld world, float radius, float height, int maxHealth, float movespeed, Vector3 position) {
-        super(world, maxHealth, movespeed);
+        super();
         mSize = new Vector2(radius, height);
+
+        mPhysicsComponent = createPhysicsComponent(world);
+        mDamageComponent = createDamageableComponent(maxHealth);
+        mActionComponent = createActionComponent();
 
         getTransformation().setTranslation(position);
         createPhysicBody();
@@ -30,10 +41,25 @@ public class DummyEntity extends ActionEntity implements IPlayer {
         btRigidBodyConstructionInfo info = new btRigidBodyConstructionInfo(5f, null, shape, Vector3.Zero);
         btDefaultMotionState motionstate = new btDefaultMotionState(getTransformation());
 
-        super.createPhysicBody(shape, info, motionstate, this);
+        mPhysicsComponent.createPhysicsBody(shape, info, motionstate, this);
+    }
+
+    @Override
+    public boolean isAlive() {
+        return mDamageComponent.isAlive();
     }
 
     public void update(float delta) {
-        mTransformation.set(getBody().getCenterOfMassTransform());
+        mActionComponent.update(delta);
+        yRot += delta;
+        shootTimer += delta;
+
+        if(shootTimer > 2f) {
+            mActionComponent.shoot();
+            shootTimer = 0f;
+        }
+
+        mTransform.rotate(new Vector2(1, (float)Math.sin(yRot)));
+        getTransformation().setTranslation(mPhysicsComponent.getBody().getCenterOfMassPosition());
     }
 }

@@ -5,9 +5,9 @@ import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.g3d.Environment;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
-import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector3;
-import se.rhel.model.Player;
+import se.rhel.model.component.MoveComponent;
+import se.rhel.model.entity.Player;
 import se.rhel.res.Resources;
 
 /**

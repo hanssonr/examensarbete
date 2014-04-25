@@ -11,13 +11,13 @@ import com.badlogic.gdx.utils.Array;
 import se.rhel.model.physics.RayVector;
 import se.rhel.res.Resources;
 
-public class LaserView {
+public class LaserRenderer {
 
     private Array<LaserDecal> mLaserDecals;
 
     private DecalBatch mDecalBatch;
 
-    public LaserView(FPSCamera camera) {
+    public LaserRenderer(FPSCamera camera) {
         mLaserDecals = new Array<>();
         mDecalBatch = new DecalBatch(new CameraGroupStrategy(camera));
     }
@@ -60,17 +60,18 @@ public class LaserView {
             mLaserVertical = Decal.newDecal(mWidth, 0.1f, new TextureRegion(Resources.INSTANCE.laser), true);
             mLaserHorizontal = Decal.newDecal(mWidth, 0.1f, new TextureRegion(Resources.INSTANCE.laser), true);
 
-            mLaserVertical.setColor(1, 0, 0, 1);
-            mLaserHorizontal.setColor(1, 0, 0, 1);
+            mLaserVertical.setColor(0, 0, 1, 1);
+            mLaserHorizontal.setColor(0, 0, 1, 1);
 
             Vector3 dir = ray.getDirection().crs(FPSCamera.UP);
 
-            mLaserVertical.setRotation(dir.cpy(), ray.getDirection().crs(dir.cpy()));
-            mLaserHorizontal.setRotation(dir.cpy(), ray.getDirection().crs(dir.cpy()));
+            mLaserVertical.setRotation(dir, ray.getDirection().crs(dir));
+            mLaserHorizontal.setRotation(dir, ray.getDirection().crs(dir));
             mLaserHorizontal.rotateX(90f);
 
             mLaserVertical.setPosition(ray.getFrom().x, ray.getFrom().y, ray.getFrom().z);
             mLaserHorizontal.setPosition(ray.getFrom().x, ray.getFrom().y, ray.getFrom().z);
+
             mPosition = mLaserVertical.getPosition().cpy();
             lifeTime = (float)RayVector.getDistance(ray.getTo(), ray.getFrom()) / speed;
             mRay = ray;
@@ -85,7 +86,7 @@ public class LaserView {
         }
 
         public void update(float delta) {
-            mPosition.add(mRay.getDirection().cpy().scl(delta * speed));
+            mPosition.add(mRay.getDirection().scl(delta * speed));
             mLaserVertical.setPosition(mPosition.x, mPosition.y, mPosition.z);
             mLaserHorizontal.setPosition(mPosition.x, mPosition.y, mPosition.z);
 

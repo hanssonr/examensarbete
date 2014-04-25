@@ -46,7 +46,7 @@ public class FPSCamera extends PerspectiveCamera {
         // We want a ray from middle of screen as basis of hit detection
         Ray ray = getPickRay(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2);
         Vector3 end = new Vector3();
-        ray.getEndPoint(end, 75f);
+        ray.getEndPoint(end, 75f); TODO:// Should be weapons shootrange
         ray = ray.cpy();
 
         // For debugging purposes

@@ -19,9 +19,9 @@ public class BulletHoleRenderer {
     private DecalBatch mDecalBatch;
     private static FPSCamera mCamera;
 
-    private static Array<Decal> mBulletholes;
-    private static int MAX_BULLET_DECALS = 1000;
-    private static int CURRENT = 0;
+    private Array<Decal> mBulletholes;
+    private int MAX_BULLET_DECALS = 1000;
+    private int CURRENT = 0;
 
     public BulletHoleRenderer(FPSCamera camera) {
         mCamera = camera;
@@ -46,7 +46,7 @@ public class BulletHoleRenderer {
         mDecalBatch.flush();
     }
 
-    public static void addBullethole(Vector3 pos, Vector3 normal) {
+    public void addBullethole(Vector3 pos, Vector3 normal) {
         CURRENT = CURRENT++ >= MAX_BULLET_DECALS-1 ? 0 : CURRENT;
         Decal bh = mBulletholes.get(CURRENT);
         bh.setPosition(pos.x + (normal.x * 0.001f), pos.y + (normal.y * 0.001f), pos.z + (normal.z * 0.001f));

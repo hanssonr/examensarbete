@@ -11,7 +11,6 @@ import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.bullet.linearmath.btIDebugDraw;
@@ -50,7 +49,7 @@ public class WorldView implements IWorldView {
     private GrenadeRenderer mGrenadeRenderer;
     private LevelRenderer mLevelRenderer;
     private ParticleRenderer particleRenderer;
-    private LaserView mLaserView;
+    private LaserRenderer mLaserView;
     private ShapeRenderer mCrosshairRenderer;
     private BulletHoleRenderer mBulletHoleRenderer;
     private DecalRenderer mDecalRenderer;
@@ -79,7 +78,7 @@ public class WorldView implements IWorldView {
         mLatencyRenderer = new TextRenderer("Latency init", new Vector2(Gdx.graphics.getWidth() - 60, Gdx.graphics.getHeight() - 10), mWorldModel, mSpriteBatch);
         mDecalRenderer = new DecalRenderer(mCamera);
         particleRenderer = new ParticleRenderer(mWorldModel, mSpriteBatch, mCamera);
-        mLaserView = new LaserView(mCamera);
+        mLaserView = new LaserRenderer(mCamera);
 
         mDebugDrawer = new DebugDrawer();
         mWorldModel.getBulletWorld().getCollisionWorld().setDebugDrawer(mDebugDrawer);
@@ -123,7 +122,7 @@ public class WorldView implements IWorldView {
                 // External stuff
                 for (int i = 0; i < mWorldModel.getExternalPlayers().size; i++) {
                     DummyEntity de = (DummyEntity)mWorldModel.getExternalPlayers().get(i);
-                    mDecalRenderer.draw(delta, de.getPosition());
+                   // mDecalRenderer.draw(delta, de.getPosition());
                 }
             buffer1.end();
 
@@ -192,6 +191,10 @@ public class WorldView implements IWorldView {
 
     public void addParticleEffect(Vector3 position, ParticleRenderer.Particle type) {
         particleRenderer.addEffect(position, type);
+    }
+
+    public void addBullethole(Vector3 position, Vector3 normal) {
+        mBulletHoleRenderer.addBullethole(position, normal);
     }
 
     /**

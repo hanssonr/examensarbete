@@ -11,12 +11,15 @@ import se.rhel.res.Resources;
 public class LevelRenderer {
 
     ModelInstance mWorld;
+    ModelInstance mSky;
 
     public LevelRenderer() {
         mWorld = new ModelInstance(Resources.INSTANCE.levelModelVisual);
+        mSky = new ModelInstance(Resources.INSTANCE.space);
     }
 
     public void render(ModelBatch batch, Environment env) {
+       batch.render(mSky, env);
        batch.render(mWorld, env);
     }
 }
