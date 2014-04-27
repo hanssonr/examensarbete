@@ -45,4 +45,8 @@ public class RayVector {
                          (from.y-to.y)*(from.y-to.y) +
                          (from.z-to.z)*(from.z-to.z)));
     }
+
+    public static RayVector createFromDirection(Vector3 position, Vector3 direction, float length) {
+        return new RayVector(position, position.cpy().add(direction.cpy().nor().scl(length)));
+    }
 }

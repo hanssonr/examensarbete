@@ -68,7 +68,7 @@ public class WorldModel extends BaseWorldModel implements IWorldModel {
         mPlayer.update(delta);
 
         if(mPlayer.wantToShoot()) {
-            mEvents.notify(new ModelEvent(EventType.SHOOT));
+            mEvents.notify(new ModelEvent(EventType.SHOOT, mPlayer));
         }
     }
 
@@ -81,13 +81,9 @@ public class WorldModel extends BaseWorldModel implements IWorldModel {
                 mEvents.notify(new ModelEvent(EventType.BULLET_HOLE, co.hitPoint, co.hitNormal));
             }
             else if(co.type == MyContactListener.CollisionObject.CollisionType.ENTITY) {
-                if(co.entity.equals(mPlayer)) {
-                    System.out.println("SHOT SELF LOL");
-                    return;
-                } else {
-                    damageEntity(co.entity, 25);
-                    mEvents.notify(new ModelEvent(EventType.DAMAGE, co.entity));
-                }
+                damageEntity(co.entity, 25);
+                mEvents.notify(new ModelEvent(EventType.DAMAGE, co.entity));
+
             }
 
             ray.setTo(co.hitPoint);

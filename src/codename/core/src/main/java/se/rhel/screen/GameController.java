@@ -6,6 +6,7 @@ import com.badlogic.gdx.math.Vector3;
 import se.rhel.CodeName;
 import se.rhel.event.*;
 import se.rhel.model.WorldModel;
+import se.rhel.model.component.GameObject;
 import se.rhel.model.physics.RayVector;
 import se.rhel.model.weapon.Grenade;
 import se.rhel.view.WorldView;
@@ -60,7 +61,9 @@ public class GameController extends BaseGameController {
         super.modelEvent(type, objs);
         switch(type) {
             case SHOOT:
-                RayVector ray = mWorldView.getCamera().getShootRay();
+                //RayVector ray = mWorldView.getCamera().getShootRay();
+                GameObject entity = (GameObject) objs[0];
+                RayVector ray = RayVector.createFromDirection(entity.getPosition().add(Vector3.Y), entity.getDirection(), 75f);
                 mWorldModel.checkShootCollision(ray);
                 mWorldView.getCamera().convertToVisualRay(ray);
                 mWorldView.shoot(ray);
