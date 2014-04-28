@@ -10,9 +10,7 @@ import se.rhel.event.EventType;
 import se.rhel.event.Events;
 import se.rhel.event.ModelEvent;
 import se.rhel.model.*;
-import se.rhel.model.component.DamageComponent;
 import se.rhel.model.component.GameObject;
-import se.rhel.model.component.MoveComponent;
 import se.rhel.model.entity.IPlayer;
 import se.rhel.model.entity.Player;
 import se.rhel.model.physics.MyContactListener;
@@ -189,7 +187,7 @@ public class ClientWorldModel extends BaseWorldModel implements INetworkWorldMod
         mEvents.notify(new ModelEvent(EventType.EXPLOSION, obj.getPosition()));
     }
 
-    public void transformEntity(int clientId, Vector3 position, Vector2 rotation) {
+    public void transformEntity(int clientId, Vector3 position, Vector3 rotation) {
         GameObject obj = getExternalPlayer(clientId);
         obj.rotateAndTranslate(rotation, position);
     }

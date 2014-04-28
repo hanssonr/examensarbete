@@ -122,7 +122,7 @@ public class ServerWorldModel extends BaseWorldModel {
         return mPlayers.get(id);
     }
 
-    public void transformEntity(int clientId, Vector3 position, Vector2 rotation) {
+    public void transformEntity(int clientId, Vector3 position, Vector3 rotation) {
         GameObject obj = getExternalPlayer(clientId);
         obj.rotateAndTranslate(rotation, position);
 

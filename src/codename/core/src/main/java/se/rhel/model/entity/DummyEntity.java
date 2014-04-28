@@ -72,7 +72,7 @@ public class DummyEntity extends GameObject implements IPlayer {
         if(moveTimer > 4f) {
             moveTimer = 0;
             Random rand = new Random();
-            mTransform.rotateTo(new Vector2(rand.nextInt(359), 0));
+            mTransform.rotateTo(new Vector3(rand.nextInt(359), 0, 0));
         }
 
         Vector3 vel = mTransform.getDirection().cpy();

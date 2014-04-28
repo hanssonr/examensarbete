@@ -15,5 +15,5 @@ public interface INetworkWorldModel extends IWorldModel {
     public IPlayer getPlayerEntity(int id);
     public void damageEntity(int id, int amount);
     public void killEntity(int id);
-    public void transformEntity(int clientId, Vector3 position, Vector2 rotation);
+    public void transformEntity(int clientId, Vector3 position, Vector3 rotation);
 }

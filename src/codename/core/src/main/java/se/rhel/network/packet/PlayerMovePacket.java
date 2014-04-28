@@ -11,17 +11,18 @@ import se.rhel.packet.AClientPacket;
 public class PlayerMovePacket extends AClientPacket {
 
     public Vector3 mPosition = new Vector3();
-    public Vector2 mRotation = new Vector2();
+    public Vector3 mRotation = new Vector3();
 
     public PlayerMovePacket() {}
 
-    public PlayerMovePacket(int clientId, Vector3 position, Vector2 rotation) {
+    public PlayerMovePacket(int clientId, Vector3 position, Vector3 rotation) {
         super(clientId, PlayerMovePacket.class);
         putFloat(position.x);
         putFloat(position.y);
         putFloat(position.z);
         putFloat(rotation.x);
         putFloat(rotation.y);
+        putFloat(rotation.z);
         ready();
     }
 
@@ -32,5 +33,6 @@ public class PlayerMovePacket extends AClientPacket {
         mPosition.z = getFloat();
         mRotation.x = getFloat();
         mRotation.y = getFloat();
+        mRotation.z = getFloat();
     }
 }

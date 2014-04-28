@@ -27,9 +27,9 @@ public class PlayerInput implements IInput {
     public static boolean DRAW_SHOOT_DEBUG = false;
 
     public static boolean CLIENT_INTERPOLATION = true;
-
-    private Vector2 mRotation = Vector2.Zero;
-    private Vector3 mDirection = Vector3.Zero;
+    
+    private Vector3 mRotation = new Vector3(0,0,0);
+    private Vector3 mDirection = new Vector3(0,0,0);
 
     private Events mEvents;
 
@@ -55,7 +55,7 @@ public class PlayerInput implements IInput {
         mEvents = events;
     }
 
-    public Vector2 getRotation() {
+    public Vector3 getRotation() {
         return mRotation;
     }
     public Vector3 getDirection() {
