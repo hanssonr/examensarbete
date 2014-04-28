@@ -11,7 +11,7 @@ public class ActionComponent implements IActionable, IComponent {
     private float mDeltaShoot;
 
     // Grenades
-    private final int MAX_GRENADES = 100;
+    private final int MAX_GRENADES = 10;
     private int currentGrenades = 0;
 
     public void update(float delta) {
@@ -41,7 +41,7 @@ public class ActionComponent implements IActionable, IComponent {
     }
 
     public boolean canThrowGrenade() {
-        if(currentGrenades <= MAX_GRENADES) {
+        if(currentGrenades < MAX_GRENADES) {
             currentGrenades++;
             return true;
         }

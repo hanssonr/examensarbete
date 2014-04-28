@@ -53,9 +53,12 @@ public class WorldView implements IWorldView {
     private ShapeRenderer mCrosshairRenderer;
     private BulletHoleRenderer mBulletHoleRenderer;
     private DecalRenderer mDecalRenderer;
+
     private TextRenderer mFPSRenderer;
     private TextRenderer mBulletLoadRenderer;
     private TextRenderer mPlayerPosRenderer;
+    private TextRenderer mClientInterpolation;
+    private TextRenderer mServerLowFreq;
 
     // Networking stats
     private TextRenderer mLatencyRenderer;
@@ -76,6 +79,8 @@ public class WorldView implements IWorldView {
         mBulletLoadRenderer = new TextRenderer("Bullet init", new Vector2(10, Gdx.graphics.getHeight() - 30), mWorldModel, mSpriteBatch);
         mPlayerPosRenderer = new TextRenderer("Player init", new Vector2(10, Gdx.graphics.getHeight() - 60), mWorldModel, mSpriteBatch);
         mLatencyRenderer = new TextRenderer("Latency init", new Vector2(Gdx.graphics.getWidth() - 60, Gdx.graphics.getHeight() - 10), mWorldModel, mSpriteBatch);
+        mClientInterpolation = new TextRenderer("Init", new Vector2(10, Gdx.graphics.getHeight() - 90), mWorldModel, mSpriteBatch);
+        mServerLowFreq = new TextRenderer("Init", new Vector2(10, Gdx.graphics.getHeight() - 120), mWorldModel, mSpriteBatch);
         mDecalRenderer = new DecalRenderer(mCamera);
         particleRenderer = new ParticleRenderer(mWorldModel, mSpriteBatch, mCamera);
         mLaserView = new LaserRenderer(mCamera);
@@ -157,6 +162,11 @@ public class WorldView implements IWorldView {
                 mLatencyRenderer.setText(Client.getLatency() + " ms");
                 mLatencyRenderer.draw(delta);
             }
+
+            mClientInterpolation.setText("Client interpolation: " + (PlayerInput.CLIENT_INTERPOLATION ? "on" : "off"));
+            mClientInterpolation.draw(delta);
+            mServerLowFreq.setText("Server Low Freq Update: " + (PlayerInput.DO_LOW_FREQ_UPDATES ? "on" : "off"));
+            mServerLowFreq.draw(delta);
 
         }
 

@@ -37,7 +37,7 @@ public class TextRenderer extends A2DView {
 
         // DaFont
         mFont = Resources.INSTANCE.hudFont;
-        mFont.setColor(Color.RED);
+        mFont.setColor(Color.WHITE);
     }
 
     public void setText(String text) {

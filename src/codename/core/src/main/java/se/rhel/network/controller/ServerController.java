@@ -1,14 +1,17 @@
 package se.rhel.network.controller;
 
+import com.badlogic.gdx.math.Quaternion;
 import com.badlogic.gdx.math.Vector3;
 import se.rhel.Connection;
 import se.rhel.Server;
 import se.rhel.event.*;
+import se.rhel.model.weapon.Grenade;
 import se.rhel.network.model.ExternalPlayer;
 import se.rhel.network.model.ServerWorldModel;
 import se.rhel.network.packet.BulletHolePacket;
 import se.rhel.network.packet.DamagePacket;
 import se.rhel.network.packet.DeadEntityPacket;
+import se.rhel.network.packet.GrenadeUpdatePacket;
 
 /**
  * Group: Multiplayer
@@ -53,6 +56,18 @@ public class ServerController implements ServerModelListener {
                 break;
             case SERVER_DEAD_ENTITY:
                 mServer.sendToAllTCP(new DeadEntityPacket(((ExternalPlayer)objs[0]).getNetworkID()));
+                break;
+            case SHOOT:
+                break;
+            case JUMP:
+                break;
+            case GRENADE:
+                // Low freq update from the WorldModel, should be synched with client
+                Grenade g = (Grenade) objs[0];
+                boolean isAlive = (boolean) objs[1];
+                Quaternion q = new Quaternion();
+                q = g.getTransformation().getRotation(q);
+                mServer.sendToAllUDP(new GrenadeUpdatePacket(g.getId(), g.getPosition(), q, isAlive));
                 break;
             default:
                 break;

@@ -26,6 +26,9 @@ public class PlayerInput implements IInput {
     public static boolean DRAW_DEBUG_INFO = true;
     public static boolean DRAW_SHOOT_DEBUG = false;
 
+    public static boolean CLIENT_INTERPOLATION = true;
+    public static boolean DO_LOW_FREQ_UPDATES = true;
+    
     private Vector3 mRotation = new Vector3(0,0,0);
     private Vector3 mDirection = new Vector3(0,0,0);
 
@@ -148,6 +151,12 @@ public class PlayerInput implements IInput {
                 break;
             case Keys.F:
                 mEvents.notify(new ViewEvent(EventType.GRENADE));
+                break;
+            case Keys.I:
+                CLIENT_INTERPOLATION = !CLIENT_INTERPOLATION;
+                break;
+            case Keys.O:
+                DO_LOW_FREQ_UPDATES = !DO_LOW_FREQ_UPDATES;
                 break;
         }
         return true;

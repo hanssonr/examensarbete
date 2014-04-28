@@ -1,5 +1,7 @@
 package se.rhel.network.model;
 
+import com.badlogic.gdx.math.Matrix4;
+import com.badlogic.gdx.math.Quaternion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
@@ -14,6 +16,7 @@ import se.rhel.model.entity.Player;
 import se.rhel.model.physics.MyContactListener;
 import se.rhel.model.physics.RayVector;
 import se.rhel.model.weapon.Grenade;
+import se.rhel.view.input.PlayerInput;
 
 import java.util.HashMap;
 
@@ -25,6 +28,8 @@ public class ClientWorldModel extends BaseWorldModel implements INetworkWorldMod
 
     private Vector3 mLastKnownPosition = Vector3.Zero;
     private float mLastKnownRotation = 0f;
+
+    private HashMap<Integer, Matrix4> mTargetGrePositions = new HashMap<>();
 
     private Client mClient;
     private Player mPlayer;
@@ -49,13 +54,49 @@ public class ClientWorldModel extends BaseWorldModel implements INetworkWorldMod
 
         for (int i = 0; i < mGrenades.size; i++) {
             Grenade g = mGrenades.get(i);
+            // The grenade doesn't have to be updated on client
+            // g.update(delta);
+            Matrix4 toTemp = mTargetGrePositions.get(mGrenades.get(i).getId());
 
-            g.update(delta);
+            if(toTemp != null) {
+                if(PlayerInput.CLIENT_INTERPOLATION) {
+                    // Interpolate position..
+                    Vector3 v = new Vector3();
+                    v = g.getPosition().slerp(toTemp.getTranslation(v), 0.1f);
+                    // .. but just take the rotation from the server
+                    Matrix4 newM = new Matrix4(v, toTemp.getRotation(new Quaternion()), new Vector3(1f, 1f, 1f));
+                    g.getTransformation().set(newM);
+                } else {
+                    g.getTransformation().set(toTemp);
+                }
+            }
 
             if(!g.isAlive()) {
                 mEvents.notify(new ModelEvent(EventType.EXPLOSION, g.getPosition()));
                 g.destroy();
                 mGrenades.removeIndex(i);
+            }
+        }
+    }
+
+    /**
+     * A Grenade should be updated on client from server
+     * @param grenadeId
+     * @param newPos
+     */
+    public void updateGrenade(int grenadeId, Vector3 newPos, Quaternion newRotation, boolean isAlive) {
+        for (int i = 0; i < mGrenades.size; i++) {
+            // We're looking for a special grenade
+            if(mGrenades.get(i).getId() == grenadeId) {
+                Grenade g = mGrenades.get(i);
+                // Add the position to the hashmap
+                Matrix4 m = new Matrix4(newPos, newRotation, new Vector3(1f, 1f, 1f));
+                mTargetGrePositions.put(grenadeId, m);
+
+                // Set the grenade as dead
+                if(!isAlive) {
+                    g.setAlive(isAlive);
+                }
             }
         }
     }

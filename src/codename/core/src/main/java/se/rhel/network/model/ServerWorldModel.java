@@ -14,6 +14,7 @@ import se.rhel.model.physics.RayVector;
 import se.rhel.model.weapon.Explosion;
 import se.rhel.model.weapon.Grenade;
 import se.rhel.model.weapon.IExplodable;
+import se.rhel.view.input.PlayerInput;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -26,6 +27,10 @@ public class ServerWorldModel extends BaseWorldModel {
     // Linkin ID's and Players
     private HashMap<Integer, ExternalPlayer> mPlayers;
 
+    private final float LOW_FREQ = 0.1f;
+    private float CURR_FREQ_TIMER = 0f;
+    private boolean SEND_LOW_FREQ = false;
+
     public ServerWorldModel(Events events) {
         super(events);
         mPlayers = new HashMap<>();
@@ -35,6 +40,15 @@ public class ServerWorldModel extends BaseWorldModel {
     public void update(float delta) {
         super.update(delta);
 
+        // Low frequency update
+        CURR_FREQ_TIMER += delta;
+        if(CURR_FREQ_TIMER >= LOW_FREQ) {
+            SEND_LOW_FREQ = true;
+            CURR_FREQ_TIMER = 0f;
+        } else {
+            SEND_LOW_FREQ = false;
+        }
+
         for(ExternalPlayer p : mPlayers.values()) {
             p.update(delta);
         }
@@ -42,13 +56,25 @@ public class ServerWorldModel extends BaseWorldModel {
         //Update grenades
         for (int i = 0; i < mGrenades.size; i++) {
             Grenade g = mGrenades.get(i);
-
             g.update(delta);
 
             if(!g.isAlive()) {
+                // A grenade is found as dead, send it to client as such
+                mEvents.notify(new ServerModelEvent(EventType.GRENADE, g, false));
+
                 handleExplosion(getAffectedByExplosion(g), g);
                 g.destroy();
                 mGrenades.removeIndex(i);
+            } else {
+                // The grenade is still alive and should be synched with client
+                // If we want a lower freq update
+                if(PlayerInput.DO_LOW_FREQ_UPDATES) {
+                    if(SEND_LOW_FREQ) {
+                        mEvents.notify(new ServerModelEvent(EventType.GRENADE, g, true));
+                    }
+                } else {
+                    mEvents.notify(new ServerModelEvent(EventType.GRENADE, g, true));
+                }
             }
         }
     }
