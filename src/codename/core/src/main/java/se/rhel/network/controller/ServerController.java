@@ -1,5 +1,6 @@
 package se.rhel.network.controller;
 
+import com.badlogic.gdx.math.Quaternion;
 import com.badlogic.gdx.math.Vector3;
 import se.rhel.Connection;
 import se.rhel.Server;
@@ -64,8 +65,9 @@ public class ServerController implements ServerModelListener {
                 // Low freq update from the WorldModel, should be synched with client
                 Grenade g = (Grenade) objs[0];
                 boolean isAlive = (boolean) objs[1];
-
-                mServer.sendToAllUDP(new GrenadeUpdatePacket(g.getId(), g.getPosition(), new Vector3(g.getRotation().x, g.getRotation().y, 0), isAlive));
+                Quaternion q = new Quaternion();
+                q = g.getTransformation().getRotation(q);
+                mServer.sendToAllUDP(new GrenadeUpdatePacket(g.getId(), g.getPosition(), q, isAlive));
                 break;
             default:
                 break;

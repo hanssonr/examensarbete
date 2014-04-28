@@ -29,7 +29,7 @@ public class ClientWorldModel extends BaseWorldModel implements INetworkWorldMod
     private Vector3 mLastKnownPosition = Vector3.Zero;
     private float mLastKnownRotation = 0f;
 
-    private HashMap<Integer, Vector3> mTargetGrePositions = new HashMap<>();
+    private HashMap<Integer, Matrix4> mTargetGrePositions = new HashMap<>();
 
     private Client mClient;
     private Player mPlayer;
@@ -55,26 +55,27 @@ public class ClientWorldModel extends BaseWorldModel implements INetworkWorldMod
         for (int i = 0; i < mGrenades.size; i++) {
             Grenade g = mGrenades.get(i);
             // g.update(delta);
-            Vector3 toTemp = mTargetGrePositions.get(mGrenades.get(i).getId());
+            Matrix4 toTemp = mTargetGrePositions.get(mGrenades.get(i).getId());
+
             if(toTemp != null) {
                 if(PlayerInput.CLIENT_INTERPOLATION) {
-                    Vector3 v = g.getPosition().lerp(toTemp, 0.1f);
-                    g.getTransformation().setTranslation(v);
+                    // Interpolate position
+                    Vector3 v = new Vector3();
+                    v = g.getPosition().lerp(toTemp.getTranslation(v), 0.1f);
+                    Matrix4 newM = new Matrix4(v, toTemp.getRotation(new Quaternion()), new Vector3(1f, 1f, 1f));
+                    g.getTransformation().set(newM);
+
                 } else {
-                    g.getTransformation().setTranslation(toTemp);
+                    g.getTransformation().set(toTemp);
                 }
             }
 
-            /*
             if(!g.isAlive()) {
                 mEvents.notify(new ModelEvent(EventType.EXPLOSION, g.getPosition()));
                 g.destroy();
                 mGrenades.removeIndex(i);
             }
-            */
         }
-
-
     }
 
     /**
@@ -82,23 +83,19 @@ public class ClientWorldModel extends BaseWorldModel implements INetworkWorldMod
      * @param grenadeId
      * @param newPos
      */
-    public void updateGrenade(int grenadeId, Vector3 newPos, Vector3 newRotation, boolean isAlive) {
+    public void updateGrenade(int grenadeId, Vector3 newPos, Quaternion newRotation, boolean isAlive) {
         for (int i = 0; i < mGrenades.size; i++) {
             // We're looking for a special grenade
             if(mGrenades.get(i).getId() == grenadeId) {
                 Grenade g = mGrenades.get(i);
                 // Update position
-                mTargetGrePositions.put(grenadeId, newPos);
-                // g.getTransformation().setTranslation(newPos);
+                Matrix4 m = new Matrix4(newPos, newRotation, new Vector3(1f, 1f, 1f));
+                mTargetGrePositions.put(grenadeId, m);
 
                 // And remove if it has exploded on server
                 if(!isAlive) {
                     g.setAlive(isAlive);
-                    mEvents.notify(new ModelEvent(EventType.EXPLOSION, g.getPosition()));
-                    g.destroy();
-                    mGrenades.removeIndex(i);
                 }
-                // mGrenades.get(i).getTransformation().set(new Matrix4(newPos, new Quaternion(newRotation.x, newRotation.y, newRotation.z, 0), new Vector3(1f, 1f, 1f)));
             }
         }
     }

@@ -14,6 +14,7 @@ import se.rhel.model.physics.RayVector;
 import se.rhel.model.weapon.Explosion;
 import se.rhel.model.weapon.Grenade;
 import se.rhel.model.weapon.IExplodable;
+import se.rhel.view.input.PlayerInput;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -58,7 +59,6 @@ public class ServerWorldModel extends BaseWorldModel {
             g.update(delta);
 
             if(!g.isAlive()) {
-
                 mEvents.notify(new ServerModelEvent(EventType.GRENADE, g, false));
 
                 handleExplosion(getAffectedByExplosion(g), g);
@@ -66,9 +66,12 @@ public class ServerWorldModel extends BaseWorldModel {
                 mGrenades.removeIndex(i);
             } else {
                 // The grenade is still alive and should be synched with client
-
                 // If we want a lower freq update, notify below
-                if(SEND_LOW_FREQ) {
+                if(PlayerInput.DO_LOW_FREQ_UPDATES) {
+                    if(SEND_LOW_FREQ) {
+                        mEvents.notify(new ServerModelEvent(EventType.GRENADE, g, true));
+                    }
+                } else {
                     mEvents.notify(new ServerModelEvent(EventType.GRENADE, g, true));
                 }
             }
