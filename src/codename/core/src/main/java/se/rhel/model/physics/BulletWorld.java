@@ -31,7 +31,7 @@ public class BulletWorld implements BaseModel {
     private Array<btRigidBody> mBodies = new Array<>();
     private Array<btDefaultMotionState> mMotionStates = new Array<>();
 
-    private Vector3 mGravity = new Vector3(0, -9.18f, 0);
+    private Vector3 mGravity = new Vector3(0, -9.87f, 0);
     private final float FIXED_TIMESTEP = 1f/60f;
 
     public BulletWorld() {

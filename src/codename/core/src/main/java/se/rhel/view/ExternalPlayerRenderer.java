@@ -36,7 +36,7 @@ public class ExternalPlayerRenderer {
     //Animation
     private HashMap<IPlayer, AnimationController> mAnimations = new HashMap<>();
     private HashMap<IPlayer, ModelInstance> mWeaponArms = new HashMap<>();
-    private HashMap<IPlayer, Boolean> mAnimationStop = new HashMap<>();
+    private HashMap<IPlayer, Float> mAnimationStop = new HashMap<>();
     private Vector3 newPos = new Vector3();
     private Vector3 oldPos = new Vector3();
 
@@ -58,7 +58,7 @@ public class ExternalPlayerRenderer {
 
         //should check what weapon entity have
         mWeaponArms.put(entity, mLaser.copy());
-        mAnimationStop.put(entity, true);
+        mAnimationStop.put(entity, 0f);
     }
 
     public void render(ModelBatch batch, Environment env) {
@@ -92,17 +92,18 @@ public class ExternalPlayerRenderer {
             ac.target.transform.getTranslation(newPos);
 
             if (newPos.dst(oldPos) > 0) {
-                mAnimationStop.put(entity, false);
+                mAnimationStop.put(entity, 0f);
                 if(!ac.current.animation.id.equals(ANIMATION_WALK)) {
                     ac.setAnimation(ANIMATION_WALK, -1, 2f, null);
                 }
             } else {
-                if(mAnimationStop.get(entity)) {
+                if(mAnimationStop.get(entity) > 0f) {
                     if(ANIMATION_WALK.equals(ac.current.animation.id)) {
-                        ac.setAnimation(ANIMATION_IDLE, -1);
+                        ac.queue(ANIMATION_IDLE, -1, 1, null, 0.05f);
+                        //ac.setAnimation(ANIMATION_IDLE, -1);
                     }
                 } else {
-                    mAnimationStop.put(entity, true);
+                    mAnimationStop.put(entity, mAnimationStop.get(entity) + delta);
                 }
             }
 
