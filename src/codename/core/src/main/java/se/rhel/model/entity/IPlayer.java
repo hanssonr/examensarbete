@@ -10,7 +10,7 @@ import com.badlogic.gdx.math.Vector3;
 public interface IPlayer {
 
     public Matrix4 getTransformation();
-    public Vector2 getRotation();
+    public Vector3 getRotation();
     public Vector3 getPosition();
     public Vector3 getDirection();
     public boolean isAlive();

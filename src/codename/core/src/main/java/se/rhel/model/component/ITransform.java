@@ -12,8 +12,8 @@ public interface ITransform {
     public Matrix4 getTransformation();
     public Vector3 getPosition();
     public Vector3 getDirection();
-    public Vector2 getRotation();
-    public void rotateBy(Vector2 amount);
-    public void rotateTo(Vector2 rotation);
-    public void rotateAndTranslate(Vector2 rotation, Vector3 position);
+    public Vector3 getRotation();
+    public void rotateBy(Vector3 amount);
+    public void rotateTo(Vector3 rotation);
+    public void rotateAndTranslate(Vector3 rotation, Vector3 position);
 }

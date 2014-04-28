@@ -144,7 +144,7 @@ public class ClientWorldModel extends BaseWorldModel implements INetworkWorldMod
         mEvents.notify(new ModelEvent(EventType.EXPLOSION, obj.getPosition()));
     }
 
-    public void transformEntity(int clientId, Vector3 position, Vector2 rotation) {
+    public void transformEntity(int clientId, Vector3 position, Vector3 rotation) {
         GameObject obj = getExternalPlayer(clientId);
         obj.rotateAndTranslate(rotation, position);
     }

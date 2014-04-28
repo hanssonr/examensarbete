@@ -1,7 +1,6 @@
 package se.rhel.model.component;
 
 import com.badlogic.gdx.math.Matrix4;
-import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.bullet.collision.btCollisionWorld;
 import se.rhel.model.physics.BulletWorld;
@@ -102,22 +101,22 @@ public class GameObject implements ITransform {
     }
 
     @Override
-    public Vector2 getRotation() {
+    public Vector3 getRotation() {
         return mTransform.getRotation();
     }
 
     @Override
-    public void rotateBy(Vector2 amount) {
+    public void rotateBy(Vector3 amount) {
         mTransform.rotateBy(amount);
     }
 
     @Override
-    public void rotateTo(Vector2 rotation) {
+    public void rotateTo(Vector3 rotation) {
         mTransform.rotateTo(rotation);
     }
 
     @Override
-    public void rotateAndTranslate(Vector2 rotation, Vector3 position) {
+    public void rotateAndTranslate(Vector3 rotation, Vector3 position) {
         mTransform.rotateAndTranslate(rotation, position);
     }
 

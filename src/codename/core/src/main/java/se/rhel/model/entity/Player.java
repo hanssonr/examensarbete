@@ -2,8 +2,6 @@ package se.rhel.model.entity;
 
 import com.badlogic.gdx.math.*;
 import com.badlogic.gdx.physics.bullet.collision.*;
-import com.badlogic.gdx.physics.bullet.collision.ClosestRayResultCallback;
-import com.badlogic.gdx.physics.bullet.collision.btCollisionObject;
 import com.badlogic.gdx.physics.bullet.collision.btCollisionShape;
 import com.badlogic.gdx.physics.bullet.dynamics.btRigidBodyConstructionInfo;
 import com.badlogic.gdx.physics.bullet.linearmath.btDefaultMotionState;
@@ -112,8 +110,8 @@ public class Player extends GameObject implements IPlayer{
     }
 
     @Override
-    public void rotateBy(Vector2 amount) {
-        Vector2 temp = getRotation().cpy();
+    public void rotateBy(Vector3 amount) {
+        Vector3 temp = getRotation().cpy();
 
         temp.y += amount.y;
         if(temp.y > 60) amount.y -= temp.y - 60;
