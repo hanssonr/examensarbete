@@ -14,6 +14,7 @@ import se.rhel.model.weapon.Grenade;
 import se.rhel.model.weapon.IExplodable;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 /**
  * Group: Logic
@@ -28,11 +29,13 @@ public class WorldModel extends BaseWorldModel implements IWorldModel {
     public WorldModel(Events events) {
         super(events);
         mPlayer = new Player(new Vector3(0, 20, 0), getBulletWorld());
+        Random rand = new Random();
 
-        mPlayers.add(new DummyEntity(getBulletWorld(), 0.7f, 1.6f, 100, 7f, new Vector3(10, 5, 0)));
-        mPlayers.add(new DummyEntity(getBulletWorld(), 0.7f, 1.6f, 100, 7f, new Vector3(0, 5, 0)));
-        mPlayers.add(new DummyEntity(getBulletWorld(), 0.7f, 1.6f, 100, 7f, new Vector3(10, 5, 10)));
-        mPlayers.add(new DummyEntity(getBulletWorld(), 0.7f, 1.6f, 100, 7f, new Vector3(0, 5, 10)));
+        for(int i = 0; i < 1; i++) {
+            float x = (float) (Math.random() * 81)-40;
+            float z = (float) (Math.random() * 81)-40;
+            mPlayers.add(new DummyEntity(getBulletWorld(), 0.7f, 1.6f, 100, 7f, new Vector3(5, 10, 5), mPlayer));
+        }
     }
 
     @Override
@@ -46,7 +49,8 @@ public class WorldModel extends BaseWorldModel implements IWorldModel {
 
             IActionable ac = (IActionable) de.getComponent(ActionComponent.class);
             if(ac.hasShoot()) {
-                mEvents.notify(new ModelEvent(EventType.SHOOT, de));
+                RayVector ray = RayVector.createFromDirection(de.getPosition().add(Vector3.Y), de.calculateShootDirection(), 75f);
+                mEvents.notify(new ModelEvent(EventType.SHOOT, ray));
             }
         }
 
@@ -68,7 +72,8 @@ public class WorldModel extends BaseWorldModel implements IWorldModel {
         mPlayer.update(delta);
 
         if(mPlayer.wantToShoot()) {
-            mEvents.notify(new ModelEvent(EventType.SHOOT, mPlayer));
+            RayVector ray = RayVector.createFromDirection(mPlayer.getPosition().add(Vector3.Y), mPlayer.getDirection(), 75f);
+            mEvents.notify(new ModelEvent(EventType.SHOOT, ray));
         }
     }
 
@@ -100,12 +105,16 @@ public class WorldModel extends BaseWorldModel implements IWorldModel {
 
     public void checkEntityStatus(GameObject entity) {
         IDamageable da = (IDamageable) entity.getComponent(DamageComponent.class);
+        if(entity instanceof Player) {
+            System.out.println("YEAP");
+        }
         if(da.isAlive() && da.getHealth() <= 0) {
             da.setAlive(false);
 
-            Explosion exp = new Explosion(entity.getPosition(), 15, 250);
+            Explosion exp = new Explosion(entity.getPosition(), 5, 50);
             mEvents.notify(new ModelEvent(EventType.EXPLOSION, exp.getPosition()));
             handleExplosion(getAffectedByExplosion(exp), exp);
+            entity.destroy();
         }
     }
 

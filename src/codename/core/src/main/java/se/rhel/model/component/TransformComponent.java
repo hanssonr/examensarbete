@@ -19,7 +19,9 @@ public class TransformComponent implements ITransform, IComponent {
 
     public void rotateBy(Vector3 amount) {
         mRotation.add(amount);
-        mTransformation.rotate(Vector3.Y, mRotation.x);
+        if(mRotation.x > 360) mRotation.x -= 360;
+        if(mRotation.x < 0) mRotation.x += 360;
+        mTransformation.rotate(Vector3.Y, amount.x);
         calculateDirection();
     }
 

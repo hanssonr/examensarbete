@@ -20,7 +20,7 @@ public class ExternalPlayer extends DummyEntity {
     private INetwork mNetworkComponent;
 
     public ExternalPlayer(int clientId, Vector3 position, BulletWorld world) {
-        super(world, PLAYERSIZE.x, PLAYERSIZE.y, MAX_HEALTH, 7f, position);
+        super(world, PLAYERSIZE.x, PLAYERSIZE.y, MAX_HEALTH, 7f, position, null);
 
         mNetworkComponent = createNetworkComponent(clientId);
         getTransformation().setTranslation(position);
