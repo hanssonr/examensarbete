@@ -83,20 +83,22 @@ public class ServerSynchronizedUpdate implements ServerListener {
                 Log.debug("ServerSynchronizedUpdate", "GrenadeCreatePacket received on server");
                 GrenadeCreatePacket gcp = (GrenadeCreatePacket) obj;
 
-                //Add info to create grenade
-                Grenade g = new Grenade(mWorld.getBulletWorld(), gcp.position, gcp.direction);
-                g.setId(Utils.getInstance().generateUniqueId());
-                mWorld.addGrenade(g);
-
                 // A player wants to throw a grenade!
                 GameObject go = mWorld.getExternalPlayer(gcp.clientId);
                 IActionable ac = (IActionable) go.getComponent(ActionComponent.class);
 
+                // Check if the player can throw
                 if(ac.canThrowGrenade()) {
-                    mEvents.notify(new ModelEvent(EventType.GRENADE, go.getPosition(), go.getDirection()));
+                    //Add info to create grenade
+                    Grenade g = new Grenade(mWorld.getBulletWorld(), gcp.position, gcp.direction);
+                    g.setId(Utils.getInstance().generateUniqueId());
+
+                    mWorld.addGrenade(g);
+
+                    // Send tcp to clients
+                    mServer.sendToAllTCP(new GrenadeCreatePacket(g.getId(), go.getPosition(), go.getDirection()));
                 }
 
-                mServer.sendToAllTCP(new GrenadeCreatePacket(g.getId(), go.getPosition(), go.getDirection()));
             }
 
             it.remove();

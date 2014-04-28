@@ -25,18 +25,22 @@ public enum SoundManager {
     }
 
     public void playMusic(boolean looping, float volume) {
+        /*
         menutheme.stop();
         theme.stop();
         theme.setLooping(looping);
         theme.setVolume(volume);
         theme.play();
+        */
     }
 
     public void playMenuMusic() {
+        /*
         menutheme.stop();
         menutheme.setLooping(true);
         menutheme.setVolume(0.2f);
         menutheme.play();
+        */
     }
 
     public void playSound(SoundType type) {

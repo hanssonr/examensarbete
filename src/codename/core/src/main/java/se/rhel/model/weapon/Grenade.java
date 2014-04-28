@@ -17,6 +17,7 @@ public class Grenade extends GameObject implements IExplodable {
     private float mExplosionRadius = 10f;
     private float size = 0.2f;
     private float explosionTime = 3f;
+
     private boolean isAlive = true;
 
     private IPhysics mPhysicsComponent;
@@ -60,6 +61,7 @@ public class Grenade extends GameObject implements IExplodable {
     public boolean isAlive() {
         return isAlive;
     }
+    public void setAlive(boolean val) { isAlive = val; }
 
     @Override
     public float getExplosionRadius() {

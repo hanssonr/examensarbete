@@ -72,6 +72,14 @@ public abstract class Packet {
         mMaxBuffer.put(b);
     }
 
+    public void putBoolean(boolean b) {
+        if(b) {
+            putByte((byte)1);
+        } else {
+            putByte((byte)0);
+        }
+    }
+
     public void putInt(int i) {
         PACKET_SIZE += (Integer.SIZE / BYTE);
         mMaxBuffer.putInt(i);
@@ -106,6 +114,11 @@ public abstract class Packet {
     // Getting the packet values
     public byte getByte() {
         return mBuffer.get();
+    }
+
+    public boolean getBoolean() {
+        byte b = getByte();
+        return b == 1;
     }
 
     public int getInt() {
