@@ -17,19 +17,11 @@ public class Player extends GameObject implements IPlayer{
 
     //Finals
     private final float JUMP_HEIGHT = 7f;
-    private final float GRAVITY_POWER = 15f;
 
     private float mRespawnTimer;
-    private float mGravity = 0f;
 
     //Actions
     private boolean mIsJumping = false;
-    private boolean mOnGround = false;
-
-    //RayCasts
-    private ClosestRayResultCallback rayTestCB;
-    private Vector3 fromGround = new Vector3();
-    private Vector3 toGround = new Vector3();
 
     private static Vector2 mPlayersize = new Vector2(0.6f, 1.5f);
 
@@ -39,6 +31,7 @@ public class Player extends GameObject implements IPlayer{
     private IActionable mActionComponent;
     private IDamageable mDamageComponent;
     private IPhysics mPhysicsComponent;
+    private IGravity mGravityComponent;
 
     public Player(Vector3 position, BulletWorld world) {
         super();
@@ -49,8 +42,8 @@ public class Player extends GameObject implements IPlayer{
         mPhysicsComponent = createPhysicsComponent(world);
         mDamageComponent = createDamageableComponent(maxhealth);
         mActionComponent = createActionComponent();
+        mGravityComponent = createGravityComponent(world.getCollisionWorld(), 15f);
 
-        rayTestCB = new ClosestRayResultCallback(Vector3.Zero, Vector3.Zero);
         createPyshicsBody();
     }
 
@@ -71,11 +64,11 @@ public class Player extends GameObject implements IPlayer{
             mPhysicsComponent.getBody().setGravity(Vector3.Zero);
             mTransform.getTransformation().set(mPhysicsComponent.getBody().getCenterOfMassTransform());
 
-            checkOnGround();
-            calculateGravity(delta);
+            mGravityComponent.checkOnGround(getPosition(), mPlayersize.y);
+            mGravityComponent.calculateGravity(delta);
 
             Vector3 vel = getVelocity();
-            vel.y = mGravity;
+            vel.y = mGravityComponent.getGravity();
 
             //Change gravity if jumping
             if (mIsJumping) {
@@ -91,43 +84,11 @@ public class Player extends GameObject implements IPlayer{
         }
     }
 
-    private void checkOnGround() {
-        mOnGround = false;
-        fromGround.set(mTransform.getPosition());
-        toGround.set(new Vector3(fromGround.x, fromGround.y - mPlayersize.y, fromGround.z));
-
-        ClosestRayResultCallback cb = new ClosestRayResultCallback(fromGround, toGround);
-        cb.setCollisionObject(null);
-
-        mPhysicsComponent.getPhysicsWorld().getCollisionWorld().rayTest(fromGround, toGround, cb);
-
-        if(cb.hasHit()) {
-            final btCollisionObject obj = cb.getCollisionObject();
-            if (obj.isStaticObject()) {
-                mOnGround = true;
-            }
-        }
-    }
-
     public void jump() {
-        if(isGrounded()) {
-            mGravity = JUMP_HEIGHT;
+        if(mGravityComponent.isGrounded()) {
+            mGravityComponent.setGravity(JUMP_HEIGHT);
             mIsJumping = true;
         }
-    }
-
-    private void calculateGravity(float delta) {
-        if(!isGrounded()) {
-            mGravity -= GRAVITY_POWER * delta;
-        } else {
-            if (mGravity < -10) mGravity = -10;
-            mGravity += GRAVITY_POWER * delta;
-            if (mGravity > 0) mGravity = 0;
-        }
-    }
-
-    public boolean isGrounded() {
-        return mOnGround;
     }
 
     @Override

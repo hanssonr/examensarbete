@@ -31,6 +31,6 @@ public class ExternalPlayer extends DummyEntity {
     }
 
     public void update(float delta) {
-        //mPhysicsComponent.getBody().setCenterOfMassTransform(getTransformation());
+        mPhysicsComponent.getBody().setCenterOfMassTransform(getTransformation());
     }
 }

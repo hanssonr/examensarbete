@@ -2,9 +2,7 @@ package se.rhel.model.entity;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.physics.bullet.collision.ClosestRayResultCallback;
 import com.badlogic.gdx.physics.bullet.collision.btCapsuleShape;
-import com.badlogic.gdx.physics.bullet.collision.btCollisionObject;
 import com.badlogic.gdx.physics.bullet.collision.btCollisionShape;
 import com.badlogic.gdx.physics.bullet.dynamics.btRigidBodyConstructionInfo;
 import com.badlogic.gdx.physics.bullet.linearmath.btDefaultMotionState;
@@ -25,18 +23,10 @@ public class DummyEntity extends GameObject implements IPlayer {
     float shootTimer = 0;
     float moveTimer = 0;
 
-    //RayCasts
-    private ClosestRayResultCallback rayTestCB;
-    private Vector3 fromGround = new Vector3();
-    private Vector3 toGround = new Vector3();
-    private boolean mOnGround = false;
-    private float mGravity = 0f;
-    private final float GRAVITY_POWER = 15f;
-
-
     protected IPhysics mPhysicsComponent;
     protected IDamageable mDamageComponent;
     protected IActionable mActionComponent;
+    protected IGravity mGravityComponent;
 
     public DummyEntity(BulletWorld world, float radius, float height, int maxHealth, float movespeed, Vector3 position) {
         super();
@@ -45,6 +35,7 @@ public class DummyEntity extends GameObject implements IPlayer {
         mPhysicsComponent = createPhysicsComponent(world);
         mDamageComponent = createDamageableComponent(maxHealth);
         mActionComponent = createActionComponent();
+        mGravityComponent = createGravityComponent(world.getCollisionWorld(), 15f);
 
         getTransformation().setTranslation(position);
         createPhysicBody();
@@ -65,8 +56,8 @@ public class DummyEntity extends GameObject implements IPlayer {
     }
 
     public void update(float delta) {
-        checkOnGround();
-        calculateGravity(delta);
+        mGravityComponent.checkOnGround(getPosition(), mSize.y);
+        mGravityComponent.calculateGravity(delta);
 
         mActionComponent.update(delta);
         yRot += delta;
@@ -85,38 +76,10 @@ public class DummyEntity extends GameObject implements IPlayer {
         }
 
         Vector3 vel = mTransform.getDirection().cpy();
-        vel.y = mGravity;
+        vel.y = mGravityComponent.getGravity();
         mPhysicsComponent.getBody().activate(true);
         mPhysicsComponent.getBody().setLinearVelocity(vel.scl(7f));
 
         getTransformation().setTranslation(mPhysicsComponent.getBody().getCenterOfMassPosition());
-    }
-
-    private void checkOnGround() {
-        mOnGround = false;
-        fromGround.set(mTransform.getPosition());
-        toGround.set(new Vector3(fromGround.x, fromGround.y - mSize.y, fromGround.z));
-
-        ClosestRayResultCallback cb = new ClosestRayResultCallback(fromGround, toGround);
-        cb.setCollisionObject(null);
-
-        mPhysicsComponent.getPhysicsWorld().getCollisionWorld().rayTest(fromGround, toGround, cb);
-
-        if(cb.hasHit()) {
-            final btCollisionObject obj = cb.getCollisionObject();
-            if (obj.isStaticObject()) {
-                mOnGround = true;
-            }
-        }
-    }
-
-    private void calculateGravity(float delta) {
-        if(!mOnGround) {
-            mGravity -= GRAVITY_POWER * delta;
-        } else {
-            if (mGravity < -10) mGravity = -10;
-            mGravity += GRAVITY_POWER * delta;
-            if (mGravity > 0) mGravity = 0;
-        }
     }
 }

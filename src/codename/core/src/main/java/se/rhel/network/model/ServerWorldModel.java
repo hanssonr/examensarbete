@@ -59,6 +59,7 @@ public class ServerWorldModel extends BaseWorldModel {
         if(co != null) {
             if(co.type == MyContactListener.CollisionObject.CollisionType.ENTITY) {
                 damageEntity(co.entity, 25);
+                mEvents.notify(new ServerModelEvent(EventType.DAMAGE, co.entity));
             }
             else if(co.type == MyContactListener.CollisionObject.CollisionType.WORLD) {
                 mEvents.notify(new ServerModelEvent(EventType.SERVER_WORLD_COLLISION, co.hitPoint, co.hitNormal, con));
@@ -85,12 +86,6 @@ public class ServerWorldModel extends BaseWorldModel {
             handleExplosion(getAffectedByExplosion(exp), exp);
             mEvents.notify(new ServerModelEvent(EventType.SERVER_DEAD_ENTITY, entity));
         }
-    }
-
-    public void damageEntity(DamageComponent entity, int amount) {
-        entity.damageEntity(amount);
-
-        mEvents.notify(new ServerModelEvent(EventType.DAMAGE, entity));
     }
 
     public HashMap<Integer, ExternalPlayer> getPlayers() {

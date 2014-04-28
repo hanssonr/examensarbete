@@ -3,6 +3,7 @@ package se.rhel.model.component;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.physics.bullet.collision.btCollisionWorld;
 import se.rhel.model.physics.BulletWorld;
 
 import java.util.ArrayList;
@@ -68,10 +69,10 @@ public class GameObject implements ITransform {
         return dc;
     }
 
-    protected IMovable createMovableComponent(float movespeed) {
-        MoveComponent mc = new MoveComponent(movespeed);
-        addComponent(mc);
-        return mc;
+    protected IGravity createGravityComponent(btCollisionWorld collisionworld, float gravitypower) {
+        GravityComponent gc = new GravityComponent(collisionworld, gravitypower);
+        addComponent(gc);
+        return gc;
     }
 
     protected INetwork createNetworkComponent(int id) {
