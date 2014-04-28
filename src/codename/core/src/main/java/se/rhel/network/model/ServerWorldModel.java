@@ -59,6 +59,7 @@ public class ServerWorldModel extends BaseWorldModel {
             g.update(delta);
 
             if(!g.isAlive()) {
+                // A grenade is found as dead, send it to client as such
                 mEvents.notify(new ServerModelEvent(EventType.GRENADE, g, false));
 
                 handleExplosion(getAffectedByExplosion(g), g);
@@ -66,7 +67,7 @@ public class ServerWorldModel extends BaseWorldModel {
                 mGrenades.removeIndex(i);
             } else {
                 // The grenade is still alive and should be synched with client
-                // If we want a lower freq update, notify below
+                // If we want a lower freq update
                 if(PlayerInput.DO_LOW_FREQ_UPDATES) {
                     if(SEND_LOW_FREQ) {
                         mEvents.notify(new ServerModelEvent(EventType.GRENADE, g, true));

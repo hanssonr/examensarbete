@@ -41,7 +41,7 @@ public class ActionComponent implements IActionable, IComponent {
     }
 
     public boolean canThrowGrenade() {
-        if(currentGrenades <= MAX_GRENADES) {
+        if(currentGrenades < MAX_GRENADES) {
             currentGrenades++;
             return true;
         }

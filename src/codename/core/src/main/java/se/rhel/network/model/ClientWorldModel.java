@@ -54,17 +54,18 @@ public class ClientWorldModel extends BaseWorldModel implements INetworkWorldMod
 
         for (int i = 0; i < mGrenades.size; i++) {
             Grenade g = mGrenades.get(i);
+            // The grenade doesn't have to be updated on client
             // g.update(delta);
             Matrix4 toTemp = mTargetGrePositions.get(mGrenades.get(i).getId());
 
             if(toTemp != null) {
                 if(PlayerInput.CLIENT_INTERPOLATION) {
-                    // Interpolate position
+                    // Interpolate position..
                     Vector3 v = new Vector3();
-                    v = g.getPosition().lerp(toTemp.getTranslation(v), 0.1f);
+                    v = g.getPosition().slerp(toTemp.getTranslation(v), 0.1f);
+                    // .. but just take the rotation from the server
                     Matrix4 newM = new Matrix4(v, toTemp.getRotation(new Quaternion()), new Vector3(1f, 1f, 1f));
                     g.getTransformation().set(newM);
-
                 } else {
                     g.getTransformation().set(toTemp);
                 }
@@ -88,11 +89,11 @@ public class ClientWorldModel extends BaseWorldModel implements INetworkWorldMod
             // We're looking for a special grenade
             if(mGrenades.get(i).getId() == grenadeId) {
                 Grenade g = mGrenades.get(i);
-                // Update position
+                // Add the position to the hashmap
                 Matrix4 m = new Matrix4(newPos, newRotation, new Vector3(1f, 1f, 1f));
                 mTargetGrePositions.put(grenadeId, m);
 
-                // And remove if it has exploded on server
+                // Set the grenade as dead
                 if(!isAlive) {
                     g.setAlive(isAlive);
                 }
