@@ -111,6 +111,17 @@ public class Player extends GameObject implements IPlayer{
         mActionComponent.shoot();
     }
 
+    @Override
+    public void rotateBy(Vector2 amount) {
+        Vector2 temp = getRotation().cpy();
+
+        temp.y += amount.y;
+        if(temp.y > 60) amount.y -= temp.y - 60;
+        if(temp.y < -60) amount.y -= temp.y + 60;
+
+        super.rotateBy(amount);
+    }
+
     public boolean wantToShoot() {
         return mActionComponent.hasShoot();
     }

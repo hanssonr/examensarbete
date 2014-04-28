@@ -18,16 +18,9 @@ public class TransformComponent implements ITransform, IComponent {
         mTransformation = new Matrix4().idt();
     }
 
-    public void rotate(Vector2 rotation) {
-        mRotation.x += rotation.x;
-        if(mRotation.x > 360) mRotation.x -= 360;
-        if(mRotation.x < 0) mRotation.x += 360;
-
-        mRotation.y += rotation.y;
-        if(mRotation.y > 60) mRotation.y = 60;
-        if(mRotation.y < -60) mRotation.y = -60;
-
-        mTransformation.setToRotation(Vector3.Y, mRotation.x);
+    public void rotateBy(Vector2 amount) {
+        mRotation.add(amount);
+        mTransformation.rotate(Vector3.Y, mRotation.x);
         calculateDirection();
     }
 

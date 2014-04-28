@@ -35,7 +35,7 @@ public class BaseGameController extends AbstactController implements ViewListene
         mPlayerInput.processCurrentInput(delta);
 
         mWorldModel.getPlayer().move(mPlayerInput.getDirection());
-        mWorldModel.getPlayer().rotate(mPlayerInput.getRotation());
+        mWorldModel.getPlayer().rotateBy(mPlayerInput.getRotation());
 
         mWorldModel.update(delta);
         mWorldView.update(delta);

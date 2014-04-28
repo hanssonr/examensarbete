@@ -13,7 +13,7 @@ public interface ITransform {
     public Vector3 getPosition();
     public Vector3 getDirection();
     public Vector2 getRotation();
-    public void rotate(Vector2 amount);
+    public void rotateBy(Vector2 amount);
     public void rotateTo(Vector2 rotation);
     public void rotateAndTranslate(Vector2 rotation, Vector3 position);
 }

@@ -107,8 +107,8 @@ public class GameObject implements ITransform {
     }
 
     @Override
-    public void rotate(Vector2 rotation) {
-        mTransform.rotate(rotation);
+    public void rotateBy(Vector2 amount) {
+        mTransform.rotateBy(amount);
     }
 
     @Override
