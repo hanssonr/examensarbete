@@ -50,7 +50,6 @@ public class ServerController implements ServerModelListener {
                 mServer.sendToAllUDPExcept(new BulletHolePacket(hitPoint, hitNormal), con);
                 break;
             case DAMAGE:
-                System.out.println("SERVER DAMAGE PACKA");
                 mServerWorldModel.checkEntityStatus((ExternalPlayer)objs[0]);
                 mServer.sendToAllTCP(new DamagePacket(((ExternalPlayer)objs[0]).getNetworkID(), 25));
                 break;

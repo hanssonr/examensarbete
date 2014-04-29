@@ -19,15 +19,13 @@ import java.util.Random;
 public class DummyEntity extends GameObject implements IPlayer {
 
     private Vector2 mSize;
-    float shootTimer = 0;
 
     protected IPhysics mPhysicsComponent;
     protected IDamageable mDamageComponent;
     protected IActionable mActionComponent;
     protected IGravity mGravityComponent;
-    private ZombieAIComponent mZombie;
 
-    public DummyEntity(BulletWorld world, float radius, float height, int maxHealth, float movespeed, Vector3 position, IPlayer player) {
+    public DummyEntity(BulletWorld world, float radius, float height, int maxHealth, float movespeed, Vector3 position) {
         super();
         mSize = new Vector2(radius, height);
 
@@ -35,7 +33,6 @@ public class DummyEntity extends GameObject implements IPlayer {
         mDamageComponent = createDamageableComponent(maxHealth);
         mActionComponent = createActionComponent();
         mGravityComponent = createGravityComponent(world.getCollisionWorld(), 15f);
-        mZombie = new ZombieAIComponent(player, mTransform);
 
 
         getTransformation().setTranslation(position);
@@ -59,22 +56,12 @@ public class DummyEntity extends GameObject implements IPlayer {
     public void update(float delta) {
         mGravityComponent.checkOnGround(getPosition(), mSize.y);
         mGravityComponent.calculateGravity(delta);
-        mZombie.update(delta);
         mActionComponent.update(delta);
 
-        shootTimer += delta;
-
-//        if(shootTimer > 2f && mZombie.chasingTarget()) {
-//            mActionComponent.shoot();
-//            shootTimer = 0f;
-//        }
-
-        Vector3 vel = new Vector3(mZombie.getDirection().scl(4f));
-        vel.y = mGravityComponent.getGravity();
-        mPhysicsComponent.getBody().activate(true);
-        mPhysicsComponent.getBody().setLinearVelocity(vel);
-
-        getTransformation().setTranslation(mPhysicsComponent.getBody().getCenterOfMassPosition());
+        if(hasComponent(IAIComponent.class)) {
+            IAIComponent ai = (IAIComponent) getComponent(IAIComponent.class);
+            ai.update(delta);
+        }
     }
 
     public Vector3 calculateShootDirection() {

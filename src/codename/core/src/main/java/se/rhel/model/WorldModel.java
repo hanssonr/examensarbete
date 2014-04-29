@@ -12,9 +12,7 @@ import se.rhel.model.physics.RayVector;
 import se.rhel.model.weapon.Explosion;
 import se.rhel.model.weapon.Grenade;
 import se.rhel.model.weapon.IExplodable;
-
 import java.util.ArrayList;
-import java.util.Random;
 
 /**
  * Group: Logic
@@ -30,10 +28,13 @@ public class WorldModel extends BaseWorldModel implements IWorldModel {
         super(events);
         mPlayer = new Player(new Vector3(0, 20, 0), getBulletWorld());
 
-        for(int i = 0; i < 1; i++) {
+        for(int i = 0; i < 144; i++) {
             float x = (float) (Math.random() * 81)-40;
             float z = (float) (Math.random() * 81)-40;
-            mPlayers.add(new DummyEntity(getBulletWorld(), 0.7f, 1.6f, 100, 7f, new Vector3(x, 10, z), mPlayer));
+
+            DummyEntity de = new DummyEntity(getBulletWorld(), 0.7f, 1.6f, 100, 7f, new Vector3(x, 10, z));
+            de.addComponent(new ZombieAIComponent(mPlayer, de));
+            mPlayers.add(de);
         }
     }
 

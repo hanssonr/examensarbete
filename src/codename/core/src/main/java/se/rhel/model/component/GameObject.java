@@ -5,6 +5,7 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.bullet.collision.btCollisionWorld;
 import se.rhel.model.physics.BulletWorld;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 
 
@@ -32,22 +33,30 @@ public class GameObject implements ITransform {
     }
 
     /**
-     * Returns a component
+     * Returns a component that either implements a interface or are of the class type that param is.
+     * Don't put a generic interface e.g IComponent, then You are a tard.
+     *
      * @param componentClass - Class of component
      * @return
      */
     public IComponent getComponent(Class<?> componentClass) {
         for(IComponent component : mComponents) {
-            if(componentClass == component.getClass()) {
+            if(componentClass.equals(component.getClass())) {
                 return component;
+            }
+
+            for(Class classinterface : component.getClass().getInterfaces()) {
+                if(classinterface.equals(componentClass))
+                    return component;
             }
         }
 
         return null;
     }
 
-    private void addComponent(IComponent component) {
-        mComponents.add(component);
+    public void addComponent(IComponent component) {
+        if(!hasComponent(component.getClass()))
+            mComponents.add(component);
     }
 
     protected IPhysics createPhysicsComponent(BulletWorld world) {

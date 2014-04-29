@@ -8,50 +8,58 @@ import se.rhel.model.physics.RayVector;
 /**
  * Created by rkh on 2014-04-28.
  */
-public class ZombieAIComponent {
+public class ZombieAIComponent implements IAIComponent, IComponent {
 
     private IPlayer mVictim;
     private Vector3 mDirection = new Vector3();
-    private Vector3 mTempPos = new Vector3();
     private float mMovetimer = 4f;
-    private ITransform mTc;
     private boolean mChasingTarget = false;
 
-    public ZombieAIComponent(IPlayer player, ITransform tc) {
+    private ITransform mTransform;
+    private IPhysics mPhysic;
+    private IGravity mGravity;
+
+    public ZombieAIComponent(IPlayer player, GameObject obj) {
         mVictim = player;
-        mTc = tc;
+
+        mTransform = (ITransform) obj.getComponent(TransformComponent.class);
+        mPhysic = (IPhysics) obj.getComponent(PhysicsComponent.class);
+        mGravity = (IGravity) obj.getComponent(GravityComponent.class);
     }
 
     public void update(float delta) {
-        mTc.getTransformation().getTranslation(mTempPos);
-
-        if(RayVector.getDistance(mVictim.getPosition(), mTempPos) < 15) {
+        if(RayVector.getDistance(mVictim.getPosition(), mTransform.getPosition()) < 15) {
             mChasingTarget = true;
-            mDirection = mVictim.getPosition().cpy().sub(mTempPos).nor();
+            mDirection = mVictim.getPosition().cpy().sub(mTransform.getPosition()).nor();
 
-            Vector2 currXDir = new Vector2(mTc.getDirection().x, mTc.getDirection().z).nor();
+            Vector2 currXDir = new Vector2(mTransform.getDirection().x, mTransform.getDirection().z).nor();
             Vector2 wantedXDir = new Vector2(mDirection.x, mDirection.z).nor();
 
             float xangle = (float) Math.toDegrees(Math.atan2(wantedXDir.cpy().crs(currXDir), wantedXDir.cpy().dot(currXDir)));
-            float yangle = (float) Math.toDegrees(mDirection.y - mTc.getDirection().y);
+            float yangle = (float) Math.toDegrees(mDirection.y - mTransform.getDirection().y);
 
-            mTc.rotateBy(new Vector3(xangle, yangle, 0));
+            mTransform.rotateBy(new Vector3(xangle, yangle, 0));
         } else {
             mChasingTarget = false;
             mMovetimer += delta;
             if(mMovetimer > 4f) {
                 mMovetimer = 0;
-                mTc.rotateTo(new Vector3((float) (Math.random() * 360), 0, 0));
-                mDirection.set(mTc.getDirection());
+                mTransform.rotateTo(new Vector3((float) (Math.random() * 360), 0, 0));
+                mDirection.set(mTransform.getDirection());
             }
         }
-    }
 
-    public Vector3 getDirection() {
-        return mDirection.cpy();
-    }
+//        shootTimer += delta;
+//        if(shootTimer > 2f && mAI.hasTarget()) {
+//            mActionComponent.shoot();
+//            shootTimer = 0f;
+//        }
 
-    public boolean chasingTarget() {
-        return mChasingTarget;
+        Vector3 vel = new Vector3(mDirection.cpy().scl(4f));
+        vel.y = mGravity.getGravity();
+        mPhysic.getBody().activate(true);
+        mPhysic.getBody().setLinearVelocity(vel);
+
+        mTransform.getTransformation().setTranslation(mPhysic.getBody().getCenterOfMassPosition());
     }
 }
