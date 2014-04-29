@@ -62,14 +62,14 @@ public class DummyEntity extends GameObject implements IPlayer {
         mZombie.update(delta);
         mActionComponent.update(delta);
 
-//        shootTimer += delta;
-//
-//        if(shootTimer > 2f) {
+        shootTimer += delta;
+
+//        if(shootTimer > 2f && mZombie.chasingTarget()) {
 //            mActionComponent.shoot();
 //            shootTimer = 0f;
 //        }
 
-        Vector3 vel = new Vector3(mZombie.getDirection().scl(2f));
+        Vector3 vel = new Vector3(mZombie.getDirection().scl(4f));
         vel.y = mGravityComponent.getGravity();
         mPhysicsComponent.getBody().activate(true);
         mPhysicsComponent.getBody().setLinearVelocity(vel);
@@ -81,7 +81,7 @@ public class DummyEntity extends GameObject implements IPlayer {
         double bias = Math.random();
         Vector3 dir = getDirection().cpy();
 
-        if(bias > 0.75d) {
+        if(bias > 0.3d) {
             dir.x += 0.2f;
             dir.z += 0.2f;
         }

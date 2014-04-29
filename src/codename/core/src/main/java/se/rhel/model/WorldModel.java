@@ -29,12 +29,11 @@ public class WorldModel extends BaseWorldModel implements IWorldModel {
     public WorldModel(Events events) {
         super(events);
         mPlayer = new Player(new Vector3(0, 20, 0), getBulletWorld());
-        Random rand = new Random();
 
         for(int i = 0; i < 1; i++) {
             float x = (float) (Math.random() * 81)-40;
             float z = (float) (Math.random() * 81)-40;
-            mPlayers.add(new DummyEntity(getBulletWorld(), 0.7f, 1.6f, 100, 7f, new Vector3(5, 10, 5), mPlayer));
+            mPlayers.add(new DummyEntity(getBulletWorld(), 0.7f, 1.6f, 100, 7f, new Vector3(x, 10, z), mPlayer));
         }
     }
 
