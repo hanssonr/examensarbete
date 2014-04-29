@@ -2,7 +2,6 @@ package se.rhel.network.model;
 
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Quaternion;
-import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import se.rhel.Client;
@@ -188,13 +187,14 @@ public class ClientWorldModel extends BaseWorldModel implements INetworkWorldMod
     }
 
     public void killEntity(int id) {
-        GameObject obj = (GameObject)(mClient.getId() == id ? mPlayer : getExternalPlayer(id));
+        GameObject obj = mClient.getId() == id ? mPlayer : getExternalPlayer(id);
         super.killEntity(obj);
         mEvents.notify(new ModelEvent(EventType.EXPLOSION, obj.getPosition()));
     }
 
     public void transformEntity(int clientId, Vector3 position, Vector3 rotation) {
         GameObject obj = getExternalPlayer(clientId);
-        obj.rotateAndTranslate(rotation, position);
+        if(obj != null)
+            obj.rotateAndTranslate(rotation, position);
     }
 }

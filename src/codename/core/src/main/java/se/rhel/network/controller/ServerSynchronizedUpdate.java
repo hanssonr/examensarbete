@@ -7,6 +7,7 @@ import se.rhel.event.EventType;
 import se.rhel.event.Events;
 import se.rhel.event.ModelEvent;
 import se.rhel.model.component.*;
+import se.rhel.model.entity.IPlayer;
 import se.rhel.model.physics.RayVector;
 import se.rhel.network.model.ConnectionWrappedObject;
 import se.rhel.network.model.ServerWorldModel;
@@ -49,13 +50,13 @@ public class ServerSynchronizedUpdate implements ServerListener {
                 Log.debug("ServerWorldModel", "Initial state requested from clientId: " + con.getId());
 
                 // Sending all the players to the client requested, except self
-                for(Map.Entry<Integer, ExternalPlayer> pairs : mWorld.getPlayers().entrySet()) {
+                for(Map.Entry<Integer, IPlayer> pairs : mWorld.getPlayers().entrySet()) {
                     int id = pairs.getKey();
-                    ExternalPlayer ep = pairs.getValue();
+                    IPlayer ep = pairs.getValue();
                     if(id != con.getId()) {
                         Log.debug("ServerWorldModel", "Sending player with id: " + id + " to " + con.getId());
                         PlayerPacket pp = new PlayerPacket(id, ep.getPosition());
-                        mServer.sendTCP(pp, con);
+                        mServer.sendUDP(pp, con);
                     }
                 }
             }
@@ -84,7 +85,7 @@ public class ServerSynchronizedUpdate implements ServerListener {
                 GrenadeCreatePacket gcp = (GrenadeCreatePacket) obj;
 
                 // A player wants to throw a grenade!
-                GameObject go = mWorld.getExternalPlayer(gcp.clientId);
+                GameObject go = (GameObject) mWorld.getExternalPlayer(gcp.clientId);
                 IActionable ac = (IActionable) go.getComponent(ActionComponent.class);
 
                 // Check if the player can throw

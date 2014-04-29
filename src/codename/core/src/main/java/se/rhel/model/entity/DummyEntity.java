@@ -34,7 +34,6 @@ public class DummyEntity extends GameObject implements IPlayer {
         mActionComponent = createActionComponent();
         mGravityComponent = createGravityComponent(world.getCollisionWorld(), 15f);
 
-
         getTransformation().setTranslation(position);
         createPhysicBody();
     }

@@ -13,7 +13,6 @@ public class ZombieAIComponent implements IAIComponent, IComponent {
     private IPlayer mVictim;
     private Vector3 mDirection = new Vector3();
     private float mMovetimer = 4f;
-    private boolean mChasingTarget = false;
 
     private ITransform mTransform;
     private IPhysics mPhysic;
@@ -28,26 +27,24 @@ public class ZombieAIComponent implements IAIComponent, IComponent {
     }
 
     public void update(float delta) {
-        if(RayVector.getDistance(mVictim.getPosition(), mTransform.getPosition()) < 15) {
-            mChasingTarget = true;
-            mDirection = mVictim.getPosition().cpy().sub(mTransform.getPosition()).nor();
-
-            Vector2 currXDir = new Vector2(mTransform.getDirection().x, mTransform.getDirection().z).nor();
-            Vector2 wantedXDir = new Vector2(mDirection.x, mDirection.z).nor();
-
-            float xangle = (float) Math.toDegrees(Math.atan2(wantedXDir.cpy().crs(currXDir), wantedXDir.cpy().dot(currXDir)));
-            float yangle = (float) Math.toDegrees(mDirection.y - mTransform.getDirection().y);
-
-            mTransform.rotateBy(new Vector3(xangle, yangle, 0));
-        } else {
-            mChasingTarget = false;
+//        if(RayVector.getDistance(mVictim.getPosition(), mTransform.getPosition()) < 15) {
+//            mDirection = mVictim.getPosition().cpy().sub(mTransform.getPosition()).nor();
+//
+//            Vector2 currXDir = new Vector2(mTransform.getDirection().x, mTransform.getDirection().z).nor();
+//            Vector2 wantedXDir = new Vector2(mDirection.x, mDirection.z).nor();
+//
+//            float xangle = (float) Math.toDegrees(Math.atan2(wantedXDir.cpy().crs(currXDir), wantedXDir.cpy().dot(currXDir)));
+//            float yangle = (float) Math.toDegrees(mDirection.y - mTransform.getDirection().y);
+//
+//            mTransform.rotateBy(new Vector3(xangle, yangle, 0));
+//        } else {
             mMovetimer += delta;
             if(mMovetimer > 4f) {
                 mMovetimer = 0;
                 mTransform.rotateTo(new Vector3((float) (Math.random() * 360), 0, 0));
                 mDirection.set(mTransform.getDirection());
             }
-        }
+        //}
 
 //        shootTimer += delta;
 //        if(shootTimer > 2f && mAI.hasTarget()) {

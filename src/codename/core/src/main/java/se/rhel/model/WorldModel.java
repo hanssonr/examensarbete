@@ -28,7 +28,7 @@ public class WorldModel extends BaseWorldModel implements IWorldModel {
         super(events);
         mPlayer = new Player(new Vector3(0, 20, 0), getBulletWorld());
 
-        for(int i = 0; i < 144; i++) {
+        for(int i = 0; i < 50; i++) {
             float x = (float) (Math.random() * 81)-40;
             float z = (float) (Math.random() * 81)-40;
 

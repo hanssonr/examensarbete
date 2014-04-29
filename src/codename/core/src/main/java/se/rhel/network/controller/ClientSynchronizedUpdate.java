@@ -41,8 +41,8 @@ public class ClientSynchronizedUpdate implements ClientListener {
             Object obj = it.next();
 
             if (obj instanceof PlayerPacket) {
-                Log.debug("ClientSynchronizedUpdate", "Player_Join packet - Player can be viewed on client!!");
                 PlayerPacket pp = (PlayerPacket)obj;
+                Log.debug("ClientSynchronizedUpdate", "Player_Join packet - Player can be viewed on client!! ID = " + pp.clientId);
                 ExternalPlayer ep = new ExternalPlayer(pp.clientId, pp.mPosition, mWorld.getBulletWorld());
                 mWorld.addPlayer(pp.clientId, ep);
 

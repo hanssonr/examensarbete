@@ -1,19 +1,19 @@
 package se.rhel.network.model;
 
-import com.badlogic.gdx.math.Vector2;
+
 import com.badlogic.gdx.math.Vector3;
 import se.rhel.Connection;
 import se.rhel.event.*;
 import se.rhel.model.BaseWorldModel;
-import se.rhel.model.component.DamageComponent;
-import se.rhel.model.component.GameObject;
-import se.rhel.model.component.IDamageable;
-import se.rhel.model.component.MoveComponent;
+import se.rhel.model.component.*;
+import se.rhel.model.entity.DummyEntity;
+import se.rhel.model.entity.IPlayer;
 import se.rhel.model.physics.MyContactListener;
 import se.rhel.model.physics.RayVector;
 import se.rhel.model.weapon.Explosion;
 import se.rhel.model.weapon.Grenade;
 import se.rhel.model.weapon.IExplodable;
+import se.rhel.util.Utils;
 import se.rhel.view.input.PlayerInput;
 
 import java.util.ArrayList;
@@ -25,7 +25,7 @@ import java.util.HashMap;
 public class ServerWorldModel extends BaseWorldModel {
 
     // Linkin ID's and Players
-    private HashMap<Integer, ExternalPlayer> mPlayers;
+    private HashMap<Integer, IPlayer> mPlayers;
 
     private final float LOW_FREQ = 0.1f;
     private float CURR_FREQ_TIMER = 0f;
@@ -34,6 +34,17 @@ public class ServerWorldModel extends BaseWorldModel {
     public ServerWorldModel(Events events) {
         super(events);
         mPlayers = new HashMap<>();
+
+        for(int i = 0; i < 6; i++) {
+            float x = (float) (Math.random() * 10)-5;
+            float z = (float) (Math.random() * 10)-5;
+
+        DummyEntity de = new DummyEntity(getBulletWorld(), 0.7f, 1.6f, 100, 7f, new Vector3(x, 10, z));
+        de.addComponent(new ZombieAIComponent(mPlayers.get(1), de));
+        int id = Utils.getInstance().generateUniqueId();
+        de.addComponent(new NetworkComponent(id));
+        mPlayers.put(id, de);
+    }
     }
 
     @Override
@@ -49,8 +60,18 @@ public class ServerWorldModel extends BaseWorldModel {
             SEND_LOW_FREQ = false;
         }
 
-        for(ExternalPlayer p : mPlayers.values()) {
+        for(IPlayer p : mPlayers.values()) {
             p.update(delta);
+
+            if(((GameObject)p).hasComponent(IAIComponent.class)) {
+                if(PlayerInput.DO_LOW_FREQ_UPDATES) {
+                    if(SEND_LOW_FREQ) {
+                        mEvents.notify(new ServerModelEvent(EventType.PLAYER_MOVE, p));
+                    }
+                } else {
+                    mEvents.notify(new ServerModelEvent(EventType.PLAYER_MOVE, p));
+                }
+            }
         }
 
         //Update grenades
@@ -114,7 +135,7 @@ public class ServerWorldModel extends BaseWorldModel {
         }
     }
 
-    public HashMap<Integer, ExternalPlayer> getPlayers() {
+    public HashMap<Integer, IPlayer> getPlayers() {
         return mPlayers;
     }
 
@@ -122,13 +143,12 @@ public class ServerWorldModel extends BaseWorldModel {
         mPlayers.put(id, player);
     }
 
-    public ExternalPlayer getExternalPlayer(int id) {
+    public IPlayer getExternalPlayer(int id) {
         return mPlayers.get(id);
     }
 
     public void transformEntity(int clientId, Vector3 position, Vector3 rotation) {
-        GameObject obj = getExternalPlayer(clientId);
+        GameObject obj = (DummyEntity)getExternalPlayer(clientId);
         obj.rotateAndTranslate(rotation, position);
-
     }
 }
