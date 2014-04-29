@@ -92,7 +92,6 @@ public class ServerSynchronizedUpdate implements ServerListener {
                     //Add info to create grenade
                     Grenade g = new Grenade(mWorld.getBulletWorld(), gcp.position, gcp.direction);
                     g.setId(Utils.getInstance().generateUniqueId());
-
                     mWorld.addGrenade(g);
 
                     // Send tcp to clients
