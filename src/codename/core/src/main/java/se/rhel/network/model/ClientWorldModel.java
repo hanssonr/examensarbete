@@ -11,6 +11,7 @@ import se.rhel.event.Events;
 import se.rhel.event.ModelEvent;
 import se.rhel.model.*;
 import se.rhel.model.component.GameObject;
+import se.rhel.model.component.NetworkComponent;
 import se.rhel.model.entity.IPlayer;
 import se.rhel.model.entity.Player;
 import se.rhel.model.physics.MyContactListener;
@@ -56,7 +57,8 @@ public class ClientWorldModel extends BaseWorldModel implements INetworkWorldMod
             Grenade g = mGrenades.get(i);
             // The grenade doesn't have to be updated on client
             // g.update(delta);
-            Matrix4 toTemp = mTargetGrePositions.get(mGrenades.get(i).getId());
+            int id = ((NetworkComponent)mGrenades.get(i).getComponent(NetworkComponent.class)).getID();
+            Matrix4 toTemp = mTargetGrePositions.get(id);
 
             if(toTemp != null) {
                 if(PlayerInput.CLIENT_INTERPOLATION) {
@@ -86,8 +88,14 @@ public class ClientWorldModel extends BaseWorldModel implements INetworkWorldMod
      */
     public void updateGrenade(int grenadeId, Vector3 newPos, Quaternion newRotation, boolean isAlive) {
         for (int i = 0; i < mGrenades.size; i++) {
+
+            // Check if the right component is there, well, it should
+            if(!mGrenades.get(i).hasComponent(NetworkComponent.class))
+                return;
+
             // We're looking for a special grenade
-            if(mGrenades.get(i).getId() == grenadeId) {
+            int currId = ((NetworkComponent)mGrenades.get(i).getComponent(NetworkComponent.class)).getID();
+            if(currId == grenadeId) {
                 Grenade g = mGrenades.get(i);
                 // Add the position to the hashmap
                 Matrix4 m = new Matrix4(newPos, newRotation, new Vector3(1f, 1f, 1f));

@@ -5,6 +5,7 @@ import com.badlogic.gdx.math.Vector3;
 import se.rhel.Connection;
 import se.rhel.Server;
 import se.rhel.event.*;
+import se.rhel.model.component.NetworkComponent;
 import se.rhel.model.weapon.Grenade;
 import se.rhel.network.model.ExternalPlayer;
 import se.rhel.network.model.ServerWorldModel;
@@ -66,7 +67,8 @@ public class ServerController implements ServerModelListener {
                 boolean isAlive = (boolean) objs[1];
                 Quaternion q = new Quaternion();
                 q = g.getTransformation().getRotation(q);
-                mServer.sendToAllUDP(new GrenadeUpdatePacket(g.getId(), g.getPosition(), q, isAlive));
+                int id = ((NetworkComponent) g.getComponent(NetworkComponent.class)).getID();
+                mServer.sendToAllUDP(new GrenadeUpdatePacket(id, g.getPosition(), q, isAlive));
                 break;
             default:
                 break;

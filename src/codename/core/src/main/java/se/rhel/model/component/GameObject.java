@@ -5,7 +5,6 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.bullet.collision.btCollisionWorld;
 import se.rhel.model.physics.BulletWorld;
 
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 
 
@@ -14,9 +13,6 @@ import java.util.ArrayList;
  */
 public class GameObject implements ITransform {
 
-    private int ID;
-    public int getId() { return ID; }
-    public void setId(int id) { ID = id; }
     protected ITransform mTransform;
 
     public ArrayList<IComponent> mComponents = new ArrayList<>();
