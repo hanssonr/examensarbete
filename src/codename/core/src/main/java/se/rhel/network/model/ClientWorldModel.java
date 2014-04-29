@@ -119,7 +119,8 @@ public class ClientWorldModel extends BaseWorldModel implements INetworkWorldMod
         }
 
         if(mPlayer.wantToShoot()) {
-            mEvents.notify(new ModelEvent(EventType.SHOOT));
+            RayVector ray = RayVector.createFromDirection(mPlayer.getPosition().add(Vector3.Y), mPlayer.getDirection(), 75f);
+            mEvents.notify(new ModelEvent(EventType.SHOOT, ray));
         }
     }
 
@@ -130,13 +131,13 @@ public class ClientWorldModel extends BaseWorldModel implements INetworkWorldMod
 
     @Override
     public void checkShootCollision(RayVector ray) {
-        MyContactListener.CollisionObject co = super.getShootCollision(ray);
-
-        if(co != null) {
-            if(co.type == MyContactListener.CollisionObject.CollisionType.WORLD) {
-                mEvents.notify(new ModelEvent(EventType.BULLET_HOLE, co.hitPoint, co.hitNormal));
-            }
-        }
+//        MyContactListener.CollisionObject co = super.getShootCollision(ray);
+//
+//        if(co != null) {
+//            if(co.type == MyContactListener.CollisionObject.CollisionType.WORLD) {
+//                mEvents.notify(new ModelEvent(EventType.BULLET_HOLE, co.hitPoint, co.hitNormal));
+//            }
+//        }
     }
 
     @Override

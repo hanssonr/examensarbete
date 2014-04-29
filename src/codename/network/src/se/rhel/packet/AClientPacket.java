@@ -9,11 +9,6 @@ public abstract class AClientPacket extends Packet {
     public int clientId = -1;
 
     /**
-     * Empty constructor for creation and instanceof check
-     */
-    public AClientPacket() {}
-
-    /**
      * Creating a new packet from a client
      * @param clientId the clients Id
      * @param classType can be ignored as parameter but must be super()-called

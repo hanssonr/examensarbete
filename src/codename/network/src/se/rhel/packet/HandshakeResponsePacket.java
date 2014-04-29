@@ -12,8 +12,6 @@ public class HandshakeResponsePacket extends Packet {
 
     public int mId;
 
-    public HandshakeResponsePacket() {}
-
     public HandshakeResponsePacket(int id) {
         super(HandshakeResponsePacket.class);
         super.putInt(id);

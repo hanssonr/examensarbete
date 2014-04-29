@@ -13,17 +13,22 @@ public class ZombieAIComponent implements IAIComponent, IComponent {
     private IPlayer mVictim;
     private Vector3 mDirection = new Vector3();
     private float mMovetimer = 4f;
+    private float mShootTimer = 0;
 
     private ITransform mTransform;
     private IPhysics mPhysic;
     private IGravity mGravity;
+    private IActionable mAction;
 
     public ZombieAIComponent(IPlayer player, GameObject obj) {
         mVictim = player;
 
+        mShootTimer = (float)((Math.random() * 10) + 5);
+
         mTransform = (ITransform) obj.getComponent(TransformComponent.class);
         mPhysic = (IPhysics) obj.getComponent(PhysicsComponent.class);
         mGravity = (IGravity) obj.getComponent(GravityComponent.class);
+        mAction = (IActionable) obj.getComponent(ActionComponent.class);
     }
 
     public void update(float delta) {
@@ -46,11 +51,11 @@ public class ZombieAIComponent implements IAIComponent, IComponent {
             }
         //}
 
-//        shootTimer += delta;
-//        if(shootTimer > 2f && mAI.hasTarget()) {
-//            mActionComponent.shoot();
-//            shootTimer = 0f;
-//        }
+        mShootTimer -= delta;
+        if(mShootTimer <= 0f) {
+            mAction.shoot();
+            mShootTimer = (float) (Math.random() * 5 + 3);
+        }
 
         Vector3 vel = new Vector3(mDirection.cpy().scl(4f));
         vel.y = mGravity.getGravity();

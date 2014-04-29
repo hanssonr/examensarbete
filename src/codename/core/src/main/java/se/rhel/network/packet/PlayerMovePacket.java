@@ -14,8 +14,6 @@ public class PlayerMovePacket extends AClientPacket {
     public Vector3 mPosition = new Vector3();
     public Vector3 mRotation = new Vector3();
 
-    public PlayerMovePacket() {}
-
     public PlayerMovePacket(int clientId, Vector3 position, Vector3 rotation) {
         super(clientId, PlayerMovePacket.class);
         putFloat(position.x);

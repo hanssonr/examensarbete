@@ -10,8 +10,6 @@ public class DamagePacket extends AClientPacket {
 
     public int amount;
 
-    public DamagePacket() {}
-
     public DamagePacket(int playerId, int amount) {
         super(playerId, DamagePacket.class);
         putInt(amount);

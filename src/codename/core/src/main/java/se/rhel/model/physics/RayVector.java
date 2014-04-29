@@ -49,4 +49,15 @@ public class RayVector {
     public static RayVector createFromDirection(Vector3 position, Vector3 direction, float length) {
         return new RayVector(position, position.cpy().add(direction.cpy().nor().scl(length)));
     }
+
+    public static void convertToVisual(RayVector ray) {
+        Vector3 offset = new Vector3();
+        Vector3 right = ray.getDirection().cpy().crs(Vector3.Y);
+        Vector3 up = right.cpy().crs(ray.getDirection());
+
+        offset.add(right.cpy().scl(0.5f));
+        offset.sub(up.cpy().scl(0.2f));
+        offset.add(ray.getDirection().cpy());
+        ray.setFrom(ray.getFrom().add(offset));
+    }
 }

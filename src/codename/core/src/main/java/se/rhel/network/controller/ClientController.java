@@ -9,6 +9,7 @@ import se.rhel.network.event.NetworkEvent;
 import se.rhel.network.event.NetworkListener;
 import se.rhel.network.model.ClientWorldModel;
 import se.rhel.model.weapon.Grenade;
+import se.rhel.network.model.ExternalPlayer;
 import se.rhel.network.model.INetworkWorldModel;
 import se.rhel.network.packet.*;
 import se.rhel.packet.Packet;
@@ -29,7 +30,7 @@ public class ClientController extends BaseGameController implements NetworkListe
         super();
         mClient = Snaek.newClient(4455, 5544, "localhost");
         mWorldModel = new ClientWorldModel(mClient, mEvents);
-        mSyncedUpdate = new ClientSynchronizedUpdate(mWorldModel, mEvents);
+        mSyncedUpdate = new ClientSynchronizedUpdate(mWorldModel, mClient, mEvents);
         mClient.addListener(mSyncedUpdate);
 
         mClient.sendTcp(new RequestInitialStatePacket(mClient.getId()));
@@ -72,14 +73,15 @@ public class ClientController extends BaseGameController implements NetworkListe
     public void modelEvent(EventType type, Object... objs) {
         super.modelEvent(type, objs);
         switch (type) {
-            case SHOOT:
-                RayVector ray = mWorldView.getCamera().getShootRay();
+            case SHOOT: // [0] = RayVector
+                RayVector ray = (RayVector) objs[0];
                 mWorldModel.checkShootCollision(ray);
-                mWorldView.getCamera().convertToVisualRay(ray);
 
                 // The network, notify the server that we have shot
                 mClient.sendTcp(new ShootPacket(mClient.getId(), ray.getFrom(), ray.getTo()));
 
+                //mWorldView.getCamera().convertToVisualRay(ray);
+                RayVector.convertToVisual(ray);
                 mWorldView.shoot(ray);
                 break;
 
@@ -96,6 +98,9 @@ public class ClientController extends BaseGameController implements NetworkListe
                         mWorldModel.getPlayer().getPosition(),
                         mWorldModel.getPlayer().getRotation()));
                 break;
+            case PLAYER_JOIN:
+                mWorldView.addPlayer((ExternalPlayer)objs[0]);
+                break;
             default:
                 break;
         }
@@ -108,16 +113,14 @@ public class ClientController extends BaseGameController implements NetworkListe
             ShootPacket sp = (ShootPacket) packet;
 
             // The rendering and sound
-            mWorldView.shoot(new RayVector(sp.mFrom, sp.mTo));
+            RayVector rv = new RayVector(sp.mFrom, sp.mTo);
+            RayVector.convertToVisual(rv);
+            mWorldView.shoot(rv);
         }
         else if(packet instanceof BulletHolePacket) {
             BulletHolePacket bhp = (BulletHolePacket) packet;
             // Draw bullethole
             mWorldView.addBullethole(bhp.hitWorld, bhp.hitNormal);
-        }
-        else if(packet instanceof PlayerPacket) {
-            PlayerPacket pp = (PlayerPacket)packet;
-            mWorldView.addPlayer(((INetworkWorldModel) mWorldModel).getExternalPlayer(pp.clientId));
         }
     }
 }

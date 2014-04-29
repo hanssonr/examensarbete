@@ -10,8 +10,6 @@ import se.rhel.packet.AClientPacket;
  */
 public class RequestInitialStatePacket extends AClientPacket {
 
-    public RequestInitialStatePacket() {}
-
     public RequestInitialStatePacket(int clientId) {
         super(clientId, RequestInitialStatePacket.class);
         super.ready();

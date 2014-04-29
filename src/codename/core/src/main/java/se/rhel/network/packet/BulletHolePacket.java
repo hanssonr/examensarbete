@@ -12,8 +12,6 @@ public class BulletHolePacket extends Packet {
 
     public Vector3 hitWorld, hitNormal;
 
-    public BulletHolePacket() {}
-
     public BulletHolePacket(Vector3 hWorld, Vector3 hNormal) {
         super(BulletHolePacket.class);
 

@@ -8,6 +8,7 @@ import se.rhel.event.*;
 import se.rhel.model.component.GameObject;
 import se.rhel.model.component.NetworkComponent;
 import se.rhel.model.entity.DummyEntity;
+import se.rhel.model.physics.RayVector;
 import se.rhel.model.weapon.Grenade;
 import se.rhel.network.model.ExternalPlayer;
 import se.rhel.network.model.ServerWorldModel;
@@ -47,7 +48,7 @@ public class ServerController implements ServerModelListener {
                 Vector3 hitPoint = ((Vector3)objs[0]);
                 Vector3 hitNormal =  ((Vector3)objs[1]);
                 Connection con = ((Connection)objs[2]);
-                mServer.sendToAllUDPExcept(new BulletHolePacket(hitPoint, hitNormal), con);
+                mServer.sendToAllUDP(new BulletHolePacket(hitPoint, hitNormal));
                 break;
             case DAMAGE:
                 DummyEntity de = (DummyEntity) objs[0];
@@ -56,9 +57,14 @@ public class ServerController implements ServerModelListener {
                 mServer.sendToAllTCP(new DamagePacket(nc.getID(), 25));
                 break;
             case SERVER_DEAD_ENTITY:
-                mServer.sendToAllTCP(new DeadEntityPacket(((NetworkComponent)((GameObject)objs[0]).getComponent(NetworkComponent.class)).getID()));
+                System.out.println("ServerController, someone died!");
+                mServer.sendToAllTCP(new DeadEntityPacket(((NetworkComponent) ((GameObject) objs[0]).getComponent(NetworkComponent.class)).getID()));
                 break;
             case SHOOT:
+                mServer.sendToAllUDP(new ShootPacket(
+                        ((NetworkComponent)((GameObject)objs[1]).getComponent(NetworkComponent.class)).getID(),
+                        ((RayVector)objs[0]).getFrom(),
+                        ((RayVector)objs[0]).getTo()));
                 break;
             case JUMP:
                 break;

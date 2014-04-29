@@ -60,13 +60,10 @@ public class GameController extends BaseGameController {
     public void modelEvent(EventType type, Object... objs) {
         super.modelEvent(type, objs);
         switch(type) {
-            case SHOOT:
-                //RayVector ray = mWorldView.getCamera().getShootRay();
-                //GameObject entity = (GameObject) objs[0];
-                //RayVector ray = RayVector.createFromDirection(entity.getPosition().add(Vector3.Y), entity.getDirection(), 75f);
+            case SHOOT: // [0] = RayVector
                 RayVector ray = (RayVector) objs[0];
                 mWorldModel.checkShootCollision(ray);
-                mWorldView.getCamera().convertToVisualRay(ray);
+                RayVector.convertToVisual(ray);
                 mWorldView.shoot(ray);
             break;
 

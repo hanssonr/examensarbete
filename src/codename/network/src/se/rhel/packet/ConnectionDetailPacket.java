@@ -5,8 +5,6 @@ public class ConnectionDetailPacket extends Packet {
     public int mPlayerId;
     public int mUdpPort;
 
-    public ConnectionDetailPacket() {}
-
     public ConnectionDetailPacket(int playerId, int udpPort) {
         super(ConnectionDetailPacket.class);
         super.putInt(playerId);

@@ -4,7 +4,7 @@ package se.rhel;
  * Created by Emil on 2014-03-14.
  */
 public class Snaek {
-    public static final int PACKAGE_SIZE = 128;
+    public static final int PACKAGE_SIZE = 512;
 
     public static Server newServer(int tcpPort, int udpPort) {
         Server s = new Server();

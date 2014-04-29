@@ -1,13 +1,10 @@
 package se.rhel.network.controller;
 
-import com.badlogic.gdx.math.Vector3;
-import se.rhel.event.EventHandler;
+import se.rhel.Client;
 import se.rhel.event.EventType;
 import se.rhel.event.Events;
 import se.rhel.event.ModelEvent;
 import se.rhel.model.IWorldModel;
-import se.rhel.model.component.IMovable;
-import se.rhel.model.component.MoveComponent;
 import se.rhel.model.component.NetworkComponent;
 import se.rhel.network.event.NetworkEvent;
 import se.rhel.model.weapon.Grenade;
@@ -30,9 +27,11 @@ public class ClientSynchronizedUpdate implements ClientListener {
     private ArrayList<Object> mUnsyncedObjects = new ArrayList<>();
     private INetworkWorldModel mWorld;
     private Events mEvents;
+    private Client mClient;
 
-    public ClientSynchronizedUpdate(IWorldModel world, Events events) {
+    public ClientSynchronizedUpdate(IWorldModel world, Client client, Events events) {
         mWorld = (INetworkWorldModel)world;
+        mClient = client;
         mEvents = events;
     }
 
@@ -42,11 +41,17 @@ public class ClientSynchronizedUpdate implements ClientListener {
 
             if (obj instanceof PlayerPacket) {
                 PlayerPacket pp = (PlayerPacket)obj;
-                Log.debug("ClientSynchronizedUpdate", "Player_Join packet - Player can be viewed on client!! ID = " + pp.clientId);
-                ExternalPlayer ep = new ExternalPlayer(pp.clientId, pp.mPosition, mWorld.getBulletWorld());
-                mWorld.addPlayer(pp.clientId, ep);
+                Log.debug("ClientSynchronizedUpdate", "PlayerPacket received - Players received: " + pp.mPlayers.size());
 
-                mEvents.notify(new NetworkEvent(pp));
+                for(int i = 0; i < pp.mPlayers.size(); i++) {
+                    UpdateStruct ps = pp.mPlayers.get(i);
+                    if(ps.mID != mClient.getId()) {
+                        ExternalPlayer ep = new ExternalPlayer(ps.mID, ps.mPosition, mWorld.getBulletWorld());
+                        ep.rotateAndTranslate(ps.mRotation, ps.mPosition);
+                        mWorld.addPlayer(ps.mID, ep);
+                        mEvents.notify(new ModelEvent(EventType.PLAYER_JOIN, ep));
+                    }
+                }
             }
 
             else if(obj instanceof PlayerMovePacket) {

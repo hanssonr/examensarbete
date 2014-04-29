@@ -8,8 +8,6 @@ public class IdlePacket extends Packet {
 
     public int mPlayerId;
 
-    public IdlePacket() {}
-
     public IdlePacket(int id) {
         super(IdlePacket.class);
         super.putInt(id);

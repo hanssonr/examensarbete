@@ -35,16 +35,16 @@ public class ServerWorldModel extends BaseWorldModel {
         super(events);
         mPlayers = new HashMap<>();
 
-        for(int i = 0; i < 6; i++) {
+        for(int i = 0; i < 0; i++) {
             float x = (float) (Math.random() * 10)-5;
             float z = (float) (Math.random() * 10)-5;
 
-        DummyEntity de = new DummyEntity(getBulletWorld(), 0.7f, 1.6f, 100, 7f, new Vector3(x, 10, z));
-        de.addComponent(new ZombieAIComponent(mPlayers.get(1), de));
-        int id = Utils.getInstance().generateUniqueId();
-        de.addComponent(new NetworkComponent(id));
-        mPlayers.put(id, de);
-    }
+            DummyEntity de = new DummyEntity(getBulletWorld(), 0.7f, 1.6f, 100, 7f, new Vector3(x, 10, z));
+            de.addComponent(new ZombieAIComponent(mPlayers.get(1), de));
+            int id = Utils.getInstance().generateUniqueId();
+            de.addComponent(new NetworkComponent(id));
+            mPlayers.put(id, de);
+        }
     }
 
     @Override
@@ -71,6 +71,12 @@ public class ServerWorldModel extends BaseWorldModel {
                 } else {
                     mEvents.notify(new ServerModelEvent(EventType.PLAYER_MOVE, p));
                 }
+            }
+
+            IActionable ac = (IActionable) ((GameObject)p).getComponent(ActionComponent.class);
+            if(ac.hasShoot()) {
+                RayVector ray = RayVector.createFromDirection(p.getPosition().add(Vector3.Y), p.getDirection(), 75f);
+                mEvents.notify(new ServerModelEvent(EventType.SHOOT, ray, p));
             }
         }
 
@@ -129,7 +135,7 @@ public class ServerWorldModel extends BaseWorldModel {
         if(dae.isAlive() && dae.getHealth() <= 0) {
             dae.setAlive(false);
 
-            Explosion exp = new Explosion(entity.getPosition(), 15, 250);
+            Explosion exp = new Explosion(entity.getPosition(), 5, 50);
             handleExplosion(getAffectedByExplosion(exp), exp);
             mEvents.notify(new ServerModelEvent(EventType.SERVER_DEAD_ENTITY, entity));
         }
