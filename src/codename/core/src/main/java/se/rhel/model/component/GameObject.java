@@ -13,9 +13,6 @@ import java.util.ArrayList;
  */
 public class GameObject implements ITransform {
 
-    private int ID;
-    public int getId() { return ID; }
-    public void setId(int id) { ID = id; }
     protected ITransform mTransform;
 
     public ArrayList<IComponent> mComponents = new ArrayList<>();
@@ -46,7 +43,7 @@ public class GameObject implements ITransform {
         return null;
     }
 
-    private void addComponent(IComponent component) {
+    public void addComponent(IComponent component) {
         mComponents.add(component);
     }
 

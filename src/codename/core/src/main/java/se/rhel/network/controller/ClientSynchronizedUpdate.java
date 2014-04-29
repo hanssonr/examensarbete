@@ -8,6 +8,7 @@ import se.rhel.event.ModelEvent;
 import se.rhel.model.IWorldModel;
 import se.rhel.model.component.IMovable;
 import se.rhel.model.component.MoveComponent;
+import se.rhel.model.component.NetworkComponent;
 import se.rhel.network.event.NetworkEvent;
 import se.rhel.model.weapon.Grenade;
 import se.rhel.network.model.ClientWorldModel;
@@ -87,7 +88,8 @@ public class ClientSynchronizedUpdate implements ClientListener {
                 GrenadeCreatePacket gcp = (GrenadeCreatePacket) obj;
 
                 Grenade g = new Grenade(mWorld.getBulletWorld(), gcp.position, gcp.direction);
-                g.setId(gcp.clientId);
+                g.addComponent(new NetworkComponent(gcp.clientId));
+
                 mWorld.addGrenade(g);
                 mEvents.notify(new ModelEvent(EventType.GRENADE_CREATED, g));
             }
