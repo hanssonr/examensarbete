@@ -35,7 +35,7 @@ public class ServerWorldModel extends BaseWorldModel {
         super(events);
         mPlayers = new HashMap<>();
 
-        for(int i = 0; i < 0; i++) {
+        for(int i = 0; i < 15; i++) {
             float x = (float) (Math.random() * 10)-5;
             float z = (float) (Math.random() * 10)-5;
 
@@ -106,7 +106,7 @@ public class ServerWorldModel extends BaseWorldModel {
         }
     }
 
-    public void checkShootCollision(RayVector ray, Connection con) {
+    public void checkShootCollision(RayVector ray) {
         MyContactListener.CollisionObject co = super.getShootCollision(ray);
 
         if(co != null) {
@@ -115,7 +115,7 @@ public class ServerWorldModel extends BaseWorldModel {
                 mEvents.notify(new ServerModelEvent(EventType.DAMAGE, co.entity));
             }
             else if(co.type == MyContactListener.CollisionObject.CollisionType.WORLD) {
-                mEvents.notify(new ServerModelEvent(EventType.SERVER_WORLD_COLLISION, co.hitPoint, co.hitNormal, con));
+                mEvents.notify(new ServerModelEvent(EventType.SERVER_WORLD_COLLISION, co.hitPoint, co.hitNormal));
             }
 
             ray.setTo(co.hitPoint);

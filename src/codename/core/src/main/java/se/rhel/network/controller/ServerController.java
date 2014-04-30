@@ -47,7 +47,6 @@ public class ServerController implements ServerModelListener {
             case SERVER_WORLD_COLLISION:
                 Vector3 hitPoint = ((Vector3)objs[0]);
                 Vector3 hitNormal =  ((Vector3)objs[1]);
-                Connection con = ((Connection)objs[2]);
                 mServer.sendToAllUDP(new BulletHolePacket(hitPoint, hitNormal));
                 break;
             case DAMAGE:
@@ -56,11 +55,11 @@ public class ServerController implements ServerModelListener {
                 NetworkComponent nc = (NetworkComponent) de.getComponent(NetworkComponent.class);
                 mServer.sendToAllTCP(new DamagePacket(nc.getID(), 25));
                 break;
-            case SERVER_DEAD_ENTITY:
-                System.out.println("ServerController, someone died!");
+            case SERVER_DEAD_ENTITY: // [0] = GameObject
                 mServer.sendToAllTCP(new DeadEntityPacket(((NetworkComponent) ((GameObject) objs[0]).getComponent(NetworkComponent.class)).getID()));
                 break;
-            case SHOOT:
+            case SHOOT: // [0] = RayVector, [1] = GameObject
+                mServerWorldModel.checkShootCollision((RayVector)objs[0]);
                 mServer.sendToAllUDP(new ShootPacket(
                         ((NetworkComponent)((GameObject)objs[1]).getComponent(NetworkComponent.class)).getID(),
                         ((RayVector)objs[0]).getFrom(),

@@ -80,7 +80,6 @@ public class ClientController extends BaseGameController implements NetworkListe
                 // The network, notify the server that we have shot
                 mClient.sendTcp(new ShootPacket(mClient.getId(), ray.getFrom(), ray.getTo()));
 
-                //mWorldView.getCamera().convertToVisualRay(ray);
                 RayVector.convertToVisual(ray);
                 mWorldView.shoot(ray);
                 break;
