@@ -69,6 +69,11 @@ public class PlayerRenderer {
         }
 
         mLaserWeapon.transform.translate(mWeaponOffset);
+
+        if(mState == PLAYERSTATE.idle) {
+            mLaserWeapon.transform.rotate(Vector3.X, (float) Math.cos(mBobTimer));
+            mLaserWeapon.transform.rotate(Vector3.Z, (float) Math.cos(mBobTimer * 2));
+        }
     }
 
     private void updateCamera(float delta) {

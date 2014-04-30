@@ -112,7 +112,6 @@ public class ExternalPlayerRenderer {
             ac.update(delta);
 
             float armbob = (float) Math.cos(mArmBobbingTimer);
-            System.out.println(armbob);
             mWeaponArms.get(entity).transform.set(entity.getTransformation());
             mWeaponArms.get(entity).transform.translate(mArmOffset);
             mWeaponArms.get(entity).transform.rotate(Vector3.X.cpy(), entity.getRotation().y + (armbob*3));

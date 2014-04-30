@@ -76,8 +76,6 @@ public class ServerSynchronizedUpdate implements ServerListener {
                 GameObject go = (GameObject) mWorld.getExternalPlayer(gcp.clientId);
                 IActionable ac = (IActionable) go.getComponent(ActionComponent.class);
 
-                System.out.println("SERVER:" + gcp.position);
-
                 // Check if the player can throw
                 if(ac.canThrowGrenade()) {
                     //Add info to create grenade
