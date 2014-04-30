@@ -28,6 +28,8 @@ public class ExternalPlayerRenderer {
     private ModelInstance mExternalPlayer = new ModelInstance(Resources.INSTANCE.playerModelAnimated);
     private ModelInstance mLaser = new ModelInstance(Resources.INSTANCE.laserWeaponModel);
 
+    private float mArmBobbingTimer = 0f;
+
     private Vector3 mArmOffset = new Vector3(0.49f, 0.35f, -0.05f);
     private Vector3 mGroundOffset = new Vector3();
     private BoundingBox mBox = new BoundingBox();
@@ -76,7 +78,7 @@ public class ExternalPlayerRenderer {
     }
 
     public void update(float delta) {
-
+        mArmBobbingTimer += delta;
         Iterator it = mAnimations.entrySet().iterator();
         while(it.hasNext()) {
 
@@ -109,9 +111,11 @@ public class ExternalPlayerRenderer {
 
             ac.update(delta);
 
+            float armbob = (float) Math.cos(mArmBobbingTimer);
+            System.out.println(armbob);
             mWeaponArms.get(entity).transform.set(entity.getTransformation());
             mWeaponArms.get(entity).transform.translate(mArmOffset);
-            mWeaponArms.get(entity).transform.rotate(Vector3.X.cpy(), entity.getRotation().y);
+            mWeaponArms.get(entity).transform.rotate(Vector3.X.cpy(), entity.getRotation().y + (armbob*3));
         }
     }
 }

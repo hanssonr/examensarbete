@@ -35,7 +35,7 @@ public class ServerWorldModel extends BaseWorldModel {
         super(events);
         mPlayers = new HashMap<>();
 
-        for(int i = 0; i < 10; i++) {
+        for(int i = 0; i < 0; i++) {
             float x = (float) (Math.random() * 10)-5;
             float z = (float) (Math.random() * 10)-5;
 
