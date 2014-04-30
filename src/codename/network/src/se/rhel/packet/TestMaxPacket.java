@@ -7,8 +7,6 @@ package se.rhel.packet;
  */
 public class TestMaxPacket extends Packet {
 
-    public TestMaxPacket() {}
-
     public TestMaxPacket(int id) {
         super(TestMaxPacket.class);
         int max = 511;
@@ -17,9 +15,5 @@ public class TestMaxPacket extends Packet {
             putByte(Byte.valueOf("1"));
         }
         ready();
-    }
-
-    public TestMaxPacket(byte[] data) {
-
     }
 }

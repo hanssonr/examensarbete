@@ -7,9 +7,6 @@ package se.rhel.packet;
 public class LatencyPacket extends Packet {
     public int mPlayerId;
 
-    public LatencyPacket() {
-    }
-
     public LatencyPacket(int id) {
         super(LatencyPacket.class);
         super.putInt(id);

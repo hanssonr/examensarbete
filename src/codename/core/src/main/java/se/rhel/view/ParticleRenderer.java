@@ -5,7 +5,9 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.ParticleEffect;
 import com.badlogic.gdx.graphics.g2d.ParticleEffectPool;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Quaternion;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import se.rhel.model.IWorldModel;
@@ -50,10 +52,13 @@ public class ParticleRenderer extends A2DView {
 
             smSpriteBatch.setTransformMatrix(mCamera.view);
             smSpriteBatch.getTransformMatrix().translate(mEffects.get(i).pos);
-            Quaternion q = new Quaternion();
-            mCamera.view.getRotation(q);
-            q.conjugate();
-            smSpriteBatch.getTransformMatrix().rotate(q);
+
+            Vector3 dir = mCamera.position.cpy().sub(mEffects.get(i).pos).nor();
+            Vector2 currDir = new Vector2(0, -1).nor();
+            Vector2 wantedDir = new Vector2(dir.x, dir.z).nor();
+
+            float xangle = (float) Math.toDegrees(Math.atan2(wantedDir.cpy().crs(currDir), wantedDir.cpy().dot(currDir)));
+            smSpriteBatch.getTransformMatrix().rotate(Vector3.Y, xangle);
 
             //TODO: Fixa detta snyggare!!!
             if(mpe.type == Particle.BLOOD) {

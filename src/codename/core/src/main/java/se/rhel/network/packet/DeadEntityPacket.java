@@ -8,8 +8,6 @@ import se.rhel.packet.AClientPacket;
  */
 public class DeadEntityPacket extends AClientPacket {
 
-    public DeadEntityPacket() {}
-
     public DeadEntityPacket(int clientId) {
         super(clientId, DeadEntityPacket.class);
         ready();

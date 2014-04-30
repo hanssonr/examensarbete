@@ -3,9 +3,7 @@ package se.rhel.network.controller;
 import com.badlogic.gdx.math.Vector3;
 import se.rhel.Connection;
 import se.rhel.Server;
-import se.rhel.event.EventType;
 import se.rhel.event.Events;
-import se.rhel.event.ModelEvent;
 import se.rhel.model.component.*;
 import se.rhel.model.physics.RayVector;
 import se.rhel.network.model.ConnectionWrappedObject;
@@ -19,7 +17,6 @@ import se.rhel.util.Log;
 
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.Map;
 
 /**
  * Group: Multiplayer
@@ -47,17 +44,8 @@ public class ServerSynchronizedUpdate implements ServerListener {
 
             if(obj instanceof RequestInitialStatePacket) {
                 Log.debug("ServerWorldModel", "Initial state requested from clientId: " + con.getId());
-
-                // Sending all the players to the client requested, except self
-                for(Map.Entry<Integer, ExternalPlayer> pairs : mWorld.getPlayers().entrySet()) {
-                    int id = pairs.getKey();
-                    ExternalPlayer ep = pairs.getValue();
-                    if(id != con.getId()) {
-                        Log.debug("ServerWorldModel", "Sending player with id: " + id + " to " + con.getId());
-                        PlayerPacket pp = new PlayerPacket(id, ep.getPosition());
-                        mServer.sendTCP(pp, con);
-                    }
-                }
+                PlayerPacket pp = new PlayerPacket(mWorld.getPlayers());
+                mServer.sendTCP(pp, con);
             }
 
             else if(obj instanceof PlayerMovePacket) {
@@ -72,7 +60,7 @@ public class ServerSynchronizedUpdate implements ServerListener {
                 ShootPacket sp = (ShootPacket)obj;
 
                 RayVector ray = new RayVector(sp.mFrom, sp.mTo);
-                mWorld.checkShootCollision(ray, con);
+                mWorld.checkShootCollision(ray);
 
                 // Resend to other clients that a player has shot for visual feedback
                 ShootPacket sendP = new ShootPacket(sp.clientId, ray.getFrom(), ray.getTo());
@@ -84,7 +72,7 @@ public class ServerSynchronizedUpdate implements ServerListener {
                 GrenadeCreatePacket gcp = (GrenadeCreatePacket) obj;
 
                 // A player wants to throw a grenade!
-                GameObject go = mWorld.getExternalPlayer(gcp.clientId);
+                GameObject go = (GameObject) mWorld.getExternalPlayer(gcp.clientId);
                 IActionable ac = (IActionable) go.getComponent(ActionComponent.class);
 
                 // Check if the player can throw
@@ -112,7 +100,7 @@ public class ServerSynchronizedUpdate implements ServerListener {
         ExternalPlayer ep = new ExternalPlayer(con.getId(), new Vector3(0, 10, 0), mWorld.getBulletWorld());
         mWorld.addPlayer(con.getId(), ep);
         // And sending to all clients except the one joined
-        mServer.sendToAllTCPExcept(new PlayerPacket(con.getId(), ep.getPosition()), con);
+        mServer.sendToAllTCPExcept(new PlayerPacket(con.getId(), ep.getPosition(), ep.getRotation()), con);
     }
 
     @Override

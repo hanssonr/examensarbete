@@ -44,10 +44,13 @@ public abstract class BasePacketHandler {
             System.exit(1);
         } catch (IllegalAccessException e) {
             e.printStackTrace();
+            System.exit(1);
         } catch (NoSuchMethodException e) {
             e.printStackTrace();
+            System.exit(1);
         } catch (InvocationTargetException e) {
             e.printStackTrace();
+            System.exit(1);
         }
     }
 

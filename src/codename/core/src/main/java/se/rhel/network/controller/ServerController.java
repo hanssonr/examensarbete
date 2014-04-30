@@ -5,14 +5,14 @@ import com.badlogic.gdx.math.Vector3;
 import se.rhel.Connection;
 import se.rhel.Server;
 import se.rhel.event.*;
+import se.rhel.model.component.GameObject;
 import se.rhel.model.component.NetworkComponent;
+import se.rhel.model.entity.DummyEntity;
+import se.rhel.model.physics.RayVector;
 import se.rhel.model.weapon.Grenade;
 import se.rhel.network.model.ExternalPlayer;
 import se.rhel.network.model.ServerWorldModel;
-import se.rhel.network.packet.BulletHolePacket;
-import se.rhel.network.packet.DamagePacket;
-import se.rhel.network.packet.DeadEntityPacket;
-import se.rhel.network.packet.GrenadeUpdatePacket;
+import se.rhel.network.packet.*;
 
 /**
  * Group: Multiplayer
@@ -47,17 +47,23 @@ public class ServerController implements ServerModelListener {
             case SERVER_WORLD_COLLISION:
                 Vector3 hitPoint = ((Vector3)objs[0]);
                 Vector3 hitNormal =  ((Vector3)objs[1]);
-                Connection con = ((Connection)objs[2]);
-                mServer.sendToAllUDPExcept(new BulletHolePacket(hitPoint, hitNormal), con);
+                mServer.sendToAllUDP(new BulletHolePacket(hitPoint, hitNormal));
                 break;
             case DAMAGE:
-                mServerWorldModel.checkEntityStatus((ExternalPlayer)objs[0]);
-                mServer.sendToAllTCP(new DamagePacket(((ExternalPlayer)objs[0]).getNetworkID(), 25));
+                DummyEntity de = (DummyEntity) objs[0];
+                mServerWorldModel.checkEntityStatus(de);
+                NetworkComponent nc = (NetworkComponent) de.getComponent(NetworkComponent.class);
+                mServer.sendToAllTCP(new DamagePacket(nc.getID(), 25));
                 break;
-            case SERVER_DEAD_ENTITY:
-                mServer.sendToAllTCP(new DeadEntityPacket(((ExternalPlayer)objs[0]).getNetworkID()));
+            case SERVER_DEAD_ENTITY: // [0] = GameObject
+                mServer.sendToAllTCP(new DeadEntityPacket(((NetworkComponent) ((GameObject) objs[0]).getComponent(NetworkComponent.class)).getID()));
                 break;
-            case SHOOT:
+            case SHOOT: // [0] = RayVector, [1] = GameObject
+                mServerWorldModel.checkShootCollision((RayVector)objs[0]);
+                mServer.sendToAllUDP(new ShootPacket(
+                        ((NetworkComponent)((GameObject)objs[1]).getComponent(NetworkComponent.class)).getID(),
+                        ((RayVector)objs[0]).getFrom(),
+                        ((RayVector)objs[0]).getTo()));
                 break;
             case JUMP:
                 break;
@@ -67,12 +73,14 @@ public class ServerController implements ServerModelListener {
                 boolean isAlive = (boolean) objs[1];
                 Quaternion q = new Quaternion();
                 q = g.getTransformation().getRotation(q);
-                int id = ((NetworkComponent) g.getComponent(NetworkComponent.class)).getID();
-                mServer.sendToAllUDP(new GrenadeUpdatePacket(id, g.getPosition(), q, isAlive));
+                mServer.sendToAllUDP(new GrenadeUpdatePacket(((NetworkComponent)((GameObject)objs[0]).getComponent(NetworkComponent.class)).getID(), g.getPosition(), q, isAlive));
+                break;
+            case PLAYER_MOVE:
+                int id = ((NetworkComponent)((GameObject)objs[0]).getComponent(NetworkComponent.class)).getID();
+                mServer.sendToAllUDP(new PlayerMovePacket(id, ((DummyEntity)objs[0]).getPosition(), ((DummyEntity)objs[0]).getRotation()));
                 break;
             default:
                 break;
         }
-
     }
 }

@@ -12,8 +12,6 @@ public class GrenadeCreatePacket extends AClientPacket {
     public Vector3 direction;
     public Vector3 position;
 
-    public GrenadeCreatePacket() {}
-
     public GrenadeCreatePacket(int clientId, Vector3 position, Vector3 direction) {
         super(clientId, GrenadeCreatePacket.class);
 

@@ -53,15 +53,15 @@ public class LaserRenderer {
         RayVector mRay;
         float lifeTime;
         boolean isAlive = true;
-        float speed = 150;
-        float mWidth = 5f;
+        float speed = 200;
+        float mWidth = 7f;
 
         public LaserDecal(RayVector ray) {
             mLaserVertical = Decal.newDecal(mWidth, 0.1f, new TextureRegion(Resources.INSTANCE.laser), true);
             mLaserHorizontal = Decal.newDecal(mWidth, 0.1f, new TextureRegion(Resources.INSTANCE.laser), true);
 
-            mLaserVertical.setColor(0, 0, 1, 1);
-            mLaserHorizontal.setColor(0, 0, 1, 1);
+            mLaserVertical.setColor(1, 0, 0, 1);
+            mLaserHorizontal.setColor(1, 0, 0, 1);
 
             Vector3 dir = ray.getDirection().crs(FPSCamera.UP);
 

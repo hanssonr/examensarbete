@@ -22,8 +22,6 @@ public abstract class Packet {
     // Where the data will reside until "compressed"
     private ByteBuffer mMaxBuffer = ByteBuffer.allocate(Snaek.PACKAGE_SIZE);
 
-    public Packet() {}
-
     /**
      * Used when creating packet from input data
      * @param data

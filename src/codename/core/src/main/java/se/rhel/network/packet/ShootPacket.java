@@ -12,8 +12,6 @@ public class ShootPacket extends AClientPacket {
     public Vector3 mFrom;
     public Vector3 mTo;
 
-    public ShootPacket() {}
-
     public ShootPacket(int clientId, Vector3 from, Vector3 to) {
         super(clientId, ShootPacket.class);
         putFloat(from.x);

@@ -13,8 +13,6 @@ public class GrenadeUpdatePacket extends AClientPacket {
     public Quaternion rotation;
     public boolean isAlive;
 
-    public GrenadeUpdatePacket() {}
-
     public GrenadeUpdatePacket(int grenadeId, Vector3 position, Quaternion rotation, boolean isAlive) {
         super(grenadeId, GrenadeUpdatePacket.class);
         putFloat(position.x);

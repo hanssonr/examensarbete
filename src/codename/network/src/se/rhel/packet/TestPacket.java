@@ -15,8 +15,6 @@ public class TestPacket extends Packet {
     public long longVal;
     public short shortVal;
 
-    public TestPacket() {}
-
     public TestPacket(int clientId, float fVal, double dVal, char cVal, byte bVal, long lVal, short sVal) {
         super(TestPacket.class);
         putInt(clientId);
