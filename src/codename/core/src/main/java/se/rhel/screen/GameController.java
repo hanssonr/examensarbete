@@ -47,7 +47,7 @@ public class GameController extends BaseGameController {
                 mWorldModel.getPlayer().shoot();
                 break;
             case GRENADE:
-                Grenade g = new Grenade(mWorldModel.getBulletWorld(), mWorldModel.getPlayer().getPosition(), mWorldModel.getPlayer().getDirection());
+                Grenade g = new Grenade(mWorldModel.getBulletWorld(), mWorldModel.getPlayer().getShootPosition(), mWorldModel.getPlayer().getDirection());
 
                 mWorldModel.addGrenade(g);
                 mWorldView.addGrenade(g);

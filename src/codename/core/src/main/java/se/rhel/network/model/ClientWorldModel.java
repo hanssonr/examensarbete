@@ -119,7 +119,7 @@ public class ClientWorldModel extends BaseWorldModel implements INetworkWorldMod
         }
 
         if(mPlayer.wantToShoot()) {
-            RayVector ray = RayVector.createFromDirection(mPlayer.getPosition().add(Vector3.Y), mPlayer.getDirection(), 75f);
+            RayVector ray = new RayVector(mPlayer.getShootPosition(), mPlayer.getDirection(), 75f);
             mEvents.notify(new ModelEvent(EventType.SHOOT, ray));
         }
     }
@@ -182,20 +182,19 @@ public class ClientWorldModel extends BaseWorldModel implements INetworkWorldMod
     }
 
     public void damageEntity(int id, int amount) {
-        GameObject obj = (GameObject)(mClient.getId() == id ? mPlayer : getExternalPlayer(id));
+        GameObject obj = (mClient.getId() == id ? mPlayer : (GameObject)mPlayers.get(id));
         super.damageEntity(obj, amount);
         mEvents.notify(new ModelEvent(EventType.DAMAGE, obj));
     }
 
     public void killEntity(int id) {
-        GameObject obj = mClient.getId() == id ? mPlayer : getExternalPlayer(id);
+        GameObject obj = (mClient.getId() == id ? mPlayer : (GameObject)mPlayers.get(id));
         super.killEntity(obj);
         mEvents.notify(new ModelEvent(EventType.EXPLOSION, obj.getPosition()));
     }
 
-    public void transformEntity(int clientId, Vector3 position, Vector3 rotation) {
-        GameObject obj = getExternalPlayer(clientId);
-        if(obj != null)
-            obj.rotateAndTranslate(rotation, position);
+    public void transformEntity(int id, Vector3 position, Vector3 rotation) {
+        GameObject obj = (mClient.getId() == id ? mPlayer : (GameObject)mPlayers.get(id));
+        obj.rotateAndTranslate(rotation, position);
     }
 }

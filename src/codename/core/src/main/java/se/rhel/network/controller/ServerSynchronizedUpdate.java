@@ -5,15 +5,16 @@ import se.rhel.Connection;
 import se.rhel.Server;
 import se.rhel.event.Events;
 import se.rhel.model.component.*;
+import se.rhel.model.entity.IPlayer;
 import se.rhel.model.physics.RayVector;
 import se.rhel.network.model.ConnectionWrappedObject;
 import se.rhel.network.model.ServerWorldModel;
-import se.rhel.model.util.Utils;
 import se.rhel.model.weapon.Grenade;
 import se.rhel.network.model.ExternalPlayer;
 import se.rhel.network.packet.*;
 import se.rhel.observer.ServerListener;
 import se.rhel.util.Log;
+import se.rhel.util.Utils;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -75,6 +76,8 @@ public class ServerSynchronizedUpdate implements ServerListener {
                 GameObject go = (GameObject) mWorld.getExternalPlayer(gcp.clientId);
                 IActionable ac = (IActionable) go.getComponent(ActionComponent.class);
 
+                System.out.println("SERVER:" + gcp.position);
+
                 // Check if the player can throw
                 if(ac.canThrowGrenade()) {
                     //Add info to create grenade
@@ -83,7 +86,7 @@ public class ServerSynchronizedUpdate implements ServerListener {
                     mWorld.addGrenade(g);
 
                     // Send tcp to clients
-                    mServer.sendToAllTCP(new GrenadeCreatePacket(((NetworkComponent)g.getComponent(NetworkComponent.class)).getID(), go.getPosition(), go.getDirection()));
+                    mServer.sendToAllTCP(new GrenadeCreatePacket(((NetworkComponent)g.getComponent(NetworkComponent.class)).getID(), ((IPlayer)go).getShootPosition(), go.getDirection()));
                 }
 
             }

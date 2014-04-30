@@ -28,7 +28,7 @@ public class ExternalPlayerRenderer {
     private ModelInstance mExternalPlayer = new ModelInstance(Resources.INSTANCE.playerModelAnimated);
     private ModelInstance mLaser = new ModelInstance(Resources.INSTANCE.laserWeaponModel);
 
-    private Vector3 mArmOffset = new Vector3(0.45f, 0.4f, -0.2f);
+    private Vector3 mArmOffset = new Vector3(0.49f, 0.35f, -0.05f);
     private Vector3 mGroundOffset = new Vector3();
     private BoundingBox mBox = new BoundingBox();
     private Array<IPlayer> mPlayers;

@@ -59,7 +59,7 @@ public class TransformComponent implements ITransform, IComponent {
 
     @Override
     public Vector3 getDirection() {
-        return mDirection;
+        return mDirection.nor();
     }
 
     public Vector3 getRotation() {

@@ -59,11 +59,10 @@ public class ClientController extends BaseGameController implements NetworkListe
         super.inputEvent(type);
         switch (type) {
             case GRENADE:
-                // Check against the rules in the model
-                // mClientWorldModel.getPlayer().grenadeThrow();
+                System.out.println("CLIENT:" +mWorldModel.getPlayer().getShootPosition());
                 // Send to server
                 mClient.sendTcp(new GrenadeCreatePacket(mClient.getId(),
-                        mWorldModel.getPlayer().getPosition(),
+                        mWorldModel.getPlayer().getShootPosition(),
                         mWorldModel.getPlayer().getDirection()));
                 break;
         }

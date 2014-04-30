@@ -2,7 +2,6 @@ package se.rhel.network.model;
 
 
 import com.badlogic.gdx.math.Vector3;
-import se.rhel.Connection;
 import se.rhel.event.*;
 import se.rhel.model.BaseWorldModel;
 import se.rhel.model.component.*;
@@ -13,6 +12,7 @@ import se.rhel.model.physics.RayVector;
 import se.rhel.model.weapon.Explosion;
 import se.rhel.model.weapon.Grenade;
 import se.rhel.model.weapon.IExplodable;
+import se.rhel.network.event.ServerModelEvent;
 import se.rhel.util.Utils;
 import se.rhel.view.input.PlayerInput;
 
@@ -35,11 +35,11 @@ public class ServerWorldModel extends BaseWorldModel {
         super(events);
         mPlayers = new HashMap<>();
 
-        for(int i = 0; i < 15; i++) {
+        for(int i = 0; i < 10; i++) {
             float x = (float) (Math.random() * 10)-5;
             float z = (float) (Math.random() * 10)-5;
 
-            DummyEntity de = new DummyEntity(getBulletWorld(), 0.7f, 1.6f, 100, 7f, new Vector3(x, 10, z));
+            DummyEntity de = new DummyEntity(getBulletWorld(), 0.6f, 1.5f, 100, 7f, new Vector3(x, 10, z));
             de.addComponent(new ZombieAIComponent(mPlayers.get(1), de));
             int id = Utils.getInstance().generateUniqueId();
             de.addComponent(new NetworkComponent(id));
@@ -75,7 +75,7 @@ public class ServerWorldModel extends BaseWorldModel {
 
             IActionable ac = (IActionable) ((GameObject)p).getComponent(ActionComponent.class);
             if(ac.hasShoot()) {
-                RayVector ray = RayVector.createFromDirection(p.getPosition().add(Vector3.Y), p.getDirection(), 75f);
+                RayVector ray = new RayVector(p.getShootPosition(), p.getDirection(), 75f);
                 mEvents.notify(new ServerModelEvent(EventType.SHOOT, ray, p));
             }
         }

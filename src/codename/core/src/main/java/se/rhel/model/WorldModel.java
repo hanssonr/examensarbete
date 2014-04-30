@@ -32,7 +32,7 @@ public class WorldModel extends BaseWorldModel implements IWorldModel {
             float x = (float) (Math.random() * 81)-40;
             float z = (float) (Math.random() * 81)-40;
 
-            DummyEntity de = new DummyEntity(getBulletWorld(), 0.7f, 1.6f, 100, 7f, new Vector3(x, 10, z));
+            DummyEntity de = new DummyEntity(getBulletWorld(), 0.6f, 1.2f, 100, 7f, new Vector3(x, 10, z));
             de.addComponent(new ZombieAIComponent(mPlayer, de));
             mPlayers.add(de);
         }
@@ -49,7 +49,7 @@ public class WorldModel extends BaseWorldModel implements IWorldModel {
 
             IActionable ac = (IActionable) de.getComponent(ActionComponent.class);
             if(ac.hasShoot()) {
-                RayVector ray = RayVector.createFromDirection(de.getPosition().add(Vector3.Y), de.calculateShootDirection(), 75f);
+                RayVector ray = new RayVector(de.getShootPosition(), de.calculateShootDirection(), 75f);
                 mEvents.notify(new ModelEvent(EventType.SHOOT, ray));
             }
         }
@@ -72,7 +72,7 @@ public class WorldModel extends BaseWorldModel implements IWorldModel {
         mPlayer.update(delta);
 
         if(mPlayer.wantToShoot()) {
-            RayVector ray = RayVector.createFromDirection(mPlayer.getPosition().add(Vector3.Y), mPlayer.getDirection(), 75f);
+            RayVector ray = new RayVector(mPlayer.getShootPosition(), mPlayer.getDirection(), 75f);
             mEvents.notify(new ModelEvent(EventType.SHOOT, ray));
         }
     }

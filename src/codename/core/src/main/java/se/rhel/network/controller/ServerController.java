@@ -2,7 +2,6 @@ package se.rhel.network.controller;
 
 import com.badlogic.gdx.math.Quaternion;
 import com.badlogic.gdx.math.Vector3;
-import se.rhel.Connection;
 import se.rhel.Server;
 import se.rhel.event.*;
 import se.rhel.model.component.GameObject;
@@ -10,7 +9,8 @@ import se.rhel.model.component.NetworkComponent;
 import se.rhel.model.entity.DummyEntity;
 import se.rhel.model.physics.RayVector;
 import se.rhel.model.weapon.Grenade;
-import se.rhel.network.model.ExternalPlayer;
+import se.rhel.network.event.ServerModelEvent;
+import se.rhel.network.event.ServerModelListener;
 import se.rhel.network.model.ServerWorldModel;
 import se.rhel.network.packet.*;
 

@@ -26,7 +26,7 @@ public class Grenade extends GameObject implements IExplodable {
         super();
 
         mPhysicsComponent = createPhysicsComponent(world);
-        mTransform.getTransformation().setTranslation(position.add(Vector3.Y).add(direction.cpy().scl(0.5f)));
+        mTransform.getTransformation().setTranslation(position.add(direction.cpy().scl(0.5f)));
 
         createPhysicBody();
         mPhysicsComponent.getBody().applyImpulse(direction.cpy().scl(20f), new Vector3(0.1f, 0.05f, 0.1f).scl(0.1f));

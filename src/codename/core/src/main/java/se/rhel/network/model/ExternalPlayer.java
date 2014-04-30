@@ -14,7 +14,7 @@ import se.rhel.model.physics.BulletWorld;
  */
 public class ExternalPlayer extends DummyEntity {
 
-    private static Vector2 PLAYERSIZE = new Vector2(0.6f, 1.5f);
+    private static Vector2 PLAYERSIZE = new Vector2(0.6f, 1.2f);
     private static int MAX_HEALTH = 100;
 
     private INetwork mNetworkComponent;

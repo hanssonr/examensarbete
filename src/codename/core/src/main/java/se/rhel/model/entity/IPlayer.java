@@ -13,6 +13,7 @@ public interface IPlayer {
     public Vector3 getRotation();
     public Vector3 getPosition();
     public Vector3 getDirection();
+    public Vector3 getShootPosition();
     public boolean isAlive();
     public void update(float delta);
 }

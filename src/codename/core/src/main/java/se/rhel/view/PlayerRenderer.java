@@ -74,8 +74,7 @@ public class PlayerRenderer {
     private void updateCamera(float delta) {
         mBobTimer +=delta;
 
-        mPlayer.getTransformation().getTranslation(mCamera.position);
-        mCamera.position.add(mCamera.getOffset());
+        mCamera.position.set(mPlayer.getShootPosition());
 
         //bobbing
         if(mState == PLAYERSTATE.running) {

@@ -12,11 +12,12 @@ public class GravityComponent implements IGravity, IComponent {
 
     //RayCasts
     private ClosestRayResultCallback rayTestCB;
-    private Vector3 fromGround = new Vector3();
+    private Vector3 fromBottom = new Vector3();
     private Vector3 toGround = new Vector3();
     private boolean mOnGround = false;
     private float mGravity = 0f;
     private float mGravityPower = 15f;
+    private float mCastRayLength = 0.2f;
 
     private btCollisionWorld mCollisionWorld;
 
@@ -25,15 +26,16 @@ public class GravityComponent implements IGravity, IComponent {
         mGravityPower = gravityPower;
     }
 
-    public void checkOnGround(Vector3 position, float length) {
+    public void checkOnGround(Vector3 bottomPosition) {
         mOnGround = false;
-        fromGround.set(position);
-        toGround.set(new Vector3(fromGround.x, fromGround.y - length, fromGround.z));
+        //0.1f bias since bottom position can sometimes be "under" the ground and therefore never trigger a collision
+        fromBottom.set(new Vector3(bottomPosition.x, bottomPosition.y + 0.1f, bottomPosition.z));
+        toGround.set(new Vector3(fromBottom.x, fromBottom.y - mCastRayLength, fromBottom.z));
 
-        ClosestRayResultCallback cb = new ClosestRayResultCallback(fromGround, toGround);
+        ClosestRayResultCallback cb = new ClosestRayResultCallback(fromBottom, toGround);
         cb.setCollisionObject(null);
 
-        mCollisionWorld.rayTest(fromGround, toGround, cb);
+        mCollisionWorld.rayTest(fromBottom, toGround, cb);
 
         if(cb.hasHit()) {
             final btCollisionObject obj = cb.getCollisionObject();

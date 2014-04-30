@@ -63,7 +63,7 @@ public class LaserRenderer {
             mLaserVertical.setColor(1, 0, 0, 1);
             mLaserHorizontal.setColor(1, 0, 0, 1);
 
-            Vector3 dir = ray.getDirection().crs(FPSCamera.UP);
+            Vector3 dir = ray.getDirection().crs(FPSCamera.UP).nor();
 
             mLaserVertical.setRotation(dir, ray.getDirection().crs(dir));
             mLaserHorizontal.setRotation(dir, ray.getDirection().crs(dir));

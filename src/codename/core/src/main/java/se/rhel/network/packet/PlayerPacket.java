@@ -15,7 +15,6 @@ import java.util.Map;
  */
 public class PlayerPacket extends Packet {
 
-    //public Vector3 mPosition;
     public ArrayList<UpdateStruct> mPlayers = new ArrayList<>();
 
     public PlayerPacket(HashMap<Integer, IPlayer> players) {

@@ -53,7 +53,8 @@ public class DummyEntity extends GameObject implements IPlayer {
     }
 
     public void update(float delta) {
-        mGravityComponent.checkOnGround(getPosition(), mSize.y);
+        mPhysicsComponent.getBody().setGravity(Vector3.Zero);
+        mGravityComponent.checkOnGround(mPhysicsComponent.getBottomPosition());
         mGravityComponent.calculateGravity(delta);
         mActionComponent.update(delta);
 
@@ -64,13 +65,18 @@ public class DummyEntity extends GameObject implements IPlayer {
     }
 
     public Vector3 calculateShootDirection() {
-        double bias = Math.random();
+        double hitchance = Math.random();
         Vector3 dir = getDirection().cpy();
 
-        if(bias > 0.3d) {
+        if(hitchance < 0.7d) {
             dir.x += 0.2f;
             dir.z += 0.2f;
         }
         return dir;
+    }
+
+    @Override
+    public Vector3 getShootPosition() {
+        return getPosition().add(new Vector3(0, 0.7f, 0));
     }
 }
