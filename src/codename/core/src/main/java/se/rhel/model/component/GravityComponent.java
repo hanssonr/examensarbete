@@ -8,7 +8,7 @@ import com.badlogic.gdx.physics.bullet.collision.btCollisionWorld;
 /**
  * Created by rkh on 2014-04-27.
  */
-public class GravityComponent implements IGravity, IComponent {
+public class GravityComponent implements IGravity, IComponent, IUpdateable {
 
     //RayCasts
     private ClosestRayResultCallback rayTestCB;
@@ -18,15 +18,17 @@ public class GravityComponent implements IGravity, IComponent {
     private float mGravity = 0f;
     private float mGravityPower = 15f;
     private float mCastRayLength = 0.2f;
+    private IPhysics mPhysics;
 
     private btCollisionWorld mCollisionWorld;
 
-    public GravityComponent(btCollisionWorld collisionWorld, float gravityPower) {
+    public GravityComponent(btCollisionWorld collisionWorld, IPhysics physiccomponent, float gravityPower) {
         mCollisionWorld = collisionWorld;
+        mPhysics = physiccomponent;
         mGravityPower = gravityPower;
     }
 
-    public void checkOnGround(Vector3 bottomPosition) {
+    private void checkOnGround(Vector3 bottomPosition) {
         mOnGround = false;
         //0.1f bias since bottom position can sometimes be "under" the ground and therefore never trigger a collision
         fromBottom.set(new Vector3(bottomPosition.x, bottomPosition.y + 0.1f, bottomPosition.z));
@@ -45,7 +47,10 @@ public class GravityComponent implements IGravity, IComponent {
         }
     }
 
-    public void calculateGravity(float delta) {
+    public void update(float delta) {
+        mPhysics.getBody().setGravity(Vector3.Zero);
+        checkOnGround(mPhysics.getBottomPosition());
+
         if(!mOnGround) {
             mGravity -= mGravityPower * delta;
         } else {

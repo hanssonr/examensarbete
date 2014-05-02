@@ -1,10 +1,9 @@
 package se.rhel.model;
 
 import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.utils.Array;
 import se.rhel.event.*;
 import se.rhel.model.component.*;
-import se.rhel.model.entity.DummyEntity;
+import se.rhel.model.entity.ControlledPlayer;
 import se.rhel.model.entity.IPlayer;
 import se.rhel.model.entity.Player;
 import se.rhel.model.physics.MyContactListener;
@@ -22,49 +21,19 @@ import java.util.ArrayList;
 public class WorldModel extends BaseWorldModel implements IWorldModel {
 
     private Player mPlayer;
-    private Array<IPlayer> mPlayers = new Array<>();
 
     public WorldModel(Events events) {
         super(events);
         mPlayer = new Player(new Vector3(0, 20, 0), getBulletWorld());
+        addPlayer(mPlayer);
 
-        for(int i = 0; i < 50; i++) {
+        for(int i = 0; i < 2; i++) {
             float x = (float) (Math.random() * 81)-40;
             float z = (float) (Math.random() * 81)-40;
 
-            DummyEntity de = new DummyEntity(getBulletWorld(), 0.6f, 1.2f, 100, 7f, new Vector3(x, 10, z));
-            de.addComponent(new ZombieAIComponent(mPlayer, de));
-            mPlayers.add(de);
-        }
-    }
-
-    @Override
-    public void update(float delta) {
-        super.update(delta);
-        updatePlayer(delta);
-
-        for(int i = 0; i < mPlayers.size; i++) {
-            DummyEntity de = (DummyEntity)mPlayers.get(i);
-            de.update(delta);
-
-            IActionable ac = (IActionable) de.getComponent(ActionComponent.class);
-            if(ac.hasShoot()) {
-                RayVector ray = new RayVector(de.getShootPosition(), de.calculateShootDirection(), 75f);
-                mEvents.notify(new ModelEvent(EventType.SHOOT, ray));
-            }
-        }
-
-        for (int i = 0; i < mGrenades.size; i++) {
-            Grenade g = mGrenades.get(i);
-
-            g.update(delta);
-
-            if(!g.isAlive()) {
-                mEvents.notify(new ModelEvent(EventType.EXPLOSION, g.getPosition()));
-                handleExplosion(getAffectedByExplosion(g), g);
-                destroyGameObject(g);
-                mGrenades.removeIndex(i);
-            }
+            ControlledPlayer cp = new ControlledPlayer(getBulletWorld(), new Vector3(x, 10, z));
+            cp.addComponent(new BasicAI(cp));
+            addPlayer(cp);
         }
     }
 
@@ -74,6 +43,34 @@ public class WorldModel extends BaseWorldModel implements IWorldModel {
         if(mPlayer.wantToShoot()) {
             RayVector ray = new RayVector(mPlayer.getShootPosition(), mPlayer.getDirection(), 75f);
             mEvents.notify(new ModelEvent(EventType.SHOOT, ray));
+        }
+    }
+
+    @Override
+    public void update(float delta) {
+        super.update(delta);
+        updatePlayer(delta);
+
+        for(IPlayer player : getControlledPlayers()) {
+            ControlledPlayer cp = (ControlledPlayer) player;
+            cp.update(delta);
+
+            IActionable ac = (IActionable) cp.getComponent(ActionComponent.class);
+            if(ac.hasShoot()) {
+                RayVector ray = new RayVector(cp.getShootPosition(), cp.calculateShootDirection(), 75f);
+                mEvents.notify(new ModelEvent(EventType.SHOOT, ray));
+            }
+        }
+
+        for(Grenade grenade : getGrenades()) {
+            grenade.update(delta);
+
+            if(!grenade.isAlive()) {
+                mEvents.notify(new ModelEvent(EventType.EXPLOSION, grenade.getPosition()));
+                handleExplosion(grenade);
+                destroyGameObject(grenade);
+                removeGrenade(grenade);
+            }
         }
     }
 
@@ -88,15 +85,16 @@ public class WorldModel extends BaseWorldModel implements IWorldModel {
             else if(co.type == MyContactListener.CollisionObject.CollisionType.ENTITY) {
                 damageEntity(co.entity, 25);
                 mEvents.notify(new ModelEvent(EventType.DAMAGE, co.entity));
-
             }
 
             ray.setTo(co.hitPoint);
         }
     }
 
-    public void handleExplosion(ArrayList<GameObject> hit, IExplodable exp) {
-        for(GameObject obj : hit) {
+    public void handleExplosion(IExplodable exp) {
+        ArrayList<GameObject> affected = getAffectedByExplosion(exp);
+
+        for(GameObject obj : affected) {
             IDamageable entity = (IDamageable) obj.getComponent(DamageComponent.class);
             entity.damageEntity(exp.getExplosionDamage());
             mEvents.notify(new ModelEvent(EventType.DAMAGE, obj));
@@ -105,15 +103,13 @@ public class WorldModel extends BaseWorldModel implements IWorldModel {
 
     public void checkEntityStatus(GameObject entity) {
         IDamageable da = (IDamageable) entity.getComponent(DamageComponent.class);
-        if(entity instanceof Player) {
-            System.out.println("YEAP");
-        }
+
         if(da.isAlive() && da.getHealth() <= 0) {
             da.setAlive(false);
 
             Explosion exp = new Explosion(entity.getPosition(), 5, 50);
             mEvents.notify(new ModelEvent(EventType.EXPLOSION, exp.getPosition()));
-            handleExplosion(getAffectedByExplosion(exp), exp);
+            handleExplosion(exp);
             entity.destroy();
         }
     }
@@ -121,9 +117,4 @@ public class WorldModel extends BaseWorldModel implements IWorldModel {
     public Player getPlayer() {
         return mPlayer;
     }
-
-    public Array<IPlayer> getExternalPlayers() {
-        return mPlayers;
-    }
-
 }

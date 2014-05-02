@@ -4,18 +4,16 @@ import com.badlogic.gdx.math.Vector3;
 import se.rhel.Client;
 import se.rhel.Snaek;
 import se.rhel.event.*;
+import se.rhel.model.entity.ControlledPlayer;
 import se.rhel.model.physics.RayVector;
 import se.rhel.network.event.NetworkEvent;
 import se.rhel.network.event.NetworkListener;
 import se.rhel.network.model.ClientWorldModel;
 import se.rhel.model.weapon.Grenade;
-import se.rhel.network.model.ExternalPlayer;
-import se.rhel.network.model.INetworkWorldModel;
 import se.rhel.network.packet.*;
 import se.rhel.packet.Packet;
 import se.rhel.screen.BaseGameController;
 import se.rhel.view.WorldView;
-import se.rhel.view.input.PlayerInput;
 
 /**
  * Group: Multiplayer
@@ -96,7 +94,7 @@ public class ClientController extends BaseGameController implements NetworkListe
                         mWorldModel.getPlayer().getRotation()));
                 break;
             case PLAYER_JOIN:
-                mWorldView.addPlayer((ExternalPlayer)objs[0]);
+                mWorldView.addPlayer((ControlledPlayer)objs[0]);
                 break;
             default:
                 break;

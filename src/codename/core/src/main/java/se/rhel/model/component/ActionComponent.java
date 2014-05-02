@@ -3,7 +3,7 @@ package se.rhel.model.component;
 /**
  * Created by Emil on 2014-04-01.
  */
-public class ActionComponent implements IActionable, IComponent {
+public class ActionComponent implements IActionable, IComponent, IUpdateable {
 
     // Laser
     private boolean mHasShot = false;
@@ -33,7 +33,6 @@ public class ActionComponent implements IActionable, IComponent {
     }
 
     public void shoot() {
-        // If can shoot
         if(mCanShoot) {
             mHasShot = true;
             mCanShoot = false;

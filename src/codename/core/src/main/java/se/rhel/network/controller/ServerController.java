@@ -6,7 +6,7 @@ import se.rhel.Server;
 import se.rhel.event.*;
 import se.rhel.model.component.GameObject;
 import se.rhel.model.component.NetworkComponent;
-import se.rhel.model.entity.DummyEntity;
+import se.rhel.model.entity.ControlledPlayer;
 import se.rhel.model.physics.RayVector;
 import se.rhel.model.weapon.Grenade;
 import se.rhel.network.event.ServerModelEvent;
@@ -50,16 +50,16 @@ public class ServerController implements ServerModelListener {
                 mServer.sendToAllUDP(new BulletHolePacket(hitPoint, hitNormal));
                 break;
             case DAMAGE:
-                DummyEntity de = (DummyEntity) objs[0];
-                mServerWorldModel.checkEntityStatus(de);
-                NetworkComponent nc = (NetworkComponent) de.getComponent(NetworkComponent.class);
+                ControlledPlayer cp = (ControlledPlayer) objs[0];
+                mServerWorldModel.checkEntityStatus(cp);
+                NetworkComponent nc = (NetworkComponent) cp.getComponent(NetworkComponent.class);
                 mServer.sendToAllTCP(new DamagePacket(nc.getID(), 25));
                 break;
             case SERVER_DEAD_ENTITY: // [0] = GameObject
-                mServer.sendToAllTCP(new DeadEntityPacket(((NetworkComponent) ((GameObject) objs[0]).getComponent(NetworkComponent.class)).getID()));
+                mServer.sendToAllUDP(new DeadEntityPacket(((NetworkComponent) ((GameObject) objs[0]).getComponent(NetworkComponent.class)).getID()));
                 break;
             case SHOOT: // [0] = RayVector, [1] = GameObject
-                mServerWorldModel.checkShootCollision((RayVector)objs[0]);
+                mServerWorldModel.checkShootCollision((RayVector)objs[0], (GameObject) objs[1]);
                 mServer.sendToAllUDP(new ShootPacket(
                         ((NetworkComponent)((GameObject)objs[1]).getComponent(NetworkComponent.class)).getID(),
                         ((RayVector)objs[0]).getFrom(),
@@ -77,7 +77,7 @@ public class ServerController implements ServerModelListener {
                 break;
             case PLAYER_MOVE:
                 int id = ((NetworkComponent)((GameObject)objs[0]).getComponent(NetworkComponent.class)).getID();
-                mServer.sendToAllUDP(new PlayerMovePacket(id, ((DummyEntity)objs[0]).getPosition(), ((DummyEntity)objs[0]).getRotation()));
+                mServer.sendToAllUDP(new PlayerMovePacket(id, ((ControlledPlayer)objs[0]).getPosition(), ((ControlledPlayer)objs[0]).getRotation()));
                 break;
             default:
                 break;

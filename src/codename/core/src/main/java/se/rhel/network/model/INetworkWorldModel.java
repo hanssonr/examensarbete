@@ -10,9 +10,6 @@ import se.rhel.model.entity.IPlayer;
  */
 public interface INetworkWorldModel extends IWorldModel {
 
-    public void addPlayer(int id, ExternalPlayer player);
-    public ExternalPlayer getExternalPlayer(int id);
-    public IPlayer getPlayerEntity(int id);
     public void damageEntity(int id, int amount);
     public void killEntity(int id);
     public void transformEntity(int clientId, Vector3 position, Vector3 rotation);

@@ -7,6 +7,7 @@ import se.rhel.CodeName;
 import se.rhel.event.*;
 import se.rhel.model.WorldModel;
 import se.rhel.model.component.GameObject;
+import se.rhel.model.entity.IPlayer;
 import se.rhel.model.physics.RayVector;
 import se.rhel.model.weapon.Grenade;
 import se.rhel.view.WorldView;

@@ -5,7 +5,7 @@ import com.badlogic.gdx.math.Vector3;
 import se.rhel.event.*;
 import se.rhel.model.BaseWorldModel;
 import se.rhel.model.component.*;
-import se.rhel.model.entity.DummyEntity;
+import se.rhel.model.entity.ControlledPlayer;
 import se.rhel.model.entity.IPlayer;
 import se.rhel.model.physics.MyContactListener;
 import se.rhel.model.physics.RayVector;
@@ -17,7 +17,6 @@ import se.rhel.util.Utils;
 import se.rhel.view.input.PlayerInput;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 /**
  * Group: Multiplayer
@@ -25,7 +24,7 @@ import java.util.HashMap;
 public class ServerWorldModel extends BaseWorldModel {
 
     // Linkin ID's and Players
-    private HashMap<Integer, IPlayer> mPlayers;
+    //private HashMap<Integer, IPlayer> mPlayers;
 
     private final float LOW_FREQ = 0.1f;
     private float CURR_FREQ_TIMER = 0f;
@@ -33,17 +32,16 @@ public class ServerWorldModel extends BaseWorldModel {
 
     public ServerWorldModel(Events events) {
         super(events);
-        mPlayers = new HashMap<>();
 
-        for(int i = 0; i < 0; i++) {
-            float x = (float) (Math.random() * 10)-5;
-            float z = (float) (Math.random() * 10)-5;
+        for(int i = 0; i < 12; i++) {
+            float x = (float) (Math.random() * 81)-40;
+            float z = (float) (Math.random() * 81)-40;
 
-            DummyEntity de = new DummyEntity(getBulletWorld(), 0.6f, 1.5f, 100, 7f, new Vector3(x, 10, z));
-            de.addComponent(new ZombieAIComponent(mPlayers.get(1), de));
+            ControlledPlayer cp = new ControlledPlayer(getBulletWorld(), new Vector3(x, 10, z));
+            cp.addComponent(new BasicAI(cp));
             int id = Utils.getInstance().generateUniqueId();
-            de.addComponent(new NetworkComponent(id));
-            mPlayers.put(id, de);
+            cp.addComponent(new NetworkComponent(id));
+            setPlayer(id, cp);
         }
     }
 
@@ -60,59 +58,62 @@ public class ServerWorldModel extends BaseWorldModel {
             SEND_LOW_FREQ = false;
         }
 
-        for(IPlayer p : mPlayers.values()) {
+        for(IPlayer p : getAllPlayers()) {
             p.update(delta);
 
-            if(((GameObject)p).hasComponent(IAIComponent.class)) {
-                if(PlayerInput.DO_LOW_FREQ_UPDATES) {
-                    if(SEND_LOW_FREQ) {
+            if(p.isAlive()) {
+                if(((GameObject)p).hasComponent(IAIComponent.class)) {
+                    if(PlayerInput.DO_LOW_FREQ_UPDATES) {
+                        if(SEND_LOW_FREQ) {
+                            mEvents.notify(new ServerModelEvent(EventType.PLAYER_MOVE, p));
+                        }
+                    } else {
                         mEvents.notify(new ServerModelEvent(EventType.PLAYER_MOVE, p));
                     }
-                } else {
-                    mEvents.notify(new ServerModelEvent(EventType.PLAYER_MOVE, p));
                 }
-            }
 
-            IActionable ac = (IActionable) ((GameObject)p).getComponent(ActionComponent.class);
-            if(ac.hasShoot()) {
-                RayVector ray = new RayVector(p.getShootPosition(), p.getDirection(), 75f);
-                mEvents.notify(new ServerModelEvent(EventType.SHOOT, ray, p));
+                IActionable ac = (IActionable) ((GameObject)p).getComponent(ActionComponent.class);
+                if(ac.hasShoot()) {
+                    RayVector ray = new RayVector(p.getShootPosition(), p.getDirection(), 75f);
+                    mEvents.notify(new ServerModelEvent(EventType.SHOOT, ray, p));
+                }
             }
         }
 
         //Update grenades
-        for (int i = 0; i < mGrenades.size; i++) {
-            Grenade g = mGrenades.get(i);
-            g.update(delta);
+        for (Grenade grenade : getGrenades()) {
+            grenade.update(delta);
 
-            if(!g.isAlive()) {
+            if(!grenade.isAlive()) {
                 // A grenade is found as dead, send it to client as such
-                mEvents.notify(new ServerModelEvent(EventType.GRENADE, g, false));
+                mEvents.notify(new ServerModelEvent(EventType.GRENADE, grenade, false));
 
-                handleExplosion(getAffectedByExplosion(g), g);
-                g.destroy();
-                mGrenades.removeIndex(i);
+                handleExplosion(grenade);
+                destroyGameObject(grenade);
+                removeGrenade(grenade);
             } else {
                 // The grenade is still alive and should be synched with client
                 // If we want a lower freq update
                 if(PlayerInput.DO_LOW_FREQ_UPDATES) {
                     if(SEND_LOW_FREQ) {
-                        mEvents.notify(new ServerModelEvent(EventType.GRENADE, g, true));
+                        mEvents.notify(new ServerModelEvent(EventType.GRENADE, grenade, true));
                     }
                 } else {
-                    mEvents.notify(new ServerModelEvent(EventType.GRENADE, g, true));
+                    mEvents.notify(new ServerModelEvent(EventType.GRENADE, grenade, true));
                 }
             }
         }
     }
 
-    public void checkShootCollision(RayVector ray) {
+    public void checkShootCollision(RayVector ray, GameObject shooter) {
         MyContactListener.CollisionObject co = super.getShootCollision(ray);
 
         if(co != null) {
             if(co.type == MyContactListener.CollisionObject.CollisionType.ENTITY) {
-                damageEntity(co.entity, 25);
-                mEvents.notify(new ServerModelEvent(EventType.DAMAGE, co.entity));
+                if(!co.entity.equals(shooter)) {
+                    damageEntity(co.entity, 25);
+                    mEvents.notify(new ServerModelEvent(EventType.DAMAGE, co.entity));
+                }
             }
             else if(co.type == MyContactListener.CollisionObject.CollisionType.WORLD) {
                 mEvents.notify(new ServerModelEvent(EventType.SERVER_WORLD_COLLISION, co.hitPoint, co.hitNormal));
@@ -122,8 +123,10 @@ public class ServerWorldModel extends BaseWorldModel {
         }
     }
 
-    public void handleExplosion(ArrayList<GameObject> hit, IExplodable exp) {
-        for(GameObject obj : hit) {
+    public void handleExplosion(IExplodable exp) {
+        ArrayList<GameObject> affected = getAffectedByExplosion(exp);
+
+        for(GameObject obj : affected) {
             IDamageable entity = (IDamageable) obj.getComponent(DamageComponent.class);
             entity.damageEntity(exp.getExplosionDamage());
             mEvents.notify(new ServerModelEvent(EventType.DAMAGE, obj));
@@ -136,25 +139,13 @@ public class ServerWorldModel extends BaseWorldModel {
             dae.setAlive(false);
 
             Explosion exp = new Explosion(entity.getPosition(), 5, 50);
-            handleExplosion(getAffectedByExplosion(exp), exp);
+            handleExplosion(exp);
             mEvents.notify(new ServerModelEvent(EventType.SERVER_DEAD_ENTITY, entity));
         }
     }
 
-    public HashMap<Integer, IPlayer> getPlayers() {
-        return mPlayers;
-    }
-
-    public void addPlayer(int id, ExternalPlayer player) {
-        mPlayers.put(id, player);
-    }
-
-    public IPlayer getExternalPlayer(int id) {
-        return mPlayers.get(id);
-    }
-
     public void transformEntity(int clientId, Vector3 position, Vector3 rotation) {
-        GameObject obj = (DummyEntity)getExternalPlayer(clientId);
+        GameObject obj = (ControlledPlayer)getPlayer(clientId);
         obj.rotateAndTranslate(rotation, position);
     }
 }

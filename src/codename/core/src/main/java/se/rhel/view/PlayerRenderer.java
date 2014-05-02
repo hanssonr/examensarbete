@@ -6,7 +6,6 @@ import com.badlogic.gdx.graphics.g3d.Environment;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.math.Vector3;
-import se.rhel.model.component.MoveComponent;
 import se.rhel.model.entity.Player;
 import se.rhel.res.Resources;
 
@@ -34,6 +33,8 @@ public class PlayerRenderer {
     private Vector3 mBobVector = new Vector3();
 
     private Player mPlayer;
+
+    private boolean hasShoot = false;
 
     public PlayerRenderer(FPSCamera camera, Player player) {
         mCamera = camera;

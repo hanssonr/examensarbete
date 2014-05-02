@@ -16,7 +16,7 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.bullet.linearmath.btIDebugDraw;
 import se.rhel.Client;
 import se.rhel.model.IWorldModel;
-import se.rhel.model.entity.DummyEntity;
+import se.rhel.model.entity.ControlledPlayer;
 import se.rhel.model.entity.IPlayer;
 import se.rhel.model.physics.BulletWorld;
 import se.rhel.model.physics.RayVector;
@@ -69,7 +69,7 @@ public class WorldView implements IWorldView {
         mModelBatch = new ModelBatch();
 
         mPlayerRenderer = new PlayerRenderer(mCamera, mWorldModel.getPlayer());
-        mExtPlayerRenderer = new ExternalPlayerRenderer(mWorldModel.getExternalPlayers());
+        mExtPlayerRenderer = new ExternalPlayerRenderer(mWorldModel.getControlledPlayers());
         mGrenadeRenderer = new GrenadeRenderer();
         mLevelRenderer = new LevelRenderer();
         mCrosshairRenderer = new ShapeRenderer();
@@ -124,11 +124,11 @@ public class WorldView implements IWorldView {
                 mBulletHoleRenderer.draw(delta);
                 mLaserView.render(delta);
 
-                // External stuff
-                for (int i = 0; i < mWorldModel.getExternalPlayers().size; i++) {
-                    DummyEntity de = (DummyEntity)mWorldModel.getExternalPlayers().get(i);
-                   // mDecalRenderer.draw(delta, de.getPosition());
-                }
+//                // External stuff
+//                for (int i = 0; i < mWorldModel.getExternalPlayers().size; i++) {
+//                    ControlledPlayer cp = (ControlledPlayer)mWorldModel.getExternalPlayers().get(i);
+//                   // mDecalRenderer.draw(delta, de.getPosition());
+//                }
             buffer1.end();
 
             buffer1.getColorBufferTexture().bind();

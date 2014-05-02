@@ -9,15 +9,10 @@ import com.badlogic.gdx.physics.bullet.linearmath.btDefaultMotionState;
 import se.rhel.model.component.*;
 import se.rhel.model.physics.BulletWorld;
 
-import java.util.Random;
-
 /**
- * Group: Logic
- *
- * Created by rkh on 2014-03-24.
+ * Created by rkh on 2014-05-02.
  */
-public class DummyEntity extends GameObject implements IPlayer {
-
+public class ControlledPlayer extends GameObject implements IPlayer {
     private Vector2 mSize;
 
     protected IPhysics mPhysicsComponent;
@@ -25,14 +20,14 @@ public class DummyEntity extends GameObject implements IPlayer {
     protected IActionable mActionComponent;
     protected IGravity mGravityComponent;
 
-    public DummyEntity(BulletWorld world, float radius, float height, int maxHealth, float movespeed, Vector3 position) {
+    public ControlledPlayer(BulletWorld world, Vector3 position) {
         super();
-        mSize = new Vector2(radius, height);
+        mSize = new Vector2(0.6f, 1.2f);
 
         mPhysicsComponent = createPhysicsComponent(world);
-        mDamageComponent = createDamageableComponent(maxHealth);
+        mDamageComponent = createDamageableComponent(100);
         mActionComponent = createActionComponent();
-        mGravityComponent = createGravityComponent(world.getCollisionWorld(), 15f);
+        mGravityComponent = createGravityComponent(world.getCollisionWorld(), mPhysicsComponent, 15f);
 
         getTransformation().setTranslation(position);
         createPhysicBody();
@@ -53,15 +48,7 @@ public class DummyEntity extends GameObject implements IPlayer {
     }
 
     public void update(float delta) {
-        mPhysicsComponent.getBody().setGravity(Vector3.Zero);
-        mGravityComponent.checkOnGround(mPhysicsComponent.getBottomPosition());
-        mGravityComponent.calculateGravity(delta);
-        mActionComponent.update(delta);
-
-        if(hasComponent(IAIComponent.class)) {
-            IAIComponent ai = (IAIComponent) getComponent(IAIComponent.class);
-            ai.update(delta);
-        }
+        super.update(delta);
     }
 
     public Vector3 calculateShootDirection() {

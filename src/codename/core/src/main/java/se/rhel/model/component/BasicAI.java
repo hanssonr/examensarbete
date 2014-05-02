@@ -1,38 +1,46 @@
 package se.rhel.model.component;
 
-import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
-import se.rhel.model.entity.IPlayer;
-import se.rhel.model.physics.RayVector;
 
 /**
  * Created by rkh on 2014-04-28.
  */
-public class ZombieAIComponent implements IAIComponent, IComponent {
+public class BasicAI implements IAIComponent, IComponent, IUpdateable {
 
-    private IPlayer mVictim;
     private Vector3 mDirection = new Vector3();
     private float mMovetimer = 4f;
     private float mShootTimer = 0;
+    private float mJumpTimer = 10f;
 
     private ITransform mTransform;
     private IPhysics mPhysic;
     private IGravity mGravity;
     private IActionable mAction;
+    private IDamageable mDamage;
 
-    public ZombieAIComponent(IPlayer player, GameObject obj) {
-        mVictim = player;
-
+    public BasicAI(GameObject obj) {
         mShootTimer = (float)((Math.random() * 10) + 5);
 
         mTransform = (ITransform) obj.getComponent(TransformComponent.class);
         mPhysic = (IPhysics) obj.getComponent(PhysicsComponent.class);
         mGravity = (IGravity) obj.getComponent(GravityComponent.class);
         mAction = (IActionable) obj.getComponent(ActionComponent.class);
+        mDamage = (IDamageable) obj.getComponent(DamageComponent.class);
     }
 
     public void update(float delta) {
-//        if(RayVector.getDistance(mVictim.getPosition(), mTransform.getPosition()) < 15) {
+//        mChaseTimer += delta;
+
+        //Get victim to chase
+//        if(mChaseTimer >= 5f) {
+//            mChaseTimer = 0;
+//
+//            if(mVictims.size > 0)
+//                mVictim = mVictims.get((int)Math.floor(Math.random() * mVictims.size));
+//        }
+
+        //If victim is alive, chase
+//        if(hasVictim() && mVictim.isAlive()) {
 //            mDirection = mVictim.getPosition().cpy().sub(mTransform.getPosition()).nor();
 //
 //            Vector2 currXDir = new Vector2(mTransform.getDirection().x, mTransform.getDirection().z).nor();
@@ -43,22 +51,31 @@ public class ZombieAIComponent implements IAIComponent, IComponent {
 //
 //            mTransform.rotateBy(new Vector3(xangle, yangle, 0));
 //        } else {
-            mMovetimer += delta;
-            if(mMovetimer > 4f) {
-                mMovetimer = 0;
-                mTransform.rotateTo(new Vector3((float) (Math.random() * 360), 0, 0));
-                mDirection.set(mTransform.getDirection());
-            }
-        //}
+        mMovetimer += delta;
+        if(mMovetimer > 4f) {
+            mMovetimer = 0;
+            mTransform.rotateTo(new Vector3((float) (Math.random() * 360), 0, 0));
+            mDirection.set(mTransform.getDirection());
+        }
+//        }
 
         mShootTimer -= delta;
         if(mShootTimer <= 0f) {
-            mAction.shoot();
-            mShootTimer = (float) (Math.random() * 5 + 3);
+            if(mDamage.isAlive()) {
+                mAction.shoot();
+                mShootTimer = (float) (Math.random() * 2 + 2);
+            }
+        }
+
+        mJumpTimer += delta;
+        if(mJumpTimer <= 0f) {
+            mGravity.setGravity(7f);
+            mJumpTimer = (float) (Math.random() * 5 + 5);
         }
 
         Vector3 vel = new Vector3(mDirection.cpy().scl(4f));
         vel.y = mGravity.getGravity();
+
         mPhysic.getBody().activate(true);
         mPhysic.getBody().setLinearVelocity(vel);
 

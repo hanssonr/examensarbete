@@ -7,8 +7,6 @@ import com.badlogic.gdx.math.Vector3;
  */
 public interface IGravity {
 
-    public void checkOnGround(Vector3 bottomPosition);
-    public void calculateGravity(float delta);
     public float getGravity();
     public boolean isGrounded();
     public void setGravity(float gravity);
