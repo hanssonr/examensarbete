@@ -1,6 +1,7 @@
 package se.rhel.network.packet;
 
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.utils.Array;
 import se.rhel.model.entity.IPlayer;
 import se.rhel.packet.Packet;
 
@@ -15,18 +16,15 @@ import java.util.Map;
  */
 public class PlayerPacket extends Packet {
 
-    //public Vector3 mPosition;
     public ArrayList<UpdateStruct> mPlayers = new ArrayList<>();
 
-    public PlayerPacket(HashMap<Integer, IPlayer> players) {
+    public PlayerPacket(Array<IPlayer> players) {
         super(PlayerPacket.class);
 
-        putInt(players.size()-1);
-        for(Map.Entry<Integer, IPlayer> pairs : players.entrySet()) {
-            int id = pairs.getKey();
-            IPlayer ep = pairs.getValue();
-
-            addData(id, ep.getPosition(), ep.getRotation());
+        putInt(players.size-1);
+        for(int i = 0; i < players.size; i++) {
+            IPlayer player = players.get(i);
+            addData(i+1, player.getPosition(), player.getRotation());
         }
         super.ready();
     }

@@ -1,4 +1,6 @@
-package se.rhel.event;
+package se.rhel.network.event;
+
+import se.rhel.event.EventType;
 
 import com.badlogic.gdx.math.Vector3;
 import se.rhel.model.component.GameObject;

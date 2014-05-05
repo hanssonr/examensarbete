@@ -9,15 +9,10 @@ import com.badlogic.gdx.physics.bullet.linearmath.btDefaultMotionState;
 import se.rhel.model.component.*;
 import se.rhel.model.physics.BulletWorld;
 
-import java.util.Random;
-
 /**
- * Group: Logic
- *
- * Created by rkh on 2014-03-24.
+ * Created by rkh on 2014-05-02.
  */
-public class DummyEntity extends GameObject implements IPlayer {
-
+public class ControlledPlayer extends GameObject implements IPlayer {
     private Vector2 mSize;
 
     protected IPhysics mPhysicsComponent;
@@ -25,14 +20,14 @@ public class DummyEntity extends GameObject implements IPlayer {
     protected IActionable mActionComponent;
     protected IGravity mGravityComponent;
 
-    public DummyEntity(BulletWorld world, float radius, float height, int maxHealth, float movespeed, Vector3 position) {
+    public ControlledPlayer(BulletWorld world, Vector3 position) {
         super();
-        mSize = new Vector2(radius, height);
+        mSize = new Vector2(0.6f, 1.2f);
 
         mPhysicsComponent = createPhysicsComponent(world);
-        mDamageComponent = createDamageableComponent(maxHealth);
+        mDamageComponent = createDamageableComponent(100);
         mActionComponent = createActionComponent();
-        mGravityComponent = createGravityComponent(world.getCollisionWorld(), 15f);
+        mGravityComponent = createGravityComponent(world.getCollisionWorld(), mPhysicsComponent, 15f);
 
         getTransformation().setTranslation(position);
         createPhysicBody();
@@ -53,24 +48,22 @@ public class DummyEntity extends GameObject implements IPlayer {
     }
 
     public void update(float delta) {
-        mGravityComponent.checkOnGround(getPosition(), mSize.y);
-        mGravityComponent.calculateGravity(delta);
-        mActionComponent.update(delta);
-
-        if(hasComponent(IAIComponent.class)) {
-            IAIComponent ai = (IAIComponent) getComponent(IAIComponent.class);
-            ai.update(delta);
-        }
+        super.update(delta);
     }
 
     public Vector3 calculateShootDirection() {
-        double bias = Math.random();
+        double hitchance = Math.random();
         Vector3 dir = getDirection().cpy();
 
-        if(bias > 0.3d) {
+        if(hitchance < 0.7d) {
             dir.x += 0.2f;
             dir.z += 0.2f;
         }
         return dir;
+    }
+
+    @Override
+    public Vector3 getShootPosition() {
+        return getPosition().add(new Vector3(0, 0.7f, 0));
     }
 }

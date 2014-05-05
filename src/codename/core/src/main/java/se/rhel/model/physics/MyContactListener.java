@@ -3,12 +3,11 @@ package se.rhel.model.physics;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.bullet.collision.*;
 import com.badlogic.gdx.physics.bullet.linearmath.btVector3;
+import se.rhel.model.entity.ControlledPlayer;
 import se.rhel.model.entity.Player;
 import se.rhel.model.component.DamageComponent;
 import se.rhel.model.component.GameObject;
-import se.rhel.model.component.IDamageable;
 import se.rhel.model.weapon.IExplodable;
-import se.rhel.network.model.ExternalPlayer;
 
 import java.util.ArrayList;
 
@@ -114,13 +113,13 @@ public class MyContactListener extends ContactListener {
     public void onContactStarted(btCollisionObject colObj0, btCollisionObject colObj1) {
 
         if(colObj0.userData instanceof Player) {
-            if(colObj1.userData instanceof ExternalPlayer) {
+            if(colObj1.userData instanceof ControlledPlayer) {
                 System.out.println("KARSTEN, VI HAR KONTAKT!!1");
             }
         }
 
         if(colObj1.userData instanceof Player) {
-            if(colObj0.userData instanceof ExternalPlayer) {
+            if(colObj0.userData instanceof ControlledPlayer) {
                 System.out.println("KARSTEN, VI HAR KONTAKT!!1");
             }
         }

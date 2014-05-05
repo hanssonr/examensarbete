@@ -15,7 +15,6 @@ import se.rhel.model.physics.RayVector;
 public class FPSCamera extends PerspectiveCamera {
 
     public static final Vector3 UP = new Vector3(0,1,0);
-    private final Vector3 mOffset = new Vector3(0, 1f, 0);
 
     /**
      *
@@ -30,10 +29,6 @@ public class FPSCamera extends PerspectiveCamera {
         this.viewportWidth = Gdx.graphics.getWidth();
         this.viewportHeight = Gdx.graphics.getHeight();
         update();
-    }
-
-    public Vector3 getOffset() {
-        return mOffset;
     }
 
     public Vector3 getRight() {

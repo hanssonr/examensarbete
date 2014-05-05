@@ -21,7 +21,7 @@ public class Player extends GameObject implements IPlayer{
     //Actions
     private boolean mIsJumping = false;
 
-    private static Vector2 mPlayersize = new Vector2(0.6f, 1.5f);
+    private static Vector2 mPlayersize = new Vector2(0.6f, 1.2f);
 
     private Vector3 mVelocity = new Vector3();
     private float mMovespeed = 7f;
@@ -37,10 +37,10 @@ public class Player extends GameObject implements IPlayer{
         mTransform.getTransformation().setTranslation(position);
         int maxhealth = 100;
 
-        mPhysicsComponent = createPhysicsComponent(world);
         mDamageComponent = createDamageableComponent(maxhealth);
         mActionComponent = createActionComponent();
-        mGravityComponent = createGravityComponent(world.getCollisionWorld(), 15f);
+        mPhysicsComponent = createPhysicsComponent(world);
+        mGravityComponent = createGravityComponent(world.getCollisionWorld(), mPhysicsComponent, 15f);
 
         createPyshicsBody();
     }
@@ -55,15 +55,11 @@ public class Player extends GameObject implements IPlayer{
     }
 
     public void update(float delta) {
-        mActionComponent.update(delta);
+        super.update(delta);
 
         if(mDamageComponent.isAlive()) {
             mPhysicsComponent.getBody().activate(true);
-            mPhysicsComponent.getBody().setGravity(Vector3.Zero);
             mTransform.getTransformation().set(mPhysicsComponent.getBody().getCenterOfMassTransform());
-
-            mGravityComponent.checkOnGround(getPosition(), mPlayersize.y);
-            mGravityComponent.calculateGravity(delta);
 
             Vector3 vel = getVelocity();
             vel.y = mGravityComponent.getGravity();
@@ -87,6 +83,11 @@ public class Player extends GameObject implements IPlayer{
             mGravityComponent.setGravity(JUMP_HEIGHT);
             mIsJumping = true;
         }
+    }
+
+    @Override
+    public Vector3 getShootPosition() {
+        return getPosition().add(new Vector3(0, 0.7f, 0));
     }
 
     @Override

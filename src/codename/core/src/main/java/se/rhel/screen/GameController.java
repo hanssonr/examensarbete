@@ -7,6 +7,7 @@ import se.rhel.CodeName;
 import se.rhel.event.*;
 import se.rhel.model.WorldModel;
 import se.rhel.model.component.GameObject;
+import se.rhel.model.entity.IPlayer;
 import se.rhel.model.physics.RayVector;
 import se.rhel.model.weapon.Grenade;
 import se.rhel.view.WorldView;
@@ -47,7 +48,7 @@ public class GameController extends BaseGameController {
                 mWorldModel.getPlayer().shoot();
                 break;
             case GRENADE:
-                Grenade g = new Grenade(mWorldModel.getBulletWorld(), mWorldModel.getPlayer().getPosition(), mWorldModel.getPlayer().getDirection());
+                Grenade g = new Grenade(mWorldModel.getBulletWorld(), mWorldModel.getPlayer().getShootPosition(), mWorldModel.getPlayer().getDirection());
 
                 mWorldModel.addGrenade(g);
                 mWorldView.addGrenade(g);

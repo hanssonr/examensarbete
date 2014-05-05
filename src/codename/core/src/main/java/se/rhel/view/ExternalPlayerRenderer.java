@@ -3,9 +3,7 @@ package se.rhel.view;
 import com.badlogic.gdx.graphics.g3d.Environment;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
-import com.badlogic.gdx.graphics.g3d.Renderable;
 import com.badlogic.gdx.graphics.g3d.utils.AnimationController;
-import com.badlogic.gdx.math.Quaternion;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.math.collision.BoundingBox;
 import com.badlogic.gdx.utils.Array;
@@ -28,7 +26,9 @@ public class ExternalPlayerRenderer {
     private ModelInstance mExternalPlayer = new ModelInstance(Resources.INSTANCE.playerModelAnimated);
     private ModelInstance mLaser = new ModelInstance(Resources.INSTANCE.laserWeaponModel);
 
-    private Vector3 mArmOffset = new Vector3(0.45f, 0.4f, -0.2f);
+    private float mArmBobbingTimer = 0f;
+
+    private Vector3 mArmOffset = new Vector3(0.49f, 0.35f, -0.05f);
     private Vector3 mGroundOffset = new Vector3();
     private BoundingBox mBox = new BoundingBox();
     private Array<IPlayer> mPlayers;
@@ -76,7 +76,7 @@ public class ExternalPlayerRenderer {
     }
 
     public void update(float delta) {
-
+        mArmBobbingTimer += delta;
         Iterator it = mAnimations.entrySet().iterator();
         while(it.hasNext()) {
 
@@ -99,8 +99,7 @@ public class ExternalPlayerRenderer {
             } else {
                 if(mAnimationStop.get(entity) > 0f) {
                     if(ANIMATION_WALK.equals(ac.current.animation.id)) {
-                        ac.queue(ANIMATION_IDLE, -1, 1, null, 0.05f);
-                        //ac.setAnimation(ANIMATION_IDLE, -1);
+                        ac.queue(ANIMATION_IDLE, -1, 0.2f, null, 0.05f);
                     }
                 } else {
                     mAnimationStop.put(entity, mAnimationStop.get(entity) + delta);
@@ -109,9 +108,11 @@ public class ExternalPlayerRenderer {
 
             ac.update(delta);
 
+            float armbob = ac.current.animation.id.equals(ANIMATION_WALK) ?
+                    (float) Math.cos(mArmBobbingTimer*10f) : (float) Math.cos(mArmBobbingTimer*1.5f);
             mWeaponArms.get(entity).transform.set(entity.getTransformation());
             mWeaponArms.get(entity).transform.translate(mArmOffset);
-            mWeaponArms.get(entity).transform.rotate(Vector3.X.cpy(), entity.getRotation().y);
+            mWeaponArms.get(entity).transform.rotate(Vector3.X.cpy(), entity.getRotation().y + (armbob*3));
         }
     }
 }

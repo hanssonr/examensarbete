@@ -15,6 +15,11 @@ public class RayVector {
         mTo.set(to);
     }
 
+    public RayVector(Vector3 position, Vector3 direction, float length) {
+        mFrom.set(position);
+        mTo.set(mFrom.cpy().add(direction.cpy().scl(length)));
+    }
+
     public RayVector() {
         mFrom = new Vector3();
         mTo = new Vector3();
@@ -46,18 +51,14 @@ public class RayVector {
                          (from.z-to.z)*(from.z-to.z)));
     }
 
-    public static RayVector createFromDirection(Vector3 position, Vector3 direction, float length) {
-        return new RayVector(position, position.cpy().add(direction.cpy().nor().scl(length)));
-    }
-
     public static void convertToVisual(RayVector ray) {
         Vector3 offset = new Vector3();
-        Vector3 right = ray.getDirection().cpy().crs(Vector3.Y);
-        Vector3 up = right.cpy().crs(ray.getDirection());
+        Vector3 right = ray.getDirection().cpy().crs(Vector3.Y).nor();
+        Vector3 up = right.cpy().crs(ray.getDirection().nor());
 
-        offset.add(right.cpy().scl(0.5f));
-        offset.sub(up.cpy().scl(0.2f));
-        offset.add(ray.getDirection().cpy());
+        offset.add(right.cpy().scl(0.3f));
+        offset.sub(up.cpy().scl(0.1f));
+        //offset.add(ray.getDirection().cpy().scl(2f));
         ray.setFrom(ray.getFrom().add(offset));
     }
 }

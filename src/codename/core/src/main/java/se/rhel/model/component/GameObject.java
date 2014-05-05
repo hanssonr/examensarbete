@@ -11,7 +11,7 @@ import java.util.ArrayList;
 /**
  * Group: Mixed
  */
-public class GameObject implements ITransform {
+public class GameObject implements ITransform, IUpdateable {
 
     protected ITransform mTransform;
 
@@ -55,6 +55,15 @@ public class GameObject implements ITransform {
             mComponents.add(component);
     }
 
+    @Override
+    public void update(float delta) {
+        for(IComponent component : mComponents) {
+            if(component instanceof IUpdateable) {
+                ((IUpdateable)component).update(delta);
+            }
+        }
+    }
+
     protected IPhysics createPhysicsComponent(BulletWorld world) {
         PhysicsComponent pc = new PhysicsComponent(world);
         addComponent(pc);
@@ -73,8 +82,8 @@ public class GameObject implements ITransform {
         return dc;
     }
 
-    protected IGravity createGravityComponent(btCollisionWorld collisionworld, float gravitypower) {
-        GravityComponent gc = new GravityComponent(collisionworld, gravitypower);
+    protected IGravity createGravityComponent(btCollisionWorld collisionworld, IPhysics physicscomponent, float gravitypower) {
+        GravityComponent gc = new GravityComponent(collisionworld, physicscomponent, gravitypower);
         addComponent(gc);
         return gc;
     }

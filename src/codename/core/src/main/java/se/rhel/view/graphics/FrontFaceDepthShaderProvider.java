@@ -14,7 +14,7 @@
  * limitations under the License.
  ******************************************************************************/
 
-package se.rhel.graphics;
+package se.rhel.view.graphics;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;

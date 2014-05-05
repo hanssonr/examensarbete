@@ -6,7 +6,6 @@ import com.badlogic.gdx.graphics.g3d.Environment;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.math.Vector3;
-import se.rhel.model.component.MoveComponent;
 import se.rhel.model.entity.Player;
 import se.rhel.res.Resources;
 
@@ -34,6 +33,8 @@ public class PlayerRenderer {
     private Vector3 mBobVector = new Vector3();
 
     private Player mPlayer;
+
+    private boolean hasShoot = false;
 
     public PlayerRenderer(FPSCamera camera, Player player) {
         mCamera = camera;
@@ -69,13 +70,17 @@ public class PlayerRenderer {
         }
 
         mLaserWeapon.transform.translate(mWeaponOffset);
+
+        if(mState == PLAYERSTATE.idle) {
+            mLaserWeapon.transform.rotate(Vector3.X, (float) Math.cos(mBobTimer));
+            mLaserWeapon.transform.rotate(Vector3.Z, (float) Math.cos(mBobTimer * 2));
+        }
     }
 
     private void updateCamera(float delta) {
         mBobTimer +=delta;
 
-        mPlayer.getTransformation().getTranslation(mCamera.position);
-        mCamera.position.add(mCamera.getOffset());
+        mCamera.position.set(mPlayer.getShootPosition());
 
         //bobbing
         if(mState == PLAYERSTATE.running) {

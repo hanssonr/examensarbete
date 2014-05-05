@@ -1,7 +1,6 @@
 package se.rhel.model.entity;
 
 import com.badlogic.gdx.math.Matrix4;
-import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 
 /**
@@ -13,6 +12,7 @@ public interface IPlayer {
     public Vector3 getRotation();
     public Vector3 getPosition();
     public Vector3 getDirection();
+    public Vector3 getShootPosition();
     public boolean isAlive();
     public void update(float delta);
 }

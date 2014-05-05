@@ -6,10 +6,10 @@ import se.rhel.event.Events;
 import se.rhel.event.ModelEvent;
 import se.rhel.model.IWorldModel;
 import se.rhel.model.component.NetworkComponent;
+import se.rhel.model.entity.ControlledPlayer;
 import se.rhel.network.event.NetworkEvent;
 import se.rhel.model.weapon.Grenade;
 import se.rhel.network.model.ClientWorldModel;
-import se.rhel.network.model.ExternalPlayer;
 import se.rhel.network.model.INetworkWorldModel;
 import se.rhel.network.packet.*;
 import se.rhel.observer.ClientListener;
@@ -46,10 +46,11 @@ public class ClientSynchronizedUpdate implements ClientListener {
                 for(int i = 0; i < pp.mPlayers.size(); i++) {
                     UpdateStruct ps = pp.mPlayers.get(i);
                     if(ps.mID != mClient.getId()) {
-                        ExternalPlayer ep = new ExternalPlayer(ps.mID, ps.mPosition, mWorld.getBulletWorld());
-                        ep.rotateAndTranslate(ps.mRotation, ps.mPosition);
-                        mWorld.addPlayer(ps.mID, ep);
-                        mEvents.notify(new ModelEvent(EventType.PLAYER_JOIN, ep));
+                        ControlledPlayer cp = new ControlledPlayer(mWorld.getBulletWorld(), ps.mPosition);
+                        cp.addComponent(new NetworkComponent(ps.mID));
+                        cp.rotateAndTranslate(ps.mRotation, ps.mPosition);
+                        mWorld.setPlayer(ps.mID, cp);
+                        mEvents.notify(new ModelEvent(EventType.PLAYER_JOIN, cp));
                     }
                 }
             }
