@@ -2,15 +2,16 @@ package se.rhel.network.controller;
 
 import com.badlogic.gdx.math.Quaternion;
 import com.badlogic.gdx.math.Vector3;
-import se.rhel.Connection;
 import se.rhel.Server;
 import se.rhel.event.*;
 import se.rhel.model.component.GameObject;
 import se.rhel.model.component.NetworkComponent;
-import se.rhel.model.entity.DummyEntity;
+import se.rhel.model.entity.ControlledPlayer;
+import se.rhel.model.entity.IPlayer;
 import se.rhel.model.physics.RayVector;
 import se.rhel.model.weapon.Grenade;
-import se.rhel.network.model.ExternalPlayer;
+import se.rhel.network.event.ServerModelListener;
+import se.rhel.network.event.ServerModelEvents;
 import se.rhel.network.model.ServerWorldModel;
 import se.rhel.network.packet.*;
 
@@ -47,40 +48,18 @@ public class ServerController implements ServerModelListener {
     @Override
     public void gameObjectEvent(EventType type, GameObject gObj) {
         switch(type) {
-            case SERVER_WORLD_COLLISION:
-                Vector3 hitPoint = ((Vector3)objs[0]);
-                Vector3 hitNormal =  ((Vector3)objs[1]);
-                mServer.sendToAllUDP(new BulletHolePacket(hitPoint, hitNormal));
-                break;
             case DAMAGE:
-                ControlledPlayer cp = (ControlledPlayer) objs[0];
+                ControlledPlayer cp = (ControlledPlayer) gObj;
                 mServerWorldModel.checkEntityStatus(cp);
                 NetworkComponent nc = (NetworkComponent) cp.getComponent(NetworkComponent.class);
                 mServer.sendToAllTCP(new DamagePacket(nc.getID(), 25));
                 break;
             case SERVER_DEAD_ENTITY: // [0] = GameObject
-                mServer.sendToAllUDP(new DeadEntityPacket(((NetworkComponent) ((GameObject) objs[0]).getComponent(NetworkComponent.class)).getID()));
-                break;
-            case SHOOT: // [0] = RayVector, [1] = GameObject
-                mServerWorldModel.checkShootCollision((RayVector)objs[0], (GameObject) objs[1]);
-                mServer.sendToAllUDP(new ShootPacket(
-                        ((NetworkComponent)((GameObject)objs[1]).getComponent(NetworkComponent.class)).getID(),
-                        ((RayVector)objs[0]).getFrom(),
-                        ((RayVector)objs[0]).getTo()));
-                break;
-            case JUMP:
-                break;
-            case GRENADE:
-                // Low freq update from the WorldModel, should be synched with client
-                Grenade g = (Grenade) objs[0];
-                boolean isAlive = (boolean) objs[1];
-                Quaternion q = new Quaternion();
-                q = g.getTransformation().getRotation(q);
-                mServer.sendToAllUDP(new GrenadeUpdatePacket(((NetworkComponent)((GameObject)objs[0]).getComponent(NetworkComponent.class)).getID(), g.getPosition(), q, isAlive));
+                mServer.sendToAllUDP(new DeadEntityPacket(((NetworkComponent) ((GameObject) gObj).getComponent(NetworkComponent.class)).getID()));
                 break;
             case PLAYER_MOVE:
-                int id = ((NetworkComponent)((GameObject)objs[0]).getComponent(NetworkComponent.class)).getID();
-                mServer.sendToAllUDP(new PlayerMovePacket(id, ((ControlledPlayer)objs[0]).getPosition(), ((ControlledPlayer)objs[0]).getRotation()));
+                int id = ((NetworkComponent)(gObj).getComponent(NetworkComponent.class)).getID();
+                mServer.sendToAllUDP(new PlayerMovePacket(id, ((ControlledPlayer)gObj).getPosition(), ((ControlledPlayer)gObj).getRotation()));
                 break;
             default:
                 break;
@@ -94,9 +73,9 @@ public class ServerController implements ServerModelListener {
 
     @Override
     public void shootEvent(RayVector ray, IPlayer player) {
-        mServerWorldModel.checkShootCollision(ray);
+        mServerWorldModel.checkShootCollision(ray, (GameObject)player);
         mServer.sendToAllUDP(new ShootPacket(
-                ((NetworkComponent)(((GameObject)player).getComponent(NetworkComponent.class))).getID(),
+                ((NetworkComponent) (((GameObject) player).getComponent(NetworkComponent.class))).getID(),
                 ray.getFrom(),
                 ray.getTo()));
     }

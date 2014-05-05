@@ -1,6 +1,7 @@
-package se.rhel.event;
+package se.rhel.network.event;
 
 import com.badlogic.gdx.math.Vector3;
+import se.rhel.event.EventType;
 import se.rhel.model.component.GameObject;
 import se.rhel.model.entity.IPlayer;
 import se.rhel.model.physics.RayVector;

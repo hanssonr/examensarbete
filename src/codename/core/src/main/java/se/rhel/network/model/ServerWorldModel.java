@@ -13,6 +13,7 @@ import se.rhel.model.weapon.Explosion;
 import se.rhel.model.weapon.Grenade;
 import se.rhel.model.weapon.IExplodable;
 import se.rhel.network.event.ServerModelEvent;
+import se.rhel.network.event.ServerModelEvents;
 import se.rhel.util.Utils;
 import se.rhel.view.input.PlayerInput;
 
@@ -65,17 +66,20 @@ public class ServerWorldModel extends BaseWorldModel {
                 if(((GameObject)p).hasComponent(IAIComponent.class)) {
                     if(PlayerInput.DO_LOW_FREQ_UPDATES) {
                         if(SEND_LOW_FREQ) {
-                            mEvents.notify(new ServerModelEvent(EventType.PLAYER_MOVE, p));
+                            // mEvents.notify(new ServerModelEvent(EventType.PLAYER_MOVE, p));
+                            mEvents.notify(new ServerModelEvents.GameObjectEvent(EventType.PLAYER_MOVE, (GameObject)p));
                         }
                     } else {
-                        mEvents.notify(new ServerModelEvent(EventType.PLAYER_MOVE, p));
+                        // mEvents.notify(new ServerModelEvent(EventType.PLAYER_MOVE, p));
+                        mEvents.notify(new ServerModelEvents.GameObjectEvent(EventType.PLAYER_MOVE, (GameObject)p));
                     }
                 }
 
                 IActionable ac = (IActionable) ((GameObject)p).getComponent(ActionComponent.class);
                 if(ac.hasShoot()) {
                     RayVector ray = new RayVector(p.getShootPosition(), p.getDirection(), 75f);
-                    mEvents.notify(new ServerModelEvent(EventType.SHOOT, ray, p));
+                    // mEvents.notify(new ServerModelEvent(EventType.SHOOT, ray, p));
+                    mEvents.notify(new ServerModelEvents.ShootEvent(ray, p));
                 }
             }
         }
@@ -86,7 +90,8 @@ public class ServerWorldModel extends BaseWorldModel {
 
             if(!grenade.isAlive()) {
                 // A grenade is found as dead, send it to client as such
-                mEvents.notify(new ServerModelEvent(EventType.GRENADE, grenade, false));
+                // mEvents.notify(new ServerModelEvent(EventType.GRENADE, grenade, false));
+                mEvents.notify(new ServerModelEvents.GrenadeEvent(grenade, false));
 
                 handleExplosion(grenade);
                 destroyGameObject(grenade);
@@ -96,10 +101,12 @@ public class ServerWorldModel extends BaseWorldModel {
                 // If we want a lower freq update
                 if(PlayerInput.DO_LOW_FREQ_UPDATES) {
                     if(SEND_LOW_FREQ) {
-                        mEvents.notify(new ServerModelEvent(EventType.GRENADE, grenade, true));
+                        // mEvents.notify(new ServerModelEvent(EventType.GRENADE, grenade, true));
+                        mEvents.notify(new ServerModelEvents.GrenadeEvent(grenade, true));
                     }
                 } else {
-                    mEvents.notify(new ServerModelEvent(EventType.GRENADE, grenade, true));
+                    mEvents.notify(new ServerModelEvents.GrenadeEvent(grenade, true));
+                    // mEvents.notify(new ServerModelEvent(EventType.GRENADE, grenade, true));
                 }
             }
         }
@@ -112,11 +119,13 @@ public class ServerWorldModel extends BaseWorldModel {
             if(co.type == MyContactListener.CollisionObject.CollisionType.ENTITY) {
                 if(!co.entity.equals(shooter)) {
                     damageEntity(co.entity, 25);
-                    mEvents.notify(new ServerModelEvent(EventType.DAMAGE, co.entity));
+                    // mEvents.notify(new ServerModelEvent(EventType.DAMAGE, co.entity));
+                    mEvents.notify(new ServerModelEvents.GameObjectEvent(EventType.DAMAGE, co.entity));
                 }
             }
             else if(co.type == MyContactListener.CollisionObject.CollisionType.WORLD) {
-                mEvents.notify(new ServerModelEvent(EventType.SERVER_WORLD_COLLISION, co.hitPoint, co.hitNormal));
+                // mEvents.notify(new ServerModelEvent(EventType.SERVER_WORLD_COLLISION, co.hitPoint, co.hitNormal));
+                mEvents.notify(new ServerModelEvents.ServerWorldCollision(co.hitPoint, co.hitNormal));
             }
 
             ray.setTo(co.hitPoint);
@@ -129,7 +138,8 @@ public class ServerWorldModel extends BaseWorldModel {
         for(GameObject obj : affected) {
             IDamageable entity = (IDamageable) obj.getComponent(DamageComponent.class);
             entity.damageEntity(exp.getExplosionDamage());
-            mEvents.notify(new ServerModelEvent(EventType.DAMAGE, obj));
+            // mEvents.notify(new ServerModelEvent(EventType.DAMAGE, obj));
+            mEvents.notify(new ServerModelEvents.GameObjectEvent(EventType.DAMAGE, obj));
         }
     }
 
@@ -140,7 +150,8 @@ public class ServerWorldModel extends BaseWorldModel {
 
             Explosion exp = new Explosion(entity.getPosition(), 5, 50);
             handleExplosion(exp);
-            mEvents.notify(new ServerModelEvent(EventType.SERVER_DEAD_ENTITY, entity));
+            // mEvents.notify(new ServerModelEvent(EventType.SERVER_DEAD_ENTITY, entity));
+            mEvents.notify(new ServerModelEvents.GameObjectEvent(EventType.SERVER_DEAD_ENTITY, entity));
         }
     }
 
