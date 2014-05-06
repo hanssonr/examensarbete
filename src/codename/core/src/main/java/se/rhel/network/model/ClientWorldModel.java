@@ -10,13 +10,16 @@ import se.rhel.event.ModelEvent;
 import se.rhel.model.*;
 import se.rhel.model.component.GameObject;
 import se.rhel.model.component.NetworkComponent;
+import se.rhel.model.entity.ControlledPlayer;
 import se.rhel.model.entity.IPlayer;
 import se.rhel.model.entity.Player;
 import se.rhel.model.physics.RayVector;
 import se.rhel.model.weapon.Grenade;
 import se.rhel.view.input.PlayerInput;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 
 /**
@@ -28,6 +31,7 @@ public class ClientWorldModel extends BaseWorldModel implements INetworkWorldMod
     private float mLastKnownRotation = 0f;
 
     private HashMap<Integer, Matrix4> mTargetGrePositions = new HashMap<>();
+    private HashMap<Integer, Vector3[]> mTargetPlaPositions = new HashMap<>();
 
     private Client mClient;
     private Player mPlayer;
@@ -46,7 +50,18 @@ public class ClientWorldModel extends BaseWorldModel implements INetworkWorldMod
         updatePlayer(delta);
 
         for(IPlayer p : getControlledPlayers()) {
-            p.update(delta);
+            // p.update(delta);
+            int id = ((NetworkComponent)((ControlledPlayer)p).getComponent(NetworkComponent.class)).getID();
+            Vector3[] temp = mTargetPlaPositions.get(id);
+
+            if(temp != null && temp.length == 2) {
+                if(PlayerInput.CLIENT_INTERPOLATION) {
+                    Vector3 v = p.getPosition().slerp(temp[1], 0.1f);
+                    ((ControlledPlayer) p).rotateAndTranslate(temp[0], v);
+                } else {
+                    ((ControlledPlayer) p).rotateAndTranslate(temp[0], temp[1]);
+                }
+            }
         }
 
         for (Grenade grenade : getGrenades()) {
@@ -103,6 +118,19 @@ public class ClientWorldModel extends BaseWorldModel implements INetworkWorldMod
         }
     }
 
+    @Override
+    public void transformEntity(int id, Vector3 position, Vector3 rotation) {
+        if(mClient.getId() == id) {
+            mPlayer.rotateAndTranslate(rotation, position);
+        } else {
+            mTargetPlaPositions.put(id, new Vector3[] {rotation, position});
+        }
+        /*
+        GameObject obj = (mClient.getId() == id ? mPlayer : (GameObject)getPlayer(id));
+        obj.rotateAndTranslate(rotation, position);
+        */
+    }
+
     private void updatePlayer(float delta) {
         mPlayer.update(delta);
 
@@ -144,10 +172,5 @@ public class ClientWorldModel extends BaseWorldModel implements INetworkWorldMod
         GameObject obj = (mClient.getId() == id ? mPlayer : (GameObject)getPlayer(id));
         super.killEntity(obj);
         mEvents.notify(new ModelEvent(EventType.EXPLOSION, obj.getPosition()));
-    }
-
-    public void transformEntity(int id, Vector3 position, Vector3 rotation) {
-        GameObject obj = (mClient.getId() == id ? mPlayer : (GameObject)getPlayer(id));
-        obj.rotateAndTranslate(rotation, position);
     }
 }
