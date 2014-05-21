@@ -3,7 +3,7 @@ package se.rhel.network.model;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Quaternion;
 import com.badlogic.gdx.math.Vector3;
-import se.rhel.Client;
+
 import se.rhel.event.EventType;
 import se.rhel.event.Events;
 import se.rhel.event.ModelEvent;
@@ -16,10 +16,8 @@ import se.rhel.model.entity.Player;
 import se.rhel.model.physics.RayVector;
 import se.rhel.model.weapon.Grenade;
 import se.rhel.view.input.PlayerInput;
-
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
+
 
 
 /**
@@ -33,15 +31,15 @@ public class ClientWorldModel extends BaseWorldModel implements INetworkWorldMod
     private HashMap<Integer, Matrix4> mTargetGrePositions = new HashMap<>();
     private HashMap<Integer, Vector3[]> mTargetPlaPositions = new HashMap<>();
 
-    private Client mClient;
     private Player mPlayer;
+    private int mClientId;
 
-    public ClientWorldModel(Client client, Events events) {
+    public ClientWorldModel(int clientId, Events events) {
         super(events);
-        mClient = client;
 
+        mClientId = clientId;
         mPlayer = new Player(new Vector3(0, 10, 0), getBulletWorld());
-        setPlayer(client.getId(), mPlayer);
+        setPlayer(clientId, mPlayer);
     }
 
     @Override
@@ -120,7 +118,7 @@ public class ClientWorldModel extends BaseWorldModel implements INetworkWorldMod
 
     @Override
     public void transformEntity(int id, Vector3 position, Vector3 rotation) {
-        if(mClient.getId() == id) {
+        if(mClientId == id) {
             mPlayer.rotateAndTranslate(rotation, position);
         } else {
             mTargetPlaPositions.put(id, new Vector3[] {rotation, position});
@@ -163,13 +161,13 @@ public class ClientWorldModel extends BaseWorldModel implements INetworkWorldMod
     }
 
     public void damageEntity(int id, int amount) {
-        GameObject obj = (mClient.getId() == id ? mPlayer : (GameObject)getPlayer(id));
+        GameObject obj = (mClientId == id ? mPlayer : (GameObject)getPlayer(id));
         super.damageEntity(obj, amount);
         mEvents.notify(new ModelEvent(EventType.DAMAGE, obj));
     }
 
     public void killEntity(int id) {
-        GameObject obj = (mClient.getId() == id ? mPlayer : (GameObject)getPlayer(id));
+        GameObject obj = (mClientId == id ? mPlayer : (GameObject)getPlayer(id));
         super.killEntity(obj);
         mEvents.notify(new ModelEvent(EventType.EXPLOSION, obj.getPosition()));
     }

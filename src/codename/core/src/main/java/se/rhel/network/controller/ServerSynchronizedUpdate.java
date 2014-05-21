@@ -25,19 +25,12 @@ import java.util.Iterator;
  */
 public class ServerSynchronizedUpdate implements ServerListener {
 
-    private ServerWorldModel mWorld;
-    private Server mServer;
-    private Events mEvents;
 
     private ArrayList<ConnectionWrappedObject> mUnsyncedObjects = new ArrayList<>();
 
-    public ServerSynchronizedUpdate(ServerWorldModel world, Server server, Events events) {
-        mWorld = world;
-        mServer = server;
-        mEvents = events;
-    }
+    public ServerSynchronizedUpdate() {}
 
-    public synchronized void update() {
+    public synchronized void update(ServerWorldModel world, Server server) {
         for (Iterator<ConnectionWrappedObject> it = mUnsyncedObjects.iterator(); it.hasNext();) {
             ConnectionWrappedObject uObj = it.next();
             Object obj = uObj.getObject();
@@ -45,15 +38,15 @@ public class ServerSynchronizedUpdate implements ServerListener {
 
             if(obj instanceof RequestInitialStatePacket) {
                 Log.debug("ServerWorldModel", "Initial state requested from clientId: " + con.getId());
-                PlayerPacket pp = new PlayerPacket(mWorld.getAllPlayers());
-                mServer.sendTCP(pp, con);
+                PlayerPacket pp = new PlayerPacket(world.getAllPlayers());
+                server.sendTCP(pp, con);
             }
 
             else if(obj instanceof PlayerMovePacket) {
                 PlayerMovePacket pmp = (PlayerMovePacket)obj;
 
-                mWorld.transformEntity(pmp.clientId, pmp.mPosition, pmp.mRotation);
-                mServer.sendToAllUDPExcept(new PlayerMovePacket(pmp.clientId, pmp.mPosition, pmp.mRotation), con);
+                world.transformEntity(pmp.clientId, pmp.mPosition, pmp.mRotation);
+                server.sendToAllUDPExcept(new PlayerMovePacket(pmp.clientId, pmp.mPosition, pmp.mRotation), con);
             }
 
             else if (obj instanceof ShootPacket) {
@@ -61,11 +54,11 @@ public class ServerSynchronizedUpdate implements ServerListener {
                 ShootPacket sp = (ShootPacket)obj;
 
                 RayVector ray = new RayVector(sp.mFrom, sp.mTo);
-                mWorld.checkShootCollision(ray, (GameObject) mWorld.getPlayer(sp.clientId));
+                world.checkShootCollision(ray, (GameObject) world.getPlayer(sp.clientId));
 
                 // Resend to other clients that a player has shot for visual feedback
                 ShootPacket sendP = new ShootPacket(sp.clientId, ray.getFrom(), ray.getTo());
-                mServer.sendToAllUDPExcept(sendP, con);
+                server.sendToAllUDPExcept(sendP, con);
             }
 
             else if (obj instanceof GrenadeCreatePacket) {
@@ -73,20 +66,29 @@ public class ServerSynchronizedUpdate implements ServerListener {
                 GrenadeCreatePacket gcp = (GrenadeCreatePacket) obj;
 
                 // A player wants to throw a grenade!
-                GameObject go = (GameObject) mWorld.getPlayer(gcp.clientId);
+                GameObject go = (GameObject) world.getPlayer(gcp.clientId);
                 IActionable ac = (IActionable) go.getComponent(ActionComponent.class);
 
                 // Check if the player can throw
                 if(ac.canThrowGrenade()) {
                     //Add info to create grenade
-                    Grenade g = new Grenade(mWorld.getBulletWorld(), gcp.position, gcp.direction);
+                    Grenade g = new Grenade(world.getBulletWorld(), gcp.position, gcp.direction);
                     g.addComponent(new NetworkComponent(Utils.getInstance().generateUniqueId()));
-                    mWorld.addGrenade(g);
+                    world.addGrenade(g);
 
                     // Send tcp to clients
-                    mServer.sendToAllTCP(new GrenadeCreatePacket(((NetworkComponent)g.getComponent(NetworkComponent.class)).getID(), ((IPlayer)go).getShootPosition(), go.getDirection()));
+                    server.sendToAllTCP(new GrenadeCreatePacket(((NetworkComponent)g.getComponent(NetworkComponent.class)).getID(), ((IPlayer)go).getShootPosition(), go.getDirection()));
                 }
 
+            }
+
+            else if (obj instanceof PlayerPacket) {
+                // Meaning, a new player should be added on the server
+                ControlledPlayer cp = new ControlledPlayer(world.getBulletWorld(), new Vector3(0, 10, 0));
+                cp.addComponent(new NetworkComponent(con.getId()));
+                world.setPlayer(con.getId(), cp);
+                // And sending to all clients except the one joined
+                server.sendToAllTCPExcept(new PlayerPacket(con.getId(), cp.getPosition(), cp.getRotation()), con);
             }
 
             it.remove();
@@ -96,13 +98,7 @@ public class ServerSynchronizedUpdate implements ServerListener {
     @Override
     public void connected(Connection con) {
         Log.debug("ServerWorldModel", "Some one connected to the server with id: " + con.getId());
-
-        // Meaning, a new player should be added on the server
-        ControlledPlayer cp = new ControlledPlayer(mWorld.getBulletWorld(), new Vector3(0, 10, 0));
-        cp.addComponent(new NetworkComponent(con.getId()));
-        mWorld.setPlayer(con.getId(), cp);
-        // And sending to all clients except the one joined
-        mServer.sendToAllTCPExcept(new PlayerPacket(con.getId(), cp.getPosition(), cp.getRotation()), con);
+        mUnsyncedObjects.add(new ConnectionWrappedObject(con, new PlayerPacket(con.getId(), new Vector3(0, 10, 0), new Vector3(0,0,0))));
     }
 
     @Override

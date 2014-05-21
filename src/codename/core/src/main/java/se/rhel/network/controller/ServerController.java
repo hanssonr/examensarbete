@@ -30,7 +30,7 @@ public class ServerController implements ServerModelListener {
         mServer = server;
         mEvents = new Events();
         mServerWorldModel = new ServerWorldModel(mEvents);
-        mSyncedUpdate = new ServerSynchronizedUpdate(mServerWorldModel, server, mEvents);
+        mSyncedUpdate = new ServerSynchronizedUpdate();
         server.addListener(mSyncedUpdate);
 
         // Listen to pure ServerModelEvents
@@ -41,7 +41,7 @@ public class ServerController implements ServerModelListener {
     }
 
     public void update(float delta) {
-        mSyncedUpdate.update();
+        mSyncedUpdate.update(mServerWorldModel, mServer);
         mServerWorldModel.update(delta);
     }
 

@@ -34,7 +34,7 @@ public class ServerWorldModel extends BaseWorldModel {
     public ServerWorldModel(Events events) {
         super(events);
 
-        for(int i = 0; i < 12; i++) {
+        for(int i = 0; i < 5; i++) {
             float x = (float) (Math.random() * 81)-40;
             float z = (float) (Math.random() * 81)-40;
 

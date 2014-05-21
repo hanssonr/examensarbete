@@ -6,8 +6,6 @@ import se.rhel.model.entity.IPlayer;
 import se.rhel.packet.Packet;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Group: Multiplayer

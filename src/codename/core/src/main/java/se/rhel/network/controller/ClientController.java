@@ -10,6 +10,7 @@ import se.rhel.network.event.NetworkEvent;
 import se.rhel.network.event.NetworkListener;
 import se.rhel.network.model.ClientWorldModel;
 import se.rhel.model.weapon.Grenade;
+import se.rhel.network.model.INetworkWorldModel;
 import se.rhel.network.packet.*;
 import se.rhel.packet.Packet;
 import se.rhel.screen.BaseGameController;
@@ -27,8 +28,8 @@ public class ClientController extends BaseGameController implements NetworkListe
     public ClientController() {
         super();
         mClient = Snaek.newClient(4455, 5544, "localhost");
-        mWorldModel = new ClientWorldModel(mClient, mEvents);
-        mSyncedUpdate = new ClientSynchronizedUpdate(mWorldModel, mClient, mEvents);
+        mWorldModel = new ClientWorldModel(mClient.getId(), mEvents);
+        mSyncedUpdate = new ClientSynchronizedUpdate(mEvents);
         mClient.addListener(mSyncedUpdate);
 
         mClient.sendTcp(new RequestInitialStatePacket(mClient.getId()));
@@ -41,7 +42,7 @@ public class ClientController extends BaseGameController implements NetworkListe
         super.update(delta);
 
         // Network stuff
-        mSyncedUpdate.update();
+        mSyncedUpdate.update((INetworkWorldModel)mWorldModel, mClient);
     }
 
     public void draw(float delta) {

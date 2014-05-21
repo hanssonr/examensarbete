@@ -25,17 +25,13 @@ import java.util.Iterator;
 public class ClientSynchronizedUpdate implements ClientListener {
 
     private ArrayList<Object> mUnsyncedObjects = new ArrayList<>();
-    private INetworkWorldModel mWorld;
     private Events mEvents;
-    private Client mClient;
 
-    public ClientSynchronizedUpdate(IWorldModel world, Client client, Events events) {
-        mWorld = (INetworkWorldModel)world;
-        mClient = client;
+    public ClientSynchronizedUpdate(Events events) {
         mEvents = events;
     }
 
-    public synchronized void update() {
+    public synchronized void update(INetworkWorldModel world, Client client) {
         for (Iterator<Object> it = mUnsyncedObjects.iterator(); it.hasNext();) {
             Object obj = it.next();
 
@@ -45,11 +41,11 @@ public class ClientSynchronizedUpdate implements ClientListener {
 
                 for(int i = 0; i < pp.mPlayers.size(); i++) {
                     UpdateStruct ps = pp.mPlayers.get(i);
-                    if(ps.mID != mClient.getId()) {
-                        ControlledPlayer cp = new ControlledPlayer(mWorld.getBulletWorld(), ps.mPosition);
+                    if(ps.mID != client.getId()) {
+                        ControlledPlayer cp = new ControlledPlayer(world.getBulletWorld(), ps.mPosition);
                         cp.addComponent(new NetworkComponent(ps.mID));
                         cp.rotateAndTranslate(ps.mRotation, ps.mPosition);
-                        mWorld.setPlayer(ps.mID, cp);
+                        world.setPlayer(ps.mID, cp);
                         mEvents.notify(new ModelEvent(EventType.PLAYER_JOIN, cp));
                     }
                 }
@@ -58,13 +54,13 @@ public class ClientSynchronizedUpdate implements ClientListener {
             else if(obj instanceof PlayerMovePacket) {
                 // An external player have moved and should be updated, accordingly
                 PlayerMovePacket pmp = (PlayerMovePacket)obj;
-                mWorld.transformEntity(pmp.clientId, pmp.mPosition, pmp.mRotation);
+                world.transformEntity(pmp.clientId, pmp.mPosition, pmp.mRotation);
             }
 
             else if (obj instanceof DamagePacket) {
                 // A player has been damaged
                 DamagePacket dp = (DamagePacket)obj;
-                mWorld.damageEntity(dp.clientId, dp.amount);
+                world.damageEntity(dp.clientId, dp.amount);
             }
 
             else if (obj instanceof ShootPacket) {
@@ -86,24 +82,24 @@ public class ClientSynchronizedUpdate implements ClientListener {
 
             else if (obj instanceof DeadEntityPacket) {
                 DeadEntityPacket dep = (DeadEntityPacket)obj;
-                mWorld.killEntity(dep.clientId);
+                world.killEntity(dep.clientId);
             }
 
             else if (obj instanceof GrenadeCreatePacket) {
                 Log.debug("ClientWorldModel", "Received GrenadeCreatePacket");
                 GrenadeCreatePacket gcp = (GrenadeCreatePacket) obj;
 
-                Grenade g = new Grenade(mWorld.getBulletWorld(), gcp.position, gcp.direction);
+                Grenade g = new Grenade(world.getBulletWorld(), gcp.position, gcp.direction);
                 g.addComponent(new NetworkComponent(gcp.clientId));
 
-                mWorld.addGrenade(g);
+                world.addGrenade(g);
                 mEvents.notify(new ModelEvent(EventType.GRENADE_CREATED, g));
             }
 
             else if(obj instanceof GrenadeUpdatePacket) {
                 GrenadeUpdatePacket gup = (GrenadeUpdatePacket) obj;
                 // Tell the client to update this grenade
-                ((ClientWorldModel) mWorld).updateGrenade(gup.clientId, gup.position, gup.rotation, gup.isAlive);
+                ((ClientWorldModel) world).updateGrenade(gup.clientId, gup.position, gup.rotation, gup.isAlive);
             }
 
             it.remove();
