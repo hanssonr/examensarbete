@@ -13,6 +13,7 @@ import se.rhel.network.model.ClientWorldModel;
 import se.rhel.network.model.INetworkWorldModel;
 import se.rhel.network.packet.*;
 import se.rhel.observer.ClientListener;
+import se.rhel.packet.ConnectAcceptPacket;
 import se.rhel.util.Log;
 
 import java.util.ArrayList;
@@ -31,75 +32,52 @@ public class ClientSynchronizedUpdate implements ClientListener {
         mEvents = events;
     }
 
-    public synchronized void update(INetworkWorldModel world, Client client) {
+    public synchronized void update() {
         for (Iterator<Object> it = mUnsyncedObjects.iterator(); it.hasNext();) {
             Object obj = it.next();
 
             if (obj instanceof PlayerPacket) {
                 PlayerPacket pp = (PlayerPacket)obj;
                 Log.debug("ClientSynchronizedUpdate", "PlayerPacket received - Players received: " + pp.mPlayers.size());
-
-                for(int i = 0; i < pp.mPlayers.size(); i++) {
-                    UpdateStruct ps = pp.mPlayers.get(i);
-                    if(ps.mID != client.getId()) {
-                        ControlledPlayer cp = new ControlledPlayer(world.getBulletWorld(), ps.mPosition);
-                        cp.addComponent(new NetworkComponent(ps.mID));
-                        cp.rotateAndTranslate(ps.mRotation, ps.mPosition);
-                        world.setPlayer(ps.mID, cp);
-                        mEvents.notify(new ModelEvent(EventType.PLAYER_JOIN, cp));
-                    }
-                }
+                mEvents.notify(new NetworkEvent(pp));
             }
 
             else if(obj instanceof PlayerMovePacket) {
                 // An external player have moved and should be updated, accordingly
-                PlayerMovePacket pmp = (PlayerMovePacket)obj;
-                world.transformEntity(pmp.clientId, pmp.mPosition, pmp.mRotation);
+                mEvents.notify(new NetworkEvent((PlayerMovePacket)obj));
             }
 
             else if (obj instanceof DamagePacket) {
                 // A player has been damaged
-                DamagePacket dp = (DamagePacket)obj;
-                world.damageEntity(dp.clientId, dp.amount);
+                mEvents.notify(new NetworkEvent((DamagePacket)obj));
             }
 
             else if (obj instanceof ShootPacket) {
                 // Visual representation of shoot
                 Log.debug("ClientSynchronizedUpdate", "ShotPacket received on client");
-                ShootPacket sp = (ShootPacket)obj;
-
-                // Notify listeners about that an external player has shot
-                mEvents.notify(new NetworkEvent(sp));
+                mEvents.notify(new NetworkEvent((ShootPacket)obj));
             }
 
             else if (obj instanceof BulletHolePacket) {
                 Log.debug("ClientSynchronizedUpdate", "BulletHolePacket received on client");
-                // Someone else has shot, and missed, thus bullethole at this position
-                BulletHolePacket bhp = (BulletHolePacket)obj;
-
-                mEvents.notify(new NetworkEvent(bhp));
+                mEvents.notify(new NetworkEvent((BulletHolePacket)obj));
             }
 
             else if (obj instanceof DeadEntityPacket) {
-                DeadEntityPacket dep = (DeadEntityPacket)obj;
-                world.killEntity(dep.clientId);
+                mEvents.notify(new NetworkEvent((DeadEntityPacket)obj));
             }
 
             else if (obj instanceof GrenadeCreatePacket) {
                 Log.debug("ClientWorldModel", "Received GrenadeCreatePacket");
-                GrenadeCreatePacket gcp = (GrenadeCreatePacket) obj;
-
-                Grenade g = new Grenade(world.getBulletWorld(), gcp.position, gcp.direction);
-                g.addComponent(new NetworkComponent(gcp.clientId));
-
-                world.addGrenade(g);
-                mEvents.notify(new ModelEvent(EventType.GRENADE_CREATED, g));
+                mEvents.notify(new NetworkEvent((GrenadeCreatePacket)obj));
             }
 
             else if(obj instanceof GrenadeUpdatePacket) {
-                GrenadeUpdatePacket gup = (GrenadeUpdatePacket) obj;
-                // Tell the client to update this grenade
-                ((ClientWorldModel) world).updateGrenade(gup.clientId, gup.position, gup.rotation, gup.isAlive);
+                mEvents.notify(new NetworkEvent((GrenadeUpdatePacket)obj));
+            }
+
+            else if(obj instanceof ConnectedPacket) {
+                mEvents.notify(new NetworkEvent((ConnectedPacket)obj));
             }
 
             it.remove();
@@ -107,7 +85,9 @@ public class ClientSynchronizedUpdate implements ClientListener {
     }
 
     @Override
-    public void connected() {}
+    public void connected() {
+        mUnsyncedObjects.add(new ConnectedPacket());
+    }
 
     @Override
     public void disconnected() {}

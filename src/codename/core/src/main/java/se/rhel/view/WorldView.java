@@ -186,9 +186,31 @@ public class WorldView implements IWorldView {
         mPlayerRenderer.render(mModelBatch, mEnvironment);
     }
 
+    public float calculateSoundVolume(Vector3 source) {
+        double dist = RayVector.getDistance(source, mWorldModel.getPlayer().getPosition());
+        return (float) (1f / dist);
+    }
+
+    public float calculateSoundPan(Vector3 source) {
+        double dist = RayVector.getDistance(source, mWorldModel.getPlayer().getPosition());
+        if (dist > 1f) {
+            Vector3 dir = source.cpy().nor().sub(mWorldModel.getPlayer().getPosition());
+            Vector3 playerDir = mWorldModel.getPlayer().getDirection().nor();
+
+            Vector2 currXDir = new Vector2(playerDir.x, playerDir.z).nor();
+            Vector2 wantedXDir = new Vector2(dir.x, dir.z).nor();
+
+            float xangle = (float) Math.toDegrees(Math.atan2(wantedXDir.cpy().crs(currXDir), wantedXDir.cpy().dot(currXDir)));
+            System.out.println(xangle);
+        }
+
+        return 0f;
+    }
+
     public void shoot(RayVector ray) {
         mLaserView.add(ray);
-        SoundManager.INSTANCE.playSound(SoundManager.SoundType.LASER);
+        SoundManager.INSTANCE.playSound(
+                SoundManager.SoundType.LASER, calculateSoundVolume(ray.getFrom()), calculateSoundPan(ray.getFrom()));
     }
 
     public void addGrenade(Grenade grenade) {

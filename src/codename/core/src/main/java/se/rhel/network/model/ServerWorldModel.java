@@ -34,7 +34,7 @@ public class ServerWorldModel extends BaseWorldModel {
     public ServerWorldModel(Events events) {
         super(events);
 
-        for(int i = 0; i < 5; i++) {
+        for(int i = 0; i < 0; i++) {
             float x = (float) (Math.random() * 81)-40;
             float z = (float) (Math.random() * 81)-40;
 
@@ -118,6 +118,7 @@ public class ServerWorldModel extends BaseWorldModel {
         if(co != null) {
             if(co.type == MyContactListener.CollisionObject.CollisionType.ENTITY) {
                 if(!co.entity.equals(shooter)) {
+                    System.out.println("DAMANGE ENTITY ON SERVER");
                     damageEntity(co.entity, 25);
                     // mEvents.notify(new ServerModelEvent(EventType.DAMAGE, co.entity));
                     mEvents.notify(new ServerModelEvents.GameObjectEvent(EventType.DAMAGE, co.entity));

@@ -14,7 +14,7 @@ import java.util.ArrayList;
 
 public class Client implements EndPoint {
 
-    private static final int CLIENT_UPDATE_INTERVAL = 2000;
+    private static final int CLIENT_UPDATE_INTERVAL = 200;
 
     private UdpConnection mUdpConnection;
     private TcpConnection mTcpConnection;

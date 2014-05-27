@@ -2,7 +2,9 @@ package se.rhel.network.controller;
 
 import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Gdx;
+import se.rhel.Client;
 import se.rhel.CodeName;
+import se.rhel.Snaek;
 import se.rhel.screen.AbstactController;
 import se.rhel.Server;
 

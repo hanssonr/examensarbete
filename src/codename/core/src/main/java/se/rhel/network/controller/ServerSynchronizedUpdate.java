@@ -25,7 +25,6 @@ import java.util.Iterator;
  */
 public class ServerSynchronizedUpdate implements ServerListener {
 
-
     private ArrayList<ConnectionWrappedObject> mUnsyncedObjects = new ArrayList<>();
 
     public ServerSynchronizedUpdate() {}
@@ -88,6 +87,7 @@ public class ServerSynchronizedUpdate implements ServerListener {
                 cp.addComponent(new NetworkComponent(con.getId()));
                 world.setPlayer(con.getId(), cp);
                 // And sending to all clients except the one joined
+                System.out.println("ID: " + con.getId() + " " + "player: " + world.getPlayer(con.getId()));
                 server.sendToAllTCPExcept(new PlayerPacket(con.getId(), cp.getPosition(), cp.getRotation()), con);
             }
 
@@ -98,7 +98,14 @@ public class ServerSynchronizedUpdate implements ServerListener {
     @Override
     public void connected(Connection con) {
         Log.debug("ServerWorldModel", "Some one connected to the server with id: " + con.getId());
-        mUnsyncedObjects.add(new ConnectionWrappedObject(con, new PlayerPacket(con.getId(), new Vector3(0, 10, 0), new Vector3(0,0,0))));
+        mUnsyncedObjects.add(new ConnectionWrappedObject(con, new PlayerPacket(con.getId(), new Vector3(0, 10, 0), new Vector3(0, 0, 0))));
+
+//        // Meaning, a new player should be added on the server
+//        ControlledPlayer cp = new ControlledPlayer(mWorld.getBulletWorld(), new Vector3(0, 10, 0));
+//        cp.addComponent(new NetworkComponent(con.getId()));
+//        mWorld.setPlayer(con.getId(), cp);
+//        // And sending to all clients except the one joined
+//        mServer.sendToAllTCPExcept(new PlayerPacket(con.getId(), cp.getPosition(), cp.getRotation()), con);
     }
 
     @Override

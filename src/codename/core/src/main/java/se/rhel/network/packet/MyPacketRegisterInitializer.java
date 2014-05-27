@@ -22,5 +22,6 @@ public class MyPacketRegisterInitializer {
         PacketManager.getInstance().registerPacket(DeadEntityPacket.class);
         PacketManager.getInstance().registerPacket(GrenadeCreatePacket.class);
         PacketManager.getInstance().registerPacket(GrenadeUpdatePacket.class);
+        PacketManager.getInstance().registerPacket(ConnectedPacket.class);
     }
 }

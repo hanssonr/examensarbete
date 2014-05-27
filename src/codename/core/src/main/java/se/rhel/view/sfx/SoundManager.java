@@ -43,7 +43,7 @@ public enum SoundManager {
         */
     }
 
-    public void playSound(SoundType type) {
-        sounds.get(type).play(1f);
+    public void playSound(SoundType type, float volume, float pan) {
+        sounds.get(type).play(volume, 1f, pan);
     }
 }

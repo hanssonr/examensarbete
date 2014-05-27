@@ -4,6 +4,7 @@ import com.badlogic.gdx.math.Vector3;
 import se.rhel.Client;
 import se.rhel.Snaek;
 import se.rhel.event.*;
+import se.rhel.model.component.NetworkComponent;
 import se.rhel.model.entity.ControlledPlayer;
 import se.rhel.model.physics.RayVector;
 import se.rhel.network.event.NetworkEvent;
@@ -24,29 +25,33 @@ public class ClientController extends BaseGameController implements NetworkListe
 
     private Client mClient;
     private ClientSynchronizedUpdate mSyncedUpdate;
+    private boolean mStarted = false;
 
     public ClientController() {
         super();
-        mClient = Snaek.newClient(4455, 5544, "localhost");
-        mWorldModel = new ClientWorldModel(mClient.getId(), mEvents);
-        mSyncedUpdate = new ClientSynchronizedUpdate(mEvents);
-        mClient.addListener(mSyncedUpdate);
-
-        mClient.sendTcp(new RequestInitialStatePacket(mClient.getId()));
-        mWorldView = new WorldView(mWorldModel);
-
         mEvents.listen(NetworkEvent.class, this);
+        mSyncedUpdate = new ClientSynchronizedUpdate(mEvents);
+        mClient = Snaek.newClient(4455, 5544, "localhost", mSyncedUpdate);
+    }
+
+    private void startGame() {
+        mWorldModel = new ClientWorldModel(mClient.getId(), mEvents);
+        mWorldView = new WorldView(mWorldModel);
+        mClient.sendTcp(new RequestInitialStatePacket(mClient.getId()));
+        mStarted = true;
     }
 
     public void update(float delta) {
-        super.update(delta);
+        if(mStarted)
+            super.update(delta);
 
         // Network stuff
-        mSyncedUpdate.update((INetworkWorldModel)mWorldModel, mClient);
+        mSyncedUpdate.update();
     }
 
     public void draw(float delta) {
-        mWorldView.render(delta);
+        if(mStarted)
+            mWorldView.render(delta);
     }
 
     public void dispose() {
@@ -97,6 +102,9 @@ public class ClientController extends BaseGameController implements NetworkListe
             case PLAYER_JOIN:
                 mWorldView.addPlayer((ControlledPlayer)objs[0]);
                 break;
+            case CONNECTED:
+                startGame();
+                break;
             default:
                 break;
         }
@@ -104,7 +112,6 @@ public class ClientController extends BaseGameController implements NetworkListe
 
     @Override
     public void networkEvent(Packet packet) {
-
         if(packet instanceof ShootPacket) {
             ShootPacket sp = (ShootPacket) packet;
 
@@ -117,6 +124,55 @@ public class ClientController extends BaseGameController implements NetworkListe
             BulletHolePacket bhp = (BulletHolePacket) packet;
             // Draw bullethole
             mWorldView.addBullethole(bhp.hitWorld, bhp.hitNormal);
+        }
+
+        else if (packet instanceof  PlayerPacket) {
+            PlayerPacket pp = (PlayerPacket) packet;
+            for(int i = 0; i < pp.mPlayers.size(); i++) {
+                UpdateStruct ps = pp.mPlayers.get(i);
+                if(ps.mID != mClient.getId()) {
+                    ControlledPlayer cp = new ControlledPlayer(mWorldModel.getBulletWorld(), ps.mPosition);
+                    cp.addComponent(new NetworkComponent(ps.mID));
+                    cp.rotateAndTranslate(ps.mRotation, ps.mPosition);
+                    mWorldModel.setPlayer(ps.mID, cp);
+                    mEvents.notify(new ModelEvent(EventType.PLAYER_JOIN, cp));
+                }
+            }
+        }
+
+        else if (packet instanceof DeadEntityPacket) {
+            DeadEntityPacket dep = (DeadEntityPacket) packet;
+            ((INetworkWorldModel)mWorldModel).killEntity(dep.clientId);
+        }
+
+        else if (packet instanceof GrenadeCreatePacket) {
+            GrenadeCreatePacket gcp = (GrenadeCreatePacket) packet;
+
+            Grenade g = new Grenade(mWorldModel.getBulletWorld(), gcp.position, gcp.direction);
+            g.addComponent(new NetworkComponent(gcp.clientId));
+
+            mWorldModel.addGrenade(g);
+            mEvents.notify(new ModelEvent(EventType.GRENADE_CREATED, g));
+        }
+
+        else if (packet instanceof GrenadeUpdatePacket) {
+            GrenadeUpdatePacket gup = (GrenadeUpdatePacket) packet;
+            ((ClientWorldModel) mWorldModel).updateGrenade(gup.clientId, gup.position, gup.rotation, gup.isAlive);
+        }
+
+        else if (packet instanceof PlayerMovePacket) {
+            PlayerMovePacket pmp = (PlayerMovePacket) packet;
+            ((INetworkWorldModel)mWorldModel).transformEntity(pmp.clientId, pmp.mPosition, pmp.mRotation);
+        }
+
+        else if (packet instanceof DamagePacket) {
+            DamagePacket dp = (DamagePacket) packet;
+            ((INetworkWorldModel)mWorldModel).damageEntity(dp.clientId, dp.amount);
+        }
+
+        else if (packet instanceof  ConnectedPacket) {
+            System.out.println("here");
+            startGame();
         }
     }
 }

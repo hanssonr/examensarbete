@@ -49,6 +49,9 @@ public class ControlledPlayer extends GameObject implements IPlayer {
 
     public void update(float delta) {
         super.update(delta);
+
+        mPhysicsComponent.getBody().activate(true);
+        mPhysicsComponent.getBody().setCenterOfMassTransform(getTransformation());
     }
 
     public Vector3 calculateShootDirection() {

@@ -1,5 +1,7 @@
 package se.rhel;
 
+import se.rhel.observer.ClientListener;
+
 /**
  * Created by Emil on 2014-03-14.
  */
@@ -13,10 +15,18 @@ public class Snaek {
         return s;
     }
 
-    public static Client newClient(int tcpPort, int udpPort, String address) {
+    public static Client newClient(int tcpPort, int udpPort, String host) {
         Client c = new Client();
         c.start();
-        c.connect(address, tcpPort, udpPort);
+        c.connect(host, tcpPort, udpPort);
+        return c;
+    }
+
+    public static Client newClient(int tcpPort, int udpPort, String host, ClientListener listener) {
+        Client c = new Client();
+        c.addListener(listener);
+        c.start();
+        c.connect(host, tcpPort, udpPort);
         return c;
     }
 

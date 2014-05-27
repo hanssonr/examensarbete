@@ -19,7 +19,7 @@ public class PlayerPacket extends Packet {
     public PlayerPacket(Array<IPlayer> players) {
         super(PlayerPacket.class);
 
-        putInt(players.size-1);
+        putInt(players.size);
         for(int i = 0; i < players.size; i++) {
             IPlayer player = players.get(i);
             addData(i+1, player.getPosition(), player.getRotation());
