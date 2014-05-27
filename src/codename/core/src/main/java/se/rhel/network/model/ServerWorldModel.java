@@ -118,7 +118,6 @@ public class ServerWorldModel extends BaseWorldModel {
         if(co != null) {
             if(co.type == MyContactListener.CollisionObject.CollisionType.ENTITY) {
                 if(!co.entity.equals(shooter)) {
-                    System.out.println("DAMANGE ENTITY ON SERVER");
                     damageEntity(co.entity, 25);
                     // mEvents.notify(new ServerModelEvent(EventType.DAMAGE, co.entity));
                     mEvents.notify(new ServerModelEvents.GameObjectEvent(EventType.DAMAGE, co.entity));

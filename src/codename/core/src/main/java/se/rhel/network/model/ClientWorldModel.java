@@ -163,8 +163,6 @@ public class ClientWorldModel extends BaseWorldModel implements INetworkWorldMod
     }
 
     public void damageEntity(int id, int amount) {
-        System.out.println("ID: " + id + " " + "CLIENTID: " + mClientId);
-        System.out.println(getPlayer(id));
         GameObject obj = (mClientId == id ? mPlayer : (GameObject)getPlayer(id));
         super.damageEntity(obj, amount);
         mEvents.notify(new ModelEvent(EventType.DAMAGE, obj));

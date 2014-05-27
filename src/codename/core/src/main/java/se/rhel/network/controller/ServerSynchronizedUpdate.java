@@ -87,7 +87,6 @@ public class ServerSynchronizedUpdate implements ServerListener {
                 cp.addComponent(new NetworkComponent(con.getId()));
                 world.setPlayer(con.getId(), cp);
                 // And sending to all clients except the one joined
-                System.out.println("ID: " + con.getId() + " " + "player: " + world.getPlayer(con.getId()));
                 server.sendToAllTCPExcept(new PlayerPacket(con.getId(), cp.getPosition(), cp.getRotation()), con);
             }
 

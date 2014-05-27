@@ -171,7 +171,6 @@ public class ClientController extends BaseGameController implements NetworkListe
         }
 
         else if (packet instanceof  ConnectedPacket) {
-            System.out.println("here");
             startGame();
         }
     }
