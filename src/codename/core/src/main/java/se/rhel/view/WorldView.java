@@ -25,12 +25,14 @@ import se.rhel.view.input.PlayerInput;
 import se.rhel.view.sfx.SoundManager;
 
 import java.math.BigDecimal;
+import java.util.Random;
 
 /**
  * Group: Logic
  */
 public class WorldView implements IWorldView {
 
+    private Random mRand;
     private FPSCamera mCamera = new FPSCamera(70, 0.1f, 1000f);
     private SpriteBatch mSpriteBatch;
     private ModelBatch mModelBatch;
@@ -64,6 +66,7 @@ public class WorldView implements IWorldView {
     private TextRenderer mLatencyRenderer;
 
     public WorldView(IWorldModel worldModel) {
+        mRand = new Random();
         mWorldModel = worldModel;
         mSpriteBatch = new SpriteBatch();
         mModelBatch = new ModelBatch();
@@ -186,12 +189,12 @@ public class WorldView implements IWorldView {
         mPlayerRenderer.render(mModelBatch, mEnvironment);
     }
 
-    public float calculateSoundVolume(Vector3 source) {
+    private float calculateSoundVolume(Vector3 source) {
         double dist = RayVector.getDistance(source, mWorldModel.getPlayer().getPosition());
         return (float) (1f / dist);
     }
 
-    public float calculateSoundPan(Vector3 source) {
+    private float calculateSoundPan(Vector3 source) {
         double dist = RayVector.getDistance(source, mWorldModel.getPlayer().getPosition());
         float pan = 0f;
         if (dist > 1f) {
@@ -210,10 +213,17 @@ public class WorldView implements IWorldView {
         return pan;
     }
 
+    private float randomizeSoundPitch() {
+        return (float)(Math.random() + 1.25) - 0.25f;
+    }
+
     public void shoot(RayVector ray) {
         mLaserView.add(ray);
         SoundManager.INSTANCE.playSound(
-                SoundManager.SoundType.LASER, calculateSoundVolume(ray.getFrom()), calculateSoundPan(ray.getFrom()));
+                SoundManager.SoundType.LASER,
+                calculateSoundVolume(ray.getFrom()),
+                randomizeSoundPitch(),
+                calculateSoundPan(ray.getFrom()));
     }
 
     public void addGrenade(Grenade grenade) {
