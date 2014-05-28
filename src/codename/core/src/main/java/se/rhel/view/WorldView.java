@@ -193,18 +193,21 @@ public class WorldView implements IWorldView {
 
     public float calculateSoundPan(Vector3 source) {
         double dist = RayVector.getDistance(source, mWorldModel.getPlayer().getPosition());
+        float pan = 0f;
         if (dist > 1f) {
-            Vector3 dir = source.cpy().nor().sub(mWorldModel.getPlayer().getPosition());
+            Vector3 dirToSource = source.cpy().sub(mWorldModel.getPlayer().getPosition()).nor();
             Vector3 playerDir = mWorldModel.getPlayer().getDirection().nor();
-
             Vector2 currXDir = new Vector2(playerDir.x, playerDir.z).nor();
-            Vector2 wantedXDir = new Vector2(dir.x, dir.z).nor();
+            Vector2 wantedXDir = new Vector2(dirToSource.x, dirToSource.z).nor();
 
-            float xangle = (float) Math.toDegrees(Math.atan2(wantedXDir.cpy().crs(currXDir), wantedXDir.cpy().dot(currXDir)));
-            System.out.println(xangle);
+            float angle = (float) Math.toDegrees(Math.atan2(wantedXDir.cpy().crs(currXDir), wantedXDir.cpy().dot(currXDir)));
+            pan = (angle * 2f) / 180f;
+
+            if (pan > 1)  pan = 2f - pan;
+            if (pan < 1)  pan = 2f + pan;
         }
 
-        return 0f;
+        return pan;
     }
 
     public void shoot(RayVector ray) {
