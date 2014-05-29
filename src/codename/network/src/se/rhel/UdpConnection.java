@@ -32,14 +32,10 @@ public class UdpConnection implements Runnable {
      * @param address
      * @param udpPort
      */
-    public void connect(InetAddress address, int udpPort) {
-        try {
-            mSocket = new DatagramSocket();
-            mSocket.connect(address, udpPort);
+    public void connect(InetAddress address, int udpPort) throws SocketException {
+        mSocket = new DatagramSocket();
+        mSocket.connect(address, udpPort);
 
-        } catch (SocketException e) {
-            e.printStackTrace();
-        }
 
         start();
         serverInitialization = false;
@@ -82,6 +78,8 @@ public class UdpConnection implements Runnable {
                 stop();
             }
         }
+
+        Log.info("UdpConnection", "Thread stopped");
     }
 
     public boolean isOpen() {
@@ -95,6 +93,7 @@ public class UdpConnection implements Runnable {
 
         if(!mSocket.isClosed()) {
             mSocket.close();
+            Log.info("UdpConnection", "Socket closed");
         } else {
             Log.error("UpdConnection", "Socket already closed");
         }

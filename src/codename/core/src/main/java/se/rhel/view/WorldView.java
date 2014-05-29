@@ -207,7 +207,7 @@ public class WorldView implements IWorldView {
             pan = (angle * 2f) / 180f;
 
             if (pan > 1)  pan = 2f - pan;
-            if (pan < 1)  pan = 2f + pan;
+            else if (pan < 1)  pan = 2f + pan;
         }
 
         return pan;

@@ -251,4 +251,13 @@ public class Server implements EndPoint {
         mUdpConnection = new UdpConnection(mServerPacketHandler);
         mUdpConnection.bind(udpPort);
     }
+
+    public String getHostAddress() {
+        try {
+            return Inet4Address.getLocalHost().getHostAddress();
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        }
+        return "no found address";
+    }
 }

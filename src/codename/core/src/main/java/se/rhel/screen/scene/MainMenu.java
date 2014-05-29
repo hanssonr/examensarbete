@@ -92,6 +92,7 @@ public class MainMenu extends AbstactController {
         mTable = new Table();
         mTable.setFillParent(true);
 
+        Gdx.input.setCursorCatched(false);
         Gdx.input.setInputProcessor(mStage);
         Gdx.input.setCatchBackKey(true);
     }
@@ -118,9 +119,15 @@ public class MainMenu extends AbstactController {
     }
 
     @Override
+    public void hide() {
+        super.hide();
+        this.dispose();
+    }
+
+    @Override
     public void dispose() {
         super.dispose();
-        Gdx.input.setInputProcessor(null);
         mStage.dispose();
+        Gdx.input.setInputProcessor(null);
     }
 }

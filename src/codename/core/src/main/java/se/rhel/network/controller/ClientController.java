@@ -15,7 +15,11 @@ import se.rhel.network.model.INetworkWorldModel;
 import se.rhel.network.packet.*;
 import se.rhel.packet.Packet;
 import se.rhel.screen.BaseGameController;
+import se.rhel.screen.scene.MainMenu;
 import se.rhel.view.WorldView;
+
+import java.io.IOException;
+import java.net.UnknownHostException;
 
 /**
  * Group: Multiplayer
@@ -27,11 +31,12 @@ public class ClientController extends BaseGameController implements NetworkListe
     private ClientSynchronizedUpdate mSyncedUpdate;
     private boolean mStarted = false;
 
-    public ClientController() {
+    public ClientController(String host) throws IOException {
         super();
         mEvents.listen(NetworkEvent.class, this);
         mSyncedUpdate = new ClientSynchronizedUpdate(mEvents);
-        mClient = Snaek.newClient(4455, 5544, "localhost", mSyncedUpdate);
+        mClient = Snaek.newClient(mSyncedUpdate);
+        mClient.connect(host, 4455, 5544);
     }
 
     private void startGame() {

@@ -1,9 +1,13 @@
 package se.rhel.screen.scene;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.scenes.scene2d.ui.CheckBox;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.graphics.*;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.TextField;
+
+import java.awt.*;
 
 /**
  * Group: Logic
@@ -29,6 +33,24 @@ public class UIComponents {
     public static CheckBox getDefaultCheckBox(String text) {
         CheckBox cb = new CheckBox(text, mDefaultSkin);
         return cb;
+    }
+
+    public static TextField getDefaultTextField(String messagetext) {
+        TextField tf = new TextField("", mDefaultSkin);
+        tf.setMessageText(messagetext);
+        return tf;
+    }
+
+    public static Label getErrorLabel(String text) {
+        Label lb = new Label(text, mDefaultSkin);
+        lb.setColor(255, 0, 0, 1);
+        return lb;
+    }
+
+    public static Label getDefaultLabel(String text) {
+        Label lb = new Label(text, mDefaultSkin);
+        lb.setColor(Color.valueOf("272B30"));
+        return lb;
     }
 
     // Class should not be initialized

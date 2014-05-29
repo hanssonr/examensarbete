@@ -9,6 +9,7 @@ import se.rhel.observer.ClientObserver;
 import se.rhel.packet.*;
 import se.rhel.util.Log;
 
+import java.io.IOException;
 import java.net.*;
 import java.util.ArrayList;
 
@@ -123,13 +124,14 @@ public class Client implements EndPoint {
         return mUdpConnection;
     }
 
-    public void connect(String host, int tcpPort, int udpPort) {
+    public void connect(String host, int tcpPort, int udpPort) throws IOException {
         try {
             InetAddress address = InetAddress.getByName(host);
             mUdpConnection.connect(address, udpPort);
             mTcpConnection.connect(address, tcpPort);
-        } catch (UnknownHostException e) {
-            e.printStackTrace();
+        } catch (IOException e) {
+            dispose();
+            throw e;
         }
     }
 
@@ -167,6 +169,12 @@ public class Client implements EndPoint {
     public void sendUdp(byte[] data) {
         Log.trace("Client", "Send UDP >" + Packet.class.getName());
         mUdpConnection.sendUdpFromClient(data);
+    }
+
+    public void dispose() {
+        this.stop();
+        this.mUdpConnection.stop();
+        this.mTcpConnection.stop();
     }
 
 }

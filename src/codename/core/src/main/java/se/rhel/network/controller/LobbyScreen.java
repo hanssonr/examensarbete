@@ -1,19 +1,19 @@
 package se.rhel.network.controller;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
-import se.rhel.Client;
 import se.rhel.CodeName;
 import se.rhel.Snaek;
 import se.rhel.network.packet.MyPacketRegisterInitializer;
 import se.rhel.screen.AbstactController;
 import se.rhel.screen.scene.UIComponents;
-import se.rhel.network.controller.NetworkGameScreen;
 import se.rhel.Server;
 
 
@@ -32,6 +32,8 @@ public class LobbyScreen extends AbstactController {
     private CodeName mGame;
     private Server mServer;
 
+    private String mErrorMessage = "";
+
     public LobbyScreen(CodeName game, boolean isHost) {
         super(game);
 
@@ -47,25 +49,45 @@ public class LobbyScreen extends AbstactController {
         }
     }
 
+    public LobbyScreen(CodeName game, boolean isHost, String error) {
+        this(game, isHost);
+
+        mErrorMessage = error;
+    }
+
     private void initStage() {
 
         mTable.clear();
+        final TextField hostField = UIComponents.getDefaultTextField("IP to host");
         final TextButton startButton = UIComponents.getDefaultTextButton("Start game", 200f, 20f);
-
         startButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                mGame.setScreen(new NetworkGameScreen(mGame, mServer));
+                String host = "localhost";
+                if(!mIsHost && !hostField.getText().isEmpty()) host = hostField.getText();
+                mGame.setScreen(new NetworkGameScreen(mGame, mServer, host));
             }
         });
+
+        if (!mIsHost) {
+            mTable.row().padTop(10);
+            mTable.add(hostField);
+        }
 
         mTable.row().padTop(10);
         mTable.add(startButton);
         mTable.row().padTop(10);
 
+        if(mIsHost) {
+            mTable.row().padTop(10);
+            mTable.add(UIComponents.getDefaultLabel("Your IP: " + mServer.getHostAddress()));
+        }
+        if(!mErrorMessage.isEmpty()) {
+            mTable.row().padTop(10);
+            mTable.add(UIComponents.getErrorLabel(mErrorMessage));
+        }
 
         mStage.addActor(mTable);
-
     }
 
     @Override
@@ -73,6 +95,7 @@ public class LobbyScreen extends AbstactController {
         mTable = new Table();
         mTable.setFillParent(true);
 
+        Gdx.input.setCursorCatched(false);
         Gdx.input.setInputProcessor(mStage);
         Gdx.input.setCatchBackKey(true);
     }

@@ -1,5 +1,8 @@
 package se.rhel;
 
+import java.io.IOException;
+import java.net.UnknownHostException;
+
 public class Main {
 
     public static void main(String[] args) {
@@ -14,7 +17,11 @@ public class Main {
             } else {
                 Client client = new Client();
                 client.start();
-                client.connect("127.0.0.1", 4455, 5544);
+                try {
+                    client.connect("127.0.0.1", 4455, 5544);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         }
     }

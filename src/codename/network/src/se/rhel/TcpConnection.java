@@ -26,24 +26,17 @@ public class TcpConnection implements Runnable {
         mPacketHandler = handler;
     }
 
-    public void connect(InetAddress address, int tcpPort) {
-        try {
-            mSocket = new Socket(address, tcpPort);
-            mSocket.setTcpNoDelay(true);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    public void connect(InetAddress address, int tcpPort) throws IOException {
+        mSocket = new Socket(address, tcpPort);
+        mSocket.setTcpNoDelay(true);
+
 
         start();
     }
 
-    public void bindSocket(Socket socket) {
-        try {
-            mSocket = socket;
-            mSocket.setTcpNoDelay(true);
-        } catch (SocketException e) {
-            e.printStackTrace();
-        }
+    public void bindSocket(Socket socket) throws SocketException {
+        mSocket = socket;
+        mSocket.setTcpNoDelay(true);
 
         start();
     }
