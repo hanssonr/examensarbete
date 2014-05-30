@@ -128,4 +128,10 @@ public class Player extends GameObject implements IPlayer{
     public Vector3 getVelocity() {
         return mVelocity;
     }
+
+    public void respawn(Vector3 pos) {
+        mTransform.getTransformation().setToTranslation(pos);
+        mPhysicsComponent.getBody().setWorldTransform(getTransformation());
+        mDamageComponent.reset();
+    }
 }

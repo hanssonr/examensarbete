@@ -80,6 +80,10 @@ public class ClientSynchronizedUpdate implements ClientListener {
                 mEvents.notify(new NetworkEvent((ConnectedPacket)obj));
             }
 
+            else if(obj instanceof RespawnPacket) {
+                mEvents.notify(new NetworkEvent((RespawnPacket)obj));
+            }
+
             it.remove();
         }
     }

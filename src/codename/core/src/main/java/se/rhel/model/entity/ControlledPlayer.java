@@ -69,4 +69,10 @@ public class ControlledPlayer extends GameObject implements IPlayer {
     public Vector3 getShootPosition() {
         return getPosition().add(new Vector3(0, 0.7f, 0));
     }
+
+    public void respawn(Vector3 pos) {
+        mTransform.getTransformation().setToTranslation(pos);
+        mPhysicsComponent.getBody().setWorldTransform(getTransformation());
+        mDamageComponent.reset();
+    }
 }

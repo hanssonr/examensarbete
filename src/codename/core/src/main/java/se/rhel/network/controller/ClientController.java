@@ -175,8 +175,13 @@ public class ClientController extends BaseGameController implements NetworkListe
             ((INetworkWorldModel)mWorldModel).damageEntity(dp.clientId, dp.amount);
         }
 
-        else if (packet instanceof  ConnectedPacket) {
+        else if (packet instanceof ConnectedPacket) {
             startGame();
+        }
+
+        else if(packet instanceof RespawnPacket) {
+            RespawnPacket rp = (RespawnPacket) packet;
+            mWorldModel.respawn(mWorldModel.getPlayer(rp.mRespawnId));
         }
     }
 }

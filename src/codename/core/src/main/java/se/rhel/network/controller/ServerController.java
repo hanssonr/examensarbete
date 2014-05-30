@@ -38,6 +38,7 @@ public class ServerController implements ServerModelListener {
         mEvents.listen(ServerModelEvents.GrenadeEvent.class, this);
         mEvents.listen(ServerModelEvents.ServerWorldCollision.class, this);
         mEvents.listen(ServerModelEvents.ShootEvent.class, this);
+        mEvents.listen(ServerModelEvents.RespawnEvent.class, this);
     }
 
     public void update(float delta) {
@@ -85,5 +86,10 @@ public class ServerController implements ServerModelListener {
         Quaternion q = new Quaternion();
         q = g.getTransformation().getRotation(q);
         mServer.sendToAllUDP(new GrenadeUpdatePacket(((NetworkComponent)g.getComponent(NetworkComponent.class)).getID(), g.getPosition(), q, isAlive));
+    }
+
+    @Override
+    public void respawnEvent(int id, Vector3 pos) {
+        mServer.sendToAllTCP(new RespawnPacket(id, pos));
     }
 }

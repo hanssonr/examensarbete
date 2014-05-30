@@ -2,6 +2,7 @@ package se.rhel.network.event;
 
 import com.badlogic.gdx.math.Vector3;
 import se.rhel.event.EventType;
+import se.rhel.event.GameEvent;
 import se.rhel.model.component.GameObject;
 import se.rhel.model.entity.IPlayer;
 import se.rhel.model.physics.RayVector;
@@ -69,6 +70,21 @@ public class ServerModelEvents {
         @Override
         public void notify(ServerModelListener listener) {
             listener.serverWorldCollision(this.hitPoint, this.hitNormal);
+        }
+    }
+
+    public static class RespawnEvent extends ServerModelEvent {
+        int id;
+        Vector3 pos;
+
+        public RespawnEvent(int id, Vector3 position) {
+            this.id = id;
+            this.pos = position;
+        }
+
+        @Override
+        public void notify(ServerModelListener listener) {
+            listener.respawnEvent(this.id, this.pos);
         }
     }
 }

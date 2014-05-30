@@ -14,5 +14,6 @@ public interface IPlayer {
     public Vector3 getDirection();
     public Vector3 getShootPosition();
     public boolean isAlive();
+    public void respawn(Vector3 pos);
     public void update(float delta);
 }

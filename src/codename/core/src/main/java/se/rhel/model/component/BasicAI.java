@@ -51,34 +51,37 @@ public class BasicAI implements IAIComponent, IComponent, IUpdateable {
 //
 //            mTransform.rotateBy(new Vector3(xangle, yangle, 0));
 //        } else {
-        mMovetimer += delta;
-        if(mMovetimer > 4f) {
-            mMovetimer = 0;
-            mTransform.rotateTo(new Vector3((float) (Math.random() * 360), 0, 0));
-            mDirection.set(mTransform.getDirection());
-        }
-//        }
 
-        mShootTimer -= delta;
-        if(mShootTimer <= 0f) {
-            if(mDamage.isAlive()) {
-                mAction.shoot();
-                mShootTimer = (float) (Math.random() * 2 + 2);
+        if(mDamage.isAlive()) {
+            mMovetimer += delta;
+            if(mMovetimer > 4f) {
+                mMovetimer = 0;
+                mTransform.rotateTo(new Vector3((float) (Math.random() * 360), 0, 0));
+                mDirection.set(mTransform.getDirection());
             }
+    //        }
+
+            mShootTimer -= delta;
+            if(mShootTimer <= 0f) {
+                if(mDamage.isAlive()) {
+                    mAction.shoot();
+                    mShootTimer = (float) (Math.random() * 2 + 2);
+                }
+            }
+
+            mJumpTimer += delta;
+            if(mJumpTimer <= 0f) {
+                mGravity.setGravity(7f);
+                mJumpTimer = (float) (Math.random() * 5 + 5);
+            }
+
+            Vector3 vel = new Vector3(mDirection.cpy().scl(4f));
+            vel.y = mGravity.getGravity();
+
+            mPhysic.getBody().activate(true);
+            mPhysic.getBody().setLinearVelocity(vel);
+
+            mTransform.getTransformation().setTranslation(mPhysic.getBody().getCenterOfMassPosition());
         }
-
-        mJumpTimer += delta;
-        if(mJumpTimer <= 0f) {
-            mGravity.setGravity(7f);
-            mJumpTimer = (float) (Math.random() * 5 + 5);
-        }
-
-        Vector3 vel = new Vector3(mDirection.cpy().scl(4f));
-        vel.y = mGravity.getGravity();
-
-        mPhysic.getBody().activate(true);
-        mPhysic.getBody().setLinearVelocity(vel);
-
-        mTransform.getTransformation().setTranslation(mPhysic.getBody().getCenterOfMassPosition());
     }
 }

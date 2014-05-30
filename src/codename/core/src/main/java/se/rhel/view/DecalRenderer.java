@@ -15,7 +15,7 @@ import se.rhel.res.Resources;
 public class DecalRenderer {
 
     private DecalBatch mDecalBatch;
-    private Decal mDecal_team_m, mDecal_team_oc;
+    private Decal mDecal_team_m, mDecal_team_oc, toDraw;
     private FPSCamera mCamera;
 
     public DecalRenderer(FPSCamera cam) {
@@ -26,12 +26,18 @@ public class DecalRenderer {
         mDecal_team_oc = Decal.newDecal(2f, 0.5f, new TextureRegion(Resources.INSTANCE.teamtag_oc));
     }
 
-    public void draw(float delta, Vector3 pos) {
+    public void draw(float delta, Vector3 pos, int team) {
         Gdx.gl.glEnable(GL20.GL_BLEND);
 
-        mDecal_team_m.setPosition(pos.x, pos.y + 2f, pos.z);
-        mDecal_team_m.lookAt(mCamera.position, FPSCamera.UP);
-        mDecalBatch.add(mDecal_team_m);
+        if(team == 0) {
+            toDraw = mDecal_team_m;
+        } else {
+            toDraw = mDecal_team_oc;
+        }
+
+        toDraw.setPosition(pos.x, pos.y + 2f, pos.z);
+        toDraw.lookAt(mCamera.position, FPSCamera.UP);
+        mDecalBatch.add(toDraw);
         mDecalBatch.flush();
 
         Gdx.gl.glDisable(GL20.GL_BLEND);

@@ -19,9 +19,11 @@ public interface IWorldModel {
     public Array<IPlayer> getControlledPlayers();
     public Array<IPlayer> getAllPlayers();
     public void setPlayer(int id, IPlayer player);
+    public IPlayer getPlayer(int id);
 
     public void update(float delta);
     public void checkShootCollision(RayVector ray);
     public void addGrenade(Grenade g);
     public void checkEntityStatus(GameObject entity);
+    public void respawn(IPlayer player);
 }

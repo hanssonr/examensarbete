@@ -10,9 +10,10 @@ public class DamageComponent implements IDamageable, IComponent {
 
     private boolean mAlive = true;
     private int mHealth;
+    private int mMaxHealth;
 
     public DamageComponent(int maxHealth) {
-        mHealth = maxHealth;
+        mMaxHealth = mHealth = maxHealth;
     }
 
     public boolean isAlive() {
@@ -29,5 +30,10 @@ public class DamageComponent implements IDamageable, IComponent {
 
     public void setAlive(boolean b) {
         mAlive = b;
+    }
+
+    public void reset() {
+        mHealth = mMaxHealth;
+        mAlive = true;
     }
 }

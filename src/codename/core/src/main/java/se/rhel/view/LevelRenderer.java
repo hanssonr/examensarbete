@@ -19,7 +19,7 @@ public class LevelRenderer {
     }
 
     public void render(ModelBatch batch, Environment env) {
-       batch.render(mSky, env);
+       batch.render(mSky);
        batch.render(mWorld, env);
     }
 }

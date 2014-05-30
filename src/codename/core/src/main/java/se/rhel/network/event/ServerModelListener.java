@@ -17,4 +17,5 @@ public interface ServerModelListener {
     public void serverWorldCollision(Vector3 hitPoint, Vector3 hitNormal);
     public void shootEvent(RayVector ray, IPlayer player);
     public void grenadeEvent(Grenade g, boolean isAlive);
+    public void respawnEvent(int id, Vector3 pos);
 }

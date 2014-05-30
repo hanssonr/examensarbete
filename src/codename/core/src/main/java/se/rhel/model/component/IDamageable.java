@@ -9,4 +9,5 @@ public interface IDamageable {
     public int getHealth();
     public void damageEntity(int amount);
     public void setAlive(boolean b);
+    public void reset();
 }

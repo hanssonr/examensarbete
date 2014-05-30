@@ -16,7 +16,8 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.bullet.linearmath.btIDebugDraw;
 import se.rhel.Client;
 import se.rhel.model.IWorldModel;
-import se.rhel.model.entity.ControlledPlayer;
+import se.rhel.model.component.GameObject;
+import se.rhel.model.component.TeamComponent;
 import se.rhel.model.entity.IPlayer;
 import se.rhel.model.physics.BulletWorld;
 import se.rhel.model.physics.RayVector;
@@ -32,7 +33,6 @@ import java.util.Random;
  */
 public class WorldView implements IWorldView {
 
-    private Random mRand;
     private FPSCamera mCamera = new FPSCamera(70, 0.1f, 1000f);
     private SpriteBatch mSpriteBatch;
     private ModelBatch mModelBatch;
@@ -66,7 +66,6 @@ public class WorldView implements IWorldView {
     private TextRenderer mLatencyRenderer;
 
     public WorldView(IWorldModel worldModel) {
-        mRand = new Random();
         mWorldModel = worldModel;
         mSpriteBatch = new SpriteBatch();
         mModelBatch = new ModelBatch();
@@ -114,24 +113,7 @@ public class WorldView implements IWorldView {
         if(PlayerInput.DRAW_MESH) {
             // Cel-shading
             buffer1.begin();
-                Gdx.gl.glClearColor(0, 1, 1, 1f);
-                Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
-
-                mModelBatch.begin(mCamera);
-                    mLevelRenderer.render(mModelBatch, mEnvironment);
-                    mExtPlayerRenderer.render(mModelBatch, mEnvironment);
-                    mGrenadeRenderer.render(mModelBatch, mEnvironment);
-                mModelBatch.end();
-
-                particleRenderer.draw(delta);
-                mBulletHoleRenderer.draw(delta);
-                mLaserView.render(delta);
-
-//                // External stuff
-//                for (int i = 0; i < mWorldModel.getExternalPlayers().size; i++) {
-//                    ControlledPlayer cp = (ControlledPlayer)mWorldModel.getExternalPlayers().get(i);
-//                   // mDecalRenderer.draw(delta, de.getPosition());
-//                }
+                drawAll(delta);
             buffer1.end();
 
             buffer1.getColorBufferTexture().bind();
@@ -140,15 +122,7 @@ public class WorldView implements IWorldView {
                 toonShader.end();
 
         } else {
-            Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-            Gdx.gl.glClearColor(0, 1, 1, 1);
-            Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
-
-            mModelBatch.begin(mCamera);
-                mLevelRenderer.render(mModelBatch, mEnvironment);
-                mPlayerRenderer.render(mModelBatch, mEnvironment);
-                mExtPlayerRenderer.render(mModelBatch, mEnvironment);
-            mModelBatch.end();
+           drawAll(delta);
         }
 
         if(PlayerInput.DRAW_DEBUG_INFO) {
@@ -182,11 +156,47 @@ public class WorldView implements IWorldView {
 
         // "Crosshair"
         mCrosshairRenderer.begin(ShapeRenderer.ShapeType.Line);
-            mCrosshairRenderer.setColor(Color.RED);
-            mCrosshairRenderer.circle(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2, 5f);
+            mCrosshairRenderer.setColor(Color.GREEN);
+            float inner = 6f;
+            float outer = 15f;
+
+            //vertical
+            mCrosshairRenderer.line(Gdx.graphics.getWidth() / 2f, Gdx.graphics.getHeight() / 2f - inner, Gdx.graphics.getWidth() / 2f, Gdx.graphics.getHeight() / 2f - outer);
+            mCrosshairRenderer.line(Gdx.graphics.getWidth() / 2f, Gdx.graphics.getHeight() / 2f + inner, Gdx.graphics.getWidth() / 2f, Gdx.graphics.getHeight() / 2f + outer);
+
+            //horizontal
+            mCrosshairRenderer.line(Gdx.graphics.getWidth() / 2f - inner, Gdx.graphics.getHeight() / 2f, Gdx.graphics.getWidth() / 2f - outer, Gdx.graphics.getHeight() / 2f);
+            mCrosshairRenderer.line(Gdx.graphics.getWidth() / 2f + inner, Gdx.graphics.getHeight() / 2f, Gdx.graphics.getWidth() / 2f + outer, Gdx.graphics.getHeight() / 2f);
+            //mCrosshairRenderer.circle(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2, 5f);
         mCrosshairRenderer.end();
 
         mPlayerRenderer.render(mModelBatch, mEnvironment);
+    }
+
+    private void drawAll(float delta) {
+        Gdx.gl.glClearColor(0, 1, 1, 1f);
+        Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
+
+        mModelBatch.begin(mCamera);
+        mLevelRenderer.render(mModelBatch, mEnvironment);
+        mExtPlayerRenderer.render(mModelBatch, mEnvironment);
+        mGrenadeRenderer.render(mModelBatch, mEnvironment);
+        mModelBatch.end();
+
+        particleRenderer.draw(delta);
+        mBulletHoleRenderer.draw(delta);
+        mLaserView.render(delta);
+
+        //ControlledPlayer team stuff
+        for(IPlayer p : mWorldModel.getControlledPlayers()) {
+            if(p.isAlive()) {
+                GameObject go = (GameObject)p;
+                if(go.hasComponent(TeamComponent.class)) {
+                    int id = ((TeamComponent)go.getComponent(TeamComponent.class)).getTeam();
+                    mDecalRenderer.draw(delta, p.getPosition(), id);
+                }
+            }
+        }
     }
 
     private float calculateSoundVolume(Vector3 source) {
@@ -206,6 +216,7 @@ public class WorldView implements IWorldView {
             float angle = (float) Math.toDegrees(Math.atan2(wantedXDir.cpy().crs(currXDir), wantedXDir.cpy().dot(currXDir)));
             pan = (angle * 2f) / 180f;
 
+            //get pan in range of -1 to 1
             if (pan > 1)  pan = 2f - pan;
             else if (pan < 1)  pan = 2f + pan;
         }

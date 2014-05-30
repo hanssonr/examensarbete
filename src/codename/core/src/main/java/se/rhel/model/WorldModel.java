@@ -11,7 +11,11 @@ import se.rhel.model.physics.RayVector;
 import se.rhel.model.weapon.Explosion;
 import se.rhel.model.weapon.Grenade;
 import se.rhel.model.weapon.IExplodable;
+import se.rhel.network.event.ServerModelEvents;
+
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.Map;
 
 /**
  * Group: Logic
@@ -24,15 +28,24 @@ public class WorldModel extends BaseWorldModel implements IWorldModel {
 
     public WorldModel(Events events) {
         super(events);
-        mPlayer = new Player(new Vector3(0, 20, 0), getBulletWorld());
+        mPlayer = new Player(mRedRespawn.getRandomPosInBoundary(), getBulletWorld());
+        mPlayer.addComponent(new TeamComponent(1));
         addPlayer(mPlayer);
 
-        for(int i = 0; i < 2; i++) {
-            float x = (float) (Math.random() * 81)-40;
-            float z = (float) (Math.random() * 81)-40;
+        for(int i = 0; i < 10; i++) {
+            int teamId = i % 2;
+            TeamComponent tc = new TeamComponent(teamId);
+            Vector3 pos = tc.getTeam() == 0 ?
+                    mBlueRespawn.getRandomPosInBoundary() : mRedRespawn.getRandomPosInBoundary();
 
-            ControlledPlayer cp = new ControlledPlayer(getBulletWorld(), new Vector3(x, 10, z));
+
+            if(teamId == 1) {
+                System.out.println("adding player to red team with pos: " + pos);
+            }
+
+            ControlledPlayer cp = new ControlledPlayer(getBulletWorld(), pos);
             cp.addComponent(new BasicAI(cp));
+            cp.addComponent(tc);
             addPlayer(cp);
         }
     }
@@ -72,6 +85,22 @@ public class WorldModel extends BaseWorldModel implements IWorldModel {
                 removeGrenade(grenade);
             }
         }
+
+        Iterator it = getRespawnMap().entrySet().iterator();
+        while(it.hasNext()) {
+
+            Map.Entry<IPlayer, Float> pairs = (Map.Entry)it.next();
+            IPlayer player = pairs.getKey();
+            float respawntimer = pairs.getValue();
+
+            respawntimer += delta;
+            getRespawnMap().put(player, respawntimer);
+
+            if(respawntimer > 5f) {
+                respawn(player);
+                it.remove();
+            }
+        }
     }
 
     @Override
@@ -106,11 +135,12 @@ public class WorldModel extends BaseWorldModel implements IWorldModel {
 
         if(da.isAlive() && da.getHealth() <= 0) {
             da.setAlive(false);
+            addRespawn((IPlayer)entity);
 
             Explosion exp = new Explosion(entity.getPosition(), 5, 50);
             mEvents.notify(new ModelEvent(EventType.EXPLOSION, exp.getPosition()));
             handleExplosion(exp);
-            entity.destroy();
+            //entity.destroy();
         }
     }
 

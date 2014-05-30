@@ -18,6 +18,8 @@ import se.rhel.util.Utils;
 import se.rhel.view.input.PlayerInput;
 
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.Map;
 
 /**
  * Group: Multiplayer
@@ -34,7 +36,7 @@ public class ServerWorldModel extends BaseWorldModel {
     public ServerWorldModel(Events events) {
         super(events);
 
-        for(int i = 0; i < 10; i++) {
+        for(int i = 0; i < 0; i++) {
             float x = (float) (Math.random() * 81)-40;
             float z = (float) (Math.random() * 81)-40;
 
@@ -110,6 +112,24 @@ public class ServerWorldModel extends BaseWorldModel {
                 }
             }
         }
+
+        Iterator it = getRespawnMap().entrySet().iterator();
+        while(it.hasNext()) {
+
+            Map.Entry<IPlayer, Float> pairs = (Map.Entry)it.next();
+            IPlayer player = pairs.getKey();
+            float respawntimer = pairs.getValue();
+
+            respawntimer += delta;
+            getRespawnMap().put(player, respawntimer);
+
+            if(respawntimer > 5f) {
+                respawn(player);
+                int id = ((NetworkComponent)((GameObject)player).getComponent(NetworkComponent.class)).getID();
+                mEvents.notify(new ServerModelEvents.RespawnEvent(id, player.getPosition()));
+                it.remove();
+            }
+        }
     }
 
     public void checkShootCollision(RayVector ray, GameObject shooter) {
@@ -147,6 +167,7 @@ public class ServerWorldModel extends BaseWorldModel {
         IDamageable dae = (IDamageable) entity.getComponent(DamageComponent.class);
         if(dae.isAlive() && dae.getHealth() <= 0) {
             dae.setAlive(false);
+            addRespawn((IPlayer)entity);
 
             Explosion exp = new Explosion(entity.getPosition(), 5, 50);
             handleExplosion(exp);

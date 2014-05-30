@@ -128,6 +128,5 @@ public class MainMenu extends AbstactController {
     public void dispose() {
         super.dispose();
         mStage.dispose();
-        Gdx.input.setInputProcessor(null);
     }
 }
